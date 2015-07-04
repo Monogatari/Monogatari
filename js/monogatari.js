@@ -5,14 +5,14 @@
  * 1) Initialize Variables - 21
  * 2) Plugin Function Calls - 32
  * 3) Set Initial Settings - 43
- * 4) Set iOS Conditions - 94
- * 5) Set Save and Load Slots - 104
- * 6) Save and Load Events - 147
- * 7) Settings Event Handlers - 229
- * 8) Data-Action Event Handlers - 277
- * 9) In-Game Event Handlers - 371
- * 10) Engine Helper Functions - 457
- * 11) Statements Functioning - 682
+ * 4) Set iOS Conditions - 105
+ * 5) Set Save and Load Slots - 115
+ * 6) Save and Load Events - 158
+ * 7) Settings Event Handlers - 240
+ * 8) Data-Action Event Handlers - 288
+ * 9) In-Game Event Handlers - 382
+ * 10) Engine Helper Functions - 468
+ * 11) Statements Functioning - 705
  * ====================================
 **/
 
@@ -88,6 +88,17 @@ $(document).ready(function(){
 	});
 
 	playAmbient();
+
+	// Set Electron's quit handler.
+	try{
+		window.onbeforeunload = function() {
+			if(confirm(strings[settings["Language"]]["Confirm"])){
+				window.close();
+			}
+		}
+	}catch(e){
+
+	}
 
 	/**
 	 * ======================
@@ -312,7 +323,7 @@ $(document).ready(function(){
 				break;
 
 			case "end":
-				if(confirm("Do you want to quit?")){
+				if(confirm(strings[settings["Language"]]["Confirm"])){
 					endGame();
 					playAmbient();
 				}

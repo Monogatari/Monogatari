@@ -1,3 +1,10 @@
+// Declaration of jQuery for Electron's environment.
+try{
+  window.$ = window.jQuery = require('./js/jquery-2.1.4.min.js');
+}catch(e){
+
+}
+
 jQuery.fn.mailto = function() {
     return this.each(function(){
         var email = $(this).attr("href").replace("(at)", "@").replace("(dot)", ".");;
