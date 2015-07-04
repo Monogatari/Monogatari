@@ -35,8 +35,8 @@ $(document).ready(function(){
 
 	$('a[href*=#]').niceScroll();
 	$('a.mailto').mailto();
-    $(".lazy").lazyload();
-    $('.video-wrapper').fitVids();
+  $(".lazy").lazyload();
+  $('.video-wrapper').fitVids();
 
 	/**
 	 * ======================
@@ -44,7 +44,7 @@ $(document).ready(function(){
 	 * ======================
 	**/
 
-    var local_settings = $_.storage.get("Settings");
+  var local_settings = $_.storage.get("Settings");
 
 	if(local_settings == null || local_settings == ""){
 		$_.storage.set("Settings", JSON.stringify(settings));
@@ -467,11 +467,17 @@ $(document).ready(function(){
 		if(engine["MenuMusic"] != ""){
 			var ambient_player = document.querySelector("[data-component='ambient']");
 			ambient_player.setAttribute("loop","");
-			if(music[engine["MenuMusic"]] != null){
-				ambient_player.setAttribute("src", "audio/music/" + music[engine["MenuMusic"]]);
+
+			if(typeof music !== 'undefined'){
+				if(music[engine["MenuMusic"]] != null){
+					ambient_player.setAttribute("src", "audio/music/" + music[engine["MenuMusic"]]);
+				}else{
+					ambient_player.setAttribute("src", "audio/music/" + engine["MenuMusic"]);
+				}
 			}else{
 				ambient_player.setAttribute("src", "audio/music/" + engine["MenuMusic"]);
 			}
+
 			ambient_player.play();
 		}
 	}
@@ -581,13 +587,15 @@ $(document).ready(function(){
 									}else if(last[3] == "noloop"){
 										music_player.removeAttribute("loop");
 									}
-
-									if(music[last[2]] != null){
-										music_player.setAttribute("src", "audio/music/" + music[last[2]]);
+									if(typeof music !== 'undefined') {
+										if(music[last[2]] != null){
+											music_player.setAttribute("src", "audio/music/" + music[last[2]]);
+										}else{
+											music_player.setAttribute("src", "audio/music/" + last[2]);
+										}
 									}else{
 										music_player.setAttribute("src", "audio/music/" + last[2]);
 									}
-
 									music_player.play();
 									engine["Song"] = last.join(" ");
 								}else if(parts[1] == "sound"){
@@ -600,8 +608,12 @@ $(document).ready(function(){
 										sound_player.removeAttribute("loop");
 									}
 
-									if(sound[last[2]] != null){
-										sound_player.setAttribute("src", "audio/sound/" + sound[last[2]]);
+									if(typeof sound !== 'undefined') {
+										if(sound[last[2]] != null){
+											sound_player.setAttribute("src", "audio/sound/" + sound[last[2]]);
+										}else{
+											sound_player.setAttribute("src", "audio/sound/" + last[2]);
+										}
 									}else{
 										sound_player.setAttribute("src", "audio/sound/" + last[2]);
 									}
@@ -695,13 +707,19 @@ $(document).ready(function(){
 
 							if(parts[1] == "music"){
 								var music_player = document.querySelector("[data-component='music']");
+
 								if(parts[3] == "loop"){
 									music_player.setAttribute("loop","");
 								}else if(parts[3] == "noloop"){
 									music_player.removeAttribute("loop");
 								}
-								if(music[parts[2]] != null){
-									music_player.setAttribute("src", "audio/music/" + music[parts[2]]);
+
+								if(typeof music !== 'undefined'){
+									if(music[parts[2]] != null){
+										music_player.setAttribute("src", "audio/music/" + music[parts[2]]);
+									}else{
+										music_player.setAttribute("src", "audio/music/" + parts[2]);
+									}
 								}else{
 									music_player.setAttribute("src", "audio/music/" + parts[2]);
 								}
@@ -717,27 +735,49 @@ $(document).ready(function(){
 								}else if(parts[3] == "noloop"){
 									sound_player.removeAttribute("loop");
 								}
-								if(sound[parts[2]] != null){
-									sound_player.setAttribute("src", "audio/sound/" + sound[parts[2]]);
+
+								if(typeof sound !== 'undefined'){
+									if(sound[parts[2]] != null){
+										sound_player.setAttribute("src", "audio/sound/" + sound[parts[2]]);
+									}else{
+										sound_player.setAttribute("src", "audio/sound/" + parts[2]);
+									}
 								}else{
 									sound_player.setAttribute("src", "audio/sound/" + parts[2]);
 								}
+
 								sound_player.play();
 								engine["Sound"] = parts.join(" ");
 								engine["SoundHistory"].push(engine["Sound"]);
 								next();
 							}else if(parts[1] == "voice"){
 								var voice_player = document.querySelector("[data-component='voice']");
-								if(voice[parts[2]] != null){
-									voice_player.setAttribute("src", "audio/voice/" + voice[parts[2]]);
+
+								if(typeof voice !== 'undefined') {
+									if(voice[parts[2]] != null){
+										voice_player.setAttribute("src", "audio/voice/" + voice[parts[2]]);
+									}else{
+										voice_player.setAttribute("src", "audio/voice/" + parts[2]);
+									}
 								}else{
 									voice_player.setAttribute("src", "audio/voice/" + parts[2]);
 								}
+
 								voice_player.play();
 								next();
 							}else if(parts[1] == "video"){
 								var video_player = document.querySelector("[data-ui='player']");
-								video_player.setAttribute("src", "video/" + videos[parts[2]]);
+
+								if(typeof videos !== 'undefined') {
+									if(videos[parts[2]] != null){
+										video_player.setAttribute("src", "video/" + videos[parts[2]]);
+									}else{
+										video_player.setAttribute("src", "video/" + parts[2]);
+									}
+								}else{
+									video_player.setAttribute("src", "video/" + parts[2]);
+								}
+
 								$('[data-component="video"]').addClass("active");
 								video_player.play();
 							}
