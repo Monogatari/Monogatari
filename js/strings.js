@@ -26,7 +26,8 @@ var strings = {
 		"SaveButon": "Open the Save Screen.",
 		"LoadButton": "Open the Load Screen.",
 		"SettingsButton": "Open the Settings Screen.",
-		"QuitButton": "Quit Game."
+		"QuitButton": "Quit Game.",
+		"Confirm": "Do you want to quit?"
 
 	},
 
@@ -50,6 +51,7 @@ var strings = {
 		"SaveButon": "Abrir la Pantalla de Guardar.",
 		"LoadButton": "Abrir la Pantalla de Cargar.",
 		"SettingsButton": "Abrir la Pantalla de Configuración.",
-		"QuitButton": "Salir del Juego."
+		"QuitButton": "Salir del Juego.",
+		"Confirm": "¿Deseas salir?"
 	}
 }
