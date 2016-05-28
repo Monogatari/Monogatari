@@ -495,8 +495,9 @@ $(document).ready(function(){
 
     function stopAmbient() {
 	var a_player = document.querySelector("[data-component='ambient']");
-	if (!a_player.paused)
+	if (!a_player.paused){
 	    a_player.pause();
+	}
     }
 
 	function shutUp(){
