@@ -302,7 +302,7 @@ $(document).ready(function(){
 				break;
 
 			case "start":
-				playAmbient();
+				stopAmbient();
 				playing = true;
 				$("section").hide();
 				$("#game").show();
@@ -342,7 +342,7 @@ $(document).ready(function(){
 				break;
 
 			case "jump":
-				playAmbient();
+				stopAmbient();
 				label = game[$(this).data("jump")];
 				engine["Step"] = 0;
 				playing = true;
@@ -492,6 +492,13 @@ $(document).ready(function(){
 			ambient_player.play();
 		}
 	}
+
+    function stopAmbient() {
+	var a_player = document.querySelector("[data-component='ambient']");
+	if (!a_player.paused){
+	    a_player.pause();
+	}
+    }
 
 	function shutUp(){
 		var voice_player = document.querySelector("[data-component='voice']");
