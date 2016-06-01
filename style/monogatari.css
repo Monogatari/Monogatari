@@ -300,11 +300,13 @@ section div {
 }
 
 [data-ui="quick-menu"] span:hover {
-	color: rgb(255,255,255);
+    color: rgb(255,255,255);
+    cursor: pointer;
 }
 
 [data-ui="quick-menu"].dark span:hover {
-	color: rgb(0,0,0);
+    color: rgb(0,0,0);
+    cursor: pointer;
 }
 
 [data-ui="slots"], [data-ui="settings"] {
