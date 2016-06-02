@@ -2,17 +2,17 @@
  * ====================================
  * I N D E X
  * ====================================
- * 1) Initialize Variables - 21
- * 2) Plugin Function Calls - 32
- * 3) Set Initial Settings - 43
- * 4) Set iOS Conditions - 105
- * 5) Set Save and Load Slots - 115
- * 6) Save and Load Events - 158
- * 7) Settings Event Handlers - 240
- * 8) Data-Action Event Handlers - 288
- * 9) In-Game Event Handlers - 382
- * 10) Engine Helper Functions - 468
- * 11) Statements Functioning - 705
+ * 1) Initialize Variables
+ * 2) Plugin Function Calls
+ * 3) Set Initial Settings
+ * 4) Set iOS Conditions
+ * 5) Set Save and Load Slots
+ * 6) Save and Load Events
+ * 7) Settings Event Handlers
+ * 8) Data-Action Event Handlers
+ * 9) In-Game Event Handlers
+ * 10) Engine Helper Functions
+ * 11) Statements Functioning
  * ====================================
 **/
 
@@ -33,21 +33,16 @@ $(document).ready(function(){
 	 * ======================
 	**/
 
-	$('a[href*=#]').niceScroll();
-	$('a.mailto').mailto();
-  $(".lazy").lazyload();
-  $('.video-wrapper').fitVids();
-
 	/**
 	 * ======================
 	 * Set Initial Settings
 	 * ======================
 	**/
 
-  var local_settings = $_.storage.get("Settings");
+  var local_settings = Storage.get("Settings");
 
 	if(local_settings == null || local_settings == ""){
-		$_.storage.set("Settings", JSON.stringify(settings));
+		Storage.set("Settings", JSON.stringify(settings));
 	}else{
 		settings = JSON.parse(local_settings);
 	}
@@ -122,9 +117,9 @@ $(document).ready(function(){
 		}
 		for(var i = 1; i <= engine["Slots"]; i++){
 
-			var slot = $_.storage.get(engine["SaveLabel"] + i);
+			var slot = Storage.get(engine["SaveLabel"] + i);
 			if(slot == null){
-				$_.storage.set(engine["SaveLabel"]+i,"");
+				Storage.set(engine["SaveLabel"]+i,"");
 			}else if(slot != ""){
 				var data = JSON.parse(slot);
 
@@ -160,12 +155,12 @@ $(document).ready(function(){
 	**/
 
 	$("[data-menu='load']").on("click","[data-load-part]", function(){
-		$("*").wait();
+		//$("*").wait();
 		playing = true;
 		$("section").hide();
 		$("#game").show();
 		$("[data-character]").remove();
-		var data = JSON.parse($_.storage.get(engine["SaveLabel"] + $(this).data("load-slot")));
+		var data = JSON.parse(Storage.get(engine["SaveLabel"] + $(this).data("load-slot")));
 		engine = data["Engine"];
 
 		label = game[data["Label"]];
@@ -209,14 +204,14 @@ $(document).ready(function(){
 		$("#game").show();
 		analyseStatement(label[engine["Step"]]);
 		engine["Step"] += 1;
-		$("*").wait();
+		//$("*").wait();
 
 	});
 
 
 	$("[data-menu='save']").on("click","[data-save]", function(){
 		if(playing){
-			$("*").wait();
+			//$("*").wait();
 			var date = new Date();
 		    var day = date.getDate();
 		    var month = date.getMonth();
@@ -227,11 +222,11 @@ $(document).ready(function(){
 			    show += this.outerHTML.replace(/"/g, "'")+",";
 		    });
 
-		     $_.storage.set(engine["SaveLabel"] + $(this).data("save"), '{"Date":"' + day + "-"+month + "-" + year + '","Engine":' + JSON.stringify(engine) + ',"Show":"' + show + '","Label":"' + engine["Label"] + '"}');
+		     Storage.set(engine["SaveLabel"] + $(this).data("save"), '{"Date":"' + day + "-"+month + "-" + year + '","Engine":' + JSON.stringify(engine) + ',"Show":"' + show + '","Label":"' + engine["Label"] + '"}');
 			$("[data-menu='load'] [data-ui='slots']").html("");
 			$("[data-menu='save'] [data-ui='slots']").html("");
 			setSlots();
-			$("*").wait();
+			//$("*").wait();
 		}
 	});
 
@@ -263,14 +258,14 @@ $(document).ready(function(){
 				settings["Volume"]["Sound"] = value;
 				break
 		}
-		$_.storage.set("Settings", JSON.stringify(settings));
+		Storage.set("Settings", JSON.stringify(settings));
 	});
 
 	$("[data-action='set-language']").change(function(){
 		settings["Language"] = $(this).val();
 		game = script[settings["Language"]];
 		label = game[engine["Label"]];
-		$_.storage.set("Settings",JSON.stringify(settings));
+		Storage.set("Settings",JSON.stringify(settings));
 
 		$("[data-string]").each(function(){
 			$(this).text(strings[$("[data-action='set-language']").val()][$(this).data("string")]);
@@ -840,7 +835,7 @@ $(document).ready(function(){
 								}
 								$("#game").append("<img src='img/characters/" + directory + "/" + image + "' class='animated " + parts[5] + " "+parts[3] + "' data-character='" + parts[1] + "'>");
 								if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-									if($_.screen.isLandscape()){
+									if(Screen.isLandscape()){
 										$("img").css("height","80%");
 									}else{
 										$("img").css("height","60%");

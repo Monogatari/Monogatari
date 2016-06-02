@@ -1,2 +1,6 @@
 .DS_Store
 *.zip
+*~
+._*
+.thumbs
+.Thumbs
