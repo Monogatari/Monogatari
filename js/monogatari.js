@@ -25,7 +25,7 @@
 var label, game;
 var playing = false;
 
-$(document).ready(function(){
+$_ready(function(){
 
 	/**
 	 * ======================
@@ -39,29 +39,30 @@ $(document).ready(function(){
 	 * ======================
 	**/
 
-  var local_settings = Storage.get("Settings");
+	var local_settings = Storage.get("Settings");
 
 	if(local_settings == null || local_settings == ""){
 		Storage.set("Settings", JSON.stringify(settings));
 	}else{
 		settings = JSON.parse(local_settings);
 	}
+
 	if(!window.localStorage){
-		$("[data-ui='slots']").html("<p>Local Storage is not Available in this Browser</p>");
+		$_("[data-ui='slots']").html("<p>Local Storage is not Available in this Browser</p>");
 	}
 
 	if(engine["MultiLanguage"]){
 		game = script[settings["Language"]];
-		$("[data-action='set-language']").val(settings["Language"]);
-		$("[data-string]").each(function(){
-			var string_translation = strings[$("[data-action='set-language']").val()][$(this).data("string")];
+		$_("[data-action='set-language']").value(settings["Language"]);
+		$_("[data-string]").each(function(element){
+			var string_translation = strings[$_("[data-action='set-language']").value()][$_(element).data("string")];
 			if(string_translation != null && string_translation != ""){
-				$(this).text(string_translation);
+				$_(element).text(string_translation);
 			}
 		});
 	}else{
 		game = script;
-		$("[data-settings='language']").hide();
+		$_("[data-settings='language']").hide();
 	}
 
 	label = game[engine["Label"]];
@@ -73,12 +74,12 @@ $(document).ready(function(){
 	document.querySelector("[data-target='voice']").value = settings["Volume"]["Voice"];
 	document.querySelector("[data-target='sound']").value = settings["Volume"]["Sound"];
 
-	$('[data-background]').each(function(){
-		if($(this).data("background").indexOf(".") >- 1){
-			var src = "url('" + $(this).data("background") + "') center / cover no-repeat";
-			$(this).css("background", src);
+	$_('[data-background]').each(function(element){
+		if($_(element).data("background").indexOf(".") >- 1){
+			var src = "url('" + $_(element).data("background") + "') center / cover no-repeat";
+			$_(element).style("background", src);
 		}else{
-			$(this).css("background", $(this).data("background"));
+			$_(element).style("background", $_(element).data("background"));
 		}
 	});
 
@@ -102,7 +103,7 @@ $(document).ready(function(){
 	**/
 
 	if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-		$("[data-settings='audio']").html("<p>Audio settings are not supported on iOS</p>");
+		$_("[data-settings='audio']").html("<p>Audio settings are not supported on iOS</p>");
 	}
 
 	/**
@@ -125,24 +126,24 @@ $(document).ready(function(){
 
 				if(scenes[data["Engine"]["Scene"]] != null){
 
-					$("[data-menu='load'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"] + "' data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data["Engine"]["Scene"]] + "' alt=''><figcaption>" + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
+					$_("[data-menu='load'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"] + "' data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data["Engine"]["Scene"]] + "' alt=''><figcaption>" + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
 
-					$("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><img src='img/scenes/" + scenes[data["Engine"]["Scene"]] + "' alt=''><figcaption>Overwrite " + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
+					$_("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><img src='img/scenes/" + scenes[data["Engine"]["Scene"]] + "' alt=''><figcaption>Overwrite " + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
 
 				}else{
-					$("[data-menu='load'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"]+ "' data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
+					$_("[data-menu='load'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"]+ "' data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
 
-					$("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><figcaption>Overwrite " + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
+					$_("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><figcaption>Overwrite " + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
 				}
 
 			}else{
-				$("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><figcaption>Save in slot " + i + "</figcaption></figure>");
+				$_("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><figcaption>Save in slot " + i + "</figcaption></figure>");
 			}
 		}
 
 		// Check if there are no Saved games.
-		if($("[data-menu='load'] [data-ui='slots']").html().trim() == ""){
-			$("[data-menu='load'] [data-ui='slots']").html("<p>No saved games.</p>");
+		if($_("[data-menu='load'] [data-ui='slots']").html().trim() == ""){
+			$_("[data-menu='load'] [data-ui='slots']").html("<p>No saved games.</p>");
 		}
 	}
 
@@ -154,13 +155,13 @@ $(document).ready(function(){
 	 * =======================
 	**/
 
-	$("[data-menu='load']").on("click","[data-load-part]", function(){
-		//$("*").wait();
+	$_("[data-menu='load']").on("click","figcaption, img", function(){
+		document.body.style.cursor = "wait";
 		playing = true;
-		$("section").hide();
-		$("#game").show();
-		$("[data-character]").remove();
-		var data = JSON.parse(Storage.get(engine["SaveLabel"] + $(this).data("load-slot")));
+		$_("section").hide();
+		$_("#game").show();
+		$_("[data-character]").remove();
+		var data = JSON.parse(Storage.get(engine["SaveLabel"] + $_(this).parent().data("loadSlot")));
 		engine = data["Engine"];
 
 		label = game[data["Label"]];
@@ -172,19 +173,19 @@ $(document).ready(function(){
 
 		for(var i in data["Show"].split(",")){
 			if(data["Show"].split(",")[i].trim() != ""){
-				$("#game").append(data["Show"].split(",")[i]);
+				$_("#game").append(data["Show"].split(",")[i]);
 			}
 		}
 
-		$('#game').fadeOut('fast', function () {
+		$_('#game').fadeOut(200, function () {
 
 			if(scenes[data["Engine"]["Scene"]] != null){
-				$('#game').css("background","url(img/scenes/" + scenes[data["Engine"]["Scene"]] + ") center / cover no-repeat");
+				$_('#game').style("background","url(img/scenes/" + scenes[data["Engine"]["Scene"]] + ") center / cover no-repeat");
 			}else{
-				$('#game').css("background",data["Engine"]["Scene"]);
+				$_('#game').style("background",data["Engine"]["Scene"]);
 			}
 
-			$('#game').fadeIn('fast');
+			$_('#game').fadeIn(200);
     	});
 
     	if(engine["Song"] != ""){
@@ -201,32 +202,32 @@ $(document).ready(function(){
 			engine["Step"] -= 1;
 		}
 
-		$("#game").show();
+		$_("#game").show();
 		analyseStatement(label[engine["Step"]]);
 		engine["Step"] += 1;
-		//$("*").wait();
+		document.body.style.cursor = "auto";
 
 	});
 
 
-	$("[data-menu='save']").on("click","[data-save]", function(){
+	$_("[data-menu='save']").on("click", "figcaption, img", function(){
 		if(playing){
-			//$("*").wait();
+			document.body.style.cursor = "wait";
 			var date = new Date();
 		    var day = date.getDate();
 		    var month = date.getMonth();
 		    var year = date.getFullYear();
 		    var show = "";
 
-		    $("#game img").each(function(index,value){
-			    show += this.outerHTML.replace(/"/g, "'")+",";
+		    $_("#game img").each(function(element){
+			    show += element.outerHTML.replace(/"/g, "'")+",";
 		    });
 
-		     Storage.set(engine["SaveLabel"] + $(this).data("save"), '{"Date":"' + day + "-"+month + "-" + year + '","Engine":' + JSON.stringify(engine) + ',"Show":"' + show + '","Label":"' + engine["Label"] + '"}');
-			$("[data-menu='load'] [data-ui='slots']").html("");
-			$("[data-menu='save'] [data-ui='slots']").html("");
+		    Storage.set(engine["SaveLabel"] + $_(this).parent().data("save"), '{"Date":"' + day + "-"+month + "-" + year + '","Engine":' + JSON.stringify(engine) + ',"Show":"' + show + '","Label":"' + engine["Label"] + '"}');
+			$_("[data-menu='load'] [data-ui='slots']").html("");
+			$_("[data-menu='save'] [data-ui='slots']").html("");
 			setSlots();
-			//$("*").wait();
+			document.body.style.cursor = "auto";
 		}
 	});
 
@@ -236,11 +237,11 @@ $(document).ready(function(){
 	 * =======================
 	**/
 
-	$("[data-action='set-volume']").on("change mouseover", function(){
-		var v = document.querySelector("[data-component='" + $(this).data("target") + "']");
-		var value = $(this).val();
+	$_("[data-action='set-volume']").on("change mouseover", function(){
+		var v = document.querySelector("[data-component='" + $_(this).data("target") + "']");
+		var value = $_(this).value();
 
-		switch($(this).data("target")){
+		switch($_(this).data("target")){
 			case "music":
 				var ambient = document.querySelector("[data-component='ambient']");
 				ambient.volume = value;
@@ -261,21 +262,21 @@ $(document).ready(function(){
 		Storage.set("Settings", JSON.stringify(settings));
 	});
 
-	$("[data-action='set-language']").change(function(){
-		settings["Language"] = $(this).val();
+	$_("[data-action='set-language']").change(function(){
+		settings["Language"] = $_(this).value();
 		game = script[settings["Language"]];
 		label = game[engine["Label"]];
 		Storage.set("Settings",JSON.stringify(settings));
 
-		$("[data-string]").each(function(){
-			$(this).text(strings[$("[data-action='set-language']").val()][$(this).data("string")]);
+		$_("[data-string]").each(function(element){
+			$_(element).text(strings[$_("[data-action='set-language']").value()][$_(element).data("string")]);
 		});
 	});
 
-	$("[data-select]").click(function(){
+	$_("[data-select]").click(function(){
 		var e = document.createEvent('MouseEvents');
 	    e.initMouseEvent('mousedown');
-	    $("[data-action='" + $(this).data("select") + "']")[0].dispatchEvent(e);
+	    $_("[data-action='" + $_(this).data("select") + "']")[0].dispatchEvent(e);
 	});
 
 	/**
@@ -284,13 +285,13 @@ $(document).ready(function(){
 	 * ==========================
 	**/
 
-	$("[data-action]").click(function(){
+	$_("[data-action]").click(function(event){
 
-	    switch($(this).data("action")){
+	    switch($_(this).data("action")){
 
 			case "open-menu":
-				$("section").hide();
-				$("[data-menu='" + $(this).data("open") + "']").show();
+				$_("section").hide();
+				$_("[data-menu='" + $_(this).data("open") + "']").show();
 				break;
 
 			case "pause":
@@ -299,14 +300,14 @@ $(document).ready(function(){
 			case "start":
 				stopAmbient();
 				playing = true;
-				$("section").hide();
-				$("#game").show();
+				$_("section").hide();
+				$_("#game").show();
 				analyseStatement(label[engine["Step"]]);
 				engine["Step"]+=1;
 				break;
 
 			case "close":
-				$("[data-ui='" + $(this).data("close") + "']").removeClass("active");
+				$_("[data-ui='" + $_(this).data("close") + "']").removeClass("active");
 				break;
 
 			case "close-video":
@@ -314,7 +315,7 @@ $(document).ready(function(){
 				video_player.pause();
 				video_player.currentTime = 0;
 				video_player.setAttribute("src", "");
-				$('[data-component="video"]').removeClass("active");
+				$_('[data-component="video"]').removeClass("active");
 				break;
 
 			case "end":
@@ -325,24 +326,25 @@ $(document).ready(function(){
 				break;
 
 			case "distraction-free":
-				if($(this).hasClass("fa-eye")){
-					$(this).removeClass("fa-eye");
-					$(this).addClass("fa-eye-slash");
-					$("[data-ui='text']").hide();
-				}else if($(this).hasClass("fa-eye-slash")){
-					$(this).removeClass("fa-eye-slash");
-					$(this).addClass("fa-eye")
-					$("[data-ui='text']").show();
+				event.stopPropagation();
+				if($_(this).hasClass("fa-eye")){
+					$_(this).removeClass("fa-eye");
+					$_(this).addClass("fa-eye-slash");
+					$_("[data-ui='text']").hide();
+				}else if($_(this).hasClass("fa-eye-slash")){
+					$_(this).removeClass("fa-eye-slash");
+					$_(this).addClass("fa-eye")
+					$_("[data-ui='text']").show();
 				}
 				break;
 
 			case "jump":
 				stopAmbient();
-				label = game[$(this).data("jump")];
+				label = game[$_(this).data("jump")];
 				engine["Step"] = 0;
 				playing = true;
-				$("section").hide();
-				$("#game").show();
+				$_("section").hide();
+				$_("#game").show();
 				analyseStatement(label[engine["Step"]]);
 				engine["Step"] += 1;
 				break;
@@ -350,25 +352,27 @@ $(document).ready(function(){
 
     });
 
-    $("#game [data-action='back']").click(function(){
-	    if(!$("[data-ui='choices']").is(":visible")
-	    	&& !$("[data-component='modal']").is(":visible")
-	    	&& !$("[data-component='video']").is(":visible")
-	    	&& $("#game").is(":visible")
-	    	&& !$("#planner").prop("open")
-	    	&& ($("[data-ui='text']").is(":visible")
-			|| (!$("[data-ui='text']").is(":visible") && $("[data-ui='centered']").is(":visible")) )){
+    $_("#game [data-action='back']").click(function(event){
+    	event.stopPropagation();
+	    if(!$_("[data-ui='choices']").isVisible()
+	    	&& !$_("[data-component='modal']").isVisible()
+	    	&& !$_("[data-component='video']").isVisible()
+	    	&& $_("#game").isVisible()
+	    	&& !$_("#planner").property("open")
+	    	&& ($_("[data-ui='text']").isVisible()
+			|| (!$_("[data-ui='text']").isVisible() && $_("[data-ui='centered']").isVisible()) )){
 
 		    previous();
 		}
 	});
 
-	$("[data-action='back']:not(#game)").click(function(){
-		$("section").hide();
+	$_("[data-action='back']:not(#game)").click(function(){
+		event.stopPropagation();
+		$_("section").hide();
 		if(playing){
-			$("#game").show();
+			$_("#game").show();
 		}else{
-			$("[data-menu='main']").show();
+			$_("[data-menu='main']").show();
 		}
 	});
 
@@ -378,21 +382,21 @@ $(document).ready(function(){
 	 * ==========================
 	**/
 
-	$(document).keyup(function(e) {
+	$_(document).keyup(function(e) {
 		switch(e.which) {
 			case 27: // escape
-				$("#game").hide();
-				$("[data-menu='settings']").show();
+				$_("#game").hide();
+				$_("[data-menu='settings']").show();
 				break;
 
 			case 32: // spacebar
-				if(!$("[data-ui='choices']").is(":visible")
-					&& !$("[data-component='modal']").is(":visible")
-					&& !$("[data-component='video']").is(":visible")
-					&& $("#game").is(":visible")
-					&& !$("#planner").prop("open")
-					&& ($("[data-ui='text']").is(":visible")
-					|| (!$("[data-ui='text']").is(":visible") && $("[data-ui='centered']").is(":visible")) )){
+				if(!$_("[data-ui='choices']").isVisible()
+					&& !$_("[data-component='modal']").isVisible()
+					&& !$_("[data-component='video']").isVisible()
+					&& $_("#game").isVisible()
+					&& !$_("#planner").property("open")
+					&& ($_("[data-ui='text']").isVisible()
+					|| (!$_("[data-ui='text']").isVisible() && $_("[data-ui='centered']").isVisible()) )){
 
 					hideCentered();
 					shutUp();
@@ -411,23 +415,22 @@ $(document).ready(function(){
 	    e.preventDefault();
 	});
 
-	$("body").on("click","[data-do]", function(){
-
+	$_("body").on("click","[data-do]", function(){
 		hideCentered();
 		shutUp();
-		if($(this).data("do") != "null" && $(this).data("do") != ""){
+		if($_(this).data("do") != "null" && $_(this).data("do") != ""){
 			var back = ["show", "play", "display", "hide", "scene", "stop", "pause"];
 			try{
-				if(back.indexOf($(this).data("do").split(" ")[0]) >- 1){
+				if(back.indexOf($_(this).data("do").split(" ")[0]) >- 1){
 					engine["Step"] -= 1;
-					analyseStatement($(this).data("do"));
+					analyseStatement($_(this).data("do"));
 					engine["Step"] += 1;
 				}else{
-					if($(this).data("do").split(" ")[0] == "jump"){
-						analyseStatement($(this).data("do"));
+					if($_(this).data("do").split(" ")[0] == "jump"){
+						analyseStatement($_(this).data("do"));
 						engine["Step"] += 1;
 					}else{
-						analyseStatement($(this).data("do"));
+						analyseStatement($_(this).data("do"));
 					}
 				}
 
@@ -435,28 +438,31 @@ $(document).ready(function(){
 				console.log("An error ocurred while trying to execute the choice's action.\n"+e);
 			}
 		}
-		$("[data-ui='choices']").hide();
-		$("[data-ui='choices']").html("");
+		$_("[data-ui='choices']").hide();
+		$_("[data-ui='choices']").html("");
 	});
 
-	$("#game").click(function(){
-		if(!$("[data-ui='choices']").is(":visible")
-			&& $("#game").is(":visible")
-			&& !$("[data-component='modal']").is(":visible")
-			&& ($("[data-ui='text']").is(":visible")
-			|| (!$("[data-ui='text']").is(":visible") && $("[data-ui='centered']").is(":visible")) )
-			&& !$("[data-component='video']").is(":visible")){
+	$_("#game [data-ui='quick-menu'] *").click(function(e) {
+	    // Clicked Child
+	    e.stopPropagation();
+	});
+
+	$_("#game").click(function(event){
+		if(!$_("[data-ui='choices']").isVisible()
+			&& $_("#game").isVisible()
+			&& !$_("[data-component='modal']").isVisible()
+			&& ($_("[data-ui='text']").isVisible()
+			|| (!$_("[data-ui='text']").isVisible() && $_("[data-ui='centered']").isVisible()))
+			&& !$_("[data-component='video']").isVisible()){
 
 			hideCentered();
 			shutUp();
 			analyseStatement(label[engine["Step"]]);
 			engine["Step"]+=1;
 	    }
-
-	}).on('click', '[data-ui="quick-menu"] *', function(e) {
-	    // Clicked Child
-	    e.stopPropagation();
 	});
+
+
 
 	/**
 	 * =======================
@@ -465,8 +471,8 @@ $(document).ready(function(){
 	**/
 
 	function hideCentered(){
-		$("[data-ui='centered']").remove();
-		$("[data-ui='text']").show();
+		$_("[data-ui='centered']").remove();
+		$_("[data-ui='text']").show();
 	}
 
 	function playAmbient(){
@@ -489,10 +495,10 @@ $(document).ready(function(){
 	}
 
     function stopAmbient() {
-	var a_player = document.querySelector("[data-component='ambient']");
-	if (!a_player.paused){
-	    a_player.pause();
-	}
+		var a_player = document.querySelector("[data-component='ambient']");
+		if(!a_player.paused){
+			a_player.pause();
+		}
     }
 
 	function shutUp(){
@@ -512,14 +518,14 @@ $(document).ready(function(){
 				v[i].currentTime = 0;
 		    }
 	    }
-	    $("[data-ui='messages']").removeClass("active");
-	    $("#game img").hide();
+	    $_("[data-ui='messages']").removeClass("active");
+	    $_("#game img").hide();
 	    playing = false;
 		engine["Label"] = "Start";
 		label = game[engine["Label"]];
 		engine["Step"] = 0;
-		$("section").hide();
-		$("[data-menu='main']").show();
+		$_("section").hide();
+		$_("[data-menu='main']").show();
     }
 
 	// Function to execute the next statement in the script.
@@ -543,7 +549,7 @@ $(document).ready(function(){
 						switch(parts[0]){
 							case "show":
 								if(characters[parts[1]] != null){
-									$("[data-character='" + parts[1] + "']").remove();
+									$_("[data-character='" + parts[1] + "']").remove();
 									if(engine["CharacterHistory"].length > 1){
 										engine["CharacterHistory"].pop()
 									}
@@ -551,23 +557,23 @@ $(document).ready(function(){
 									var last_character = engine["CharacterHistory"].slice(-1)[0];
 									if(last_character != null){
 										if(last_character.indexOf("data-character='"+parts[1]+"'") > -1){
-											$("#game").append(last_character);
+											$_("#game").append(last_character);
 										}
 									}
 
 								}else if(images[parts[1]] != null){
 									if(parts[3] != null && parts[3] != ""){
-										$("[data-image='" + parts[1] + "']").addClass(parts[3]);
+										$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
 									}else{
-										$("[data-image='" + parts[1] + "']").remove();
+										$_("[data-image='" + parts[1] + "']").remove();
 									}
 									engine["ImageHistory"].pop();
 
 								}else{
 									if(parts[3] != null && parts[3] != ""){
-										$("[data-image='" + parts[1] + "']").addClass(parts[3]);
+										$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
 									}else{
-										$("[data-image='" + parts[1] + "']").remove();
+										$_("[data-image='" + parts[1] + "']").remove();
 									}
 									engine["ImageHistory"].pop();
 								}
@@ -638,20 +644,20 @@ $(document).ready(function(){
 
 							case "scene":
 
-								$("[data-character]").remove();
-								$("[data-image]").remove();
+								$_("[data-character]").remove();
+								$_("[data-image]").remove();
 
 								engine["SceneHistory"].pop()
 					        	engine["Scene"] =  engine["SceneHistory"].slice(-1)[0];
-								$('#game').fadeOut('fast', function () {
+								$_('#game').fadeOut(200, function () {
 
 									if(scenes[parts[1]] != null){
-										$('#game').css("background","url(img/scenes/" + scenes[engine["Scene"]] + ") center / cover no-repeat");
+										$_('#game').style("background","url(img/scenes/" + scenes[engine["Scene"]] + ") center / cover no-repeat");
 									}else{
-										$('#game').css("background",engine["Scene"]);
+										$_('#game').style("background",engine["Scene"]);
 									}
 
-									$('#game').fadeIn('fast');
+									$_('#game').fadeIn(200);
 					        	});
 
 					        	whipeText();
@@ -660,18 +666,18 @@ $(document).ready(function(){
 							case "display":
 								if(parts[1] == "message"){
 									var mess = messages[parts[2]];
-									$("[data-ui='message-content']").html("");
-									$("[data-ui='messages']").removeClass("active");
+									$_("[data-ui='message-content']").html("");
+									$_("[data-ui='messages']").removeClass("active");
 								}else if(parts[1] == "image"){
-									$("[data-image='" + parts[2] + "']").remove();
+									$_("[data-image='" + parts[2] + "']").remove();
 								}
 								break;
 							case "hide":
 								if(characters[parts[1]] != null){
-									$("#game").append(engine["CharacterHistory"].pop());
+									$_("#game").append(engine["CharacterHistory"].pop());
 
 								}else if(images[parts[1]] != null){
-									$("#game").append(engine["ImageHistory"].pop());
+									$_("#game").append(engine["ImageHistory"].pop());
 
 								}
 								break;
@@ -698,8 +704,8 @@ $(document).ready(function(){
 	}
 
 	function whipeText(){
-		$("[data-ui='who']").html("");
-		$("[data-ui='say']").html("");
+		$_("[data-ui='who']").html("");
+		$_("[data-ui='say']").html("");
 	}
 
 	/**
@@ -791,25 +797,25 @@ $(document).ready(function(){
 									video_player.setAttribute("src", "video/" + parts[2]);
 								}
 
-								$('[data-component="video"]').addClass("active");
+								$_('[data-component="video"]').addClass("active");
 								video_player.play();
 							}
 
 							break;
 
 						case "scene":
-							$("[data-character]").remove();
-							$("[data-image]").remove();
+							$_("[data-character]").remove();
+							$_("[data-image]").remove();
 
-							$('#game').fadeOut('fast', function () {
+							$_('#game').fadeOut(200, function () {
 
 								if(scenes[parts[1]] != null){
-									$('#game').css("background","url(img/scenes/" + scenes[parts[1]] + ") center / cover no-repeat");
+									$_('#game').style("background","url(img/scenes/" + scenes[parts[1]] + ") center / cover no-repeat");
 								}else{
-									$('#game').css("background", parts[1]);
+									$_('#game').style("background", parts[1]);
 								}
 
-								$('#game').fadeIn('fast');
+								$_('#game').fadeIn(200);
 				        	});
 
 				        	engine["Scene"] = parts[1];
@@ -825,7 +831,7 @@ $(document).ready(function(){
 									directory = "";
 								}
 								var image = characters[parts[1]]["Images"][parts[2]].split(" ")[0];
-								$("[data-character='" + parts[1] + "']").remove();
+								$_("[data-character='" + parts[1] + "']").remove();
 								if(parts[3] == null){
 									parts[3] = "center";
 								}
@@ -833,12 +839,12 @@ $(document).ready(function(){
 									parts[3] = "center";
 									parts[5] = parts[4];
 								}
-								$("#game").append("<img src='img/characters/" + directory + "/" + image + "' class='animated " + parts[5] + " "+parts[3] + "' data-character='" + parts[1] + "'>");
+								$_("#game").append("<img src='img/characters/" + directory + "/" + image + "' class='animated " + parts[5] + " "+parts[3] + "' data-character='" + parts[1] + "'>");
 								if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 									if(Screen.isLandscape()){
-										$("img").css("height","80%");
+										$_("img").style("height","80%");
 									}else{
-										$("img").css("height","60%");
+										$_("img").style("height","60%");
 									}
 								}
 								engine["CharacterHistory"].push("<img src='img/characters/" + directory + "/" + image + "' class='animated " + parts[5] + " " + parts[3] + "' data-character='" + parts[1] + "'>");
@@ -854,7 +860,7 @@ $(document).ready(function(){
 									parts[4] = parts[3];
 								}
 
-								$("#game").append("<img src='img/" + images[parts[1]] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "'>");
+								$_("#game").append("<img src='img/" + images[parts[1]] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "'>");
 								engine["ImageHistory"].push("<img src='img/" + images[parts[1]] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "'>");
 
 							}else{
@@ -866,7 +872,7 @@ $(document).ready(function(){
 									parts[2] = "center";
 									parts[4] = parts[3];
 								}
-								$("#game").append("<img src='img/" + parts[1] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "'>");
+								$_("#game").append("<img src='img/" + parts[1] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "'>");
 								engine["ImageHistory"].push("<img src='img/" + parts[1] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "'>");
 								}
 							next();
@@ -913,23 +919,23 @@ $(document).ready(function(){
 						case "hide":
 							if(characters[parts[1]] != null){
 								if(parts[3] != null && parts[3]!=""){
-									$("[data-character='" + parts[1] + "']").addClass(parts[3]);
+									$_("[data-character='" + parts[1] + "']").addClass(parts[3]);
 								}else{
-									$("[data-character='" + parts[1] + "']").remove();
+									$_("[data-character='" + parts[1] + "']").remove();
 								}
 
 							}else if(images[parts[1]] != null){
 								if(parts[3] != null && parts[3] != ""){
-									$("[data-image='" + parts[1] + "']").addClass(parts[3]);
+									$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
 								}else{
-									$("[data-image='" + parts[1] + "']").remove();
+									$_("[data-image='" + parts[1] + "']").remove();
 								}
 
 							}else{
 								if(parts[3] != null && parts[3] != ""){
-									$("[data-image='" + parts[1] + "']").addClass(parts[3]);
+									$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
 								}else{
-									$("[data-image='" + parts[1] + "']").remove();
+									$_("[data-image='" + parts[1] + "']").remove();
 								}
 							}
 							next();
@@ -939,8 +945,8 @@ $(document).ready(function(){
 
 							if(parts[1] == "message"){
 								var mess = messages[parts[2]];
-								$("[data-ui='message-content']").html("<h3>" + mess["Title"] + "</h3><p>" + mess["Subtitle"] + "</p>" + "<p>" + mess["Message"] + "</p>");
-								$("[data-ui='messages']").addClass("active");
+								$_("[data-ui='message-content']").html("<h3>" + mess["Title"] + "</h3><p>" + mess["Subtitle"] + "</p>" + "<p>" + mess["Message"] + "</p>");
+								$_("[data-ui='messages']").addClass("active");
 							}else if(parts[1] == "image"){
 								if(parts[3] == null){
 									parts[3] = "center";
@@ -950,10 +956,10 @@ $(document).ready(function(){
 									parts[5] = parts[4];
 								}
 								if(images[parts[2]] != null){
-									$("#game").append("<img src='img/" + images[parts[2]] + "' class='animated " + parts[5] + " " + parts[3] + "' data-image='" + parts[2] + "'>");
+									$_("#game").append("<img src='img/" + images[parts[2]] + "' class='animated " + parts[5] + " " + parts[3] + "' data-image='" + parts[2] + "'>");
 									engine["ImageHistory"].push("<img src='img/" + images[parts[2]] + "' class='animated " + parts[5] + " " + parts[3] + "' data-image='" + parts[2] + "'>");
 								}else{
-									$("#game").append("<img src='img/" + parts[2] + "' class='animated " + parts[5] + " " + parts[3] + "' data-image='" + parts[2] + "'>");
+									$_("#game").append("<img src='img/" + parts[2] + "' class='animated " + parts[5] + " " + parts[3] + "' data-image='" + parts[2] + "'>");
 									engine["ImageHistory"].push("<img src='img/" + parts[2] + "' class='animated " + parts[5] + " " + parts[3] + "' data-image='" + parts[2] + "'>");
 								}
 
@@ -979,28 +985,28 @@ $(document).ready(function(){
 							break;
 
 						case "centered":
-							$("[data-ui='text']").hide();
-							$("#game").append("<div class='middle align-center' data-ui='centered'>"+statement.replace(parts[0] + " ", "")+"</div>");
+							$_("[data-ui='text']").hide();
+							$_("#game").append("<div class='middle align-center' data-ui='centered'>"+statement.replace(parts[0] + " ", "")+"</div>");
 							break;
 
 						default:
 
 							if(characters[parts[0]] != null){
 								document.querySelector("[data-ui='who']").innerHTML = characters[parts[0]]["Name"];
-								$("[data-ui='who']").css("color", characters[parts[0]]["Color"]);
+								$_("[data-ui='who']").style("color", characters[parts[0]]["Color"]);
 								document.querySelector("[data-ui='say']").innerHTML = statement.replace(parts[0] + " ", "");
 								if(characters[parts[0]]["Face"] != null && characters[parts[0]]["Face"]  != ""){
 									var directory = characters[parts[0]]["Directory"];
 									if(directory == null){
 										directory = "";
 									}
-									$("[data-ui='face']").attr("src", "img/characters/" + directory + "/" + characters[parts[0]]["Face"]);
-									$("[data-ui='face']").show();
+									$_("[data-ui='face']").attr("src", "img/characters/" + directory + "/" + characters[parts[0]]["Face"]);
+									$_("[data-ui='face']").show();
 								}else{
-									$("[data-ui='face']").hide();
+									$_("[data-ui='face']").hide();
 								}
 							}else{
-								$("[data-ui='face']").hide();
+								$_("[data-ui='face']").hide();
 								document.querySelector("[data-ui='who']").innerHTML = "";
 								document.querySelector("[data-ui='say']").innerHTML = statement;
 							}
@@ -1016,19 +1022,19 @@ $(document).ready(function(){
 
 			    case "object":
 			    	if(statement["Choice"] != null){
-				    	$("[data-ui='choices']").html("");
+				    	$_("[data-ui='choices']").html("");
 				    	for(var i in statement["Choice"]){
 					    	var choice = label[engine["Step"]]["Choice"][i];
 					    	if(choice["Condition"] != null && choice["Condition"] != ""){
 
 						    	if(eval(label[engine["Step"]]["Choice"][i]["Condition"])){
-							    	$("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "'>"+choice["Text"] + "</button>");
+							    	$_("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "'>"+choice["Text"] + "</button>");
 						    	}
 
 					    	}else{
-						    	$("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "'>" + choice["Text"] + "</button>");
+						    	$_("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "'>" + choice["Text"] + "</button>");
 					    	}
-							$("[data-ui='choices']").show();
+							$_("[data-ui='choices']").show();
 						}
 			    	}else if(statement["Conditional"] != null){
 				    	var condition = statement["Conditional"];
