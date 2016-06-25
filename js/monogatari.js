@@ -279,6 +279,21 @@ $_ready(function(){
 	    $_("[data-action='" + $_(this).data("select") + "']")[0].dispatchEvent(e);
 	});
 
+
+    /**
+     * ==========================
+     * Game Quick Start
+     * ==========================
+     **/
+
+    if(engine["ShowMenu"] != "1"){
+	playing = true;
+	$_("section").hide();
+	$_("#game").show();
+	analyseStatement(label[engine["Step"]]);
+	engine["Step"]+=1;
+    }
+
 	/**
 	 * ==========================
 	 * Data-Action Event Handlers
