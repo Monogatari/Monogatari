@@ -286,7 +286,8 @@ $_ready(function(){
      * ==========================
      **/
 
-    if(engine["ShowMenu"] != "1"){
+    if(engine["ShowMenu"] != "true"){
+	stopAmbient();
 	playing = true;
 	$_("section").hide();
 	$_("#game").show();
