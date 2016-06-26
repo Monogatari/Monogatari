@@ -9,10 +9,11 @@
  * 5) Set Save and Load Slots
  * 6) Save and Load Events
  * 7) Settings Event Handlers
- * 8) Data-Action Event Handlers
- * 9) In-Game Event Handlers
- * 10) Engine Helper Functions
- * 11) Statements Functioning
+ * 8) Quick Start
+ * 9) Data-Action Event Handlers
+ * 10) In-Game Event Handlers
+ * 11) Engine Helper Functions
+ * 12) Statements Functioning
  * ====================================
 **/
 
@@ -286,13 +287,13 @@ $_ready(function(){
      * ==========================
      **/
 
-    if(engine["ShowMenu"] != "true"){
-	stopAmbient();
-	playing = true;
-	$_("section").hide();
-	$_("#game").show();
-	analyseStatement(label[engine["Step"]]);
-	engine["Step"]+=1;
+    if(!engine["ShowMenu"]){
+		stopAmbient();
+		playing = true;
+		$_("section").hide();
+		$_("#game").show();
+		analyseStatement(label[engine["Step"]]);
+		engine["Step"] += 1;
     }
 
 	/**
