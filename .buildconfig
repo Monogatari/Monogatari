@@ -1,0 +1,6 @@
+[default]
+name=Default Configuration
+device=local
+runtime=host
+prefix=/home/hyuchia/.cache/gnome-builder/install/Monogatari/host
+default=true

@@ -990,9 +990,11 @@ $_ready(function(){
 							break;
 
 						default:
+							// Default case, used to show the dialog.
 
+							// Check if a declared character is speaking
 							if(characters[parts[0]] != null){
-								document.querySelector("[data-ui='who']").innerHTML = characters[parts[0]]["Name"];
+								$_("[data-ui='who']").html(characters[parts[0]]["Name"]);
 								$_("[data-ui='who']").style("color", characters[parts[0]]["Color"]);
 								document.querySelector("[data-ui='say']").innerHTML = statement.replace(parts[0] + " ", "");
 								if(characters[parts[0]]["Face"] != null && characters[parts[0]]["Face"]  != ""){
@@ -1000,12 +1002,13 @@ $_ready(function(){
 									if(directory == null){
 										directory = "";
 									}
-									$_("[data-ui='face']").attr("src", "img/characters/" + directory + "/" + characters[parts[0]]["Face"]);
+									$_("[data-ui='face']").attribute("src", "img/characters/" + directory + "/" + characters[parts[0]]["Face"]);
 									$_("[data-ui='face']").show();
 								}else{
 									$_("[data-ui='face']").hide();
 								}
 							}else{
+								// The narrator is speaking
 								$_("[data-ui='face']").hide();
 								document.querySelector("[data-ui='who']").innerHTML = "";
 								document.querySelector("[data-ui='say']").innerHTML = statement;

@@ -471,6 +471,10 @@ input[type=range] {
 	margin: 0;
 }
 
+#game [data-image].bottom {
+	top: auto;
+}
+
 .middle {
 	top: 50%;
 	left: 50%;
