@@ -39,8 +39,8 @@ var engine = {
     // Prefix for the Save Slots in Local Storage.
     "SaveLabel": "Save_",
 
-    // Turn main menu on/off; Default: True
-    "ShowMenu": "true"
+    // Turn main menu on/off; Default: true *  
+    "ShowMenu": true
 }
 
 // Initial Settings
