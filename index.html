@@ -141,7 +141,14 @@
 		<!-- Load Screen -->
     	<section data-menu="load" data-background="">
 			<h2 data-string="Load">Load</h2>
-			<div data-ui="slots" class="horizontal align-center"></div>
+    	  	<div data-ui="saveSlots">
+			  	<h3 data-string="LoadSlots">Saved Games</h3>
+				<div data-ui="slots" class="horizontal align-center"></div>
+    	  	</div>
+    	  	<div data-ui="autoSaveSlots">
+				<h3 data-string="LoadAutoSaveSlots">Auto Saved Games</h3>
+    	  		<div data-ui="slots" class="horizontal align-center"></div>
+    	  	</div>
 			<div class="horizontal align-center bottom animated bounceIn" data-ui="inner-menu">
 		    	<button data-action="back" data-string="Back">Back</button>
 	    	</div>

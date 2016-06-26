@@ -38,9 +38,13 @@ var engine = {
 
     // Prefix for the Save Slots in Local Storage.
     "SaveLabel": "Save_",
+    "AutoSaveLabel": "AutoSave_",
 
-    // Turn main menu on/off; Default: true *  
-    "ShowMenu": true
+    // Turn main menu on/off; Default: true *
+    "ShowMenu": true,
+
+    // Time interval between autosaves (In Minutes). Default: 0 (Off)
+    "AutoSave": 0
 }
 
 // Initial Settings
@@ -51,8 +55,8 @@ var settings = {
 
     // Initial Volumes from 0.0 to 1.
     "Volume":{
-	"Music": 1,
-	"Voice": 1,
-	"Sound": 1
+		"Music": 1,
+		"Voice": 1,
+		"Sound": 1
     }
 }

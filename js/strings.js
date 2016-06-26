@@ -27,7 +27,9 @@ var strings = {
 		"LoadButton": "Open the Load Screen.",
 		"SettingsButton": "Open the Settings Screen.",
 		"QuitButton": "Quit Game.",
-		"Confirm": "Do you want to quit?"
+		"Confirm": "Do you want to quit?",
+		"LoadSlots": "Saved Games",
+		"LoadAutoSaveSlots": "Auto Saved Games"
 
 	},
 
@@ -52,6 +54,8 @@ var strings = {
 		"LoadButton": "Abrir la Pantalla de Cargar.",
 		"SettingsButton": "Abrir la Pantalla de Configuración.",
 		"QuitButton": "Salir del Juego.",
-		"Confirm": "¿Deseas salir?"
+		"Confirm": "¿Deseas salir?",
+		"LoadSlots": "Juegos Guardados",
+		"LoadAutoSaveSlots": "Juegos Guardados Automaticamente"
 	}
 }

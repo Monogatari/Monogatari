@@ -319,6 +319,7 @@ section div {
 	background: rgba(0,0,0,0.5);
 	border-radius: 3px;
 	vertical-align: middle;
+	cursor: pointer;
 }
 
 [data-ui="slots"] img {

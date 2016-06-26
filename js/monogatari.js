@@ -42,16 +42,19 @@ $_ready(function(){
 
 	var local_settings = Storage.get("Settings");
 
+	// Set the initial settings if they don't exist or load them.
 	if(local_settings == null || local_settings == ""){
 		Storage.set("Settings", JSON.stringify(settings));
 	}else{
 		settings = JSON.parse(local_settings);
 	}
 
+	// Disable the load and save slots in case Local Storage is not supported.
 	if(!window.localStorage){
 		$_("[data-ui='slots']").html("<p>Local Storage is not Available in this Browser</p>");
 	}
 
+	// Set the game language or hide the option if the game is not multilingual
 	if(engine["MultiLanguage"]){
 		game = script[settings["Language"]];
 		$_("[data-action='set-language']").value(settings["Language"]);
@@ -66,7 +69,10 @@ $_ready(function(){
 		$_("[data-settings='language']").hide();
 	}
 
+	// Set the label in which the game will start
 	label = game[engine["Label"]];
+
+	// Set the volume of all the media components
 	document.querySelector("[data-component='music']").volume = settings["Volume"]["Music"];
 	document.querySelector("[data-component='ambient']").volume = settings["Volume"]["Music"];
 	document.querySelector("[data-component='voice']").volume = settings["Volume"]["Voice"];
@@ -75,6 +81,7 @@ $_ready(function(){
 	document.querySelector("[data-target='voice']").value = settings["Volume"]["Voice"];
 	document.querySelector("[data-target='sound']").value = settings["Volume"]["Sound"];
 
+	// Set all the dynamic backgrounds of the data-background property
 	$_('[data-background]').each(function(element){
 		if($_(element).data("background").indexOf(".") >- 1){
 			var src = "url('" + $_(element).data("background") + "') center / cover no-repeat";
@@ -84,6 +91,7 @@ $_ready(function(){
 		}
 	});
 
+	// Play the main menu song
 	playAmbient();
 
 	// Set Electron's quit handler.
@@ -97,12 +105,17 @@ $_ready(function(){
 
 	}
 
+	$_("[data-string]").each(function(element){
+		$_(element).text(strings[settings["Language"]][$_(element).data("string")]);
+	});
+
 	/**
 	 * ======================
 	 * Set iOS Conditions
 	 * ======================
 	**/
 
+	// Disable audio settings in iOS since they are not supported
 	if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
 		$_("[data-settings='audio']").html("<p>Audio settings are not supported on iOS</p>");
 	}
@@ -117,22 +130,29 @@ $_ready(function(){
 		if(!window.localStorage){
 			return false;
 		}
+
+		$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html("");
+		$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html("");
+		$_("[data-menu='save'] [data-ui='slots']").html("");
+
 		for(var i = 1; i <= engine["Slots"]; i++){
 
 			var slot = Storage.get(engine["SaveLabel"] + i);
+			var autoSaveSlot = Storage.get(engine["AutoSaveLabel"] + i);
+
 			if(slot == null){
-				Storage.set(engine["SaveLabel"]+i,"");
+				Storage.set(engine["SaveLabel"] + i, "");
 			}else if(slot != ""){
 				var data = JSON.parse(slot);
 
 				if(scenes[data["Engine"]["Scene"]] != null){
 
-					$_("[data-menu='load'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"] + "' data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data["Engine"]["Scene"]] + "' alt=''><figcaption>" + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
+					$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"] + "' data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data["Engine"]["Scene"]] + "' alt=''><figcaption>" + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
 
 					$_("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><img src='img/scenes/" + scenes[data["Engine"]["Scene"]] + "' alt=''><figcaption>Overwrite " + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
 
 				}else{
-					$_("[data-menu='load'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"]+ "' data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
+					$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"]+ "' data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
 
 					$_("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><figcaption>Overwrite " + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
 				}
@@ -140,11 +160,29 @@ $_ready(function(){
 			}else{
 				$_("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><figcaption>Save in slot " + i + "</figcaption></figure>");
 			}
+
+			if(autoSaveSlot == null){
+				Storage.set(engine["AutoSaveLabel"] + i, "");
+			}else if(autoSaveSlot != ""){
+				var data = JSON.parse(autoSaveSlot);
+
+				if(scenes[data["Engine"]["Scene"]] != null){
+					$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"] + "' data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data["Engine"]["Scene"]] + "' alt=''><figcaption>" + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
+				}else{
+					$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"]+ "' data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
+				}
+
+			}
 		}
 
 		// Check if there are no Saved games.
-		if($_("[data-menu='load'] [data-ui='slots']").html().trim() == ""){
+		if($_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html().trim() == ""){
 			$_("[data-menu='load'] [data-ui='slots']").html("<p>No saved games.</p>");
+		}
+
+		// Check if there are no Auto Saved games.
+		if($_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html().trim() == ""){
+			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html("<p>No automatically saved games.</p>");
 		}
 	}
 
@@ -156,81 +194,36 @@ $_ready(function(){
 	 * =======================
 	**/
 
-	$_("[data-menu='load']").on("click","figcaption, img", function(){
-		document.body.style.cursor = "wait";
-		playing = true;
-		$_("section").hide();
-		$_("#game").show();
-		$_("[data-character]").remove();
-		var data = JSON.parse(Storage.get(engine["SaveLabel"] + $_(this).parent().data("loadSlot")));
-		engine = data["Engine"];
-
-		label = game[data["Label"]];
-
-		for(var j in engine["JS"].split("::")){
-			eval(engine["JS"].split("::")[j]);
-
-		}
-
-		for(var i in data["Show"].split(",")){
-			if(data["Show"].split(",")[i].trim() != ""){
-				$_("#game").append(data["Show"].split(",")[i]);
-			}
-		}
-
-		$_('#game').fadeOut(200, function () {
-
-			if(scenes[data["Engine"]["Scene"]] != null){
-				$_('#game').style("background","url(img/scenes/" + scenes[data["Engine"]["Scene"]] + ") center / cover no-repeat");
-			}else{
-				$_('#game').style("background",data["Engine"]["Scene"]);
-			}
-
-			$_('#game').fadeIn(200);
-    	});
-
-    	if(engine["Song"] != ""){
-	    	analyseStatement(engine["Song"]);
-	    	engine["Step"] -= 1;
-    	}
-
-		if(engine["Sound"] != ""){
-	    	analyseStatement(engine["Sound"]);
-	    	engine["Step"] -= 1;
-    	}
-
-		if(engine["Step"] > 0){
-			engine["Step"] -= 1;
-		}
-
-		$_("#game").show();
-		analyseStatement(label[engine["Step"]]);
-		engine["Step"] += 1;
-		document.body.style.cursor = "auto";
-
+	// Load a saved game slot when it is pressed
+	$_("[data-menu='load'] [data-ui='saveSlots']").on("click","figcaption, img", function(){
+		loadFromSlot(engine["SaveLabel"] + $_(this).parent().data("loadSlot"));
 	});
 
+	// Load an autosaved game slot when it is pressed
+	$_("[data-menu='load'] [data-ui='autoSaveSlots']").on("click","figcaption, img", function(){
+		loadFromSlot(engine["AutoSaveLabel"] + $_(this).parent().data("loadSlot"));
+	});
 
+	// Save to slot when a slot is pressed.
 	$_("[data-menu='save']").on("click", "figcaption, img", function(){
-		if(playing){
-			document.body.style.cursor = "wait";
-			var date = new Date();
-		    var day = date.getDate();
-		    var month = date.getMonth();
-		    var year = date.getFullYear();
-		    var show = "";
-
-		    $_("#game img").each(function(element){
-			    show += element.outerHTML.replace(/"/g, "'")+",";
-		    });
-
-		    Storage.set(engine["SaveLabel"] + $_(this).parent().data("save"), '{"Date":"' + day + "-"+month + "-" + year + '","Engine":' + JSON.stringify(engine) + ',"Show":"' + show + '","Label":"' + engine["Label"] + '"}');
-			$_("[data-menu='load'] [data-ui='slots']").html("");
-			$_("[data-menu='save'] [data-ui='slots']").html("");
-			setSlots();
-			document.body.style.cursor = "auto";
-		}
+		saveToSlot(engine["SaveLabel"] + $_(this).parent().data("save"));
 	});
+
+	// Auto Save
+	var currentAutoSaveSlot = 1;
+	if(engine["AutoSave"] != 0 && typeof engine["AutoSave"] == "number"){
+		setInterval(function() {
+			saveToSlot(engine["AutoSaveLabel"] + currentAutoSaveSlot);
+
+			if(currentAutoSaveSlot == engine["Slots"]){
+				currentAutoSaveSlot = 1;
+			}else{
+				currentAutoSaveSlot += 1;
+			}
+			setSlots();
+
+		}, engine["AutoSave"] * 60000);
+	}
 
 	/**
 	 * =======================
@@ -287,6 +280,7 @@ $_ready(function(){
      * ==========================
      **/
 
+	// Start game automatically withouth going trough the main menu
     if(!engine["ShowMenu"]){
 		stopAmbient();
 		playing = true;
@@ -332,7 +326,7 @@ $_ready(function(){
 				video_player.pause();
 				video_player.currentTime = 0;
 				video_player.setAttribute("src", "");
-				$_('[data-component="video"]').removeClass("active");
+				$_("[data-component='video']").removeClass("active");
 				break;
 
 			case "end":
@@ -725,6 +719,80 @@ $_ready(function(){
 		$_("[data-ui='say']").html("");
 	}
 
+	function saveToSlot(slot){
+		if(playing){
+			document.body.style.cursor = "wait";
+			var date = new Date();
+		    var day = date.getDate();
+		    var month = date.getMonth();
+		    var year = date.getFullYear();
+		    var show = "";
+
+		    $_("#game img").each(function(element){
+			    show += element.outerHTML.replace(/"/g, "'")+",";
+		    });
+
+		    Storage.set(slot, '{"Date":"' + day + "-"+month + "-" + year + '","Engine":' + JSON.stringify(engine) + ',"Show":"' + show + '","Label":"' + engine["Label"] + '"}');
+			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html("");
+			$_("[data-menu='save'] [data-ui='slots']").html("");
+			setSlots();
+			document.body.style.cursor = "auto";
+		}
+	}
+
+	function loadFromSlot(slot){
+		document.body.style.cursor = "wait";
+		playing = true;
+		$_("section").hide();
+		$_("#game").show();
+		$_("[data-character]").remove();
+		var data = JSON.parse(Storage.get(slot));
+		engine = data["Engine"];
+
+		label = game[data["Label"]];
+
+		for(var j in engine["JS"].split("::")){
+			eval(engine["JS"].split("::")[j]);
+
+		}
+
+		for(var i in data["Show"].split(",")){
+			if(data["Show"].split(",")[i].trim() != ""){
+				$_("#game").append(data["Show"].split(",")[i]);
+			}
+		}
+
+		$_('#game').fadeOut(200, function () {
+
+			if(scenes[data["Engine"]["Scene"]] != null){
+				$_('#game').style("background","url(img/scenes/" + scenes[data["Engine"]["Scene"]] + ") center / cover no-repeat");
+			}else{
+				$_('#game').style("background",data["Engine"]["Scene"]);
+			}
+
+			$_('#game').fadeIn(200);
+    	});
+
+    	if(engine["Song"] != ""){
+	    	analyseStatement(engine["Song"]);
+	    	engine["Step"] -= 1;
+    	}
+
+		if(engine["Sound"] != ""){
+	    	analyseStatement(engine["Sound"]);
+	    	engine["Step"] -= 1;
+    	}
+
+		if(engine["Step"] > 0){
+			engine["Step"] -= 1;
+		}
+
+		$_("#game").show();
+		analyseStatement(label[engine["Step"]]);
+		engine["Step"] += 1;
+		document.body.style.cursor = "auto";
+	}
+
 	/**
 	 * =======================
 	 * Statements Functioning
@@ -814,7 +882,7 @@ $_ready(function(){
 									video_player.setAttribute("src", "video/" + parts[2]);
 								}
 
-								$_('[data-component="video"]').addClass("active");
+								$_("[data-component='video']").addClass("active");
 								video_player.play();
 							}
 
