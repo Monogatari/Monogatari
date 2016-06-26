@@ -367,6 +367,10 @@ section div {
 	margin: 2vmin;
 }
 
+[data-menu] button:hover {
+    cursor: pointer;
+}
+
 /**
  * ====================================
  * Inputs Styling
