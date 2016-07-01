@@ -438,7 +438,6 @@ $_ready(function(){
 			case "end":
 				if(confirm(strings[settings["Language"]]["Confirm"])){
 					endGame();
-					playAmbient();
 				}
 				break;
 
