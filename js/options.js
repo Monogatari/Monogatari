@@ -60,3 +60,10 @@ var settings = {
 		"Sound": 1
     }
 }
+
+// Persistent Storage Variable
+var storage = {
+	player: {
+		Name: ""
+	}
+}
