@@ -114,6 +114,10 @@ section div {
 	padding: 2vmax;
 }
 
+.block {
+	display: block;
+}
+
 /**
  * ===========================
  * In-Game Elements Styling
@@ -203,6 +207,19 @@ section div {
 [data-ui="message-content"] {
 	text-align: left;
 	max-width: 100%;
+}
+
+[data-ui="input"] div {
+	width: auto;
+	padding: 1vmin;
+}
+
+[data-ui="input"] input, textarea {
+	padding: 1vmin;
+	background: #eee;
+	outline: none;
+	border: none;
+	min-width: 50%;
 }
 
 [data-ui="player"] {

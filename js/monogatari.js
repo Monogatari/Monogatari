@@ -2,18 +2,20 @@
  * ====================================
  * I N D E X
  * ====================================
- * 1) Initialize Variables
- * 2) Plugin Function Calls
- * 3) Set Initial Settings
- * 4) Set iOS Conditions
- * 5) Set Save and Load Slots
- * 6) Save and Load Events
- * 7) Settings Event Handlers
- * 8) Quick Start
- * 9) Data-Action Event Handlers
- * 10) In-Game Event Handlers
- * 11) Engine Helper Functions
- * 12) Statements Functioning
+ * 1)  Initialize Variables
+ * 2)  Plugin Function Calls
+ * 3)  Set Initial Settings
+ * 4)  Set iOS Conditions
+ * 5)  Set Save and Load Slots
+ * 6)  Save and Load Functions
+ * 7)  Save and Load Events
+ * 8)  Settings Event Handlers
+ * 9)  Storage
+ * 10) Quick Start
+ * 11) Data-Action Event Handlers
+ * 12) In-Game Event Handlers
+ * 13) Engine Helper Functions
+ * 14) Statements Functioning
  * ====================================
 **/
 
@@ -190,6 +192,87 @@ $_ready(function(){
 
 	/**
 	 * =======================
+	 * Save and Load Functions
+	 * =======================
+	**/
+
+	function saveToSlot(slot){
+		if(playing){
+			document.body.style.cursor = "wait";
+			var date = new Date();
+		    var day = date.getDate();
+		    var month = date.getMonth();
+		    var year = date.getFullYear();
+		    var show = "";
+
+		    $_("#game img").each(function(element){
+			    show += element.outerHTML.replace(/"/g, "'")+",";
+		    });
+
+		    Storage.set(slot, '{"Date":"' + day + "-"+month + "-" + year + '","Engine":' + JSON.stringify(engine) + ',"Show":"' + show + '","Label":"' + engine["Label"] + '", "Storage":'+ JSON.stringify(storage) +'}');
+			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html("");
+			$_("[data-menu='save'] [data-ui='slots']").html("");
+			setSlots();
+			document.body.style.cursor = "auto";
+		}
+	}
+
+	function loadFromSlot(slot){
+		document.body.style.cursor = "wait";
+		playing = true;
+		$_("section").hide();
+		$_("#game").show();
+		$_("[data-character]").remove();
+		var data = JSON.parse(Storage.get(slot));
+		engine = data["Engine"];
+		storage = data["Storage"];
+
+		label = game[data["Label"]];
+
+		for(var j in engine["JS"].split("::")){
+			eval(engine["JS"].split("::")[j]);
+
+		}
+
+		for(var i in data["Show"].split(",")){
+			if(data["Show"].split(",")[i].trim() != ""){
+				$_("#game").append(data["Show"].split(",")[i]);
+			}
+		}
+
+		$_('#game').fadeOut(200, function () {
+
+			if(scenes[data["Engine"]["Scene"]] != null){
+				$_('#game').style("background","url(img/scenes/" + scenes[data["Engine"]["Scene"]] + ") center / cover no-repeat");
+			}else{
+				$_('#game').style("background",data["Engine"]["Scene"]);
+			}
+
+			$_('#game').fadeIn(200);
+    	});
+
+    	if(engine["Song"] != ""){
+	    	analyseStatement(engine["Song"]);
+	    	engine["Step"] -= 1;
+    	}
+
+		if(engine["Sound"] != ""){
+	    	analyseStatement(engine["Sound"]);
+	    	engine["Step"] -= 1;
+    	}
+
+		if(engine["Step"] > 0){
+			engine["Step"] -= 1;
+		}
+
+		$_("#game").show();
+		analyseStatement(label[engine["Step"]]);
+		engine["Step"] += 1;
+		document.body.style.cursor = "auto";
+	}
+
+	/**
+	 * =======================
 	 * Save and Load Events
 	 * =======================
 	**/
@@ -223,6 +306,9 @@ $_ready(function(){
 			setSlots();
 
 		}, engine["AutoSave"] * 60000);
+	}else{
+		$("[data-menu='load'] [data-ui='autoSaveSlots']").hide();
+
 	}
 
 	/**
@@ -273,6 +359,21 @@ $_ready(function(){
 	    $_("[data-action='" + $_(this).data("select") + "']")[0].dispatchEvent(e);
 	});
 
+	/**
+	 * =======================
+	 * Storage
+	 * =======================
+	**/
+
+	function getData(data){
+		var path = data.split(".");
+
+		data = storage[path[0]];
+		for(var i = 1; i < path.length; i++){
+			data = data[path[i]];
+		}
+		return data;
+	}
 
     /**
      * ==========================
@@ -556,7 +657,7 @@ $_ready(function(){
 			try{
 				if(typeof label[engine["Step"]] == "string"){
 					while(back.indexOf(label[engine["Step"]].split(" ")[0]) >- 1){
-						var parts = label[engine["Step"]].split(" ");
+						var parts = replaceVariables(label[engine["Step"]]).split(" ");
 						switch(parts[0]){
 							case "show":
 								if(characters[parts[1]] != null){
@@ -719,90 +820,35 @@ $_ready(function(){
 		$_("[data-ui='say']").html("");
 	}
 
-	function saveToSlot(slot){
-		if(playing){
-			document.body.style.cursor = "wait";
-			var date = new Date();
-		    var day = date.getDate();
-		    var month = date.getMonth();
-		    var year = date.getFullYear();
-		    var show = "";
-
-		    $_("#game img").each(function(element){
-			    show += element.outerHTML.replace(/"/g, "'")+",";
-		    });
-
-		    Storage.set(slot, '{"Date":"' + day + "-"+month + "-" + year + '","Engine":' + JSON.stringify(engine) + ',"Show":"' + show + '","Label":"' + engine["Label"] + '"}');
-			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html("");
-			$_("[data-menu='save'] [data-ui='slots']").html("");
-			setSlots();
-			document.body.style.cursor = "auto";
-		}
-	}
-
-	function loadFromSlot(slot){
-		document.body.style.cursor = "wait";
-		playing = true;
-		$_("section").hide();
-		$_("#game").show();
-		$_("[data-character]").remove();
-		var data = JSON.parse(Storage.get(slot));
-		engine = data["Engine"];
-
-		label = game[data["Label"]];
-
-		for(var j in engine["JS"].split("::")){
-			eval(engine["JS"].split("::")[j]);
-
-		}
-
-		for(var i in data["Show"].split(",")){
-			if(data["Show"].split(",")[i].trim() != ""){
-				$_("#game").append(data["Show"].split(",")[i]);
-			}
-		}
-
-		$_('#game').fadeOut(200, function () {
-
-			if(scenes[data["Engine"]["Scene"]] != null){
-				$_('#game').style("background","url(img/scenes/" + scenes[data["Engine"]["Scene"]] + ") center / cover no-repeat");
-			}else{
-				$_('#game').style("background",data["Engine"]["Scene"]);
-			}
-
-			$_('#game').fadeIn(200);
-    	});
-
-    	if(engine["Song"] != ""){
-	    	analyseStatement(engine["Song"]);
-	    	engine["Step"] -= 1;
-    	}
-
-		if(engine["Sound"] != ""){
-	    	analyseStatement(engine["Sound"]);
-	    	engine["Step"] -= 1;
-    	}
-
-		if(engine["Step"] > 0){
-			engine["Step"] -= 1;
-		}
-
-		$_("#game").show();
-		analyseStatement(label[engine["Step"]]);
-		engine["Step"] += 1;
-		document.body.style.cursor = "auto";
-	}
-
 	/**
 	 * =======================
 	 * Statements Functioning
 	 * =======================
 	**/
 
+	function replaceVariables(statement){
+		var matches = statement.match(/{{\S+}}/g);
+		if(matches != null){
+			for(var i = 0; i < matches.length; i++){
+				var path = matches[i].replace("{{", "").replace("}}", "").split(".");
+				var data = storage[path[0]];
+				for(var j = 1; j < path.length; j++){
+					data = data[path[j]];
+				}
+				statement = statement.replace(matches[i], data);
+			}
+		}
+
+		return statement;
+
+	}
+
     function analyseStatement(statement){
 		try{
+
 			switch(typeof statement){
 			    case "string":
+			    	statement = replaceVariables(statement);
 			    	var parts = statement.split(" ");
 
 					switch(parts[0]){
@@ -1136,6 +1182,22 @@ $_ready(function(){
 				    	}else{
 					    	analyseStatement(condition["False"]);
 				    	}
+			    	}else if(statement["Input"] != null){
+						$_("[data-ui='input'] [data-ui='input-message']").text(statement["Input"]["Text"]);
+						$_("[data-ui='input']").addClass("active");
+
+						$_("[data-ui='input'] [data-action='submit']").click(function(){
+							var inputValue = $_("[data-ui='input'] input").value();
+
+							if(statement["Input"]["Validation"](inputValue)){
+								statement["Input"]["Save"](inputValue);
+								$_("[data-ui='input']").removeClass("active");
+								$_("[data-ui='input'] [data-ui='warning']").text("");
+							}else{
+								$_("[data-ui='input'] [data-ui='warning']").text(statement["Input"]["Warning"]);
+							}
+
+						});
 			    	}
 			    	break;
 			}
