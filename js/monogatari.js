@@ -107,6 +107,7 @@ $_ready(function(){
 
 	}
 
+	// Set the initial language translations
 	$_("[data-string]").each(function(element){
 		$_(element).text(strings[settings["Language"]][$_(element).data("string")]);
 	});
@@ -128,6 +129,7 @@ $_ready(function(){
 	 * =======================
 	**/
 
+	// Create all save and load slots
 	function setSlots(){
 		if(!window.localStorage){
 			return false;
@@ -317,6 +319,7 @@ $_ready(function(){
 	 * =======================
 	**/
 
+	// Volume bars listeners
 	$_("[data-action='set-volume']").on("change mouseover", function(){
 		var v = document.querySelector("[data-component='" + $_(this).data("target") + "']");
 		var value = $_(this).value();
@@ -342,6 +345,7 @@ $_ready(function(){
 		Storage.set("Settings", JSON.stringify(settings));
 	});
 
+	// Language select listener
 	$_("[data-action='set-language']").change(function(){
 		settings["Language"] = $_(this).value();
 		game = script[settings["Language"]];
@@ -353,6 +357,7 @@ $_ready(function(){
 		});
 	});
 
+	// Fix for select labels
 	$_("[data-select]").click(function(){
 		var e = document.createEvent('MouseEvents');
 	    e.initMouseEvent('mousedown');
@@ -606,6 +611,7 @@ $_ready(function(){
 		}
 	}
 
+	// Stop the main menu's music
     function stopAmbient() {
 		var a_player = document.querySelector("[data-component='ambient']");
 		if(!a_player.paused){
@@ -613,6 +619,7 @@ $_ready(function(){
 		}
     }
 
+	// Stop the voice player
 	function shutUp(){
 		var voice_player = document.querySelector("[data-component='voice']");
 	    if(!voice_player.paused && voice_player.src!=null && voice_player.src!= ""){
@@ -623,6 +630,8 @@ $_ready(function(){
 
 	// Function to end the game.
     function endGame(){
+    	playing = false;
+    	// Stop any playing music
 	    for(var i = 0; i < document.getElementsByTagName("audio").length; i++){
 		    var v = document.getElementsByTagName("audio");
 		    if(!v[i].paused && v[i].src!=null && v[i].src!= ""){
@@ -630,13 +639,22 @@ $_ready(function(){
 				v[i].currentTime = 0;
 		    }
 	    }
+	    // Hide in-game elements
+	    $_("[data-component='modal']").removeClass("active");
 	    $_("[data-ui='messages']").removeClass("active");
+	    $_("[data-ui='centered']").remove();
 	    $_("#game img").hide();
-	    playing = false;
+	    $_("#game").style({"background": "initial"});
+	    whipeText();
+
+	    // Reset conditions
 		engine["Label"] = "Start";
 		label = game[engine["Label"]];
-		engine["Step"] = 0;
+		engine["Step"] = -1;
 		$_("section").hide();
+
+		// Show main menu
+		playAmbient();
 		$_("[data-menu='main']").show();
     }
 
@@ -1193,6 +1211,7 @@ $_ready(function(){
 								statement["Input"]["Save"](inputValue);
 								$_("[data-ui='input']").removeClass("active");
 								$_("[data-ui='input'] [data-ui='warning']").text("");
+								$_("[data-ui='input'] input").value("");
 							}else{
 								$_("[data-ui='input'] [data-ui='warning']").text(statement["Input"]["Warning"]);
 							}
