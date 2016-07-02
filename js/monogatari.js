@@ -438,6 +438,7 @@ $_ready(function(){
 			case "end":
 				if(confirm(strings[settings["Language"]]["Confirm"])){
 					endGame();
+					engine["Step"] = 0;
 				}
 				break;
 
