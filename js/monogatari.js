@@ -981,6 +981,14 @@ $_ready(function(){
 								}
 								var image = characters[parts[1]]["Images"][parts[2]].split(" ")[0];
 								$_("[data-character='" + parts[1] + "']").remove();
+
+								if(parts[3] == "at"){
+									parts[3] == parts[4];
+									if(parts[5] != null && parts[6] != null){
+										parts[5] = parts[6];
+									}
+								}
+
 								if(parts[3] == null){
 									parts[3] = "center";
 								}
@@ -999,6 +1007,13 @@ $_ready(function(){
 								engine["CharacterHistory"].push("<img src='img/characters/" + directory + "/" + image + "' class='animated " + parts[5] + " " + parts[3] + "' data-character='" + parts[1] + "'>");
 
 							}else if(images[parts[1]] != null){
+								// Parts[2] is position and Parts[4] is animation
+								if(parts[2] == "at"){
+									parts[2] == parts[3];
+									if(parts[4] != null && parts[5] != null){
+										parts[4] = parts[5];
+									}
+								}
 
 								if(parts[2] == null){
 									parts[2] = "center";
@@ -1009,8 +1024,9 @@ $_ready(function(){
 									parts[4] = parts[3];
 								}
 
-								$_("#game").append("<img src='img/" + images[parts[1]] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "'>");
-								engine["ImageHistory"].push("<img src='img/" + images[parts[1]] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "'>");
+								var imageObject = "<img src='img/" + images[parts[1]] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "'>";
+								$_("#game").append(imageObject);
+								engine["ImageHistory"].push(imageObject);
 
 							}else{
 								if(parts[2] == null){

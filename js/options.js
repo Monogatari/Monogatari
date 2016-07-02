@@ -50,7 +50,7 @@ var engine = {
 // Initial Settings
 var settings = {
 
-    // Initial Language for Multilanguage Games.
+    // Initial Language for Multilanguage Games or for the Default GUI Language.
     "Language": "English",
 
     // Initial Volumes from 0.0 to 1.

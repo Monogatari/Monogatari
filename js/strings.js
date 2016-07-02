@@ -7,7 +7,6 @@
 var strings = {
 
 	"English":{
-
 		"Back": "Back",
 		"Start": "Start",
 		"Load": "Load",
@@ -30,11 +29,9 @@ var strings = {
 		"Confirm": "Do you want to quit?",
 		"LoadSlots": "Saved Games",
 		"LoadAutoSaveSlots": "Auto Saved Games"
-
 	},
 
 	"Español":{
-
 		"Back": "Atrás",
 		"Start": "Comenzar",
 		"Load": "Cargar",
@@ -57,5 +54,30 @@ var strings = {
 		"Confirm": "¿Deseas salir?",
 		"LoadSlots": "Juegos Guardados",
 		"LoadAutoSaveSlots": "Juegos Guardados Automaticamente"
+	},
+
+	"Français":{
+		"Back": "Retourner",
+		"Start": "Démarrer",
+		"Load": "Charger",
+		"Save": "Sauvegarder",
+		"Close": "Fermer",
+		"Language": "Langue",
+		"Settings": "Préférences",
+		"Voice": "Volume de la Voix",
+		"Music": "Volume de la Musique",
+		"Sound": "Volume des Sons",
+		"Help": "Aide",
+		"AdvanceHelp": "Pour avancer dans le jeu, appuyez sur la touche espace ou cliquez sur.",
+		"QuickButtons": "Boutons du Menu Rapide",
+		"BackButton": "Retourner.",
+		"HideButton": "Cacher le Texte.",
+		"SaveButon": "Ouvrir l'écran de Sauvegarde.",
+		"LoadButton": "Ouvrir l'écran de Chargement.",
+		"SettingsButton": "Ouvrir l'écran des Préférences.",
+		"QuitButton": "Quitter le Jeu.",
+		"Confirm": "Voulez-vous vraiment quitter?",
+		"LoadSlots": "Jeux Sauvegardés",
+		"LoadAutoSaveSlots": "Jeux Sauvegardés Automatiquement"
 	}
 }
