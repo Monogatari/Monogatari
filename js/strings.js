@@ -79,5 +79,30 @@ var strings = {
 		"Confirm": "Voulez-vous vraiment quitter?",
 		"LoadSlots": "Jeux Sauvegardés",
 		"LoadAutoSaveSlots": "Jeux Sauvegardés Automatiquement"
+	},
+
+	"日本語":{
+		"Back": "巻き戻し",
+		"Start": "スタート",
+		"Load": "ロード",
+		"Save": "セーブ",
+		"Close": "閉めて",
+		"Language": "言語",
+		"Settings": "環境設定",
+		"Voice": "ボイスの音量",
+		"Music": "音楽の音量",
+		"Sound": "効果音の音量",
+		"Help": "ヘルプ",
+		"AdvanceHelp": "ゲームを進めるためには、スペースキーを押すかクリックします。",
+		"QuickButtons": "クイックメニューボタン",
+		"BackButton": "巻き戻し",
+		"HideButton": "テキストを隠します。",
+		"SaveButon": "保存画面を開きます。",
+		"LoadButton": "ロード画面を開きます。",
+		"SettingsButton": "設定画面を開きます。.",
+		"QuitButton": "ゲームを終了します。",
+		"Confirm": "終了しますか？",
+		"LoadSlots": "保存されたゲーム",
+		"LoadAutoSaveSlots": "自動的に保存されたゲーム"
 	}
 }
