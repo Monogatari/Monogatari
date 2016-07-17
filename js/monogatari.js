@@ -979,7 +979,8 @@ $_ready(function(){
 								if(directory == null){
 									directory = "";
 								}
-								var image = characters[parts[1]]["Images"][parts[2]].split(" ")[0];
+							    var image = characters[parts[1]]["Images"][parts[2]];
+							    image = escape(image);
 								$_("[data-character='" + parts[1] + "']").remove();
 
 								if(parts[3] == "at"){
