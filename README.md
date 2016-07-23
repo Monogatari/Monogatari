@@ -8,4 +8,3 @@ You can see the documentation in http://monogatari.hyuchia.com/documentation/
 
 # License
 Monogatari is an open-source project released under the MIT License.
-

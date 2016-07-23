@@ -5,4 +5,8 @@
 .thumbs
 .Thumbs
 .buildconfig
-
+/node_modules
+/cache
+/src
+/build
+/release

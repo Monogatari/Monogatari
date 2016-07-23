@@ -1,10 +1,10 @@
 // Define the messages used in the game.
 var messages = {
-    "Help":{
-	"Title": "Help",
-	"Subtitle": "Some useful Links",
-	"Message":"<p><a href='http://monogatari.hyuchia.com/documentation/'>Documentation</a> - Everything you need to know.</p><p><a href='http://monogatari.hyuchia.com/demo/'>Demo</a> - A simple Demo.</p>"
-    }
+	"Help": {
+		"Title": "Help",
+		"Subtitle": "Some useful Links",
+		"Message": "<p><a href='http://monogatari.hyuchia.com/documentation/'>Documentation</a> - Everything you need to know.</p><p><a href='http://monogatari.hyuchia.com/demo/'>Demo</a> - A simple Demo.</p>"
+	}
 }
 
 // Define the music used in the game.
@@ -39,42 +39,45 @@ var scenes = {
 
 // Define the Characters
 var characters = {
-    "h":{
-	"Name": "Hikaru",
-	"Color": "#5bcaff"
-    }
+	"h": {
+		"Name": "Hikaru",
+		"Color": "#5bcaff"
+	}
 }
 
 var script = {
-    // The game starts here.
-    "Start":[
-	{"Input":{
-	    "Text": "What is your name?",
-	    "Validation": function(input){
-		return input.trim().length > 0;
-	    },
-			"Save": function(input){
-				storage.player.Name = input;
-			},
-			"Warning": "You must enter a name!"
-		}},
+	// The game starts here.
+	"Start": [{
+			"Input": {
+				"Text": "What is your name?",
+				"Validation": function(input) {
+					return input.trim().length > 0;
+				},
+				"Save": function(input) {
+					storage.player.Name = input;
+				},
+				"Warning": "You must enter a name!"
+			}
+		},
 
 		"h Hi {{player.Name}} Welcome to Monogatari!",
 		"h Have you already read some documentation?",
 
-		{"Choice":{
-			"Yes":{
-				"Text": "Yes",
-				"Do": "jump Yes"
-			},
-			"No":{
-				"Text": "No",
-				"Do": "jump No"
+		{
+			"Choice": {
+				"Yes": {
+					"Text": "Yes",
+					"Do": "jump Yes"
+				},
+				"No": {
+					"Text": "No",
+					"Do": "jump No"
+				}
 			}
-		}}
+		}
 	],
 
-	"Yes":[
+	"Yes": [
 
 		"h That's awesome!",
 		"h Then you are ready to go ahead and create an amazing Game!",
@@ -82,7 +85,7 @@ var script = {
 		"end"
 	],
 
-	"No":[
+	"No": [
 
 		"h You can do it now.",
 

@@ -6,64 +6,64 @@
 
 var engine = {
 
-    // Initial Label *
-    "Label": "Start",
+	// Initial Label *
+	"Label": "Start",
 
-    // Number of Save Slots
-    "Slots": 10,
+	// Number of Save Slots
+	"Slots": 10,
 
-    // Current Media *.
-    "Song": "",
-    "Sound": "",
-    "Scene": "",
+	// Current Media *.
+	"Song": "",
+	"Sound": "",
+	"Scene": "",
 
-    // Javascript saved from the $ command *.
-    "JS": "",
+	// Javascript saved from the $ command *.
+	"JS": "",
 
-    // Current Statement *.
-    "Step": 0,
+	// Current Statement *.
+	"Step": 0,
 
-    // History for the previous function *.
-    "MusicHistory":[],
-    "SoundHistory":[],
-    "ImageHistory":[],
-    "CharacterHistory":[],
-    "SceneHistory":[],
+	// History for the previous function *.
+	"MusicHistory": [],
+	"SoundHistory": [],
+	"ImageHistory": [],
+	"CharacterHistory": [],
+	"SceneHistory": [],
 
-    // Change to true for a MultiLanguage Game.
-    "MultiLanguage": false,
+	// Change to true for a MultiLanguage Game.
+	"MultiLanguage": false,
 
-    // Music for the Main Menu.
-    "MenuMusic": "",
+	// Music for the Main Menu.
+	"MenuMusic": "",
 
-    // Prefix for the Save Slots in Local Storage.
-    "SaveLabel": "Save_",
-    "AutoSaveLabel": "AutoSave_",
+	// Prefix for the Save Slots in Local Storage.
+	"SaveLabel": "Save_",
+	"AutoSaveLabel": "AutoSave_",
 
-    // Turn main menu on/off; Default: true *
-    "ShowMenu": true,
+	// Turn main menu on/off; Default: true *
+	"ShowMenu": true,
 
-    // Time interval between autosaves (In Minutes). Default: 0 (Off)
-    "AutoSave": 0
+	// Time interval between autosaves (In Minutes). Default: 0 (Off)
+	"AutoSave": 0
 }
 
 // Initial Settings
 var settings = {
 
-    // Initial Language for Multilanguage Games or for the Default GUI Language.
-    "Language": "English",
+	// Initial Language for Multilanguage Games or for the Default GUI Language.
+	"Language": "English",
 
-    // Initial Volumes from 0.0 to 1.
-    "Volume":{
+	// Initial Volumes from 0.0 to 1.
+	"Volume": {
 		"Music": 1,
 		"Voice": 1,
 		"Sound": 1
-    }
+	}
 }
 
 // Persistent Storage Variable
 var storage = {
-    player: {
-	Name: ""
-    }
+	player: {
+		Name: ""
+	}
 }
