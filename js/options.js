@@ -63,7 +63,7 @@ var settings = {
 
 // Persistent Storage Variable
 var storage = {
-	player: {
-		Name: ""
-	}
+    player: {
+	Name: ""
+    }
 }
