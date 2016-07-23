@@ -43,9 +43,8 @@ gulp.task('optimize', () => {
 });
 
 gulp.task('release', () => {
-	gulp.src(['./img/**/*.jpg', './img/**/*.jpeg', './img/**/*.png', './img/**/*.gif', './img/**/*.svg'])
-		.pipe(imagemin())
-		.pipe(gulp.dest(function(file) {
-			return file.base;
-		}))
+	return gulp.src(['./**', '!./**/.DS_Store', '!./**/.thumbs', '!./**/.gitignore', '!./**/.editorconfig',
+					'!./**/.buildconfig', '!.git/**','!node_modules/**','!build/**', '!.git','!node_modules','!build'], {dot: true})
+	.pipe(zip('Monogatari-v' + packageJson.version + '.zip'))
+	.pipe(gulp.dest('dist'));
 });
