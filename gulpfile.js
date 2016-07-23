@@ -2,6 +2,7 @@ const gulp = require('gulp');
 const prettify = require('gulp-jsbeautifier');
 const imagemin = require('gulp-imagemin');
 const packageJson = require('./package.json');
+const zip = require('gulp-zip');
 
 gulp.task('default', () => {
 	// place code for your default task here
