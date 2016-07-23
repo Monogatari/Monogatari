@@ -1156,6 +1156,50 @@ $_ready(function() {
 							$_("#game").append("<div class='middle align-center' data-ui='centered'>" + statement.replace(parts[0] + " ", "") + "</div>");
 							break;
 
+						case "vibrate":
+							if (navigator) {
+								if (navigator.vibrate) {
+									navigator.vibrate(0);
+									if (parts.length > 2) {
+										navigator.vibrate(parts.slice(1, parts.length));
+									} else {
+										navigator.vibrate(parts[1]);
+									}
+								}
+							}
+							next();
+							break;
+
+						case "notify":
+							if (notifications[parts[1]] && ("Notification" in window)) {
+								// Let's check whether notification permissions have already been granted
+								if (Notification.permission === "granted") {
+									// If it's okay let's create a notification
+									var notification = new Notification(notifications[parts[1]].title, notifications[parts[1]]);
+
+									if (parts[2]) {
+										setTimeout(function() {
+											notification.close();
+										}, parseInt(parts[2]));
+									}
+
+								} else if (Notification.permission !== 'denied') {
+									Notification.requestPermission(function(permission) {
+										// If the user accepts, let's create a notification
+										if (permission === "granted") {
+											var notification = new Notification(notifications[parts[1]].title, notifications[parts[1]]);
+											if (parts[2]) {
+												setTimeout(function() {
+													notification.close();
+												}, parseInt(parts[2]));
+											}
+										}
+									});
+								}
+							}
+							next();
+							break;
+
 						default:
 							// Default case, used to show the dialog.
 

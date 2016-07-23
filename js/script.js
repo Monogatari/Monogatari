@@ -7,6 +7,15 @@ var messages = {
 	}
 }
 
+
+var notifications = {
+	"Welcome": {
+		title: "Welcome",
+		body: "This is the Monogatari VN Engine",
+		icon: ""
+	}
+}
+
 // Define the music used in the game.
 var music = {
 
@@ -47,8 +56,9 @@ var characters = {
 
 var script = {
 	// The game starts here.
-	"Start": [{
-			"Input": {
+	"Start": [
+		"notify Welcome",
+		{"Input": {
 				"Text": "What is your name?",
 				"Validation": function(input) {
 					return input.trim().length > 0;
@@ -63,8 +73,7 @@ var script = {
 		"h Hi {{player.Name}} Welcome to Monogatari!",
 		"h Have you already read some documentation?",
 
-		{
-			"Choice": {
+		{"Choice": {
 				"Yes": {
 					"Text": "Yes",
 					"Do": "jump Yes"
