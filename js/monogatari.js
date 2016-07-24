@@ -998,7 +998,7 @@ $_ready(function() {
 									parts[3] = "center";
 									parts[5] = parts[4];
 								}
-								$_("#game").append("<img src='img/characters/" + directory + "/" + image + "' class='animated " + parts[5] + " " + parts[3] + "' data-character='" + parts[1] + "'>");
+								$_("#game").append("<img src='img/characters/" + directory + "/" + image + "' class='animated " + parts[5] + " " + parts[3] + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
 								if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 									if (Screen.isLandscape()) {
 										$_("img").style("height", "80%");
@@ -1006,7 +1006,7 @@ $_ready(function() {
 										$_("img").style("height", "60%");
 									}
 								}
-								engine["CharacterHistory"].push("<img src='img/characters/" + directory + "/" + image + "' class='animated " + parts[5] + " " + parts[3] + "' data-character='" + parts[1] + "'>");
+								engine["CharacterHistory"].push("<img src='img/characters/" + directory + "/" + image + "' class='animated " + parts[5] + " " + parts[3] + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
 
 							} else if (images[parts[1]] != null) {
 								// Parts[2] is position and Parts[4] is animation
@@ -1026,7 +1026,7 @@ $_ready(function() {
 									parts[4] = parts[3];
 								}
 
-								var imageObject = "<img src='img/" + images[parts[1]] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "'>";
+								var imageObject = "<img src='img/" + images[parts[1]] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "' data-sprite='" + parts[2] + "'>";
 								$_("#game").append(imageObject);
 								engine["ImageHistory"].push(imageObject);
 
