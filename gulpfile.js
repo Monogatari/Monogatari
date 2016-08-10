@@ -5,6 +5,7 @@ const packageJson = require('./package.json');
 const zip = require('gulp-zip');
 const cssnano = require('gulp-cssnano');
 const download = require("gulp-download-stream");
+const runSequence = require('run-sequence');
 
 gulp.task('default', () => {
 	// place code for your default task here
@@ -46,18 +47,21 @@ gulp.task('optimize', () => {
 
 gulp.task('release', () => {
 	return gulp.src(['./**', '!./**/.DS_Store', '!./**/.thumbs', '!./**/.gitignore', '!./**/.editorconfig',
-					'!./**/.buildconfig', '!.git/**','!node_modules/**','!build/**', '!.git','!node_modules','!build'], {dot: true})
-	.pipe(zip('Monogatari-v' + packageJson.version + '.zip'))
-	.pipe(gulp.dest('dist'));
+			'!./**/.buildconfig', '!.git/**', '!node_modules/**', '!build/**', '!.git', '!node_modules', '!build'
+		], {
+			dot: true
+		})
+		.pipe(zip('Monogatari-v' + packageJson.version + '.zip'))
+		.pipe(gulp.dest('dist'));
 });
 
 // Update Dependencies
 gulp.task('download-deps', () => {
 
 	// Aegis JS
-    download("https://raw.githubusercontent.com/HyuchiaDiego/AegisJS/master/dist/aegis.min.js").pipe(gulp.dest("js/"));
+	download("https://raw.githubusercontent.com/HyuchiaDiego/AegisJS/master/dist/aegis.min.js").pipe(gulp.dest("js/"));
 
-    // jQuery
+	// jQuery
 	download({
 		file: "jquery.min.js",
 		url: "https://code.jquery.com/jquery-3.1.0.min.js"
@@ -82,7 +86,7 @@ gulp.task('download-deps', () => {
 	}).pipe(gulp.dest("style/"));
 
 	// Font Awesome
-    download("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/css/font-awesome.min.css").pipe(gulp.dest("style/"));
+	download("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/css/font-awesome.min.css").pipe(gulp.dest("style/"));
 
 	download({
 		file: "FontAwesome.otf",
@@ -114,10 +118,23 @@ gulp.task('download-deps', () => {
 
 gulp.task('minify-deps', () => {
 	gulp.src('style/animate.min.css')
-	.pipe(cssnano())
-	.pipe(gulp.dest("style/"));
+		.pipe(cssnano())
+		.pipe(gulp.dest("style/"));
 
 	gulp.src('style/normalize.min.css')
-	.pipe(cssnano())
-	.pipe(gulp.dest("style/"));
+		.pipe(cssnano())
+		.pipe(gulp.dest("style/"));
+});
+
+gulp.task('download-monogatari', () => {
+
+	// Monogatari CSS
+	download("https://raw.githubusercontent.com/HyuchiaDiego/Monogatari/master/style/monogatari.css").pipe(gulp.dest("style/"));
+
+	// Monogatari JS
+	download("https://raw.githubusercontent.com/HyuchiaDiego/Monogatari/master/js/monogatari.js").pipe(gulp.dest("js/"));
+});
+
+gulp.task('update', () => {
+	runSequence(['download-deps', 'download-monogatari']);
 });

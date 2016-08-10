@@ -139,6 +139,18 @@ $_ready(function() {
 		$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html("");
 		$_("[data-menu='save'] [data-ui='slots']").html("");
 
+		// Add missing statements in engine configuration
+		// in case they are not there
+		if (typeof engine.AutoSave == 'undefined') {
+			engine.AutoSave = 0;
+			console.warn("The AutoSave property is missing in the engine configuration.");
+		}
+
+		if (typeof engine.AutoSaveLabel == 'undefined') {
+			engine.AutoSaveLabel = "AutoSave_";
+			console.warn("The AutoSaveLabel property is missing in the engine configuration.");
+		}
+
 		for (var i = 1; i <= engine["Slots"]; i++) {
 
 			var slot = Storage.get(engine["SaveLabel"] + i);
@@ -370,14 +382,19 @@ $_ready(function() {
 	 * =======================
 	 **/
 
+	// Retrieve data from the storage variable
 	function getData(data) {
-		var path = data.split(".");
+		if (typeof storage != 'undefined') {
+			var path = data.split(".");
 
-		data = storage[path[0]];
-		for (var i = 1; i < path.length; i++) {
-			data = data[path[i]];
+			data = storage[path[0]];
+			for (var i = 1; i < path.length; i++) {
+				data = data[path[i]];
+			}
+			return data;
+		} else {
+			console.error("The storage object is not defined.");
 		}
-		return data;
 	}
 
 	/**
@@ -387,13 +404,15 @@ $_ready(function() {
 	 **/
 
 	// Start game automatically withouth going trough the main menu
-	if (!engine["ShowMenu"]) {
-		stopAmbient();
-		playing = true;
-		$_("section").hide();
-		$_("#game").show();
-		analyseStatement(label[engine["Step"]]);
-		engine["Step"] += 1;
+	if (typeof engine.ShowMenu != 'undefined') {
+		if (!engine["ShowMenu"]) {
+			stopAmbient();
+			playing = true;
+			$_("section").hide();
+			$_("#game").show();
+			analyseStatement(label[engine["Step"]]);
+			engine["Step"] += 1;
+		}
 	}
 
 	/**
@@ -579,8 +598,6 @@ $_ready(function() {
 		}
 	});
 
-
-
 	/**
 	 * =======================
 	 * Engine Helper Functions
@@ -606,7 +623,6 @@ $_ready(function() {
 			} else {
 				ambient_player.setAttribute("src", "audio/music/" + engine["MenuMusic"]);
 			}
-
 			ambient_player.play();
 		}
 	}
@@ -1068,6 +1084,8 @@ $_ready(function() {
 								engine["Sound"] = "";
 								sound_player.pause();
 								sound_player.currentTime = 0;
+							} else if (parts[1] == "particles") {
+								$_("#particles-js").html("");
 							}
 							next();
 							break;
@@ -1111,9 +1129,11 @@ $_ready(function() {
 						case "display":
 
 							if (parts[1] == "message") {
-								var mess = messages[parts[2]];
-								$_("[data-ui='message-content']").html("<h3>" + mess["Title"] + "</h3><p>" + mess["Subtitle"] + "</p>" + "<p>" + mess["Message"] + "</p>");
-								$_("[data-ui='messages']").addClass("active");
+								if (typeof messages == 'object') {
+									var mess = messages[parts[2]];
+									$_("[data-ui='message-content']").html("<h3>" + mess["Title"] + "</h3><p>" + mess["Subtitle"] + "</p>" + "<p>" + mess["Message"] + "</p>");
+									$_("[data-ui='messages']").addClass("active");
+								}
 							} else if (parts[1] == "image") {
 								if (parts[3] == null) {
 									parts[3] = "center";
@@ -1171,33 +1191,53 @@ $_ready(function() {
 							break;
 
 						case "notify":
-							if (notifications[parts[1]] && ("Notification" in window)) {
-								// Let's check whether notification permissions have already been granted
-								if (Notification.permission === "granted") {
-									// If it's okay let's create a notification
-									var notification = new Notification(notifications[parts[1]].title, notifications[parts[1]]);
+							if (typeof notifications == 'object') {
+								if (notifications[parts[1]] && ("Notification" in window)) {
+									// Let's check whether notification permissions have already been granted
+									if (Notification.permission === "granted") {
+										// If it's okay let's create a notification
+										var notification = new Notification(notifications[parts[1]].title, notifications[parts[1]]);
 
-									if (parts[2]) {
-										setTimeout(function() {
-											notification.close();
-										}, parseInt(parts[2]));
-									}
-
-								} else if (Notification.permission !== 'denied') {
-									Notification.requestPermission(function(permission) {
-										// If the user accepts, let's create a notification
-										if (permission === "granted") {
-											var notification = new Notification(notifications[parts[1]].title, notifications[parts[1]]);
-											if (parts[2]) {
-												setTimeout(function() {
-													notification.close();
-												}, parseInt(parts[2]));
-											}
+										if (parts[2]) {
+											setTimeout(function() {
+												notification.close();
+											}, parseInt(parts[2]));
 										}
-									});
+
+									} else if (Notification.permission !== 'denied') {
+										Notification.requestPermission(function(permission) {
+											// If the user accepts, let's create a notification
+											if (permission === "granted") {
+												var notification = new Notification(notifications[parts[1]].title, notifications[parts[1]]);
+												if (parts[2]) {
+													setTimeout(function() {
+														notification.close();
+													}, parseInt(parts[2]));
+												}
+											}
+										});
+									}
 								}
+							} else {
+								console.error("The notifications object is not defined.");
 							}
 							next();
+							break;
+
+						case "particles":
+							if (typeof particles == 'object') {
+								if (particles[parts[1]]) {
+									if (typeof particlesJS != "undefined") {
+										particlesJS(particles[parts[1]]);
+									} else {
+										console.error("particlesJS is not loaded, are you sure you added it?");
+									}
+								} else {
+									console.error("There is no definition of the '" + parts[1] + "' particle configuration.");
+								}
+							} else {
+								console.error("The particles object is not defined.");
+							}
 							break;
 
 						default:
@@ -1283,7 +1323,7 @@ $_ready(function() {
 					break;
 			}
 		} catch (e) {
-			console.log("An error ocurred while while trying to analyse the following statement: " + statement + "\n" + e);
+			console.error("An error ocurred while while trying to analyse the following statement: " + statement + "\n" + e);
 			next();
 		}
 	}

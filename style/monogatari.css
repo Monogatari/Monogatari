@@ -367,6 +367,11 @@ textarea {
 	margin: 0;
 }
 
+[data-ui="particles"] {
+	width: 100vw;
+	height: 100vh;
+}
+
 
 /**
  * ===========================

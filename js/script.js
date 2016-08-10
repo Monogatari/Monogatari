@@ -7,13 +7,17 @@ var messages = {
 	}
 }
 
-
+// Define the notifications used in the game
 var notifications = {
-	"Welcome": {
-		title: "Welcome",
-		body: "This is the Monogatari VN Engine",
-		icon: ""
+		"Welcome": {
+			title: "Welcome",
+			body: "This is the Monogatari VN Engine",
+			icon: ""
+		}
 	}
+	// Define the Particles JS Configurations used in the game
+var particles = {
+
 }
 
 // Define the music used in the game.
