@@ -359,7 +359,7 @@ $_ready(function() {
 
 	// Language select listener
 	$_("[data-action='set-language']").change(function() {
-		settings["Language"] = $_(this).value();
+		settings["Language"] = $_("[data-action='set-language']").value();
 		game = script[settings["Language"]];
 		label = game[engine["Label"]];
 		Storage.set("Settings", JSON.stringify(settings));
