@@ -992,6 +992,14 @@ $_ready(function() {
 							break;
 
 						case "show":
+							// show [character] [expression] at [position] with [animation]
+							//   0      1             2       3     4        5       6
+
+							// show [character] [expression] with [animation]
+							//   0      1             2       3       4
+
+							// show [character] [expression]
+							//   0      1             2
 							if (characters[parts[1]] != null) {
 								var directory = characters[parts[1]]["Directory"];
 								if (directory == null) {
@@ -1002,19 +1010,16 @@ $_ready(function() {
 
 								if (parts[3] == "at") {
 									parts[3] == parts[4];
-									if (parts[5] != null && parts[6] != null) {
-										parts[5] = parts[6];
-									}
 								}
 
-								if (parts[3] == null) {
+								if (parts[3] == "with" || parts[3] == null) {
 									parts[3] = "center";
 								}
-								if (parts[3] == "with") {
-									parts[3] = "center";
-									parts[5] = parts[4];
-								}
-								$_("#game").append("<img src='img/characters/" + directory + "/" + image + "' class='animated " + parts[5] + " " + parts[3] + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
+
+								var classes = parts.join(" ").replace("show " + parts[1] +" "+ parts[2], "").replace(" at ", "").replace(" with ", " ");
+
+
+								$_("#game").append("<img src='img/characters/" + directory + "/" + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
 								if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 									if (Screen.isLandscape()) {
 										$_("img").style("height", "80%");
@@ -1022,41 +1027,38 @@ $_ready(function() {
 										$_("img").style("height", "60%");
 									}
 								}
-								engine["CharacterHistory"].push("<img src='img/characters/" + directory + "/" + image + "' class='animated " + parts[5] + " " + parts[3] + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
+								engine["CharacterHistory"].push("<img src='img/characters/" + directory + "/" + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
 
-							} else if (images[parts[1]] != null) {
-								// Parts[2] is position and Parts[4] is animation
+							} else {
+								// show [image] at [position] with [animation]
+								//   0     1     2      3      4        5
+
+								// show [image] with [animation]
+								//   0      1     2       3
+
+								// show [image]
+								//   0      1
+
 								if (parts[2] == "at") {
 									parts[2] == parts[3];
-									if (parts[4] != null && parts[5] != null) {
-										parts[4] = parts[5];
-									}
 								}
 
-								if (parts[2] == null) {
+								if (parts[2] == "with" || parts[2] == null) {
 									parts[2] = "center";
 								}
 
-								if (parts[2] == "with") {
-									parts[2] = "center";
-									parts[4] = parts[3];
+								if (images[parts[1]] != null) {
+									var src = images[parts[1]];
+								} else {
+									var src = parts[1];
 								}
 
-								var imageObject = "<img src='img/" + images[parts[1]] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "' data-sprite='" + parts[2] + "'>";
+								var classes = parts.join(" ").replace("show " + parts[1], "").replace(" at ", "").replace(" with ", " ");
+
+								var imageObject = "<img src='img/" + src + "' class='animated " + classes + "' data-image='" + parts[1] + "' data-sprite='" + parts[1] + "'>";
 								$_("#game").append(imageObject);
 								engine["ImageHistory"].push(imageObject);
 
-							} else {
-								if (parts[2] == null) {
-									parts[2] = "center";
-								}
-
-								if (parts[2] == "with") {
-									parts[2] = "center";
-									parts[4] = parts[3];
-								}
-								$_("#game").append("<img src='img/" + parts[1] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "'>");
-								engine["ImageHistory"].push("<img src='img/" + parts[1] + "' class='animated " + parts[4] + " " + parts[2] + "' data-image='" + parts[1] + "'>");
 							}
 							next();
 							break;
