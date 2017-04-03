@@ -709,14 +709,6 @@ $_ready(function() {
 										}
 									}
 
-								} else if (images[parts[1]] != null) {
-									if (parts[3] != null && parts[3] != "") {
-										$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
-									} else {
-										$_("[data-image='" + parts[1] + "']").remove();
-									}
-									engine["ImageHistory"].pop();
-
 								} else {
 									if (parts[3] != null && parts[3] != "") {
 										$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
