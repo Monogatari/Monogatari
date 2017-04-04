@@ -1236,8 +1236,8 @@ $_ready(function() {
 
 						default:
 							// Default case, used to show the dialog.
-							if (parts[0].indexOf(":") > -1) {
-								var character = parts[0].split(":");
+							var character = parts[0].split(":");
+							if (character.length > 1 && characters[character[0]] != null) {
 								if(characters[character[0]] != null) {
 									$_("[data-ui='who']").html(characters[character[0]]["Name"]);
 									$_("[data-ui='who']").style("color", characters[character[0]]["Color"]);
