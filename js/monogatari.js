@@ -1236,9 +1236,30 @@ $_ready(function() {
 
 						default:
 							// Default case, used to show the dialog.
+							if (parts[0].indexOf(":") > -1) {
+								var character = parts[0].split(":");
+								if(characters[character[0]] != null) {
+									$_("[data-ui='who']").html(characters[character[0]]["Name"]);
+									$_("[data-ui='who']").style("color", characters[character[0]]["Color"]);
+									document.querySelector("[data-ui='say']").innerHTML = statement.replace(parts[0] + " ", "");
+									if (characters[character[0]]["Side"] != null) {
+										if (characters[character[0]]["Side"][character[1]] != null && characters[character[0]]["Side"][character[1]] != "") {
+											var directory = characters[character[0]]["Directory"];
+											if (directory == null) {
+												directory = "";
+											}
+											$_("[data-ui='face']").attribute("src", "img/characters/" + directory + "/" + characters[character[0]]["Side"][character[1]]);
+											$_("[data-ui='face']").show();
+										} else {
+											$_("[data-ui='face']").hide();
+										}
+									} else {
+										$_("[data-ui='face']").hide();
+									}
 
-							// Check if a declared character is speaking
-							if (characters[parts[0]] != null) {
+								}
+							} else if (characters[parts[0]] != null) {
+
 								$_("[data-ui='who']").html(characters[parts[0]]["Name"]);
 								$_("[data-ui='who']").style("color", characters[parts[0]]["Color"]);
 								document.querySelector("[data-ui='say']").innerHTML = statement.replace(parts[0] + " ", "");
