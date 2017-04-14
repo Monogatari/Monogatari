@@ -78,6 +78,7 @@ select {
 	-webkit-appearance: none;
 	border: none;
 	outline: none;
+	font-size: inherit;
 }
 
 button {
@@ -88,6 +89,7 @@ button {
 	border: none;
 	outline: none;
 	color: #F7F7F7;
+	font-size: inherit;
 }
 
 section div {
@@ -235,6 +237,7 @@ textarea {
 	outline: none;
 	border: none;
 	min-width: 50%;
+	font-size: inherit;
 }
 
 [data-ui="player"] {
