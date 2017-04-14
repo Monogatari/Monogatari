@@ -58,8 +58,8 @@ gulp.task('release', () => {
 // Update Dependencies
 gulp.task('download-deps', () => {
 
-	// Aegis JS
-	download("https://raw.githubusercontent.com/HyuchiaDiego/AegisJS/master/dist/aegis.min.js").pipe(gulp.dest("js/"));
+	// Artemis JS
+	download("https://raw.githubusercontent.com/AegisFramework/Artemis/master/dist/artemis.min.js").pipe(gulp.dest("js/"));
 
 	// jQuery
 	download({
