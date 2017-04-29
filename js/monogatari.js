@@ -219,7 +219,7 @@ $_ready(function() {
 			var year = date.getFullYear();
 			var show = "";
 
-			$_("#game img").each(function(element) {
+			$_("#game img:not([data-ui='face'])").each(function(element) {
 				show += element.outerHTML.replace(/"/g, "'") + ",";
 			});
 
