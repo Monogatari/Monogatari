@@ -502,7 +502,7 @@ $_ready(function() {
 		}
 	});
 
-	$_("[data-action='back']:not(#game)").click(function() {
+	$_("[data-action='back']:not(#game)").click(function(event) {
 		event.stopPropagation();
 		$_("section").hide();
 		if (playing) {
