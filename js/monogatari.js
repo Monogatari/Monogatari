@@ -1307,7 +1307,7 @@ $_ready(function() {
 						}
 					} else if (statement["Conditional"] != null) {
 						var condition = statement["Conditional"];
-						if (eval(condition["Condition"])) {
+						if (condition["Condition"]()) {
 							if (condition["True"].trim() == "") {
 								analyseStatement("next");
 							} else {
