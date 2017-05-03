@@ -690,10 +690,10 @@ $_ready(function() {
 		shutUp();
 		if (engine["Step"] >= 2) {
 			engine["Step"] -= 2;
-			var back = ["show", "play", "display", "hide", "stop"];
+			var back = ["show", "play", "display", "hide", "stop", "scene"];
 			try {
 				if (typeof label[engine["Step"]] == "string") {
-					while (back.indexOf(label[engine["Step"]].split(" ")[0]) > -1) {
+					while (back.indexOf(label[engine["Step"]].split(" ")[0]) > -1 && engine["Step"] > 0) {
 						var parts = replaceVariables(label[engine["Step"]]).split(" ");
 						switch (parts[0]) {
 							case "show":
@@ -784,22 +784,19 @@ $_ready(function() {
 								break;
 
 							case "scene":
-
-								$_("[data-character]").remove();
-								$_("[data-image]").remove();
-
 								engine["SceneHistory"].pop()
 								engine["Scene"] = engine["SceneHistory"].slice(-1)[0];
-								$_('#game').fadeOut(200, function() {
+
+								if (typeof engine["Scene"] != 'undefined') {
+									$_("[data-character]").remove();
+									$_("[data-image]").remove();
 
 									if (scenes[parts[1]] != null) {
 										$_('#game').style("background", "url(img/scenes/" + scenes[engine["Scene"]] + ") center / cover no-repeat");
 									} else {
 										$_('#game').style("background", engine["Scene"]);
 									}
-
-									$_('#game').fadeIn(200);
-								});
+								}
 
 								whipeText();
 								break;
