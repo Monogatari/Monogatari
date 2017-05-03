@@ -158,6 +158,7 @@ $_ready(function() {
 
 			if (slot == null) {
 				Storage.set(engine["SaveLabel"] + i, "");
+				$_("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><figcaption>Save in slot " + i + "</figcaption></figure>");
 			} else if (slot != "") {
 				var data = JSON.parse(slot);
 
