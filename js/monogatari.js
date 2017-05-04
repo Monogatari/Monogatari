@@ -690,7 +690,7 @@ $_ready(function() {
 		shutUp();
 		if (engine["Step"] >= 2) {
 			engine["Step"] -= 2;
-			var back = ["show", "play", "display", "hide", "stop", "scene"];
+			var back = ["show", "play", "display", "hide", "stop"];
 			try {
 				if (typeof label[engine["Step"]] == "string") {
 					while (back.indexOf(label[engine["Step"]].split(" ")[0]) > -1 && engine["Step"] > 0) {
@@ -1235,9 +1235,11 @@ $_ready(function() {
 						default:
 							// Default case, used to show the dialog.
 							var character = parts[0].split(":");
+							$_("[data-character]").removeClass("focus");
 							if (character.length > 1 && characters[character[0]] != null) {
 								if(characters[character[0]] != null) {
 									$_("[data-ui='who']").html(characters[character[0]]["Name"]);
+									$_("[data-character='" + character[0] + "']").addClass("focus");
 									$_("[data-ui='who']").style("color", characters[character[0]]["Color"]);
 									document.querySelector("[data-ui='say']").innerHTML = statement.replace(parts[0] + " ", "");
 									if (characters[character[0]]["Side"] != null) {
@@ -1257,8 +1259,8 @@ $_ready(function() {
 
 								}
 							} else if (characters[parts[0]] != null) {
-
 								$_("[data-ui='who']").html(characters[parts[0]]["Name"]);
+								$_("[data-character='" + parts[0] + "']").addClass("focus");
 								$_("[data-ui='who']").style("color", characters[parts[0]]["Color"]);
 								document.querySelector("[data-ui='say']").innerHTML = statement.replace(parts[0] + " ", "");
 								if (characters[parts[0]]["Face"] != null && characters[parts[0]]["Face"] != "") {
