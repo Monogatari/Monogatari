@@ -1301,8 +1301,16 @@ $_ready(function() {
 								}
 
 							} else {
-								$_("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "'>" + choice["Text"] + "</button>");
+								if (typeof choice == 'object') {
+									$_("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "'>" + choice["Text"] + "</button>");
+								} else if (typeof choice == 'string') {
+									analyseStatement(choice);
+								}
+
 							}
+
+
+
 							$_("[data-ui='choices']").show();
 						}
 					} else if (statement["Conditional"] != null) {
