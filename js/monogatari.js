@@ -691,9 +691,10 @@ $_ready(function() {
 		if (engine["Step"] >= 2) {
 			engine["Step"] -= 2;
 			var back = ["show", "play", "display", "hide", "stop"];
+			var flag = true;
 			try {
 				if (typeof label[engine["Step"]] == "string") {
-					while (back.indexOf(label[engine["Step"]].split(" ")[0]) > -1 && engine["Step"] > 0) {
+					while (back.indexOf(label[engine["Step"]].split(" ")[0]) > -1 && engine["Step"] > 0 && flag) {
 						var parts = replaceVariables(label[engine["Step"]]).split(" ");
 						switch (parts[0]) {
 							case "show":
@@ -811,12 +812,15 @@ $_ready(function() {
 								}
 								break;
 							case "hide":
-								if (characters[parts[1]] != null) {
+								if (characters[parts[1]] != null && engine["CharacterHistory"].length > 0) {
 									$_("#game").append(engine["CharacterHistory"].pop());
 
-								} else if (images[parts[1]] != null) {
+								} else if (images[parts[1]] != null && engine["ImageHistory"] > 0) {
 									$_("#game").append(engine["ImageHistory"].pop());
 
+								} else {
+									flag = false;
+									engine["Step"] += 1;
 								}
 								break;
 						}
