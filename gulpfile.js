@@ -64,7 +64,7 @@ gulp.task('download-deps', () => {
 	// jQuery
 	download({
 		file: "jquery.min.js",
-		url: "https://code.jquery.com/jquery-3.1.0.min.js"
+		url: "https://code.jquery.com/jquery-3.2.1.min.js"
 	}).pipe(gulp.dest("js/"));
 
 	// Particles JS
@@ -129,10 +129,10 @@ gulp.task('minify-deps', () => {
 gulp.task('download-monogatari', () => {
 
 	// Monogatari CSS
-	download("https://raw.githubusercontent.com/HyuchiaDiego/Monogatari/master/style/monogatari.css").pipe(gulp.dest("style/"));
+	download("https://raw.githubusercontent.com/Hyuchia/Monogatari/master/style/monogatari.css").pipe(gulp.dest("style/"));
 
 	// Monogatari JS
-	download("https://raw.githubusercontent.com/HyuchiaDiego/Monogatari/master/js/monogatari.js").pipe(gulp.dest("js/"));
+	download("https://raw.githubusercontent.com/Hyuchia/Monogatari/master/js/monogatari.js").pipe(gulp.dest("js/"));
 });
 
 gulp.task('update', () => {
