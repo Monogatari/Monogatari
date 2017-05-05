@@ -76,9 +76,9 @@ var script = {
 		},
 
 		"h Hi {{player.Name}} Welcome to Monogatari!",
-		"h Have you already read some documentation?",
 
 		{"Choice": {
+				"Dialog": "h Have you already read some documentation?",
 				"Yes": {
 					"Text": "Yes",
 					"Do": "jump Yes"
