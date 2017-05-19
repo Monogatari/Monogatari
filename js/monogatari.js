@@ -558,6 +558,8 @@ $_ready(function() {
 		if ($_(this).data("do") != "null" && $_(this).data("do") != "") {
 			var back = ["show", "play", "display", "hide", "scene", "stop", "pause"];
 			try {
+				$_("[data-ui='choices']").hide();
+				$_("[data-ui='choices']").html("");
 				if (back.indexOf($_(this).data("do").split(" ")[0]) > -1) {
 					engine["Step"] -= 1;
 					analyseStatement($_(this).data("do"));
@@ -574,9 +576,7 @@ $_ready(function() {
 			} catch (e) {
 				console.log("An error ocurred while trying to execute the choice's action.\n" + e);
 			}
-		}
-		$_("[data-ui='choices']").hide();
-		$_("[data-ui='choices']").html("");
+		}	
 	});
 
 	$_("#game [data-ui='quick-menu'] *").click(function(e) {
