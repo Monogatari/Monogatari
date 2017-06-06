@@ -322,7 +322,7 @@ $_ready(function() {
 
 		}, engine["AutoSave"] * 60000);
 	} else {
-		$("[data-menu='load'] [data-ui='autoSaveSlots']").hide();
+		$_("[data-menu='load'] [data-ui='autoSaveSlots']").hide();
 
 	}
 
