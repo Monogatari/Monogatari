@@ -418,6 +418,126 @@ $_ready(function() {
 
 	/**
 	 * ==========================
+	 * Preload Assets
+	 * ==========================
+	 **/
+
+	function preloadImage (src) {
+		return new Promise(function (resolve, reject) {
+			var image = new Image();
+			image.onload  = function () {
+				$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+				resolve ();
+			}
+			image.onerror = function () {
+				$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+				resolve ();
+			}
+			image.src = src;
+		});
+	}
+
+
+	function preloadAudio (src) {
+		return new Promise(function (resolve, reject) {
+			var audio = new Audio();
+			audio.onloadeddata = function () {
+				$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+				resolve ();
+			}
+			audio.onerror = function () {
+				$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+				resolve ();
+			}
+			audio.src = src;
+		});
+	}
+
+	var preloadPromises = [];
+	var assetCount = 0;
+	if (typeof engine.Preload != 'undefined') {
+		if (engine["Preload"]) {
+			// Show loading screen
+			$_("[data-menu='loading']").show();
+
+			// Start by loading the image assets
+			if (typeof scenes == 'object') {
+				assetCount += Object.keys(scenes).length;
+				for (var i in scenes) {
+					preloadPromises.push(preloadImage("img/scenes/" + scenes[i]));
+				}
+			}
+
+			if (typeof characters == 'object') {
+				for (var i in characters) {
+					var directory = "";
+					if (typeof characters[i]["Directory"] != 'undefined') {
+						directory = characters[i]["Directory"] + "/";
+					}
+
+					if (typeof characters[i]["Images"] != 'undefined') {
+						assetCount += Object.keys(characters[i]["Images"]).length;
+						for(var j in characters[i]["Images"]){
+							preloadPromises.push(preloadImage("img/characters/" + directory + characters[i]["Images"][j]));
+						}
+					}
+
+					if (typeof characters[i]["Side"] != 'undefined') {
+						assetCount += Object.keys(characters[i]["Side"]).length;
+						for(var k in characters[i]["Side"]){
+							preloadPromises.push(preloadImage("img/characters/" + directory + characters[i]["Side"][k]));
+						}
+					}
+				}
+			}
+
+			if (typeof images == 'object') {
+				assetCount += Object.keys(images).length;
+				for (var i in images) {
+					preloadPromises.push(preloadImage("img/" + images[i]));
+				}
+			}
+
+			// Load the audio assets
+			if (typeof music == 'object') {
+				assetCount += Object.keys(music).length;
+				for (var i in music) {
+					preloadPromises.push(preloadAudio("audio/music/" + music[i]));
+				}
+			}
+
+			if (typeof voice == 'object') {
+				assetCount += Object.keys(voice).length;
+				for (var i in voice) {
+					preloadPromises.push(preloadAudio("audio/music/voice" + voice[i]));
+				}
+			}
+
+			if (typeof sound == 'object') {
+				assetCount += Object.keys(sound).length;
+				for (var i in sound) {
+					preloadPromises.push(preloadAudio("audio/sound/" + sound[i]));
+				}
+			}
+
+			$_("[data-ui='load-progress']").attribute("max", assetCount);
+			Promise.all(preloadPromises).then(() => {
+				$_("[data-menu='loading']").fadeOut(400, function () {
+					$_("[data-menu='loading']").hide();
+				});
+				$_("[data-menu='main']").show();
+
+			});
+
+		} else {
+			$_("[data-menu='main']").show();
+		}
+	} else {
+		$_("[data-menu='main']").show();
+	}
+
+	/**
+	 * ==========================
 	 * Data-Action Event Handlers
 	 * ==========================
 	 **/
@@ -1288,8 +1408,11 @@ $_ready(function() {
 					break;
 
 				case "function":
-					if (statement()) {
-						next();
+					var result = statement();
+					if (typeof result == 'boolean') {
+						if (result) {
+							next();
+						}
 					}
 					break;
 

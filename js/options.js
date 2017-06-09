@@ -12,7 +12,7 @@ var engine = {
 	// Number of Save Slots
 	"Slots": 10,
 
-	// Current Media *.
+	// Current Media *
 	"Song": "",
 	"Sound": "",
 	"Scene": "",
@@ -42,6 +42,9 @@ var engine = {
 
 	// Turn main menu on/off; Default: true *
 	"ShowMenu": true,
+
+	// Turn image preloading on/off, Default: true
+	"Preload": true,
 
 	// Time interval between autosaves (In Minutes). Default: 0 (Off)
 	"AutoSave": 0

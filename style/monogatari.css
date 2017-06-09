@@ -215,6 +215,35 @@ section div {
  * ===========================
 **/
 
+[data-ui="load-progress"] {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	border: none;
+	margin: 1em auto;
+	display: block;
+	border-radius: 3px;
+	box-shadow: 0 2px 3px rgba(0,0,0,0.2) inset;
+	background: transparent;
+	width: 50vw;
+}
+
+[data-ui="load-progress"]::-webkit-progress-bar {
+	background: transparent;
+	box-shadow: 0 2px 3px rgba(0,0,0,0.2) inset;
+	border-radius: 3px;
+}
+
+[data-ui="load-progress"]::-webkit-progress-value {
+	background-color: #F16272;
+	border-radius: 3px;
+}
+
+[data-ui="load-progress"]::-moz-progress-bar {
+	background-color: #F16272;
+	border-radius: 3px;
+}
+
 [data-ui="messages"] div {
 	width: auto;
 	padding: 1vmin;
@@ -401,7 +430,6 @@ textarea {
 }
 
 [data-menu="main"] {
-	display: block;
 	background-repeat: no-repeat;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -640,5 +668,9 @@ input[type=range] {
 	}
 	[data-ui="quick-menu"] span {
 		font-size: 5vmax;
+	}
+
+	[data-ui="load-progress"] {
+		width: 80vw;
 	}
 }
