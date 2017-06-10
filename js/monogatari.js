@@ -439,17 +439,10 @@ $_ready(function() {
 
 
 	function preloadAudio (src) {
-		return new Promise(function (resolve, reject) {
-			var audio = new Audio();
-			audio.onloadeddata = function () {
-				$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-				resolve ();
-			}
-			audio.onerror = function () {
-				$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-				resolve ();
-			}
-			audio.src = src;
+		return Request.get(src, null, "blob").then(function () {
+			$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+		}).catch(function() {
+			$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
 		});
 	}
 
