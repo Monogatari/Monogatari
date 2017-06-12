@@ -65,6 +65,11 @@
 			"src": "img/icons/icon_310x310.png",
 			"type": "image/png",
 			"sizes": "310x310"
+		},
+		{
+			"src": "img/icons/icon_512x512.png",
+			"type": "image/png",
+			"sizes": "512x512"
 		}
 	]
 }

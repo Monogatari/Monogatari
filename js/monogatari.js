@@ -422,6 +422,10 @@ $_ready(function() {
 	 * ==========================
 	 **/
 
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('service-worker.js');
+	}
+
 	function preloadImage (src) {
 		return new Promise(function (resolve, reject) {
 			var image = new Image();
