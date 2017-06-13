@@ -422,9 +422,13 @@ $_ready(function() {
 	 * ==========================
 	 **/
 
-	if ('serviceWorker' in navigator) {
-		navigator.serviceWorker.register('service-worker.js');
+	if (typeof engine.ServiceWorkers != 'undefined') {
+		if ('serviceWorker' in navigator && engine.ServiceWorkers) {
+			navigator.serviceWorker.register('service-worker.js');
+		}
 	}
+
+
 
 	function preloadImage (src) {
 		return new Promise(function (resolve, reject) {
