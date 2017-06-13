@@ -27,6 +27,7 @@
 
 var label, game;
 var playing = false;
+var block = false;
 
 $_ready(function() {
 
@@ -612,13 +613,7 @@ $_ready(function() {
 
 	$_("#game [data-action='back']").click(function(event) {
 		event.stopPropagation();
-		if (!$_("[data-ui='choices']").isVisible() &&
-			!$_("[data-component='modal']").isVisible() &&
-			!$_("[data-component='video']").isVisible() &&
-			$_("#game").isVisible() &&
-			!$_("#planner").property("open") &&
-			($_("[data-ui='text']").isVisible() ||
-				(!$_("[data-ui='text']").isVisible() && $_("[data-ui='centered']").isVisible()))) {
+		if (canProceed()) {
 
 			previous();
 		}
@@ -648,13 +643,7 @@ $_ready(function() {
 				break;
 
 			case 32: // spacebar
-				if (!$_("[data-ui='choices']").isVisible() &&
-					!$_("[data-component='modal']").isVisible() &&
-					!$_("[data-component='video']").isVisible() &&
-					$_("#game").isVisible() &&
-					!$_("#planner").property("open") &&
-					($_("[data-ui='text']").isVisible() ||
-						(!$_("[data-ui='text']").isVisible() && $_("[data-ui='centered']").isVisible()))) {
+				if (canProceed()) {
 
 					hideCentered();
 					shutUp();
@@ -706,13 +695,7 @@ $_ready(function() {
 	});
 
 	$_("#game").click(function(event) {
-		if (!$_("[data-ui='choices']").isVisible() &&
-			$_("#game").isVisible() &&
-			!$_("[data-component='modal']").isVisible() &&
-			($_("[data-ui='text']").isVisible() ||
-				(!$_("[data-ui='text']").isVisible() && $_("[data-ui='centered']").isVisible())) &&
-			!$_("[data-component='video']").isVisible()) {
-
+		if (canProceed()) {
 			hideCentered();
 			shutUp();
 			analyseStatement(label[engine["Step"]]);
@@ -725,6 +708,26 @@ $_ready(function() {
 	 * Engine Helper Functions
 	 * =======================
 	 **/
+
+	function canProceed() {
+		if (!$_("[data-ui='choices']").isVisible()
+			&& $_("#game").isVisible()
+			&& !$_("[data-component='modal']").isVisible()
+			&& (
+				$_("[data-ui='text']").isVisible()
+				|| (
+					!$_("[data-ui='text']").isVisible()
+					&& $_("[data-ui='centered']").isVisible()
+					)
+				)
+			&& !$_("[data-component='video']").isVisible()
+			&& !block
+			) {
+				return true;
+		} else {
+			return false;
+		}
+	}
 
 	function hideCentered() {
 		$_("[data-ui='centered']").remove();
@@ -1419,9 +1422,11 @@ $_ready(function() {
 					} else if (typeof result === 'object') {
 						// Check if the result was a promise
 						if (typeof result.then != 'undefined') {
+							block = true;
 							result.then(function(value) {
 								if (typeof value === 'boolean') {
 									if (value) {
+										block = false;
 										analyseStatement(label[engine["Step"]]);
 										engine["Step"] += 1;
 									}
