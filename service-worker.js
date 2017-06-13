@@ -5,10 +5,12 @@ var name = 'Monogatari';
 // again.
 var version = '0.1.0';
 
-// The base url where your game is hosted
-var url = 'https://example.com';
-
 var files = [
+
+	// General Files
+	'/',
+	'manifest.json',
+
 	// HTML Files
 	// 'index.html',
 
@@ -85,21 +87,37 @@ self.addEventListener('activate', function (event) {
 	return self.clients.claim();
 });
 
-self.addEventListener('fetch', function(event) {
-	if (event.request.url.indexOf(url) > -1) {
-		event.respondWith(
-			caches.open(`${name}-v${version}`).then(function(cache) {
-				return fetch(event.request).then(function(response){
-					cache.put(event.request.url, response.clone());
-					return response;
-				});
-			})
-		);
-	} else {
-		event.respondWith(
-			caches.match(event.request).then(function(response) {
-				return response || fetch(event.request);
-			})
-		);
+self.addEventListener("fetch", function(event) {
+	if (event.request.method !== 'GET') {
+		return;
 	}
+
+	event.respondWith(
+		caches.match(event.request).then(function(cached) {
+			var networked = fetch(event.request)
+							.then(fetchedFromNetwork, unableToResolve)
+      						.catch(unableToResolve);
+		    return cached || networked;
+
+		    function fetchedFromNetwork(response) {
+				var cacheCopy = response.clone();
+
+				caches.open(`${name}-v${version}`).then(function add(cache) {
+					cache.put(event.request, cacheCopy);
+				});
+
+				return response;
+			}
+
+		    function unableToResolve () {
+				return new Response('<h1>Service Unavailable</h1>', {
+					status: 503,
+					statusText: 'Service Unavailable',
+					headers: new Headers({
+						'Content-Type': 'text/html'
+					})
+				});
+			}
+		})
+	);
 });
