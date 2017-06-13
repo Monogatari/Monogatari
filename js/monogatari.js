@@ -1410,9 +1410,23 @@ $_ready(function() {
 
 				case "function":
 					var result = statement();
-					if (typeof result == 'boolean') {
+					// Check if the function returned a simple boolean
+					// if the return value is true, the game will continue
+					if (typeof result === 'boolean') {
 						if (result) {
 							next();
+						}
+					} else if (typeof result === 'object') {
+						// Check if the result was a promise
+						if (typeof result.then != 'undefined') {
+							result.then(function(value) {
+								if (typeof value === 'boolean') {
+									if (value) {
+										analyseStatement(label[engine["Step"]]);
+										engine["Step"] += 1;
+									}
+								}
+							});
 						}
 					}
 					break;
