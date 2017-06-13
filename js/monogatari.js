@@ -522,7 +522,7 @@ $_ready(function() {
 			}
 
 			$_("[data-ui='load-progress']").attribute("max", assetCount);
-			Promise.all(preloadPromises).then(() => {
+			Promise.all(preloadPromises).then(function() {
 				$_("[data-menu='loading']").fadeOut(400, function () {
 					$_("[data-menu='loading']").hide();
 				});
