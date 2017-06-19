@@ -256,15 +256,15 @@ $_ready(function() {
 			}
 		}
 
-		$_('#game').fadeOut(200, function() {
+		$_("[data-ui='background']").fadeOut(200, function() {
 
 			if (scenes[data["Engine"]["Scene"]] != null) {
-				$_('#game').style("background", "url(img/scenes/" + scenes[data["Engine"]["Scene"]] + ") center / cover no-repeat");
+				$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[data["Engine"]["Scene"]] + ") center / cover no-repeat");
 			} else {
-				$_('#game').style("background", data["Engine"]["Scene"]);
+				$_("[data-ui='background']").style("background", data["Engine"]["Scene"]);
 			}
 
-			$_('#game').fadeIn(200);
+			$_("[data-ui='background']").fadeIn(200);
 		});
 
 		if (engine["Song"] != "") {
@@ -917,9 +917,9 @@ $_ready(function() {
 									$_("[data-image]").remove();
 
 									if (scenes[parts[1]] != null) {
-										$_('#game').style("background", "url(img/scenes/" + scenes[engine["Scene"]] + ") center / cover no-repeat");
+										$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[engine["Scene"]] + ") center / cover no-repeat");
 									} else {
-										$_('#game').style("background", engine["Scene"]);
+										$_("[data-ui='background']").style("background", engine["Scene"]);
 									}
 								}
 
@@ -1092,15 +1092,15 @@ $_ready(function() {
 							$_("[data-character]").remove();
 							$_("[data-image]").remove();
 
-							$_('#game').fadeOut(200, function() {
+							$_("[data-ui='background']").fadeOut(200, function() {
 
 								if (scenes[parts[1]] != null) {
-									$_('#game').style("background", "url(img/scenes/" + scenes[parts[1]] + ") center / cover no-repeat");
+									$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[parts[1]] + ") center / cover no-repeat");
 								} else {
-									$_('#game').style("background", parts[1]);
+									$_("[data-ui='background']").style("background", parts[1]);
 								}
 
-								$_('#game').fadeIn(200);
+								$_("[data-ui='background']").fadeIn(200);
 							});
 
 							engine["Scene"] = parts[1];

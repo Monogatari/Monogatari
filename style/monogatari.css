@@ -405,6 +405,11 @@ textarea {
 	height: 100vh;
 }
 
+[data-ui="background"] {
+	width: 100vw;
+	height: 100vh;
+}
+
 
 /**
  * ===========================
