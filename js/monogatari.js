@@ -781,6 +781,8 @@ $_ready(function() {
 			}
 		}
 		// Hide in-game elements
+		$_("[data-ui='choices']").hide();
+		$_("[data-ui='choices']").html("");
 		$_("[data-component='modal']").removeClass("active");
 		$_("[data-ui='messages']").removeClass("active");
 		$_("[data-ui='centered']").remove();
