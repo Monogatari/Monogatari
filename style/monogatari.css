@@ -131,6 +131,15 @@ section div {
  * ===========================
 **/
 
+#game {
+	height: 100vh;
+	max-height: 100vh;
+	max-width: 100vw;
+	overflow: hidden;
+	width: 100vw;
+	display: none;
+}
+
 #game img {
 	position: absolute;
 	-moz-user-select: none;
@@ -417,14 +426,7 @@ textarea {
  * ===========================
 **/
 
-[data-menu='settings'] input,
-[data-menu='settings'] select {
-	margin: 2vmax;
-	background: transparent;
-}
-
-[data-menu],
-#game {
+[data-menu] {
 	height: 100vh;
 	max-height: 100vh;
 	max-width: 100vw;
@@ -432,6 +434,12 @@ textarea {
 	overflow-x: hidden;
 	width: 100vw;
 	display: none;
+}
+
+[data-menu='settings'] input,
+[data-menu='settings'] select {
+	margin: 2vmax;
+	background: transparent;
 }
 
 [data-menu="main"] {
@@ -620,6 +628,17 @@ input[type=range] {
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+    background: transparent;
+	width: 5px;
+	height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+	border-radius: 3px;
 }
 
 .container {
