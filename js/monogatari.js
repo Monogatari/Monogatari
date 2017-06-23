@@ -419,7 +419,7 @@ $_ready(function() {
 
 	/**
 	 * ==========================
-	 * Preload Assets
+	 * Service Workers
 	 * ==========================
 	 **/
 
@@ -429,7 +429,11 @@ $_ready(function() {
 		}
 	}
 
-
+	/**
+	 * ==========================
+	 * Preload Assets
+	 * ==========================
+	 **/
 
 	function preloadImage (src) {
 		return new Promise(function (resolve, reject) {
@@ -1094,17 +1098,17 @@ $_ready(function() {
 							$_("[data-character]").remove();
 							$_("[data-image]").remove();
 
-							$_("[data-ui='background']").fadeOut(200, function() {
+							if (scenes[parts[1]] != null) {
+								$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[parts[1]] + ") center / cover no-repeat");
+							} else {
+								$_("[data-ui='background']").style("background", parts[1]);
+							}
 
-								if (scenes[parts[1]] != null) {
-									$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[parts[1]] + ") center / cover no-repeat");
-								} else {
-									$_("[data-ui='background']").style("background", parts[1]);
+							if (parts.length > 2) {
+								if (parts[2] == "with" && parts[3].trim != "") {
+									$_("[data-ui='background']").addClass((parts.join(" ").replace("scene " + parts[1], "").replace(" with ", " ")).trim());
 								}
-
-								$_("[data-ui='background']").fadeIn(200);
-							});
-
+							}
 							engine["Scene"] = parts[1];
 							engine["SceneHistory"].push(parts[1]);
 							whipeText();
