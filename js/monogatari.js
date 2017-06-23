@@ -28,6 +28,7 @@
 var label, game;
 var playing = false;
 var block = false;
+var storageStructure = JSON.stringify(storage);
 
 $_ready(function() {
 
@@ -811,6 +812,8 @@ $_ready(function() {
 		engine["Step"] = -1;
 		$_("section").hide();
 
+		// Reset Storage
+		storage = JSON.parse(storageStructure);
 		// Show main menu
 		playAmbient();
 		$_("[data-menu='main']").show();
