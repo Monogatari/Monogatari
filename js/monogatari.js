@@ -225,7 +225,15 @@ $_ready(function() {
 				show += element.outerHTML.replace(/"/g, "'") + ",";
 			});
 
-			Storage.set(slot, '{"Date":"' + day + "-" + month + "-" + year + '","Engine":' + JSON.stringify(engine) + ',"Show":"' + show + '","Label":"' + engine["Label"] + '", "Storage":' + JSON.stringify(storage) + '}');
+			var saveData = {
+				"Date": `${day} - ${month} - ${year}`,
+				"Engine": engine,
+				"Show": show,
+				"Label": engine["Label"],
+				"Storage": storage
+			};
+
+			Storage.set(slot, JSON.stringify(saveData));
 			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html("");
 			$_("[data-menu='save'] [data-ui='slots']").html("");
 			setSlots();
@@ -791,6 +799,7 @@ $_ready(function() {
 		$_("[data-ui='messages']").removeClass("active");
 		$_("[data-ui='centered']").remove();
 		$_("#game img").hide();
+		$_("[data-ui='input'] [data-ui='warning']").text("");
 		$_("#game").style({
 			"background": "initial"
 		});
@@ -1098,11 +1107,16 @@ $_ready(function() {
 							$_("[data-character]").remove();
 							$_("[data-image]").remove();
 
+							// scene [scene]
+							//   0      1
 							if (scenes[parts[1]] != null) {
 								$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[parts[1]] + ") center / cover no-repeat");
 							} else {
 								$_("[data-ui='background']").style("background", parts[1]);
 							}
+							// Check if an animation or class was provided
+							// scene [scene] with [animation]
+							//   0      1     2       3
 
 							if (parts.length > 2) {
 								if (parts[2] == "with" && parts[3].trim != "") {
