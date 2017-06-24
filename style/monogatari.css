@@ -2,16 +2,17 @@
  * ==============================================
  * I N D E X
  * ==============================================
- * 1) HTML Elements Initial Style - 20
- * 2) Support Classes - 97
- * 3) In-Game Elements Styling - 119
- * 4) Data Components Styling - 147
- * 5) Data UI Styling - 194
- * 6) Data Menu Styling - 336
- * 7) Inputs Styling - 370
- * 8) Positioning and Distributing Classes - 454
- * 9) CSS Fixes - 523
- * 10) Media Queries - 562
+ * 1) HTML Elements Initial Style
+ * 2) Support Classes
+ * 3) In-Game Elements Styling
+ * 4) Data Notice Styling
+ * 5) Data Components Styling
+ * 6) Data UI Styling
+ * 7) Data Menu Styling
+ * 8) Inputs Styling
+ * 9) Positioning and Distributing Classes
+ * 10) CSS Fixes
+ * 11) Media Queries
  * ==============================================
 **/
 
@@ -90,6 +91,7 @@ button {
 	outline: none;
 	color: #F7F7F7;
 	font-size: inherit;
+	cursor: pointer;
 }
 
 section div {
@@ -168,6 +170,49 @@ section div {
 	max-height: 100%;
 }
 
+
+/**
+ * ===========================
+ * Data Notice Styling
+ * ===========================
+**/
+
+[data-notice].modal {
+	display: none;
+	text-align: center;
+	z-index: 20;
+	background: rgba(0, 0, 0, 0.5);
+	width: 100vw;
+	height: 100vh;
+	position: absolute;
+}
+
+[data-notice].modal.active {
+	display: block;
+}
+
+[data-notice] button {
+	display: inline-block;
+	margin: 0 auto;
+	cursor: pointer;
+}
+
+[data-notice].modal  > div {
+	top: 50%;
+    left: 50%;
+	-webkit-transform: translate(-50%,-50%);
+	-moz-transform: translate(-50%,-50%);
+	-o-transform: translate(-50%,-50%);
+	-ms-transform: translate(-50%,-50%);
+	position: absolute;
+	padding: 2em;
+	border-radius: 4px;
+	background-color: #fff;
+}
+
+[data-notice].modal  > p {
+	font-size: 2.5vmax;
+}
 
 /**
  * ===========================

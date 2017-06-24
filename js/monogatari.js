@@ -12,10 +12,12 @@
  * 8)  Settings Event Handlers
  * 9)  Storage
  * 10) Quick Start
- * 11) Data-Action Event Handlers
- * 12) In-Game Event Handlers
- * 13) Engine Helper Functions
- * 14) Statements Functioning
+ * 11) Service Workers
+ * 12) Preload Assets
+ * 13) Data-Action Event Handlers
+ * 14) In-Game Event Handlers
+ * 15) Engine Helper Functions
+ * 16) Statements Functioning
  * ====================================
  **/
 
@@ -98,16 +100,11 @@ $_ready(function() {
 	// Play the main menu song
 	playAmbient();
 
-	// Set Electron's quit handler.
-	try {
-		window.onbeforeunload = function() {
-			if (confirm(strings[settings["Language"]]["Confirm"])) {
-				window.close();
-			}
-		}
-	} catch (e) {
-
-	}
+	// Set the quit handler.
+	window.addEventListener('beforeunload', function (event) {
+		event.preventDefault();
+		$_("[data-notice='exit']").addClass('active');
+	});
 
 	// Set the initial language translations
 	$_("[data-string]").each(function(element) {
@@ -590,11 +587,18 @@ $_ready(function() {
 				$_("[data-component='video']").removeClass("active");
 				break;
 
+			case "quit":
+				$_("[data-notice='exit']").removeClass('active');
+				endGame();
+				engine["Step"] = 0;
+				break;
+
+			case "dismiss-notice":
+				$_("[data-notice]").removeClass('active');
+				break;
+
 			case "end":
-				if (confirm(strings[settings["Language"]]["Confirm"])) {
-					endGame();
-					engine["Step"] = 0;
-				}
+				$_("[data-notice='exit']").addClass('active');
 				break;
 
 			case "distraction-free":

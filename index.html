@@ -88,12 +88,23 @@
 </head>
 
 <body>
+
+	<!-- Fallback when JavaScript is not available -->
 	<noscript>
 		<div class='middle align-center'>
 			<h2>JavaScript Disabled or not Supported.</h2>
 			<small>To play this game, please enable JavaScript executing or use a different browser.</small>
 		</div>
 	</noscript>
+
+	<!-- Notice messages -->
+	<div data-notice='exit' class='modal'>
+		<div>
+			<p data-string="Confirm">Do you want to quit</p>
+			<button data-action='quit' data-string="Quit">Quit</button>
+			<button data-action='dismiss-notice' data-string="Cancel">Cancel</button>
+		</div>
+	</div>
 
 	<!--Game Screen -->
 	<section id="game">
