@@ -653,29 +653,53 @@ $_ready(function() {
 	 **/
 
 	$_(document).keyup(function(e) {
-		switch (e.which) {
-			case 27: // escape
-				$_("#game").hide();
-				$_("[data-menu='settings']").show();
-				break;
+		if (e.target.tagName.toLowerCase() != "input") {
+			switch (e.which) {
 
-			case 32: // spacebar
-				if (canProceed()) {
+				// Escape Key
+				case 27:
+					if ($_("#game").isVisible()) {
+						$_("#game").hide();
+						$_("[data-menu='settings']").show();
+					}
+					break;
 
-					hideCentered();
-					shutUp();
-					analyseStatement(label[engine["Step"]]);
-					engine["Step"] += 1;
-				}
-				break;
+				// Spacebar and Right Arrow
+				case 32:
+				case 39:
+					if (canProceed()) {
+						hideCentered();
+						shutUp();
+						analyseStatement(label[engine["Step"]]);
+						engine["Step"] += 1;
+					}
+					break;
 
-			case 37: // left
-				previous();
-				break;
+				// Left Arrow
+				case 37:
+					previous();
+					break;
 
-			default:
-				return; // exit this handler for other keys
+				// H Key
+				case 72:
+					event.stopPropagation();
+					if ($_("[data-action='distraction-free']").hasClass("fa-eye")) {
+						$_("[data-action='distraction-free']").removeClass("fa-eye");
+						$_("[data-action='distraction-free']").addClass("fa-eye-slash");
+						$_("[data-ui='text']").hide();
+					} else if ($_("[data-action='distraction-free']").hasClass("fa-eye-slash")) {
+						$_("[data-action='distraction-free']").removeClass("fa-eye-slash");
+						$_("[data-action='distraction-free']").addClass("fa-eye")
+						$_("[data-ui='text']").show();
+					}
+					break
+
+				// Exit this handler for other keys to run normally
+				default:
+					return;
+			}
 		}
+
 		e.preventDefault();
 	});
 
