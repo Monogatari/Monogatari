@@ -100,11 +100,13 @@ $_ready(function() {
 	// Play the main menu song
 	playAmbient();
 
-	// Set the quit handler.
-	window.addEventListener('beforeunload', function (event) {
-		event.preventDefault();
-		$_("[data-notice='exit']").addClass('active');
-	});
+	// Set the electron quit handler.
+	if (window && window.process && window.process.type) {
+		window.addEventListener('beforeunload', function (event) {
+			event.preventDefault();
+			$_("[data-notice='exit']").addClass('active');
+		});
+	}
 
 	// Set the initial language translations
 	$_("[data-string]").each(function(element) {
