@@ -729,7 +729,7 @@ $_ready(function() {
 			} catch (e) {
 				console.log("An error ocurred while trying to execute the choice's action.\n" + e);
 			}
-		}	
+		}
 	});
 
 	$_("#game [data-ui='quick-menu'] *").click(function(e) {
@@ -1147,12 +1147,15 @@ $_ready(function() {
 							} else {
 								$_("[data-ui='background']").style("background", parts[1]);
 							}
+
+							$_("[data-ui='background']").removeClass();
 							// Check if an animation or class was provided
 							// scene [scene] with [animation]
 							//   0      1     2       3
 
 							if (parts.length > 2) {
 								if (parts[2] == "with" && parts[3].trim != "") {
+									$_("[data-ui='background']").addClass("animated");
 									$_("[data-ui='background']").addClass((parts.join(" ").replace("scene " + parts[1], "").replace(" with ", " ")).trim());
 								}
 							}
