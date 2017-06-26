@@ -5,19 +5,20 @@
  * 1)  Initialize Variables
  * 2)  Plugin Function Calls
  * 3)  Set Initial Settings
- * 4)  Set iOS Conditions
- * 5)  Set Save and Load Slots
- * 6)  Save and Load Functions
- * 7)  Save and Load Events
- * 8)  Settings Event Handlers
- * 9)  Storage
- * 10) Quick Start
- * 11) Service Workers
- * 12) Preload Assets
- * 13) Data-Action Event Handlers
- * 14) In-Game Event Handlers
- * 15) Engine Helper Functions
- * 16) Statements Functioning
+ * 4)  Electron Platform
+ * 5)  Set iOS Conditions
+ * 6)  Set Save and Load Slots
+ * 7)  Save and Load Functions
+ * 8)  Save and Load Events
+ * 9)  Settings Event Handlers
+ * 10)  Storage
+ * 11) Quick Start
+ * 12) Service Workers
+ * 13) Preload Assets
+ * 14) Data-Action Event Handlers
+ * 15) In-Game Event Handlers
+ * 16) Engine Helper Functions
+ * 17) Statements Functioning
  * ====================================
  **/
 
@@ -100,18 +101,76 @@ $_ready(function() {
 	// Play the main menu song
 	playAmbient();
 
-	// Set the electron quit handler.
-	if (window && window.process && window.process.type) {
-		window.addEventListener('beforeunload', function (event) {
-			event.preventDefault();
-			$_("[data-notice='exit']").addClass('active');
-		});
-	}
-
 	// Set the initial language translations
 	$_("[data-string]").each(function(element) {
 		$_(element).text(strings[settings["Language"]][$_(element).data("string")]);
 	});
+
+	/**
+	 * ======================
+	 * Electron Platform
+	 * ======================
+	 **/
+
+	function isElectron () {
+		return window && window.process && window.process.type;
+	}
+
+	// Set the electron quit handler.
+	if (isElectron()) {
+		const remote = require('electron').remote;
+		const win = remote.getCurrentWindow();
+
+		$_("[data-action='set-resolution']").value(settings["Resolution"]);
+		changeWindowResolution (settings["Resolution"]);
+		console.log(settings["Resolution"]);
+
+		window.addEventListener('beforeunload', function (event) {
+			event.preventDefault();
+			$_("[data-notice='exit']").addClass('active');
+		});
+
+		if (!win.isResizable()) {
+			$_("[data-action='set-resolution']").change(function() {
+				var size = $_("[data-action='set-resolution']").value();
+				changeWindowResolution (size);
+			});
+		} else {
+			$_("[data-settings='resolution']").hide();
+		}
+
+	} else {
+		$_("[data-platform='electron']").hide();
+	}
+
+	function changeWindowResolution (resolution) {
+		if (isElectron()) {
+			const remote = require('electron').remote;
+			const win = remote.getCurrentWindow();
+			const {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
+			if (resolution) {
+				win.setResizable(true);
+
+				if (resolution == 'fullscreen' && !win.isFullScreen() && win.isFullScreenable ()) {
+					win.setFullScreen(true);
+					settings["Resolution"] = resolution;
+					Storage.set("Settings", JSON.stringify(settings));
+				} else if (resolution.indexOf('x') > -1) {
+					win.setFullScreen(false);
+					var size = resolution.split('x');
+					var chosenWidth = parseInt(size[0]);
+					var chosenHeight = parseInt(size[1]);
+
+					if (chosenWidth <= width && chosenHeight <= height) {
+						win.setSize(chosenWidth, chosenHeight, true);
+						settings["Resolution"] = resolution;
+						Storage.set("Settings", JSON.stringify(settings));
+					}
+				}
+				win.setResizable(false);
+			}
+		}
+	}
 
 	/**
 	 * ======================
@@ -385,7 +444,7 @@ $_ready(function() {
 	$_("[data-select]").click(function() {
 		var e = document.createEvent('MouseEvents');
 		e.initMouseEvent('mousedown');
-		$_("[data-action='" + $_(this).data("select") + "']")[0].dispatchEvent(e);
+		$_("[data-action='" + $_(this).data("select") + "']").get(0).dispatchEvent(e);
 	});
 
 	/**
@@ -433,7 +492,7 @@ $_ready(function() {
 	 * ==========================
 	 **/
 
-	if (typeof engine.ServiceWorkers != 'undefined') {
+	if (typeof engine.ServiceWorkers != 'undefined' && !isElectron()) {
 		if ('serviceWorker' in navigator && engine.ServiceWorkers) {
 			navigator.serviceWorker.register('service-worker.js');
 		}

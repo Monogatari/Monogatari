@@ -485,6 +485,7 @@ textarea {
 [data-menu='settings'] select {
 	margin: 2vmax;
 	background: transparent;
+	color: inherit;
 }
 
 [data-menu="main"] {

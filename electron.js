@@ -9,8 +9,29 @@ let win;
 function createWindow() {
 	// Create the browser window.
 	win = new BrowserWindow({
+
+		// Set the minimal window size
+		minWidth: 480,
+		minHeight: 360,
+
+
+		// Set the initial window size
 		width: 800,
 		height: 600,
+
+		// If resize is disabled, the resolution chooser will show in
+		// the settings screen.
+		resizable: true,
+
+		// Other settings
+		enableLargerThanScreen: false,
+		center: true,
+
+		// Full Screen options
+		fullscrenable: true,
+		fullscreen: false,
+
+		// Set an icon for the window
 		icon: __dirname + '/img/icons/icon_128x128.png'
 	});
 

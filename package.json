@@ -1,6 +1,6 @@
 {
   "name": "Monogatari",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "main": "electron.js",
   "description": "Monogatari is a simple web visual novel engine created to bring Visual Novels to the web.",
   "repository": {
