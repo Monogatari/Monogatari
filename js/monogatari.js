@@ -244,9 +244,11 @@ $_ready(function() {
 	function loadFromSlot(slot) {
 		document.body.style.cursor = "wait";
 		playing = true;
+
+		resetGame ();
+
 		$_("section").hide();
 		$_("#game").show();
-		$_("[data-character]").remove();
 		var data = JSON.parse(Storage.get(slot));
 		engine = data["Engine"];
 		storage = data["Storage"];
@@ -582,11 +584,7 @@ $_ready(function() {
 				break;
 
 			case "close-video":
-				var video_player = document.querySelector("[data-ui='player']");
-				video_player.pause();
-				video_player.currentTime = 0;
-				video_player.setAttribute("src", "");
-				$_("[data-component='video']").removeClass("active");
+				stopVideo();
 				break;
 
 			case "quit":
@@ -772,9 +770,51 @@ $_ready(function() {
 		}
 	}
 
+	function resetGame () {
+		stopVideo();
+		silence();
+		hideGameElements();
+
+		// Reset Storage
+		storage = JSON.parse(storageStructure);
+
+		// Reset Conditions
+		engine["Label"] = "Start";
+		label = game[engine["Label"]];
+		engine["Step"] = -1;
+
+		// Reset History
+		engine.MusicHistory = [];
+		engine.SoundHistory = [];
+		engine.ImageHistory = [];
+		engine.CharacterHistory = [];
+		engine.SceneHistory = [];
+	}
+
 	function hideCentered() {
 		$_("[data-ui='centered']").remove();
 		$_("[data-ui='text']").show();
+	}
+
+	function hideGameElements () {
+		// Hide in-game elements
+		$_("[data-ui='choices']").hide();
+		$_("[data-ui='choices']").html("");
+
+		$_("[data-component='modal']").removeClass("active");
+		$_("[data-ui='messages']").removeClass("active");
+		$_("[data-component='video']").removeClass("active");
+
+		$_("[data-ui='centered']").remove();
+		$_("#game [data-character]").remove();
+		$_("#game [data-image]").remove();
+
+		$_("[data-ui='input'] [data-ui='warning']").text("");
+
+		$_("#game").style({
+			"background": "initial"
+		});
+		whipeText();
 	}
 
 	function playAmbient() {
@@ -793,6 +833,25 @@ $_ready(function() {
 			}
 			ambient_player.play();
 		}
+	}
+
+	// Stop any playing music or sound
+	function silence () {
+		for (var i = 0; i < document.getElementsByTagName("audio").length; i++) {
+			var v = document.getElementsByTagName("audio");
+			if (!v[i].paused && v[i].src != null && v[i].src != "") {
+				v[i].pause();
+				v[i].currentTime = 0;
+			}
+		}
+	}
+
+	function stopVideo () {
+		var video_player = document.querySelector("[data-ui='player']");
+		video_player.pause();
+		video_player.currentTime = 0;
+		video_player.setAttribute("src", "");
+		$_("[data-component='video']").removeClass("active");
 	}
 
 	// Stop the main menu's music
@@ -815,36 +874,11 @@ $_ready(function() {
 	// Function to end the game.
 	function endGame() {
 		playing = false;
-		// Stop any playing music
-		for (var i = 0; i < document.getElementsByTagName("audio").length; i++) {
-			var v = document.getElementsByTagName("audio");
-			if (!v[i].paused && v[i].src != null && v[i].src != "") {
-				v[i].pause();
-				v[i].currentTime = 0;
-			}
-		}
-		// Hide in-game elements
-		$_("[data-ui='choices']").hide();
-		$_("[data-ui='choices']").html("");
-		$_("[data-component='modal']").removeClass("active");
-		$_("[data-ui='messages']").removeClass("active");
-		$_("[data-ui='centered']").remove();
-		$_("#game img").hide();
-		$_("[data-ui='input'] [data-ui='warning']").text("");
-		$_("#game").style({
-			"background": "initial"
-		});
-		whipeText();
 
-		// Reset conditions
-		engine["Label"] = "Start";
-		label = game[engine["Label"]];
-		engine["Step"] = -1;
-		$_("section").hide();
+		resetGame ();
 
-		// Reset Storage
-		storage = JSON.parse(storageStructure);
 		// Show main menu
+		$_("section").hide();
 		playAmbient();
 		$_("[data-menu='main']").show();
 	}
