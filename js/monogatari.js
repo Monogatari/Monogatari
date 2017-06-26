@@ -1173,6 +1173,7 @@ $_ready(function() {
 						case "scene":
 							$_("[data-character]").remove();
 							$_("[data-image]").remove();
+							$_("[data-ui='background']").removeClass();
 
 							// scene [scene]
 							//   0      1
@@ -1182,7 +1183,6 @@ $_ready(function() {
 								$_("[data-ui='background']").style("background", parts[1]);
 							}
 
-							$_("[data-ui='background']").removeClass();
 							// Check if an animation or class was provided
 							// scene [scene] with [animation]
 							//   0      1     2       3
