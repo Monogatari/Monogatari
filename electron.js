@@ -11,13 +11,13 @@ function createWindow() {
 	win = new BrowserWindow({
 
 		// Set the minimal window size
-		minWidth: 480,
+		minWidth: 640,
 		minHeight: 360,
 
 
 		// Set the initial window size
-		width: 800,
-		height: 600,
+		width: 960,
+		height: 540,
 
 		// If resize is disabled, the resolution chooser will show in
 		// the settings screen.
