@@ -118,12 +118,11 @@ $_ready(function() {
 
 	// Set the electron quit handler.
 	if (isElectron()) {
-		const remote = require('electron').remote;
-		const win = remote.getCurrentWindow();
+		var remote = require('electron').remote;
+		var win = remote.getCurrentWindow();
+
 
 		$_("[data-action='set-resolution']").value(settings["Resolution"]);
-		changeWindowResolution (settings["Resolution"]);
-		console.log(settings["Resolution"]);
 
 		window.addEventListener('beforeunload', function (event) {
 			event.preventDefault();
@@ -131,6 +130,20 @@ $_ready(function() {
 		});
 
 		if (!win.isResizable()) {
+
+			$_("[data-action='set-resolution'] option").each(function (element) {
+				var {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
+				var value = $_(element).value();
+
+				if (value.indexOf("x")) {
+					var valueArray = value.split("x");
+					if (parseInt(valueArray[0]) > width || parseInt(valueArray[1]) > height) {
+						$_(element).remove();
+					}
+				}
+			});
+
+			changeWindowResolution (settings["Resolution"]);
 			$_("[data-action='set-resolution']").change(function() {
 				var size = $_("[data-action='set-resolution']").value();
 				changeWindowResolution (size);
@@ -145,9 +158,9 @@ $_ready(function() {
 
 	function changeWindowResolution (resolution) {
 		if (isElectron()) {
-			const remote = require('electron').remote;
-			const win = remote.getCurrentWindow();
-			const {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
+			var remote = require('electron').remote;
+			var win = remote.getCurrentWindow();
+			var {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
 			if (resolution) {
 				win.setResizable(true);
 
