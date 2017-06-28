@@ -53,7 +53,7 @@ $_ready(function() {
 	if (local_settings == null || local_settings == "") {
 		Storage.set("Settings", JSON.stringify(settings));
 	} else {
-		settings = JSON.parse(local_settings);
+		settings = Object.assign({}, settings, JSON.parse(local_settings));
 	}
 
 	// Disable the load and save slots in case Local Storage is not supported.
@@ -130,6 +130,26 @@ $_ready(function() {
 		});
 
 		if (!win.isResizable()) {
+
+			var aspectRatio = engine["AspectRatio"].split(":");
+			var aspectRatioWidth = parseInt(aspectRatio[0]);
+			var aspectRatioHeight = parseInt(aspectRatio[1]);
+			win.setResizable(true);
+			var minSize = win.getMinimumSize();
+			var maxSize = win.getMaximumSize();
+			win.setResizable(false);
+
+
+			for (var i = 0; i < 488; i+=8) {
+				var calculatedWidth = aspectRatioWidth*i;
+				var calculatedHeight = aspectRatioHeight*i;
+
+				if (calculatedWidth >= minSize[0] && calculatedHeight >= minSize[1]) {
+					$_("[data-action='set-resolution']").append(`<option value="${calculatedWidth}x${calculatedHeight}">Windowed ${calculatedWidth}x${calculatedHeight}</option>`);
+				}
+			}
+
+			$_("[data-action='set-resolution']").append(`<option value="fullscreen">Fullscreen</option>`);
 
 			$_("[data-action='set-resolution'] option").each(function (element) {
 				var {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
@@ -322,8 +342,8 @@ $_ready(function() {
 		$_("section").hide();
 		$_("#game").show();
 		var data = JSON.parse(Storage.get(slot));
-		engine = data["Engine"];
-		storage = data["Storage"];
+		engine = Object.assign({}, engine, data["Engine"]);
+		storage = Object.assign({}, JSON.parse(storageStructure), data["Storage"]);
 
 		label = game[data["Label"]];
 
