@@ -149,13 +149,13 @@ $_ready(function() {
 				}
 			}
 
-			$_("[data-action='set-resolution']").append(`<option value="fullscreen">Fullscreen</option>`);
+			$_("[data-action='set-resolution']").append(`<option value="fullscreen" data-string="FullScreen">Full Screen</option>`);
 
 			$_("[data-action='set-resolution'] option").each(function (element) {
 				var {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
 				var value = $_(element).value();
 
-				if (value.indexOf("x")) {
+				if (value.indexOf("x") > -1) {
 					var valueArray = value.split("x");
 					if (parseInt(valueArray[0]) > width || parseInt(valueArray[1]) > height) {
 						$_(element).remove();
