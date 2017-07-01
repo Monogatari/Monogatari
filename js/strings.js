@@ -7,33 +7,48 @@
 var strings = {
 
 	"English": {
+		"AdvanceHelp": "To advance through the game, press the space key or click.",
+		"Audio": "Audio",
+
 		"Back": "Back",
-		"Start": "Start",
-		"Load": "Load",
-		"Quit": "Quit",
+		"BackButton": "Back.",
+
 		"Cancel": "Cancel",
+		"Close": "Close",
+		"Confirm": "Do you want to quit?",
+
+		"FullScreen": "Full Screen",
+
+		"Help": "Help",
+		"HideButton": "Hide Text.",
+
+		"iOSAudioWarning": "Audio settings are not supported on iOS.",
+
+		"Language": "Language",
+		"Load": "Load",
+		"LoadAutoSaveSlots": "Auto Saved Games",
+		"LoadButton": "Open the Load Screen.",
 		"Loading": "Loading",
 		"LoadingMessage": "Wait while the assets are loaded.",
-		"Save": "Save",
-		"Close": "Close",
-		"Language": "Language",
-		"Settings": "Settings",
-		"Audio": "Audio",
-		"Voice": "Voice Volume",
-		"Music": "Music Volume",
-		"Sound": "Sound Volume",
-		"Help": "Help",
-		"AdvanceHelp": "To advance through the game, press the space key or click.",
-		"QuickButtons": "Quick Menu Buttons",
-		"BackButton": "Back.",
-		"HideButton": "Hide Text.",
-		"SaveButon": "Open the Save Screen.",
-		"LoadButton": "Open the Load Screen.",
-		"SettingsButton": "Open the Settings Screen.",
-		"QuitButton": "Quit Game.",
-		"Confirm": "Do you want to quit?",
 		"LoadSlots": "Saved Games",
-		"LoadAutoSaveSlots": "Auto Saved Games"
+		"LocalStorageWarning": "Local Storage is not available in this browser.",
+
+		"Music": "Music Volume",
+
+		"QuickButtons": "Quick Menu Buttons",
+		"Quit": "Quit",
+		"QuitButton": "Quit Game.",
+
+		"Save": "Save",
+		"SaveButon": "Open the Save Screen.",
+		"Settings": "Settings",
+		"SettingsButton": "Open the Settings Screen.",
+		"Sound": "Sound Volume",
+		"Start": "Start",
+
+		"Voice": "Voice Volume",
+
+		"Windowed": "Windowed"
 	},
 
 	"Español": {
