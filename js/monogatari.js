@@ -5,20 +5,21 @@
  * 1)  Initialize Variables
  * 2)  Plugin Function Calls
  * 3)  Set Initial Settings
- * 4)  Electron Platform
- * 5)  Set iOS Conditions
- * 6)  Set Save and Load Slots
- * 7)  Save and Load Functions
- * 8)  Save and Load Events
- * 9)  Settings Event Handlers
- * 10)  Storage
- * 11) Quick Start
- * 12) Service Workers
- * 13) Preload Assets
- * 14) Data-Action Event Handlers
- * 15) In-Game Event Handlers
- * 16) Engine Helper Functions
- * 17) Statements Functioning
+ * 4)  Localization
+ * 5)  Electron Platform
+ * 6)  Set iOS Conditions
+ * 7)  Set Save and Load Slots
+ * 8)  Save and Load Functions
+ * 9)  Save and Load Events
+ * 10)  Settings Event Handlers
+ * 11) Storage
+ * 12) Quick Start
+ * 13) Service Workers
+ * 14) Preload Assets
+ * 15) Data-Action Event Handlers
+ * 16) In-Game Event Handlers
+ * 17) Engine Helper Functions
+ * 18) Statements Functioning
  * ====================================
  **/
 
@@ -58,7 +59,7 @@ $_ready(function() {
 
 	// Disable the load and save slots in case Local Storage is not supported.
 	if (!window.localStorage) {
-		$_("[data-ui='slots']").html("<p>Local Storage is not Available in this Browser</p>");
+		$_("[data-ui='slots']").html(`<p>${getLocalizedString("LocalStorageWarning")}</p>`);
 	}
 
 	// Set the game language or hide the option if the game is not multilingual
@@ -101,10 +102,21 @@ $_ready(function() {
 	// Play the main menu song
 	playAmbient();
 
-	// Set the initial language translations
+	/**
+	 * ======================
+	 * Localization
+	 * ======================
+	 **/
+
+	 function getLocalizedString (string) {
+		return strings[settings["Language"]][string];
+	 }
+
+	 // Set the initial language translations
 	$_("[data-string]").each(function(element) {
-		$_(element).text(strings[settings["Language"]][$_(element).data("string")]);
+		$_(element).text(getLocalizedString($_(element).data("string")));
 	});
+
 
 	/**
 	 * ======================
@@ -145,11 +157,11 @@ $_ready(function() {
 				var calculatedHeight = aspectRatioHeight*i;
 
 				if (calculatedWidth >= minSize[0] && calculatedHeight >= minSize[1]) {
-					$_("[data-action='set-resolution']").append(`<option value="${calculatedWidth}x${calculatedHeight}">Windowed ${calculatedWidth}x${calculatedHeight}</option>`);
+					$_("[data-action='set-resolution']").append(`<option value="${calculatedWidth}x${calculatedHeight}">${getLocalizedString("Windowed")} ${calculatedWidth}x${calculatedHeight}</option>`);
 				}
 			}
 
-			$_("[data-action='set-resolution']").append(`<option value="fullscreen" data-string="FullScreen">Full Screen</option>`);
+			$_("[data-action='set-resolution']").append(`<option value="fullscreen">${getLocalizedString("FullScreen")}</option>`);
 
 			$_("[data-action='set-resolution'] option").each(function (element) {
 				var {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
@@ -213,7 +225,7 @@ $_ready(function() {
 
 	// Disable audio settings in iOS since they are not supported
 	if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-		$_("[data-settings='audio']").html("<p>Audio settings are not supported on iOS</p>");
+		$_("[data-settings='audio']").html(`<p>${getLocalizedString("iOSAudioWarning")}</p>`);
 	}
 
 	/**
@@ -1172,6 +1184,8 @@ $_ready(function() {
 	}
 
 	function analyseStatement(statement) {
+
+
 		try {
 
 			switch (typeof statement) {
@@ -1658,7 +1672,7 @@ $_ready(function() {
 						$_("[data-ui='input'] [data-ui='input-message']").text(statement["Input"]["Text"]);
 						$_("[data-ui='input']").addClass("active");
 
-						$_("[data-ui='input'] [data-action='submit']").click(function() {
+						function inputButtonListener () {
 							var inputValue = $_("[data-ui='input'] input").value();
 
 							if (statement["Input"]["Validation"](inputValue)) {
@@ -1670,7 +1684,11 @@ $_ready(function() {
 								$_("[data-ui='input'] [data-ui='warning']").text(statement["Input"]["Warning"]);
 							}
 
-						});
+							$_("[data-ui='input'] [data-action='submit']").get(0).removeEventListener("click", inputButtonListener);
+
+						}
+
+						$_("[data-ui='input'] [data-action='submit']").click(inputButtonListener);
 					}
 					break;
 			}
