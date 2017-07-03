@@ -1669,14 +1669,22 @@ $_ready(function() {
 							if (choice["Condition"] != null && choice["Condition"] != "") {
 
 								assertAsync(label[engine["Step"]]["Choice"][i]["Condition"]).then(function () {
-									$_("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "'>" + choice["Text"] + "</button>");
+									if (typeof choice["Class"] != 'undefined') {
+										$_("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "' class='" + choice["Class"] + "'>" + choice["Text"] + "</button>");
+									} else {
+										$_("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "'>" + choice["Text"] + "</button>");
+									}
 									block = false;
 								}).catch(function () {
 									block = false;
 								});
 							} else {
 								if (typeof choice == 'object') {
-									$_("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "'>" + choice["Text"] + "</button>");
+									if (typeof choice["Class"] != 'undefined') {
+										$_("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "' class='" + choice["Class"] + "'>" + choice["Text"] + "</button>");
+									} else {
+										$_("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "'>" + choice["Text"] + "</button>");
+									}
 								} else if (typeof choice == 'string') {
 									analyseStatement(choice);
 								}
