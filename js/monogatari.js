@@ -529,6 +529,8 @@ $_ready(function() {
 			analyseStatement(label[engine["Step"]]);
 			engine["Step"] += 1;
 		}
+	} else {
+		console.warn("The ShowMenu property is missing in the engine configuration.");
 	}
 
 	/**
@@ -537,10 +539,16 @@ $_ready(function() {
 	 * ==========================
 	 **/
 
-	if (typeof engine.ServiceWorkers != 'undefined' && !isElectron()) {
-		if ('serviceWorker' in navigator && engine.ServiceWorkers) {
-			navigator.serviceWorker.register('service-worker.js');
+	if (typeof engine.ServiceWorkers != 'undefined') {
+		if (!isElectron()) {
+			if ('serviceWorker' in navigator && engine.ServiceWorkers) {
+				navigator.serviceWorker.register('service-worker.js');
+			} else {
+				console.warn("Service Workers are not available in this browser or have been disabled in the engine configuration.");
+			}
 		}
+	} else {
+		console.warn("The ServiceWorkers property is missing in the engine configuration.");
 	}
 
 	/**
@@ -653,6 +661,7 @@ $_ready(function() {
 			$_("[data-menu='main']").show();
 		}
 	} else {
+		console.warn("The Preload property is missing in the engine configuration.");
 		$_("[data-menu='main']").show();
 	}
 
@@ -735,7 +744,6 @@ $_ready(function() {
 	$_("#game [data-action='back']").click(function(event) {
 		event.stopPropagation();
 		if (canProceed()) {
-
 			previous();
 		}
 	});
