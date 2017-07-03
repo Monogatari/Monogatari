@@ -457,6 +457,7 @@ textarea {
 [data-ui="particles"] {
 	width: 100vw;
 	height: 100vh;
+	position: absolute;
 }
 
 [data-ui="background"] {
