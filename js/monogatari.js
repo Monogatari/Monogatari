@@ -854,6 +854,42 @@ $_ready(function() {
 	 * =======================
 	 **/
 
+	// Assert the result of a function
+	function assertAsync (callable, args = null) {
+		block = true;
+		return new Promise (function (resolve, reject) {
+			var result = callable.apply(null, args);
+			// Check if the function returned a simple boolean
+			// if the return value is true, the game will continue
+			if (typeof result === 'boolean') {
+
+				if (result) {
+					resolve ();
+				} else {
+					reject ();
+				}
+			} else if (typeof result === 'object') {
+				// Check if the result was a promise
+				if (typeof result.then != 'undefined') {
+
+					result.then(function(value) {
+						if (typeof value === 'boolean') {
+							if (value) {
+								resolve ();
+							} else {
+								reject ();
+							}
+						}
+					});
+				} else {
+					resolve ();
+				}
+			} else {
+				reject ();
+			}
+		});
+	}
+
 	function canProceed() {
 		if (!$_("[data-ui='choices']").isVisible()
 			&& $_("#game").isVisible()
@@ -1608,28 +1644,13 @@ $_ready(function() {
 					break;
 
 				case "function":
-					var result = statement();
-					// Check if the function returned a simple boolean
-					// if the return value is true, the game will continue
-					if (typeof result === 'boolean') {
-						if (result) {
-							next();
-						}
-					} else if (typeof result === 'object') {
-						// Check if the result was a promise
-						if (typeof result.then != 'undefined') {
-							block = true;
-							result.then(function(value) {
-								if (typeof value === 'boolean') {
-									if (value) {
-										block = false;
-										analyseStatement(label[engine["Step"]]);
-										engine["Step"] += 1;
-									}
-								}
-							});
-						}
-					}
+					assertAsync(statement).then(function () {
+						block = false;
+						analyseStatement(label[engine["Step"]]);
+						engine["Step"] += 1;
+					}).catch(function() {
+						block = false;
+					});
 					break;
 
 				case "object":
@@ -1639,35 +1660,36 @@ $_ready(function() {
 							var choice = label[engine["Step"]]["Choice"][i];
 							if (choice["Condition"] != null && choice["Condition"] != "") {
 
-								if (eval(label[engine["Step"]]["Choice"][i]["Condition"])) {
+								assertAsync(label[engine["Step"]]["Choice"][i]["Condition"]).then(function () {
 									$_("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "'>" + choice["Text"] + "</button>");
-								}
-
+									block = false;
+								}).catch(function () {
+									block = false;
+								});
 							} else {
 								if (typeof choice == 'object') {
 									$_("[data-ui='choices']").append("<button data-do='" + choice["Do"] + "'>" + choice["Text"] + "</button>");
 								} else if (typeof choice == 'string') {
 									analyseStatement(choice);
 								}
-
 							}
-
-
-
 							$_("[data-ui='choices']").show();
 						}
 					} else if (statement["Conditional"] != null) {
 						var condition = statement["Conditional"];
-						if (condition["Condition"]()) {
+
+						assertAsync(condition["Condition"]).then(function () {
 							if (condition["True"].trim() == "") {
 								analyseStatement("next");
 							} else {
 								analyseStatement(condition["True"]);
 							}
-
-						} else {
+							block = false;
+						}).catch(function () {
 							analyseStatement(condition["False"]);
-						}
+							block = false;
+						});
+
 					} else if (statement["Input"] != null) {
 						$_("[data-ui='input'] [data-ui='input-message']").text(statement["Input"]["Text"]);
 						$_("[data-ui='input']").addClass("active");
@@ -1675,17 +1697,24 @@ $_ready(function() {
 						function inputButtonListener () {
 							var inputValue = $_("[data-ui='input'] input").value();
 
-							if (statement["Input"]["Validation"](inputValue)) {
-								statement["Input"]["Save"](inputValue);
-								$_("[data-ui='input']").removeClass("active");
-								$_("[data-ui='input'] [data-ui='warning']").text("");
-								$_("[data-ui='input'] input").value("");
-							} else {
+							assertAsync(statement["Input"]["Validation"], [inputValue]).then(function () {
+								assertAsync(statement["Input"]["Save"], [inputValue]).then(function () {
+									$_("[data-ui='input']").removeClass("active");
+									$_("[data-ui='input'] [data-ui='warning']").text("");
+									$_("[data-ui='input'] input").value("");
+									$_("[data-ui='input'] [data-action='submit']").get(0).removeEventListener("click", inputButtonListener);
+									block = false;
+								}).catch(function () {
+									$_("[data-ui='input']").removeClass("active");
+									$_("[data-ui='input'] [data-ui='warning']").text("");
+									$_("[data-ui='input'] input").value("");
+									$_("[data-ui='input'] [data-action='submit']").get(0).removeEventListener("click", inputButtonListener);
+									block = false;
+								});
+							}).catch(function () {
 								$_("[data-ui='input'] [data-ui='warning']").text(statement["Input"]["Warning"]);
-							}
-
-							$_("[data-ui='input'] [data-action='submit']").get(0).removeEventListener("click", inputButtonListener);
-
+								block = false;
+							});
 						}
 
 						$_("[data-ui='input'] [data-action='submit']").click(inputButtonListener);
