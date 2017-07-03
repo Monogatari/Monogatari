@@ -483,6 +483,8 @@ $_ready(function() {
 		$_("[data-string]").each(function(element) {
 			$_(element).text(strings[$_("[data-action='set-language']").value()][$_(element).data("string")]);
 		});
+
+		setSlots();
 	});
 
 	// Fix for select labels
