@@ -299,12 +299,12 @@ $_ready(function() {
 
 		// Check if there are no Saved games.
 		if ($_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html().trim() == "") {
-			$_("[data-menu='load'] [data-ui='slots']").html("<p>No saved games.</p>");
+			$_("[data-menu='load'] [data-ui='slots']").html(`<p>${getLocalizedString("NoSavedGames")}</p>`);
 		}
 
 		// Check if there are no Auto Saved games.
 		if ($_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html().trim() == "") {
-			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html("<p>No automatically saved games.</p>");
+			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html(`<p>${getLocalizedString("NoAutoSavedGames")}</p>`);
 		}
 	}
 

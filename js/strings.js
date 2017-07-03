@@ -35,6 +35,9 @@ var strings = {
 
 		"Music": "Music Volume",
 
+		"NoSavedGames": "No saved games.",
+		"NoAutoSavedGames": "No automatically saved games.",
+
 		"QuickButtons": "Quick Menu Buttons",
 		"Quit": "Quit",
 		"QuitButton": "Quit Game.",
@@ -79,6 +82,9 @@ var strings = {
 		"LocalStorageWarning": "El Almacenaje Local no está disponible en este navegador.",
 
 		"Music": "Volumen de la Música",
+
+		"NoSavedGames": "No hay juegos guardados.",
+		"NoAutoSavedGames": "No hay juegos guardados automaticamente.",
 
 		"QuickButtons": "Botones del Menú Rápido",
 		"Quit": "Salir",
@@ -125,6 +131,9 @@ var strings = {
 
 		"Music": "Volume de la Musique",
 
+		"NoSavedGames": "Pas de jeux sauvegardés.",
+		"NoAutoSavedGames": "Aucun jeu enregistré automatiquement.",
+
 		"QuickButtons": "Boutons du Menu Rapide",
 		"Quit": "Quitter",
 		"QuitButton": "Quitter le Jeu.",
@@ -169,6 +178,9 @@ var strings = {
 		"LocalStorageWarning": "このブラウザではローカルストレージは使用できません。",
 
 		"Music": "音楽の音量",
+
+		"NoSavedGames": "保存されたゲームはありません。",
+		"NoAutoSavedGames": "自動的に保存されたゲームはありません。",
 
 		"QuickButtons": "クイックメニューボタン",
 		"Quit": "終了する",
