@@ -52,92 +52,137 @@ var strings = {
 	},
 
 	"Español": {
+		"AdvanceHelp": "Para avanzar en el juego, presiona espacio o haz click.",
+		"Audio": "Audio",
+
 		"Back": "Atrás",
-		"Start": "Comenzar",
-		"Load": "Cargar",
-		"Quit": "Salir",
+		"BackButton": "Atrás.",
+
 		"Cancel": "Cancelar",
+		"Close": "Cerrar",
+		"Confirm": "¿Deseas salir?",
+
+		"FullScreen": "Pantalla Completa",
+
+		"Help": "Ayuda",
+		"HideButton": "Esconder el Texto.",
+
+		"iOSAudioWarning": "Las configuraciones de Audio no están disponibles en iOS.",
+
+		"Language": "Lenguaje",
+		"Load": "Cargar",
+		"LoadAutoSaveSlots": "Juegos Guardados Automaticamente",
+		"LoadButton": "Abrir la Pantalla de Cargar.",
 		"Loading": "Cargando",
 		"LoadingMessage": "Espere mientras se cargan los archivos.",
-		"Save": "Guardar",
-		"Close": "Cerrar",
-		"Language": "Lenguaje",
-		"Settings": "Configuración",
-		"Audio": "Audio",
-		"Voice": "Volumen de la Voz",
-		"Music": "Volumen de la Música",
-		"Sound": "Volumen de los Sonidos",
-		"Help": "Ayuda",
-		"AdvanceHelp": "Para avanzar en el juego, presiona espacio o haz click.",
-		"QuickButtons": "Botones del Menú Rápido",
-		"BackButton": "Atrás.",
-		"HideButton": "Esconder el Texto.",
-		"SaveButon": "Abrir la Pantalla de Guardar.",
-		"LoadButton": "Abrir la Pantalla de Cargar.",
-		"SettingsButton": "Abrir la Pantalla de Configuración.",
-		"QuitButton": "Salir del Juego.",
-		"Confirm": "¿Deseas salir?",
 		"LoadSlots": "Juegos Guardados",
-		"LoadAutoSaveSlots": "Juegos Guardados Automaticamente"
+		"LocalStorageWarning": "El Almacenaje Local no está disponible en este navegador.",
+
+		"Music": "Volumen de la Música",
+
+		"QuickButtons": "Botones del Menú Rápido",
+		"Quit": "Salir",
+		"QuitButton": "Salir del Juego.",
+
+		"Save": "Guardar",
+		"SaveButon": "Abrir la Pantalla de Guardar.",
+		"Settings": "Configuración",
+		"SettingsButton": "Abrir la Pantalla de Configuración.",
+		"Sound": "Volumen de los Sonidos",
+		"Start": "Comenzar",
+
+		"Voice": "Volumen de la Voz",
+
+		"Windowed": "Ventana"
 	},
 
 	"Français": {
+		"AdvanceHelp": "Pour avancer dans le jeu, appuyez sur la touche espace ou cliquez sur.",
+		"Audio": "Audio",
+
 		"Back": "Retourner",
-		"Start": "Démarrer",
-		"Load": "Charger",
-		"Quit": "Quitter",
+		"BackButton": "Retourner.",
+
 		"Cancel": "Annuler",
+		"Close": "Fermer",
+		"Confirm": "Voulez-vous vraiment quitter?",
+
+		"FullScreen": "Plein Écran",
+
+		"Help": "Aide",
+		"HideButton": "Cacher le Texte.",
+
+		"iOSAudioWarning": "Les paramètres audio ne sont pas pris en charge par iOS.",
+
+		"Language": "Langue",
+		"Load": "Charger",
+		"LoadAutoSaveSlots": "Jeux Sauvegardés Automatiquement",
+		"LoadButton": "Ouvrir l'écran de Chargement.",
 		"Loading": "Charge",
 		"LoadingMessage": "Attendez pendant que les fichiers sont chargés.",
-		"Save": "Sauvegarder",
-		"Close": "Fermer",
-		"Language": "Langue",
-		"Settings": "Préférences",
-		"Audio": "Audio",
-		"Voice": "Volume de la Voix",
-		"Music": "Volume de la Musique",
-		"Sound": "Volume des Sons",
-		"Help": "Aide",
-		"AdvanceHelp": "Pour avancer dans le jeu, appuyez sur la touche espace ou cliquez sur.",
-		"QuickButtons": "Boutons du Menu Rapide",
-		"BackButton": "Retourner.",
-		"HideButton": "Cacher le Texte.",
-		"SaveButon": "Ouvrir l'écran de Sauvegarde.",
-		"LoadButton": "Ouvrir l'écran de Chargement.",
-		"SettingsButton": "Ouvrir l'écran des Préférences.",
-		"QuitButton": "Quitter le Jeu.",
-		"Confirm": "Voulez-vous vraiment quitter?",
 		"LoadSlots": "Jeux Sauvegardés",
-		"LoadAutoSaveSlots": "Jeux Sauvegardés Automatiquement"
+		"LocalStorageWarning": "Le stockage local n'est pas disponible dans ce navigateur.",
+
+		"Music": "Volume de la Musique",
+
+		"QuickButtons": "Boutons du Menu Rapide",
+		"Quit": "Quitter",
+		"QuitButton": "Quitter le Jeu.",
+
+		"Save": "Sauvegarder",
+		"SaveButon": "Ouvrir l'écran de Sauvegarde.",
+		"Settings": "Préférences",
+		"SettingsButton": "Ouvrir l'écran des Préférences.",
+		"Sound": "Volume des Sons",
+		"Start": "Démarrer",
+
+		"Voice": "Volume de la Voix",
+
+		"Windowed": "Fenêtre"
 	},
 
 	"日本語": {
+		"AdvanceHelp": "ゲームを進めるためには、スペースキーを押すかクリックします。",
+		"Audio": "オーディオ",
+
 		"Back": "巻き戻し",
-		"Start": "スタート",
-		"Load": "ロード",
-		"Quit": "終了する",
+		"BackButton": "巻き戻し",
+
 		"Cancel": "キャンセル",
+		"Close": "閉めて",
+		"Confirm": "終了しますか？",
+
+		"FullScreen": "全画面表示",
+
+		"Help": "ヘルプ",
+		"HideButton": "テキストを隠します。",
+
+		"iOSAudioWarning": "iOSではオーディオ設定がサポートされていません。",
+
+		"Language": "言語",
+		"Load": "ロード",
+		"LoadAutoSaveSlots": "自動的に保存されたゲーム",
+		"LoadButton": "ロード画面を開きます。",
 		"Loading": "読み込み中",
 		"LoadingMessage": "ファイルがロードされるのを待ちます。",
-		"Save": "セーブ",
-		"Close": "閉めて",
-		"Language": "言語",
-		"Settings": "環境設定",
-		"Audio": "オーディオ",
-		"Voice": "ボイスの音量",
-		"Music": "音楽の音量",
-		"Sound": "効果音の音量",
-		"Help": "ヘルプ",
-		"AdvanceHelp": "ゲームを進めるためには、スペースキーを押すかクリックします。",
-		"QuickButtons": "クイックメニューボタン",
-		"BackButton": "巻き戻し",
-		"HideButton": "テキストを隠します。",
-		"SaveButon": "保存画面を開きます。",
-		"LoadButton": "ロード画面を開きます。",
-		"SettingsButton": "設定画面を開きます。.",
-		"QuitButton": "ゲームを終了します。",
-		"Confirm": "終了しますか？",
 		"LoadSlots": "保存されたゲーム",
-		"LoadAutoSaveSlots": "自動的に保存されたゲーム"
+		"LocalStorageWarning": "このブラウザではローカルストレージは使用できません。",
+
+		"Music": "音楽の音量",
+
+		"QuickButtons": "クイックメニューボタン",
+		"Quit": "終了する",
+		"QuitButton": "ゲームを終了します。",
+
+		"Save": "セーブ",
+		"SaveButon": "保存画面を開きます。",
+		"Settings": "環境設定",
+		"SettingsButton": "設定画面を開きます。",
+		"Sound": "効果音の音量",
+		"Start": "スタート",
+
+		"Voice": "ボイスの音量",
+
+		"Windowed": "窓"
 	}
 }
