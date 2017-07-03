@@ -38,12 +38,17 @@ var strings = {
 		"NoSavedGames": "No saved games.",
 		"NoAutoSavedGames": "No automatically saved games.",
 
+		"Overwrite": "Overwrite",
+
 		"QuickButtons": "Quick Menu Buttons",
 		"Quit": "Quit",
 		"QuitButton": "Quit Game.",
 
+		"Resolution": "Resolution",
+
 		"Save": "Save",
 		"SaveButon": "Open the Save Screen.",
+		"SaveInSlot": "Save in slot",
 		"Settings": "Settings",
 		"SettingsButton": "Open the Settings Screen.",
 		"Sound": "Sound Volume",
@@ -86,12 +91,17 @@ var strings = {
 		"NoSavedGames": "No hay juegos guardados.",
 		"NoAutoSavedGames": "No hay juegos guardados automaticamente.",
 
+		"Overwrite": "Sobreescribir",
+
 		"QuickButtons": "Botones del Menú Rápido",
 		"Quit": "Salir",
 		"QuitButton": "Salir del Juego.",
 
+		"Resolution": "Resolución",
+
 		"Save": "Guardar",
 		"SaveButon": "Abrir la Pantalla de Guardar.",
+		"SaveInSlot": "Guardar en ranura",
 		"Settings": "Configuración",
 		"SettingsButton": "Abrir la Pantalla de Configuración.",
 		"Sound": "Volumen de los Sonidos",
@@ -134,12 +144,17 @@ var strings = {
 		"NoSavedGames": "Pas de jeux sauvegardés.",
 		"NoAutoSavedGames": "Aucun jeu enregistré automatiquement.",
 
+		"Overwrite": "Écraser",
+
 		"QuickButtons": "Boutons du Menu Rapide",
 		"Quit": "Quitter",
 		"QuitButton": "Quitter le Jeu.",
 
+		"Resolution": "Résolution",
+
 		"Save": "Sauvegarder",
 		"SaveButon": "Ouvrir l'écran de Sauvegarde.",
+		"SaveInSlot": "Enregistrer dans la fente",
 		"Settings": "Préférences",
 		"SettingsButton": "Ouvrir l'écran des Préférences.",
 		"Sound": "Volume des Sons",
@@ -182,12 +197,17 @@ var strings = {
 		"NoSavedGames": "保存されたゲームはありません。",
 		"NoAutoSavedGames": "自動的に保存されたゲームはありません。",
 
+		"Overwrite": "上書き",
+
 		"QuickButtons": "クイックメニューボタン",
 		"Quit": "終了する",
 		"QuitButton": "ゲームを終了します。",
 
+		"Resolution": "解像度",
+
 		"Save": "セーブ",
 		"SaveButon": "保存画面を開きます。",
+		"SaveInSlot": "スロットにセーブする",
 		"Settings": "環境設定",
 		"SettingsButton": "設定画面を開きます。",
 		"Sound": "効果音の音量",

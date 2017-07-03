@@ -450,6 +450,10 @@ textarea {
 	padding: 1vmax;
 }
 
+[data-ui="slots"] figcaption small {
+	display: block;
+}
+
 [data-ui="centered"] {
 	margin: 0;
 }

@@ -263,24 +263,24 @@ $_ready(function() {
 
 			if (slot == null) {
 				Storage.set(engine["SaveLabel"] + i, "");
-				$_("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><figcaption>Save in slot " + i + "</figcaption></figure>");
+				$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><figcaption>${getLocalizedString("SaveInSlot")} #${i}</figcaption></figure>`);
 			} else if (slot != "") {
 				var data = JSON.parse(slot);
 
 				if (scenes[data["Engine"]["Scene"]] != null) {
 
-					$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"] + "' data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data["Engine"]["Scene"]] + "' alt=''><figcaption>" + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
+					$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"] + "' data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data["Engine"]["Scene"]] + "' alt=''><figcaption>" + getLocalizedString("Load") + " #" + i + "<small> " +data["Date"] + "</small></figcaption></figure>");
 
-					$_("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><img src='img/scenes/" + scenes[data["Engine"]["Scene"]] + "' alt=''><figcaption>Overwrite " + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
+					$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><img src='img/scenes/${scenes[data["Engine"]["Scene"]]}' alt=''><figcaption>${getLocalizedString("Overwrite")} #${i}<small>${data["Date"]}</small></figcaption></figure>`);
 
 				} else {
-					$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"] + "' data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
+					$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data["Label"] + "' data-load-element='" + data["Engine"]["Step"] + "' data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + getLocalizedString("Load") + " #" + i + "<small> " +data["Date"] + "</small></figcaption></figure>");
 
-					$_("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><figcaption>Overwrite " + data["Date"] + " in " + data["Label"] + "</figcaption></figure>");
+					$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><figcaption>${getLocalizedString("Overwrite")} #${i}<small>${data["Date"]}</small></figcaption></figure>`);
 				}
 
 			} else {
-				$_("[data-menu='save'] [data-ui='slots']").append("<figure data-save='" + i + "'><figcaption>Save in slot " + i + "</figcaption></figure>");
+				$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><figcaption>${getLocalizedString("SaveInSlot")} #${i}</figcaption></figure>`);
 			}
 
 			if (autoSaveSlot == null) {
@@ -330,7 +330,7 @@ $_ready(function() {
 			});
 
 			var saveData = {
-				"Date": `${day} - ${month} - ${year}`,
+				"Date": `${day}-${month}-${year}`,
 				"Engine": engine,
 				"Show": show,
 				"Label": engine["Label"],
@@ -1062,6 +1062,13 @@ $_ready(function() {
 									if (last_character != null) {
 										if (last_character.indexOf("data-character='" + parts[1] + "'") > -1) {
 											$_("#game").append(last_character);
+											if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+												if (Screen.isLandscape()) {
+													$_("[data-character]").style("height", "80%");
+												} else {
+													$_("[data-character]").style("height", "60%");
+												}
+											}
 										}
 									}
 
@@ -1380,9 +1387,9 @@ $_ready(function() {
 								$_("#game").append("<img src='img/characters/" + directory + "/" + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
 								if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 									if (Screen.isLandscape()) {
-										$_("img").style("height", "80%");
+										$_("[data-character]").style("height", "80%");
 									} else {
-										$_("img").style("height", "60%");
+										$_("[data-character]").style("height", "60%");
 									}
 								}
 								engine["CharacterHistory"].push("<img src='img/characters/" + directory + "/" + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
