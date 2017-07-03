@@ -5,12 +5,12 @@
   "description": "Monogatari is a simple web visual novel engine created to bring Visual Novels to the web.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MonogatariVN/Monogatari.git"
+    "url": "git+https://github.com/Monogatari/Monogatari.git"
   },
   "author": "Diego Islas Ocampo",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MonogatariVN/Monogatari/issues"
+    "url": "https://github.com/Monogatari/Monogatari/issues"
   },
   "homepage": "https://monogatari.io",
   "devDependencies": {
