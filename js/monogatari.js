@@ -133,8 +133,11 @@ $_ready(function() {
 		var remote = require('electron').remote;
 		var win = remote.getCurrentWindow();
 
-
-		$_("[data-action='set-resolution']").value(settings["Resolution"]);
+		if (typeof settings["Resolution"] != 'undefined') {
+			$_("[data-action='set-resolution']").value(settings["Resolution"]);
+		} else {
+			console.warn("The Resolution property is missing from the settings configuration.");
+		}
 
 		window.addEventListener('beforeunload', function (event) {
 			event.preventDefault();
@@ -142,44 +145,48 @@ $_ready(function() {
 		});
 
 		if (!win.isResizable()) {
+			if (typeof engine["AspectRatio"] != 'undefined') {
+				var aspectRatio = engine["AspectRatio"].split(":");
+				var aspectRatioWidth = parseInt(aspectRatio[0]);
+				var aspectRatioHeight = parseInt(aspectRatio[1]);
+				win.setResizable(true);
+				var minSize = win.getMinimumSize();
+				var maxSize = win.getMaximumSize();
+				win.setResizable(false);
 
-			var aspectRatio = engine["AspectRatio"].split(":");
-			var aspectRatioWidth = parseInt(aspectRatio[0]);
-			var aspectRatioHeight = parseInt(aspectRatio[1]);
-			win.setResizable(true);
-			var minSize = win.getMinimumSize();
-			var maxSize = win.getMaximumSize();
-			win.setResizable(false);
+				for (var i = 0; i < 488; i+=8) {
+					var calculatedWidth = aspectRatioWidth*i;
+					var calculatedHeight = aspectRatioHeight*i;
 
-
-			for (var i = 0; i < 488; i+=8) {
-				var calculatedWidth = aspectRatioWidth*i;
-				var calculatedHeight = aspectRatioHeight*i;
-
-				if (calculatedWidth >= minSize[0] && calculatedHeight >= minSize[1]) {
-					$_("[data-action='set-resolution']").append(`<option value="${calculatedWidth}x${calculatedHeight}">${getLocalizedString("Windowed")} ${calculatedWidth}x${calculatedHeight}</option>`);
-				}
-			}
-
-			$_("[data-action='set-resolution']").append(`<option value="fullscreen">${getLocalizedString("FullScreen")}</option>`);
-
-			$_("[data-action='set-resolution'] option").each(function (element) {
-				var {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
-				var value = $_(element).value();
-
-				if (value.indexOf("x") > -1) {
-					var valueArray = value.split("x");
-					if (parseInt(valueArray[0]) > width || parseInt(valueArray[1]) > height) {
-						$_(element).remove();
+					if (calculatedWidth >= minSize[0] && calculatedHeight >= minSize[1]) {
+						$_("[data-action='set-resolution']").append(`<option value="${calculatedWidth}x${calculatedHeight}">${getLocalizedString("Windowed")} ${calculatedWidth}x${calculatedHeight}</option>`);
 					}
 				}
-			});
 
-			changeWindowResolution (settings["Resolution"]);
-			$_("[data-action='set-resolution']").change(function() {
-				var size = $_("[data-action='set-resolution']").value();
-				changeWindowResolution (size);
-			});
+				$_("[data-action='set-resolution']").append(`<option value="fullscreen">${getLocalizedString("FullScreen")}</option>`);
+
+				$_("[data-action='set-resolution'] option").each(function (element) {
+					var {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
+					var value = $_(element).value();
+
+					if (value.indexOf("x") > -1) {
+						var valueArray = value.split("x");
+						if (parseInt(valueArray[0]) > width || parseInt(valueArray[1]) > height) {
+							$_(element).remove();
+						}
+					}
+				});
+				if (typeof settings["Resolution"] != 'undefined') {
+					changeWindowResolution (settings["Resolution"]);
+				}
+				$_("[data-action='set-resolution']").change(function() {
+					var size = $_("[data-action='set-resolution']").value();
+					changeWindowResolution (size);
+				});
+			} else {
+				$_("[data-settings='resolution']").hide();
+				console.warn("The AspectRatio property is missing in the engine configuration.");
+			}
 		} else {
 			$_("[data-settings='resolution']").hide();
 		}
