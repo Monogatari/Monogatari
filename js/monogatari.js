@@ -185,6 +185,7 @@ $_ready(function() {
 				});
 			} else {
 				$_("[data-settings='resolution']").hide();
+				win.setResizable(true);
 				console.warn("The AspectRatio property is missing in the engine configuration.");
 			}
 		} else {
