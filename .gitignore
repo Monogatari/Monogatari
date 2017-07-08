@@ -5,6 +5,7 @@
 .thumbs
 .Thumbs
 .buildconfig
+package-lock.json
 /node_modules
 /cache
 /src

@@ -1,0 +1,25 @@
+{
+    "rules": {
+		"block-closing-brace-empty-line-before": "never",
+		"block-closing-brace-newline-after": "always",
+		"declaration-block-semicolon-newline-after": "always",
+		"block-opening-brace-space-before": "always",
+		"color-hex-case": "lower",
+		"color-named": "never",
+		"color-no-invalid-hex": true,
+		"function-comma-newline-after": "never-multi-line",
+		"function-comma-space-after": "always",
+		"no-duplicate-selectors": true,
+        "no-eol-whitespace": true,
+		"indentation": "tab",
+		"number-leading-zero": "always",
+		"property-no-unknown": [ true, {
+			"ignoreProperties": [
+				"composes"
+			]
+		}],
+		"selector-list-comma-newline-after": "always",
+		"unit-case": "lower",
+		"unit-whitelist": ["em", "rem", "s", "vmax", "vmin", "vh", "vw", "%", "px"]
+    }
+}

@@ -58,7 +58,7 @@ body {
 	-o-background-size: cover;
 	background-size: cover;
 	color: rgba(0, 0, 0, 0.5);
-	background-color: #F7F7F7;
+	background-color: #f7f7f7;
 }
 
 body.light {
@@ -89,7 +89,7 @@ button {
 	-webkit-appearance: none;
 	border: none;
 	outline: none;
-	color: #F7F7F7;
+	color: #f7f7f7;
 	font-size: inherit;
 	cursor: pointer;
 }
@@ -199,11 +199,11 @@ section div {
 
 [data-notice].modal  > div {
 	top: 50%;
-    left: 50%;
-	-webkit-transform: translate(-50%,-50%);
-	-moz-transform: translate(-50%,-50%);
-	-o-transform: translate(-50%,-50%);
-	-ms-transform: translate(-50%,-50%);
+	left: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	-moz-transform: translate(-50%, -50%);
+	-o-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
 	position: absolute;
 	padding: 2em;
 	border-radius: 4px;
@@ -277,24 +277,24 @@ section div {
 	margin: 1em auto;
 	display: block;
 	border-radius: 3px;
-	box-shadow: 0 2px 3px rgba(0,0,0,0.2) inset;
+	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2) inset;
 	background: transparent;
 	width: 50vw;
 }
 
 [data-ui="load-progress"]::-webkit-progress-bar {
 	background: transparent;
-	box-shadow: 0 2px 3px rgba(0,0,0,0.2) inset;
+	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2) inset;
 	border-radius: 3px;
 }
 
 [data-ui="load-progress"]::-webkit-progress-value {
-	background-color: #F16272;
+	background-color: #f16272;
 	border-radius: 3px;
 }
 
 [data-ui="load-progress"]::-moz-progress-bar {
-	background-color: #F16272;
+	background-color: #f16272;
 	border-radius: 3px;
 }
 
@@ -682,13 +682,13 @@ input[type=range] {
 }
 
 ::-webkit-scrollbar {
-    background: transparent;
+	background: transparent;
 	width: 5px;
 	height: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
+	background: rgba(0, 0, 0, 0.2);
 	border-radius: 3px;
 }
 

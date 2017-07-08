@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en" itemscope itemtype="http://schema.org/WebPage"> <!--Change the lang property to your web's language-->
+<html lang="en" itemscope itemtype="http://schema.org/WebPage"> <!--Change the lang property to your web"s language-->
 
 <head prefix="og: http://ogp.me/ns#">
 
@@ -24,9 +24,9 @@
 	<meta itemprop="description" content=""> <!--Page Description-->
 	<meta itemprop="image" content="http://"> <!--URL of Image to show-->
 
-	<!--Twitter Meta Tags - You'll have to validate your website here: https://dev.twitter.com/docs/cards/validation/validator-->
+	<!--Twitter Meta Tags - You"ll have to validate your website here: https://dev.twitter.com/docs/cards/validation/validator-->
 	<meta name="twitter:card" content="summary_large_image"> <!--Content Card Type-->
-	<meta name="twitter:domain" content=""> <!--Your web's domain-->
+	<meta name="twitter:domain" content=""> <!--Your web"s domain-->
 	<meta name="twitter:site" content="@"> <!--@publisher-->
 	<meta name="twitter:title" content=""> <!--Page Title-->
 	<meta name="twitter:description" content=""> <!--Page description less than 200 characters-->
@@ -59,7 +59,7 @@
 	<meta name="msapplication-wide310x150logo" content="img/icons/icon_310x150.png" /> <!--Image for Tile 310x150-->
 	<meta name="msapplication-square310x310logo" content="img/icons/icon_310x310.png" /> <!--Image for Tile 310x310-->
 
-	<link rel="publisher" href=""> <!--Publisher's Google+ URL-->
+	<link rel="publisher" href=""> <!--Publisher"s Google+ URL-->
 
 	<meta name="theme-color" content=""><!--Theme color for browsers in hexadecimal format.-->
 
@@ -78,7 +78,6 @@
 	<script src="js/jquery.min.js"></script>
 	<script src="js/particles.min.js"></script>
 	<script src="js/artemis.min.js"></script>
-	<script src="js/plugins.js"></script>
 	<script src="js/strings.js"></script>
 	<script src="js/options.js"></script>
 	<script src="js/script.js"></script>
@@ -91,25 +90,25 @@
 
 	<!-- Fallback when JavaScript is not available -->
 	<noscript>
-		<div class='middle align-center'>
+		<div class="middle align-center">
 			<h2>JavaScript Disabled or not Supported.</h2>
 			<small>To play this game, please enable JavaScript executing or use a different browser.</small>
 		</div>
 	</noscript>
 
 	<!-- Notice messages -->
-	<div data-notice='exit' class='modal'>
+	<div data-notice="exit" class="modal">
 		<div>
 			<p data-string="Confirm">Do you want to quit</p>
-			<button data-action='quit' data-string="Quit">Quit</button>
-			<button data-action='dismiss-notice' data-string="Cancel">Cancel</button>
+			<button data-action="quit" data-string="Quit">Quit</button>
+			<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
 		</div>
 	</div>
 
 	<!--Game Screen -->
 	<section id="game">
 		<div id="particles-js" data-ui="particles"></div>
-		<div id="background" data-ui='background'></div>
+		<div id="background" data-ui="background"></div>
 		<div>
 			<audio type="audio/mpeg" data-component="music"></audio>
 			<audio type="audio/mpeg" data-component="voice"></audio>
@@ -127,7 +126,7 @@
 			</div>
 			<div data-component="modal" data-ui="input" class="middle">
 				<p data-ui="input-message" class="block"></p>
-				<input type="text"></input>
+				<input type="text">
 				<small data-ui="warning" class="block"></small>
 				<div>
 					<button data-action="submit">Ok</button>
@@ -147,7 +146,7 @@
 
 		</div>
 		<div data-ui="text">
-			<img data-ui="face">
+			<img data-ui="face" alt="">
 			<span data-ui="who"></span>
 			<p data-ui="say"></p>
 		</div>
@@ -159,7 +158,7 @@
 
 		<div class="middle">
 			<h2 data-string="Loading">Loading</h2>
-			<progress data-ui='load-progress' value="0" max="100"></progress>
+			<progress data-ui="load-progress" value="0" max="100"></progress>
 			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
 		</div>
 	</section>
@@ -227,10 +226,10 @@
 
 		</div>
 
-		<div data-settings='resolution' data-platform='electron'>
-			<h3 data-string='Resolution'>Resolution</h3>
+		<div data-settings="resolution" data-platform="electron">
+			<h3 data-string="Resolution">Resolution</h3>
 			<div class="horizontal">
-				<select data-action='set-resolution'></select>
+				<select data-action="set-resolution"></select>
 				<span class="fa fa-unsorted" data-select="set-resolution"></span>
 			</div>
 		</div>
@@ -246,12 +245,12 @@
 		<div class="align-left padded">
 			<p data-string="AdvanceHelp">To advance through the game, click anywhere on the game screen or press the space key.</p>
 			<h3 data-string="QuickButtons">Quick Menu Buttons</h3>
-			<p><span class='fa fa-arrow-left'></span> <span data-string="BackButton">Back.</span></p>
-			<p><span class='fa fa-eye'></span> <span data-string="HideButton">Hide Text.</span></p>
-			<p><span class='fa fa-save'></span> <span data-string="SaveButon">Open the Save Screen.</span></p>
-			<p><span class='fa fa-undo'></span> <span data-string="LoadButton">Open the Load Screen.</span></p>
-			<p><span class='fa fa-gear'></span> <span data-string="SettingsButton">Open the Settings Screen.</span></p>
-			<p><span class='fa fa-times-circle-o'></span> <span data-string="QuitButton">Quit Game.</span></p>
+			<p><span class="fa fa-arrow-left"></span> <span data-string="BackButton">Back.</span></p>
+			<p><span class="fa fa-eye"></span> <span data-string="HideButton">Hide Text.</span></p>
+			<p><span class="fa fa-save"></span> <span data-string="SaveButon">Open the Save Screen.</span></p>
+			<p><span class="fa fa-undo"></span> <span data-string="LoadButton">Open the Load Screen.</span></p>
+			<p><span class="fa fa-gear"></span> <span data-string="SettingsButton">Open the Settings Screen.</span></p>
+			<p><span class="fa fa-times-circle-o"></span> <span data-string="QuitButton">Quit Game.</span></p>
 		</div>
 
 		<div class="horizontal align-center bottom animated bounceIn" data-ui="inner-menu">

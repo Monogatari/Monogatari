@@ -1,3 +1,19 @@
+"use strict";
+
+/* exported messages */
+/* exported notifications */
+/* exported particles */
+/* exported music */
+/* exported voice */
+/* exported sound */
+/* exported videos */
+/* exported images */
+/* exported scenes */
+/* exported characters */
+/* exported script */
+
+/* global storage */
+
 // Define the messages used in the game.
 var messages = {
 	"Help": {
@@ -5,7 +21,7 @@ var messages = {
 		"Subtitle": "Some useful Links",
 		"Message": "<p><a href='http://monogatari.hyuchia.com/documentation/'>Documentation</a> - Everything you need to know.</p><p><a href='http://monogatari.hyuchia.com/demo/'>Demo</a> - A simple Demo.</p>"
 	}
-}
+};
 
 // Define the notifications used in the game
 var notifications = {
@@ -14,42 +30,42 @@ var notifications = {
 		body: "This is the Monogatari VN Engine",
 		icon: ""
 	}
-}
+};
 
 // Define the Particles JS Configurations used in the game
 var particles = {
 
-}
+};
 
 // Define the music used in the game.
 var music = {
 
-}
+};
 
 // Define the voice files used in the game.
 var voice = {
 
-}
+};
 
 // Define the sounds used in the game.
 var sound = {
 
-}
+};
 
 // Define the videos used in the game.
 var videos = {
 
-}
+};
 
 // Define the images used in the game.
 var images = {
 
-}
+};
 
 // Define the backgrounds for each scene.
 var scenes = {
 
-}
+};
 
 // Define the Characters
 var characters = {
@@ -57,18 +73,19 @@ var characters = {
 		"Name": "Hikaru",
 		"Color": "#5bcaff"
 	}
-}
+};
 
 var script = {
 	// The game starts here.
 	"Start": [
 		"notify Welcome",
-		{"Input": {
+		{
+			"Input": {
 				"Text": "What is your name?",
-				"Validation": function(input) {
+				"Validation": function (input) {
 					return input.trim().length > 0;
 				},
-				"Save": function(input) {
+				"Save": function (input) {
 					storage.player.Name = input;
 				},
 				"Warning": "You must enter a name!"
@@ -77,7 +94,8 @@ var script = {
 
 		"h Hi {{player.Name}} Welcome to Monogatari!",
 
-		{"Choice": {
+		{
+			"Choice": {
 				"Dialog": "h Have you already read some documentation?",
 				"Yes": {
 					"Text": "Yes",
@@ -109,4 +127,4 @@ var script = {
 		"h I can't wait to see what story you'll tell!",
 		"end"
 	]
-}
+};

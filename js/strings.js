@@ -4,6 +4,10 @@
  * ============================================================
  **/
 
+"use strict";
+
+/* exported strings */
+
 var strings = {
 
 	"English": {
@@ -217,4 +221,4 @@ var strings = {
 
 		"Windowed": "窓"
 	}
-}
+};

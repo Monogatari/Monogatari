@@ -1,8 +1,16 @@
-// Engine Settings.
+/**
+ * =======================================
+ * Engine Settings
+ *
+ * Do not modify the ones marked with a *
+ * Unless you know what you are doing
+ * =======================================
+ **/
 
-// Do not modify the ones marked with a *
-
-// Unless you know what you are doing
+"use strict";
+/* exported engine */
+/* exported storage */
+/* exported settings */
 
 var engine = {
 
@@ -16,9 +24,6 @@ var engine = {
 	"Song": "",
 	"Sound": "",
 	"Scene": "",
-
-	// Javascript saved from the $ command *.
-	"JS": "",
 
 	// Current Statement *.
 	"Step": 0,
@@ -55,7 +60,7 @@ var engine = {
 	// The Aspect Ratio your background images are on. This has no effect on
 	// web deployed novels.
 	"AspectRatio": "16:9"
-}
+};
 
 // Initial Settings
 var settings = {
@@ -73,11 +78,11 @@ var settings = {
 	// Initial resolution used for Electron, it must match the settings inside
 	// the electron.js file. This has no effect on web deployed novels.
 	"Resolution": "800x600"
-}
+};
 
 // Persistent Storage Variable
 var storage = {
 	player: {
-		Name: ""
+		name: ""
 	}
-}
+};
