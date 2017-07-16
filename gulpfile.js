@@ -1,62 +1,67 @@
-const gulp = require('gulp');
-const prettify = require('gulp-jsbeautifier');
-const imagemin = require('gulp-imagemin');
-const packageJson = require('./package.json');
-const zip = require('gulp-zip');
-const cssnano = require('gulp-cssnano');
-const download = require("gulp-download-stream");
-const runSequence = require('run-sequence');
 
-gulp.task('default', () => {
+/* global require */
+
+"use strict";
+
+const gulp = require("gulp");
+const prettify = require("gulp-jsbeautifier");
+const imagemin = require("gulp-imagemin");
+const packageJson = require("./package.json");
+const zip = require("gulp-zip");
+const cssnano = require("gulp-cssnano");
+const download = require("gulp-download-stream");
+const runSequence = require("run-sequence");
+
+gulp.task("default", () => {
 	// place code for your default task here
 });
 
-gulp.task('prettify', () => {
-	gulp.src(['./style/*.css', '!style/*.min.css'])
+gulp.task("prettify", () => {
+	gulp.src(["./style/*.css", "!style/*.min.css"])
 		.pipe(prettify({
 			indent_level: 4,
-			indent_char: '\t',
+			indent_char: "\t",
 			indent_size: 1
 		}))
-		.pipe(gulp.dest('./style/'));
+		.pipe(gulp.dest("./style/"));
 
-	gulp.src(['./*.html', './*.js'])
+	gulp.src(["./*.html", "./*.js"])
 		.pipe(prettify({
 			indent_level: 4,
-			indent_char: '\t',
+			indent_char: "\t",
 			indent_size: 1
 		}))
-		.pipe(gulp.dest('./'))
+		.pipe(gulp.dest("./"));
 
-	gulp.src(['./js/*.js', '!js/*.min.js'])
+	gulp.src(["./js/*.js", "!js/*.min.js"])
 		.pipe(prettify({
 			indent_level: 4,
-			indent_char: '\t',
+			indent_char: "\t",
 			indent_size: 1
 		}))
-		.pipe(gulp.dest('./js/'))
+		.pipe(gulp.dest("./js/"));
 });
 
-gulp.task('optimize', () => {
-	gulp.src(['./img/**/*.jpg', './img/**/*.jpeg', './img/**/*.png', './img/**/*.gif', './img/**/*.svg'])
+gulp.task("optimize", () => {
+	gulp.src(["./img/**/*.jpg", "./img/**/*.jpeg", "./img/**/*.png", "./img/**/*.gif", "./img/**/*.svg"])
 		.pipe(imagemin())
-		.pipe(gulp.dest(function(file) {
+		.pipe(gulp.dest(function (file) {
 			return file.base;
-		}))
+		}));
 });
 
-gulp.task('release', () => {
-	return gulp.src(['./**', '!./**/.DS_Store', '!./**/.thumbs', '!./**/.gitignore', '!./**/.editorconfig',
-			'!./**/.buildconfig', '!.git/**', '!node_modules/**', '!build/**', '!.git', '!node_modules', '!build'
-		], {
-			dot: true
-		})
-		.pipe(zip('Monogatari-v' + packageJson.version + '.zip'))
-		.pipe(gulp.dest('dist'));
+gulp.task("release", () => {
+	return gulp.src(["./**", "!./**/.DS_Store", "!./**/.thumbs", "!./**/.gitignore", "!./**/.editorconfig",
+		"!./**/.buildconfig", "!.git/**", "!node_modules/**", "!build/**", "!.git", "!node_modules", "!build"
+	], {
+		dot: true
+	})
+		.pipe(zip("Monogatari-v" + packageJson.version + ".zip"))
+		.pipe(gulp.dest("dist"));
 });
 
 // Update Dependencies
-gulp.task('download-deps', () => {
+gulp.task("download-deps", () => {
 
 	// Artemis JS
 	download("https://raw.githubusercontent.com/AegisFramework/Artemis/master/dist/artemis.min.js").pipe(gulp.dest("js/"));
@@ -116,17 +121,17 @@ gulp.task('download-deps', () => {
 	download("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/fonts/fontawesome-webfont.svg").pipe(gulp.dest("fonts/"));
 });
 
-gulp.task('minify-deps', () => {
-	gulp.src('style/animate.min.css')
+gulp.task("minify-deps", () => {
+	gulp.src("style/animate.min.css")
 		.pipe(cssnano())
 		.pipe(gulp.dest("style/"));
 
-	gulp.src('style/normalize.min.css')
+	gulp.src("style/normalize.min.css")
 		.pipe(cssnano())
 		.pipe(gulp.dest("style/"));
 });
 
-gulp.task('download-monogatari', () => {
+gulp.task("download-monogatari", () => {
 
 	// Monogatari CSS
 	download("https://raw.githubusercontent.com/Hyuchia/Monogatari/master/style/monogatari.css").pipe(gulp.dest("style/"));
@@ -135,6 +140,6 @@ gulp.task('download-monogatari', () => {
 	download("https://raw.githubusercontent.com/Hyuchia/Monogatari/master/js/monogatari.js").pipe(gulp.dest("js/"));
 });
 
-gulp.task('update', () => {
-	runSequence(['download-deps', 'download-monogatari']);
+gulp.task("update", () => {
+	runSequence(["download-deps", "download-monogatari"]);
 });
