@@ -41,6 +41,7 @@
 /* global particles */
 /* global require */
 /* global particlesJS */
+/* global Typed */
 /* global scenes */
 /* global script */
 /* global settings */
@@ -52,11 +53,26 @@
 
 var label;
 var game;
+var textObject;
 var playing = false;
 var block = false;
 const storageStructure = JSON.stringify(storage);
 
 $_ready(function () {
+
+	/**
+	 * ======================
+	 * Library Settings
+	 * ======================
+	 **/
+
+	var typedConfiguration = {
+		strings: [],
+		typeSpeed: engine.TextSpeed,
+		fadeOut: true,
+		loop: false,
+		showCursor: false
+	};
 
 	/**
 	 * ======================
@@ -88,6 +104,10 @@ $_ready(function () {
 	// Disable the load and save slots in case Local Storage is not supported.
 	if (!window.localStorage) {
 		$_("[data-ui='slots']").html(`<p>${getLocalizedString("LocalStorageWarning")}</p>`);
+	}
+
+	if (typeof Typed == "undefined") {
+		console.error ("Typed library not found, dialogs will not be shown.");
 	}
 
 	// Set the game language or hide the option if the game is not multilingual
@@ -890,6 +910,14 @@ $_ready(function () {
 	 * =======================
 	 **/
 
+	function displayDialog (dialog) {
+		if (typeof textObject != "undefined") {
+			textObject.destroy ();
+		}
+		typedConfiguration.strings = [dialog];
+		textObject = new Typed ("[data-ui='say']", typedConfiguration);
+	}
+
 	// Assert the result of a function
 	function assertAsync (callable, args = null) {
 		block = true;
@@ -1634,7 +1662,7 @@ $_ready(function () {
 									$_("[data-ui='who']").html(characters[character[0]].Name);
 									$_("[data-character='" + character[0] + "']").addClass("focus");
 									$_("[data-ui='who']").style("color", characters[character[0]].Color);
-									document.querySelector("[data-ui='say']").innerHTML = statement.replace(parts[0] + " ", "");
+									displayDialog (statement.replace(parts[0] + " ", ""));
 									if (typeof characters[character[0]].Side != "undefined") {
 										if (typeof characters[character[0]].Side[character[1]] != "undefined" && characters[character[0]].Side[character[1]] != "") {
 											directory = characters[character[0]].Directory;
@@ -1655,7 +1683,7 @@ $_ready(function () {
 								$_("[data-ui='who']").html(characters[parts[0]].Name);
 								$_("[data-character='" + parts[0] + "']").addClass("focus");
 								$_("[data-ui='who']").style("color", characters[parts[0]].Color);
-								document.querySelector("[data-ui='say']").innerHTML = statement.replace(parts[0] + " ", "");
+								displayDialog (statement.replace(parts[0] + " ", ""));
 								if (typeof characters[parts[0]].Face != "undefined" && characters[parts[0]].Face != "") {
 									directory = characters[parts[0]].Directory;
 									if (typeof directory == "undefined") {
@@ -1670,7 +1698,7 @@ $_ready(function () {
 								// The narrator is speaking
 								$_("[data-ui='face']").hide();
 								document.querySelector("[data-ui='who']").innerHTML = "";
-								document.querySelector("[data-ui='say']").innerHTML = statement;
+								displayDialog (statement);
 							}
 							break;
 					}

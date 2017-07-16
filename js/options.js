@@ -59,7 +59,10 @@ var engine = {
 
 	// The Aspect Ratio your background images are on. This has no effect on
 	// web deployed novels.
-	"AspectRatio": "16:9"
+	"AspectRatio": "16:9",
+
+	// Speed at which dialog text will appear
+	"TextSpeed": 20
 };
 
 // Initial Settings
