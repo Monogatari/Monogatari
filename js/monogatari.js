@@ -640,7 +640,7 @@ $_ready(function () {
 
 					if (typeof characters[i].Side != "undefined") {
 						assetCount += Object.keys(characters[i].Side).length;
-						for(var k in characters[i].Side){
+						for (var k in characters[i].Side) {
 							preloadPromises.push(preloadImage("img/characters/" + directory + characters[i].Side[k]));
 						}
 					}
@@ -1015,7 +1015,7 @@ $_ready(function () {
 	function silence () {
 		for (var i = 0; i < document.getElementsByTagName("audio").length; i++) {
 			var v = document.getElementsByTagName("audio");
-			if (!v[i].paused && v[i].src != null && v[i].src != "") {
+			if (!v[i].paused && typeof v[i].src != "undefined" && v[i].src != "") {
 				v[i].pause();
 				v[i].currentTime = 0;
 			}
@@ -1041,7 +1041,7 @@ $_ready(function () {
 	// Stop the voice player
 	function shutUp () {
 		var voicePlayer = document.querySelector("[data-component='voice']");
-		if (!voicePlayer.paused && voicePlayer.src != null && voicePlayer.src != "") {
+		if (!voicePlayer.paused && typeof voicePlayer.src != "undefined" && voicePlayer.src != "") {
 			voicePlayer.pause();
 			voicePlayer.currentTime = 0;
 		}
@@ -1080,14 +1080,14 @@ $_ready(function () {
 						var parts = replaceVariables(label[engine.Step]).split(" ");
 						switch (parts[0]) {
 							case "show":
-								if (characters[parts[1]] != null) {
+								if (typeof characters[parts[1]] != "undefined") {
 									$_("[data-character='" + parts[1] + "']").remove();
 									if (engine.CharacterHistory.length > 1) {
 										engine.CharacterHistory.pop();
 									}
 
 									var last_character = engine.CharacterHistory.slice(-1)[0];
-									if (last_character != null) {
+									if (typeof last_character != "undefined") {
 										if (last_character.indexOf("data-character='" + parts[1] + "'") > -1) {
 											$_("#game").append(last_character);
 											if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -1101,7 +1101,7 @@ $_ready(function () {
 									}
 
 								} else {
-									if (parts[3] != null && parts[3] != "") {
+									if (typeof parts[3] != "undefined" && parts[3] != "") {
 										$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
 									} else {
 										$_("[data-image='" + parts[1] + "']").remove();
@@ -1135,7 +1135,7 @@ $_ready(function () {
 										musicPlayer.removeAttribute("loop");
 									}
 									if (typeof music !== "undefined") {
-										if (music[last_song[2]] != null) {
+										if (typeof music[last_song[2]] != "undefined") {
 											musicPlayer.setAttribute("src", "audio/music/" + music[last_song[2]]);
 										} else {
 											musicPlayer.setAttribute("src", "audio/music/" + last_song[2]);
@@ -1155,7 +1155,7 @@ $_ready(function () {
 									}
 
 									if (typeof sound !== "undefined") {
-										if (sound[last[2]] != null) {
+										if (typeof sound[last[2]] != "undefined") {
 											soundPlayer.setAttribute("src", "audio/sound/" + sound[last[2]]);
 										} else {
 											soundPlayer.setAttribute("src", "audio/sound/" + last[2]);
@@ -1177,7 +1177,7 @@ $_ready(function () {
 									$_("[data-character]").remove();
 									$_("[data-image]").remove();
 
-									if (scenes[parts[1]] != null) {
+									if (typeof scenes[parts[1]] != "undefined") {
 										$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[engine.Scene] + ") center / cover no-repeat");
 									} else {
 										$_("[data-ui='background']").style("background", engine.Scene);
@@ -1196,10 +1196,10 @@ $_ready(function () {
 								}
 								break;
 							case "hide":
-								if (characters[parts[1]] != null && engine.CharacterHistory.length > 0) {
+								if (typeof characters[parts[1]] != "undefined" && engine.CharacterHistory.length > 0) {
 									$_("#game").append(engine.CharacterHistory.pop());
 
-								} else if (images[parts[1]] != null && engine.ImageHistory > 0) {
+								} else if (typeof images[parts[1]] != "undefined" && engine.ImageHistory > 0) {
 									$_("#game").append(engine.ImageHistory.pop());
 
 								} else {
@@ -1242,7 +1242,7 @@ $_ready(function () {
 
 	function replaceVariables (statement) {
 		var matches = statement.match(/{{\S+}}/g);
-		if (matches != null) {
+		if (matches !== null) {
 			for (var i = 0; i < matches.length; i++) {
 				var path = matches[i].replace("{{", "").replace("}}", "").split(".");
 				var data = storage[path[0]];
@@ -1279,7 +1279,7 @@ $_ready(function () {
 								}
 
 								if (typeof music !== "undefined") {
-									if (music[parts[2]] != null) {
+									if (typeof music[parts[2]] != "undefined") {
 										musicPlayer.setAttribute("src", "audio/music/" + music[parts[2]]);
 									} else {
 										musicPlayer.setAttribute("src", "audio/music/" + parts[2]);
@@ -1300,7 +1300,7 @@ $_ready(function () {
 								}
 
 								if (typeof sound !== "undefined") {
-									if (sound[parts[2]] != null) {
+									if (typeof sound[parts[2]] != "undefined") {
 										soundPlayer.setAttribute("src", "audio/sound/" + sound[parts[2]]);
 									} else {
 										soundPlayer.setAttribute("src", "audio/sound/" + parts[2]);
@@ -1317,7 +1317,7 @@ $_ready(function () {
 								var voicePlayer = document.querySelector("[data-component='voice']");
 
 								if (typeof voice !== "undefined") {
-									if (voice[parts[2]] != null) {
+									if (typeof voice[parts[2]] != "undefined") {
 										voicePlayer.setAttribute("src", "audio/voice/" + voice[parts[2]]);
 									} else {
 										voicePlayer.setAttribute("src", "audio/voice/" + parts[2]);
@@ -1332,7 +1332,7 @@ $_ready(function () {
 
 
 								if (typeof videos !== "undefined") {
-									if (videos[parts[2]] != null) {
+									if (typeof videos[parts[2]] != "undefined") {
 										videoPlayer.setAttribute("src", "video/" + videos[parts[2]]);
 									} else {
 										videoPlayer.setAttribute("src", "video/" + parts[2]);
@@ -1354,7 +1354,7 @@ $_ready(function () {
 
 							// scene [scene]
 							//   0      1
-							if (scenes[parts[1]] != null) {
+							if (typeof scenes[parts[1]] != "undefined") {
 								$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[parts[1]] + ") center / cover no-repeat");
 							} else {
 								$_("[data-ui='background']").style("background", parts[1]);
@@ -1386,9 +1386,9 @@ $_ready(function () {
 							// show [character] [expression]
 							//   0      1             2
 							var classes = "";
-							if (characters[parts[1]] != null) {
+							if (typeof characters[parts[1]] != "undefined") {
 								var directory = characters[parts[1]].Directory;
-								if (directory == null) {
+								if (typeof directory == "undefined") {
 									directory = "";
 								}
 								var image = characters[parts[1]].Images[parts[2]];
@@ -1398,7 +1398,7 @@ $_ready(function () {
 									parts[3] == parts[4];
 								}
 
-								if (parts[3] == "with" || parts[3] == null) {
+								if (parts[3] == "with" || typeof parts[3] == "undefined") {
 									parts[3] = "center";
 								}
 
@@ -1429,12 +1429,12 @@ $_ready(function () {
 									parts[2] == parts[3];
 								}
 
-								if (parts[2] == "with" || parts[2] == null) {
+								if (parts[2] == "with" || typeof parts[2] == "undefined") {
 									parts[2] = "center";
 								}
 
 								var src = "";
-								if (images[parts[1]] != null) {
+								if (typeof images[parts[1]] != "undefined") {
 									src = images[parts[1]];
 								} else {
 									src = parts[1];
@@ -1487,22 +1487,22 @@ $_ready(function () {
 							break;
 
 						case "hide":
-							if (characters[parts[1]] != null) {
-								if (parts[3] != null && parts[3] != "") {
+							if (typeof characters[parts[1]] != "undefined") {
+								if (typeof parts[3] != "undefined" && parts[3] != "") {
 									$_("[data-character='" + parts[1] + "']").addClass(parts[3]);
 								} else {
 									$_("[data-character='" + parts[1] + "']").remove();
 								}
 
-							} else if (images[parts[1]] != null) {
-								if (parts[3] != null && parts[3] != "") {
+							} else if (typeof images[parts[1]] != "undefined") {
+								if (typeof parts[3] != "undefined" && parts[3] != "") {
 									$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
 								} else {
 									$_("[data-image='" + parts[1] + "']").remove();
 								}
 
 							} else {
-								if (parts[3] != null && parts[3] != "") {
+								if (typeof parts[3] != "undefined" && parts[3] != "") {
 									$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
 								} else {
 									$_("[data-image='" + parts[1] + "']").remove();
@@ -1630,15 +1630,15 @@ $_ready(function () {
 							var directory;
 							$_("[data-character]").removeClass("focus");
 							if (character.length > 1 && typeof characters[character[0]] !== "undefined") {
-								if(characters[character[0]] != null) {
+								if (typeof characters[character[0]] != "undefined") {
 									$_("[data-ui='who']").html(characters[character[0]].Name);
 									$_("[data-character='" + character[0] + "']").addClass("focus");
 									$_("[data-ui='who']").style("color", characters[character[0]].Color);
 									document.querySelector("[data-ui='say']").innerHTML = statement.replace(parts[0] + " ", "");
-									if (characters[character[0]].Side != null) {
-										if (characters[character[0]].Side[character[1]] != null && characters[character[0]].Side[character[1]] != "") {
+									if (typeof characters[character[0]].Side != "undefined") {
+										if (typeof characters[character[0]].Side[character[1]] != "undefined" && characters[character[0]].Side[character[1]] != "") {
 											directory = characters[character[0]].Directory;
-											if (directory == null) {
+											if (typeof directory == "undefined") {
 												directory = "";
 											}
 											$_("[data-ui='face']").attribute("src", "img/characters/" + directory + "/" + characters[character[0]].Side[character[1]]);
@@ -1651,14 +1651,14 @@ $_ready(function () {
 									}
 
 								}
-							} else if (characters[parts[0]] != null) {
+							} else if (typeof characters[parts[0]] != "undefined") {
 								$_("[data-ui='who']").html(characters[parts[0]].Name);
 								$_("[data-character='" + parts[0] + "']").addClass("focus");
 								$_("[data-ui='who']").style("color", characters[parts[0]].Color);
 								document.querySelector("[data-ui='say']").innerHTML = statement.replace(parts[0] + " ", "");
-								if (characters[parts[0]].Face != null && characters[parts[0]].Face != "") {
+								if (typeof characters[parts[0]].Face != "undefined" && characters[parts[0]].Face != "") {
 									directory = characters[parts[0]].Directory;
-									if (directory == null) {
+									if (typeof directory == "undefined") {
 										directory = "";
 									}
 									$_("[data-ui='face']").attribute("src", "img/characters/" + directory + "/" + characters[parts[0]].Face);
@@ -1687,11 +1687,11 @@ $_ready(function () {
 					break;
 
 				case "object":
-					if (statement.Choice != null) {
+					if (typeof statement.Choice != "undefined") {
 						$_("[data-ui='choices']").html("");
 						for (var i in statement.Choice) {
 							var choice = label[engine.Step].Choice[i];
-							if (choice.Condition != null && choice.Condition != "") {
+							if (typeof choice.Condition != "undefined" && choice.Condition != "") {
 
 								assertAsync(label[engine.Step].Choice[i].Condition).then(function () {
 									if (typeof choice.Class != "undefined") {
@@ -1716,7 +1716,7 @@ $_ready(function () {
 							}
 							$_("[data-ui='choices']").show();
 						}
-					} else if (statement.Conditional != null) {
+					} else if (typeof statement.Conditional != "undefined") {
 						var condition = statement.Conditional;
 
 						assertAsync(condition.Condition).then(function () {
@@ -1731,7 +1731,7 @@ $_ready(function () {
 							block = false;
 						});
 
-					} else if (statement.Input != null) {
+					} else if (typeof statement.Input != "undefined") {
 						$_("[data-ui='input'] [data-ui='input-message']").text(statement.Input.Text);
 						$_("[data-ui='input']").addClass("active");
 
