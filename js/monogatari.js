@@ -312,7 +312,7 @@ $_ready(function () {
 			var slot = Storage.get(engine.SaveLabel + i);
 			var autoSaveSlot = Storage.get(engine.AutoSaveLabel + i);
 
-			if (typeof slot === "undefined") {
+			if (slot === null) {
 				Storage.set(engine.SaveLabel + i, "");
 				$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><figcaption>${getLocalizedString("SaveInSlot")} #${i}</figcaption></figure>`);
 			} else if (slot != "") {
@@ -334,7 +334,7 @@ $_ready(function () {
 				$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><figcaption>${getLocalizedString("SaveInSlot")} #${i}</figcaption></figure>`);
 			}
 
-			if (typeof autoSaveSlot === "undefined") {
+			if (autoSaveSlot === null) {
 				Storage.set(engine.AutoSaveLabel + i, "");
 			} else if (autoSaveSlot != "") {
 				var data = JSON.parse(autoSaveSlot);
