@@ -28,7 +28,7 @@ var files = [
 	"js/particles.min.js",
 	"js/jquery.min.js",
 	"js/artemis.min.js",
-	"js/plugins.js",
+	"js/typed.min.js",
 	// js/monogatari.js",
 	// js/strings.js",
 	// js/options.js",
