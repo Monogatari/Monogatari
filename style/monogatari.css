@@ -16,7 +16,6 @@
  * ==============================================
 **/
 
-
 /**
  * ===========================
  * HTML Elements Initial Style
@@ -25,20 +24,17 @@
 
 html {
 	width: auto;
-	overflow-x: hidden;
 	height: 100vh;
 	width: 100vw;
 }
 
 h1,
 h2 {
-	margin: 0;
 	padding: 0.03em;
 	font-size: 7vmax;
 }
 
 h3 {
-	margin: 0;
 	padding: 0.03em;
 }
 
@@ -48,11 +44,8 @@ body {
 	width: 100vw;
 	max-height: 100vh;
 	max-width: 100vw;
-	overflow-x: hidden;
 	font-size: 2vmax;
 	text-align: center;
-	margin: 0;
-	padding: 0;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
@@ -70,34 +63,16 @@ li {
 	display: inline-block;
 }
 
-a {
-	text-decoration: none;
-	color: inherit;
-}
-
-select {
-	-webkit-appearance: none;
-	border: none;
-	outline: none;
-	font-size: inherit;
-}
-
 button {
 	width: 15vmax;
 	height: 5vmax;
 	background: rgba(0, 0, 0, 0.5);
-	-webkit-appearance: none;
-	border: none;
-	outline: none;
 	color: #f7f7f7;
-	font-size: inherit;
-	cursor: pointer;
 }
 
 section div {
 	width: 100vw;
 }
-
 
 /**
  * ===========================
@@ -118,14 +93,9 @@ section div {
 	cursor: wait;
 }
 
-.padded {
-	padding: 2vmax;
-}
-
 .block {
 	display: block;
 }
-
 
 /**
  * ===========================
@@ -144,14 +114,6 @@ section div {
 
 #game img {
 	position: absolute;
-	-moz-user-select: none;
-	-webkit-user-drag: none;
-	-ms-user-select: none;
-	pointer-events: none;
-	-khtml-user-select: none;
-	-o-user-select: none;
-	-webkit-user-select: none;
-	user-select: none;
 	max-height: 90%;
 }
 
@@ -170,47 +132,27 @@ section div {
 	max-height: 100%;
 }
 
-
 /**
  * ===========================
  * Data Notice Styling
  * ===========================
 **/
 
-[data-notice].modal {
-	display: none;
-	text-align: center;
-	z-index: 20;
-	background: rgba(0, 0, 0, 0.5);
+.modal {
 	width: 100vw;
 	height: 100vh;
-	position: absolute;
 }
 
-[data-notice].modal.active {
-	display: block;
-}
-
-[data-notice] button {
+.modal button {
 	display: inline-block;
 	margin: 0 auto;
-	cursor: pointer;
 }
 
-[data-notice].modal  > div {
-	top: 50%;
-	left: 50%;
-	-webkit-transform: translate(-50%, -50%);
-	-moz-transform: translate(-50%, -50%);
-	-o-transform: translate(-50%, -50%);
-	-ms-transform: translate(-50%, -50%);
-	position: absolute;
-	padding: 2em;
+.modal  > div {
 	border-radius: 4px;
-	background-color: #fff;
 }
 
-[data-notice].modal  > p {
+.modal  > p {
 	font-size: 2.5vmax;
 }
 
@@ -225,11 +167,9 @@ section div {
 }
 
 [data-component="modal"] {
-	position: relative;
 	height: auto;
 	max-height: 70vh;
 	width: 80vw;
-	top: 100%;
 	margin: 0 auto;
 	background: #fff;
 	z-index: 15;
@@ -261,7 +201,6 @@ section div {
 [data-component="video"].active {
 	display: block;
 }
-
 
 /**
  * ===========================
@@ -317,10 +256,7 @@ section div {
 textarea {
 	padding: 1vmin;
 	background: #eee;
-	outline: none;
-	border: none;
 	min-width: 50%;
-	font-size: inherit;
 }
 
 [data-ui="player"] {
@@ -345,7 +281,6 @@ textarea {
 	width: auto;
 	height: auto;
 	color: rgb(255, 255, 255);
-	cursor: pointer;
 }
 
 [data-ui="face"] {
@@ -469,7 +404,6 @@ textarea {
 	height: 100vh;
 }
 
-
 /**
  * ===========================
  * Data Menu Styling
@@ -490,7 +424,6 @@ textarea {
 [data-menu='settings'] select {
 	margin: 2vmax;
 	background: transparent;
-	color: inherit;
 }
 
 [data-menu="main"] {
@@ -505,93 +438,44 @@ textarea {
 	margin: 2vmin;
 }
 
-[data-menu] button:hover {
-	cursor: pointer;
-}
-
-
 /**
  * ====================================
  * Inputs Styling
  * ====================================
 **/
 
-input[type=range]::-webkit-slider-runnable-track {
-	cursor: pointer;
-	background: rgba(0, 0, 0, 0.5);
-}
-
-input[type=range]:focus::-webkit-slider-runnable-track {
-	background: rgba(0, 0, 0, 0.5);
-}
-
-input[type=range]::-moz-range-track {
-	cursor: pointer;
-	background: rgba(0, 0, 0, 0.5);
-}
-
-input[type=range]::-ms-fill-lower {
-	cursor: pointer;
-	background: rgba(0, 0, 0, 0.5);
-}
-
-input[type=range]:focus::-ms-fill-lower {
-	cursor: pointer;
-	background: rgba(0, 0, 0, 0.5);
-}
-
-input[type=range]::-ms-fill-upper {
-	cursor: pointer;
-	background: rgba(0, 0, 0, 0.5);
-}
-
-input[type=range]:focus::-ms-fill-upper {
-	cursor: pointer;
-	background: rgba(0, 0, 0, 0.5);
-}
-
-input[type=range].light::-webkit-slider-runnable-track {
-	cursor: pointer;
-	background: rgba(255, 255, 255, 0.5);
-}
-
 input[type=range].light:focus::-webkit-slider-runnable-track {
 	background: rgba(255, 255, 255, 0.5);
 }
 
-input[type=range].light::-moz-range-track {
-	cursor: pointer;
-	background: rgba(255, 255, 255, 0.5);
-}
-
-input[type=range].light::-ms-fill-lower {
-	cursor: pointer;
-	background: rgba(255, 255, 255, 0.5);
-}
-
-input[type=range].light:focus::-ms-fill-lower {
-	cursor: pointer;
-	background: rgba(255, 255, 255, 0.5);
-}
-
-input[type=range].light::-ms-fill-upper {
-	cursor: pointer;
+input[type=range].light::-webkit-slider-runnable-track {
 	background: rgba(255, 255, 255, 0.5);
 }
 
 input[type=range].light:focus::-ms-fill-upper {
-	cursor: pointer;
+	background: rgba(255, 255, 255, 0.5);
+}
+
+input[type=range].light:focus::-ms-fill-lower {
+	background: rgba(255, 255, 255, 0.5);
+}
+
+input[type=range].light::-moz-range-track {
+	background: rgba(255, 255, 255, 0.5);
+}
+
+input[type=range].light::-ms-fill-lower {
+	background: rgba(255, 255, 255, 0.5);
+}
+
+input[type=range].light::-ms-fill-upper {
 	background: rgba(255, 255, 255, 0.5);
 }
 
 input[type=range] {
-	-webkit-appearance: none;
 	width: 30%;
-	background: transparent;
-	outline: none;
 	height: 2vmin;
 }
-
 
 /**
  * ====================================
@@ -599,128 +483,9 @@ input[type=range] {
  * ====================================
 **/
 
-.vertical * {
-	display: block;
-}
-
-.horizontal * {
-	display: inline-block;
-}
-
-.bottom {
-	position: absolute;
-	bottom: 0;
-	margin: 0;
-}
-
 #game [data-image].bottom {
 	top: auto;
 }
-
-.middle {
-	top: 50%;
-	left: 50%;
-	-webkit-transform: translate(-50%, -50%);
-	-moz-transform: translate(-50%, -50%);
-	-o-transform: translate(-50%, -50%);
-	-ms-transform: translate(-50%, -50%);
-	position: absolute;
-}
-
-.center {
-	margin: 0 auto;
-	left: 0;
-	right: 0;
-}
-
-.left {
-	left: 0;
-}
-
-.right {
-	right: 0;
-}
-
-.align-center {
-	text-align: center;
-}
-
-.align-left {
-	text-align: left;
-}
-
-.align-right {
-	text-align: right;
-}
-
-.vertical.align-center * {
-	margin-left: auto;
-	margin-right: auto;
-}
-
-.vertical.align-left * {
-	margin-right: auto;
-}
-
-.vertical.align-right * {
-	margin-left: auto;
-}
-
-
-/**
- * ================
- * CSS Fixes
- * ===============
-**/
-
-*,
-*:before,
-*:after {
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-}
-
-::-webkit-scrollbar {
-	background: transparent;
-	width: 5px;
-	height: 5px;
-}
-
-::-webkit-scrollbar-thumb {
-	background: rgba(0, 0, 0, 0.2);
-	border-radius: 3px;
-}
-
-.container {
-	margin: 0 auto;
-	max-width: 60rem;
-	/*48rem*/
-	width: 95%;
-}
-
-.clearfix:before,
-.clearfix:after {
-	content: " ";
-	display: table;
-}
-
-.clearfix:after {
-	clear: both;
-}
-
-.clearfix {
-	*zoom: 1;
-}
-
-::selection {
-	background: transparent;
-}
-
-::-moz-selection {
-	background: transparent;
-}
-
 
 /**
  * ====================================
@@ -732,15 +497,18 @@ input[type=range] {
 	body {
 		font-size: 3vmax !important;
 	}
+
 	[data-component="modal"] {
 		font-size: 3vmax !important;
 	}
+
 	button {
 		width: auto;
 		font-size: 4vmax !important;
 		height: auto;
 		padding: 1vmax;
 	}
+
 	[data-ui="quick-menu"] span {
 		font-size: 5vmax;
 	}

@@ -68,15 +68,16 @@
 
 	<link rel="manifest" href="manifest.json">
 
-	<link rel="stylesheet" href="style/normalize.min.css">
 	<link rel="stylesheet" href="style/animate.min.css">
 	<link rel="stylesheet" href="style/csshake.min.css">
 	<link rel="stylesheet" href="style/font-awesome.min.css">
+	<link rel="stylesheet" href="style/kayros.min.css">
 	<link rel="stylesheet" href="style/monogatari.css">
 	<link rel="stylesheet" href="style/main.css">
 
 	<script src="js/jquery.min.js"></script>
 	<script src="js/particles.min.js"></script>
+	<script src="js/animatelo.min.js"></script>
 	<script src="js/typed.min.js"></script>
 	<script src="js/artemis.min.js"></script>
 	<script src="js/strings.js"></script>
@@ -204,7 +205,7 @@
 	<!-- Settings Screen -->
 	<section data-menu="settings" data-background="" class="vertical align-center">
 		<h2 data-string="Settings">Settings</h2>
-		<div data-settings="audio">
+		<div data-settings="audio" class="vertical align-center">
 			<h3 data-string="Audio">Audio</h3>
 			<span data-string="Music">Music Volume:</span>
 			<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="music">
@@ -243,7 +244,7 @@
 	<!--Help Screen -->
 	<section data-menu="help" data-background="">
 		<h2 data-string="Help">Help</h2>
-		<div class="align-left padded">
+		<div class="align-left padded-2">
 			<p data-string="AdvanceHelp">To advance through the game, click anywhere on the game screen or press the space key.</p>
 			<h3 data-string="QuickButtons">Quick Menu Buttons</h3>
 			<p><span class="fa fa-arrow-left"></span> <span data-string="BackButton">Back.</span></p>

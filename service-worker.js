@@ -10,40 +10,52 @@ var version = "0.1.0";
 var files = [
 
 	// General Files
-	"/",
 	"manifest.json",
 
 	// HTML Files
 	// "index.html",
 
-	// CSS Files
-	"style/animate.min.css",
-	"style/csshake.min.css",
+	// Style Sheets
 	"style/font-awesome.min.css",
-	"style/normalize.min.css",
-	// "style/monogatari.css",
+	"style/kayros.css",
+	"style/csshake.min.css",
+	"style/monogatari.css",
 	// "style/main.css",
 
 	// JavaScript Files
 	"js/particles.min.js",
+	"js/animatelo.min.js",
 	"js/jquery.min.js",
 	"js/artemis.min.js",
 	"js/typed.min.js",
-	// js/monogatari.js",
-	// js/strings.js",
-	// js/options.js",
-	// js/script.js",
+	"js/monogatari.js",
+	"js/strings.js",
+	// "js/options.js",
+	// "js/script.js",
 
 	// Fonts
-	"fonts/FontAwesome.otf",
 	"fonts/fontawesome-webfont.eot",
 	"fonts/fontawesome-webfont.svg",
 	"fonts/fontawesome-webfont.ttf",
 	"fonts/fontawesome-webfont.woff",
 	"fonts/fontawesome-webfont.woff2",
+	"fonts/FontAwesome.otf",
 
 	// App Images
 	"img/favicon.ico",
+	"img/icons/icon_48x48.png",
+	"img/icons/icon_60x60.png",
+	"img/icons/icon_70x70.png",
+	"img/icons/icon_76x76.png",
+	"img/icons/icon_96x96.png",
+	"img/icons/icon_128x128.png",
+	"img/icons/icon_150x150.png",
+	"img/icons/icon_152x152.png",
+	"img/icons/icon_167x167.png",
+	"img/icons/icon_180x180.png",
+	"img/icons/icon_192x192.png",
+	"img/icons/icon_310x310.png",
+	"img/icons/icon_512x512.png"
 
 	// Scene Images
 	//"img/scenes/",

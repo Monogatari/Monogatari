@@ -77,17 +77,17 @@ gulp.task("download-deps", () => {
 
 	// Animate CSS
 	download({
-		file: "animate.min.css",
-		url: "https://raw.githubusercontent.com/daneden/animate.css/master/animate.css"
-	}).pipe(gulp.dest("style/"));
+		file: "animatelo.min.js",
+		url: "https://raw.githubusercontent.com/gibbok/animatelo/master/dist/animatelo.min.js"
+	}).pipe(gulp.dest("js/"));
 
 	// CSS Shake
 	download("https://raw.githubusercontent.com/elrumordelaluz/csshake/master/dist/csshake.min.css").pipe(gulp.dest("style/"));
 
-	// Normalize CSS
+	// Kayros
 	download({
-		file: "normalize.min.css",
-		url: "https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css"
+		file: "kayros.min.css",
+		url: "https://raw.githubusercontent.com/AegisFramework/Kayros/master/dist/kayros.min.css"
 	}).pipe(gulp.dest("style/"));
 
 	// Font Awesome
@@ -121,15 +121,6 @@ gulp.task("download-deps", () => {
 	download("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/fonts/fontawesome-webfont.svg").pipe(gulp.dest("fonts/"));
 });
 
-gulp.task("minify-deps", () => {
-	gulp.src("style/animate.min.css")
-		.pipe(cssnano())
-		.pipe(gulp.dest("style/"));
-
-	gulp.src("style/normalize.min.css")
-		.pipe(cssnano())
-		.pipe(gulp.dest("style/"));
-});
 
 gulp.task("download-monogatari", () => {
 
