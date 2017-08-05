@@ -59,10 +59,7 @@ var engine = {
 
 	// The Aspect Ratio your background images are on. This has no effect on
 	// web deployed novels.
-	"AspectRatio": "16:9",
-
-	// Speed at which dialog text will appear
-	"TextSpeed": 20
+	"AspectRatio": "16:9"
 };
 
 // Initial Settings
@@ -80,7 +77,13 @@ var settings = {
 
 	// Initial resolution used for Electron, it must match the settings inside
 	// the electron.js file. This has no effect on web deployed novels.
-	"Resolution": "800x600"
+	"Resolution": "800x600",
+
+	// Speed at which dialog text will appear
+	"TextSpeed": 20,
+
+	// Speed at which dialog text will appear
+	"AutoPlaySpeed": 5
 };
 
 // Persistent Storage Variable

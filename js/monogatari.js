@@ -56,23 +56,67 @@ var game;
 var textObject;
 var playing = false;
 var block = false;
+var autoPlay = null;
 const storageStructure = JSON.stringify(storage);
 
 $_ready(function () {
 
 	/**
 	 * ======================
-	 * Library Settings
+	 * Fixer functions
 	 * ======================
 	 **/
 
-	var typedConfiguration = {
-		strings: [],
-		typeSpeed: engine.TextSpeed,
-		fadeOut: true,
-		loop: false,
-		showCursor: false
-	};
+	function fixOptions () {
+		fixSettings ();
+		fixEngine ();
+	}
+
+	// Fill missing settings properties with the engine's defaults
+	function fixSettings () {
+		if (typeof settings.Resolution !== "string") {
+			console.warn ("The 'Resolution' property is missing in the settings object, using default fallback.");
+			settings.Resolution = "800x600";
+		}
+
+		if (typeof settings.TextSpeed !== "number") {
+			console.warn ("The 'TextSpeed' property is missing in the settings object, using default fallback.");
+			settings.TextSpeed = 20;
+		}
+
+		if (typeof settings.AutoPlaySpeed !== "number") {
+			console.warn ("The 'AutoPlaySpeed' property is missing in the settings object, using default fallback.");
+			settings.AutoPlaySpeed = 5;
+		}
+
+		Storage.set("Settings", JSON.stringify(settings));
+	}
+
+	function fixEngine () {
+
+		if (typeof engine.ShowMenu !== "boolean") {
+			console.warn ("The 'ShowMenu' property is missing in the engine object, using default fallback.");
+			engine.ShowMenu = true;
+		}
+
+		if (typeof engine.Preload !== "boolean") {
+			console.warn ("The 'Preload' property is missing in the engine object, using default fallback.");
+			engine.Preload = true;
+		}
+
+		if (typeof engine.AutoSave !== "number") {
+			console.warn ("The 'AutoSave' property is missing in the engine object, using default fallback.");
+			engine.AutoSave = 0;
+		}
+
+		if (typeof engine.ServiceWorkers !== "boolean") {
+			engine.ServiceWorkers = true;
+		}
+
+		if (typeof engine.AspectRatio !== "string") {
+			engine.AspectRatio = "16:9";
+		}
+	}
 
 	/**
 	 * ======================
@@ -85,6 +129,8 @@ $_ready(function () {
 	const soundPlayer = document.querySelector("[data-component='sound']");
 	const videoPlayer = document.querySelector("[data-ui='player']");
 	const voicePlayer = document.querySelector("[data-component='voice']");
+
+	const maxTextSpeed = parseInt($_("[data-action='set-text-speed']").property ("max"));
 
 	/**
 	 * ======================
@@ -100,6 +146,8 @@ $_ready(function () {
 	} else {
 		settings = Object.assign({}, settings, JSON.parse(local_settings));
 	}
+
+	fixOptions ();
 
 	// Disable the load and save slots in case Local Storage is not supported.
 	if (!window.localStorage) {
@@ -137,6 +185,9 @@ $_ready(function () {
 	document.querySelector("[data-target='voice']").value = settings.Volume.Voice;
 	document.querySelector("[data-target='sound']").value = settings.Volume.Sound;
 
+	document.querySelector("[data-action='set-text-speed']").value = settings.TextSpeed;
+	document.querySelector("[data-action='set-auto-play-speed']").value = settings.AutoPlaySpeed;
+
 	// Set all the dynamic backgrounds of the data-background property
 	$_("[data-background]").each(function (element) {
 		if ($_(element).data("background").indexOf(".") > -1) {
@@ -149,6 +200,20 @@ $_ready(function () {
 
 	// Play the main menu song
 	playAmbient();
+
+	/**
+	 * ======================
+	 * Library Settings
+	 * ======================
+	 **/
+
+	var typedConfiguration = {
+		strings: [],
+		typeSpeed: settings.TextSpeed,
+		fadeOut: true,
+		loop: false,
+		showCursor: false
+	};
 
 	/**
 	 * ======================
@@ -187,11 +252,7 @@ $_ready(function () {
 			console.warn ("jQuery could not be loaded.");
 		}
 
-		if (typeof settings.Resolution != "undefined") {
-			$_("[data-action='set-resolution']").value(settings.Resolution);
-		} else {
-			console.warn("The Resolution property is missing from the settings configuration.");
-		}
+		$_("[data-action='set-resolution']").value(settings.Resolution);
 
 		window.addEventListener("beforeunload", function (event) {
 			event.preventDefault();
@@ -229,7 +290,6 @@ $_ready(function () {
 			} else {
 				$_("[data-settings='resolution']").hide();
 				win.setResizable(true);
-				console.warn("The AspectRatio property is missing in the engine configuration.");
 			}
 		} else {
 			$_("[data-settings='resolution']").hide();
@@ -406,6 +466,7 @@ $_ready(function () {
 		$_("#game").show();
 		var data = JSON.parse(Storage.get(slot));
 		engine = Object.assign({}, engine, data.Engine);
+		fixEngine ();
 		storage = Object.assign({}, JSON.parse(storageStructure), data.Storage);
 
 		label = game[data.Label];
@@ -519,6 +580,30 @@ $_ready(function () {
 		Storage.set("Settings", JSON.stringify(settings));
 	});
 
+	$_("[data-action='set-text-speed']").on("change mouseover", function () {
+		var value =  maxTextSpeed - parseInt($_(this).value());
+		typedConfiguration.typeSpeed = value;
+		settings.TextSpeed = value;
+		Storage.set("Settings", JSON.stringify(settings));
+	});
+
+	$_("[data-action='set-auto-play-speed']").on("change mouseover", function () {
+		var value = parseInt($_(this).value());
+		if (autoPlay !== null) {
+			clearInterval (autoPlay);
+			autoPlay = setInterval (function () {
+				if (canProceed()) {
+					hideCentered();
+					shutUp();
+					analyseStatement(label[engine.Step]);
+					engine.Step += 1;
+				}
+			}, settings.AutoPlaySpeed * 1000);
+		}
+		settings.AutoPlaySpeed = value;
+		Storage.set("Settings", JSON.stringify(settings));
+	});
+
 	// Language select listener
 	$_("[data-action='set-language']").change(function () {
 		settings.Language = $_("[data-action='set-language']").value();
@@ -568,17 +653,13 @@ $_ready(function () {
 	 **/
 
 	// Start game automatically withouth going trough the main menu
-	if (typeof engine.ShowMenu != "undefined") {
-		if (!engine.ShowMenu) {
-			stopAmbient();
-			playing = true;
-			$_("section").hide();
-			$_("#game").show();
-			analyseStatement(label[engine.Step]);
-			engine.Step += 1;
-		}
-	} else {
-		console.warn("The ShowMenu property is missing in the engine configuration.");
+	if (!engine.ShowMenu) {
+		stopAmbient();
+		playing = true;
+		$_("section").hide();
+		$_("#game").show();
+		analyseStatement(label[engine.Step]);
+		engine.Step += 1;
 	}
 
 	/**
@@ -587,20 +668,16 @@ $_ready(function () {
 	 * ==========================
 	 **/
 
-	if (typeof engine.ServiceWorkers != "undefined") {
-		if (!isElectron()) {
-			if ("serviceWorker" in navigator && engine.ServiceWorkers) {
-				if (location.protocol.indexOf ("http") > -1) {
-					navigator.serviceWorker.register("service-worker.js");
-				} else {
-					console.warn ("Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/");
-				}
+	if (!isElectron()) {
+		if ("serviceWorker" in navigator && engine.ServiceWorkers) {
+			if (location.protocol.indexOf ("http") > -1) {
+				navigator.serviceWorker.register("service-worker.js");
 			} else {
-				console.warn("Service Workers are not available in this browser or have been disabled in the engine configuration.");
+				console.warn ("Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/");
 			}
+		} else {
+			console.warn("Service Workers are not available in this browser or have been disabled in the engine configuration.");
 		}
-	} else {
-		console.warn("The ServiceWorkers property is missing in the engine configuration.");
 	}
 
 	/**
@@ -635,85 +712,80 @@ $_ready(function () {
 
 	var preloadPromises = [];
 	var assetCount = 0;
-	if (typeof engine.Preload != "undefined") {
-		if (engine.Preload) {
-			// Show loading screen
-			$_("[data-menu='loading']").show();
+	if (engine.Preload) {
+		// Show loading screen
+		$_("[data-menu='loading']").show();
 
-			// Start by loading the image assets
-			if (typeof scenes == "object") {
-				assetCount += Object.keys(scenes).length;
-				for (var i in scenes) {
-					preloadPromises.push(preloadImage("img/scenes/" + scenes[i]));
-				}
+		// Start by loading the image assets
+		if (typeof scenes == "object") {
+			assetCount += Object.keys(scenes).length;
+			for (var i in scenes) {
+				preloadPromises.push(preloadImage("img/scenes/" + scenes[i]));
 			}
-
-			if (typeof characters == "object") {
-				for (var i in characters) {
-					var directory = "";
-					if (typeof characters[i].Directory != "undefined") {
-						directory = characters[i].Directory + "/";
-					}
-
-					if (typeof characters[i].Images != "undefined") {
-						assetCount += Object.keys(characters[i].Images).length;
-						for (var j in characters[i].Images) {
-							preloadPromises.push(preloadImage("img/characters/" + directory + characters[i].Images[j]));
-						}
-					}
-
-					if (typeof characters[i].Side != "undefined") {
-						assetCount += Object.keys(characters[i].Side).length;
-						for (var k in characters[i].Side) {
-							preloadPromises.push(preloadImage("img/characters/" + directory + characters[i].Side[k]));
-						}
-					}
-				}
-			}
-
-			if (typeof images == "object") {
-				assetCount += Object.keys(images).length;
-				for (var i in images) {
-					preloadPromises.push(preloadImage("img/" + images[i]));
-				}
-			}
-
-			// Load the audio assets
-			if (typeof music == "object") {
-				assetCount += Object.keys(music).length;
-				for (var i in music) {
-					preloadPromises.push(preloadAudio("audio/music/" + music[i]));
-				}
-			}
-
-			if (typeof voice == "object") {
-				assetCount += Object.keys(voice).length;
-				for (var i in voice) {
-					preloadPromises.push(preloadAudio("audio/music/voice" + voice[i]));
-				}
-			}
-
-			if (typeof sound == "object") {
-				assetCount += Object.keys(sound).length;
-				for (var i in sound) {
-					preloadPromises.push(preloadAudio("audio/sound/" + sound[i]));
-				}
-			}
-
-			$_("[data-ui='load-progress']").attribute("max", assetCount);
-			Promise.all(preloadPromises).then(function () {
-				$_("[data-menu='loading']").fadeOut(400, function () {
-					$_("[data-menu='loading']").hide();
-				});
-				$_("[data-menu='main']").show();
-
-			});
-
-		} else {
-			$_("[data-menu='main']").show();
 		}
+
+		if (typeof characters == "object") {
+			for (var i in characters) {
+				var directory = "";
+				if (typeof characters[i].Directory != "undefined") {
+					directory = characters[i].Directory + "/";
+				}
+
+				if (typeof characters[i].Images != "undefined") {
+					assetCount += Object.keys(characters[i].Images).length;
+					for (var j in characters[i].Images) {
+						preloadPromises.push(preloadImage("img/characters/" + directory + characters[i].Images[j]));
+					}
+				}
+
+				if (typeof characters[i].Side != "undefined") {
+					assetCount += Object.keys(characters[i].Side).length;
+					for (var k in characters[i].Side) {
+						preloadPromises.push(preloadImage("img/characters/" + directory + characters[i].Side[k]));
+					}
+				}
+			}
+		}
+
+		if (typeof images == "object") {
+			assetCount += Object.keys(images).length;
+			for (var i in images) {
+				preloadPromises.push(preloadImage("img/" + images[i]));
+			}
+		}
+
+		// Load the audio assets
+		if (typeof music == "object") {
+			assetCount += Object.keys(music).length;
+			for (var i in music) {
+				preloadPromises.push(preloadAudio("audio/music/" + music[i]));
+			}
+		}
+
+		if (typeof voice == "object") {
+			assetCount += Object.keys(voice).length;
+			for (var i in voice) {
+				preloadPromises.push(preloadAudio("audio/music/voice" + voice[i]));
+			}
+		}
+
+		if (typeof sound == "object") {
+			assetCount += Object.keys(sound).length;
+			for (var i in sound) {
+				preloadPromises.push(preloadAudio("audio/sound/" + sound[i]));
+			}
+		}
+
+		$_("[data-ui='load-progress']").attribute("max", assetCount);
+		Promise.all(preloadPromises).then(function () {
+			$_("[data-menu='loading']").fadeOut(400, function () {
+				$_("[data-menu='loading']").hide();
+			});
+			$_("[data-menu='main']").show();
+
+		});
+
 	} else {
-		console.warn("The Preload property is missing in the engine configuration.");
 		$_("[data-menu='main']").show();
 	}
 
@@ -776,6 +848,27 @@ $_ready(function () {
 					$_(this).removeClass("fa-eye-slash");
 					$_(this).addClass("fa-eye");
 					$_("[data-ui='text']").show();
+				}
+				break;
+
+			case "auto-play":
+				event.stopPropagation();
+				if ($_(this).hasClass("fa-play-circle")) {
+					$_(this).removeClass("fa-play-circle");
+					$_(this).addClass("fa-stop-circle");
+					autoPlay = setInterval (function () {
+						if (canProceed()) {
+							hideCentered();
+							shutUp();
+							analyseStatement(label[engine.Step]);
+							engine.Step += 1;
+						}
+					}, settings.AutoPlaySpeed * 1000);
+				} else if ($_(this).hasClass("fa-stop-circle")) {
+					$_(this).removeClass("fa-stop-circle");
+					$_(this).addClass("fa-play-circle");
+					clearInterval (autoPlay);
+					autoPlay = null;
 				}
 				break;
 
@@ -982,6 +1075,12 @@ $_ready(function () {
 		stopVideo();
 		silence();
 		hideGameElements();
+
+		clearInterval (autoPlay);
+		autoPlay = null;
+
+		$_("[data-action='auto-play']").removeClass("fa-stop-circle");
+		$_("[data-action='auto-play']").addClass("fa-play-circle");
 
 		// Reset Storage
 		storage = JSON.parse(storageStructure);

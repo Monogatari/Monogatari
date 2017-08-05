@@ -68,7 +68,6 @@
 
 	<link rel="manifest" href="manifest.json">
 
-	<link rel="stylesheet" href="style/animate.min.css">
 	<link rel="stylesheet" href="style/csshake.min.css">
 	<link rel="stylesheet" href="style/font-awesome.min.css">
 	<link rel="stylesheet" href="style/kayros.min.css">
@@ -139,6 +138,7 @@
 		<ul data-ui="quick-menu" class="align-right dark">
 			<span class="fa fa-arrow-left" data-action="back"></span>
 			<span class="fa fa-eye" data-action="distraction-free"></span>
+			<span class="fa fa-play-circle" data-action="auto-play"></span>
 			<span class="fa fa-save" data-action="open-menu" data-open="save"></span>
 			<span class="fa fa-undo" data-action="open-menu" data-open="load"></span>
 			<span class="fa fa-gear" data-action="open-menu" data-open="settings"></span>
@@ -203,38 +203,58 @@
 	</section>
 
 	<!-- Settings Screen -->
-	<section data-menu="settings" data-background="" class="vertical align-center">
+	<section data-menu="settings" data-background="" class="align-center">
 		<h2 data-string="Settings">Settings</h2>
-		<div data-settings="audio" class="vertical align-center">
-			<h3 data-string="Audio">Audio</h3>
-			<span data-string="Music">Music Volume:</span>
-			<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="music">
-			<span data-string="Sound">Sound Volume:</span>
-			<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="sound">
-			<span data-string="Voice">Voice Volume:</span>
-			<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="voice">
-		</div>
-		<div data-settings="language">
-			<h3 data-string="Language">Language</h3>
-			<div class="horizontal">
-				<select data-action="set-language">
-						<option value="English">English</option>
-						<option value="Español">Español</option>
-						<option value="Français">Français</option>
-						<option value="日本語">日本語</option>
-					</select>
-				<span class="fa fa-unsorted" data-select="set-language"></span>
+		<div class="row padded-1">
+			<div class="col s12 m6">
+				<div data-settings="audio" class="vertical align-center">
+					<h3 data-string="Audio">Audio</h3>
+					<span data-string="Music">Music Volume:</span>
+					<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="music">
+					<span data-string="Sound">Sound Volume:</span>
+					<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="sound">
+					<span data-string="Voice">Voice Volume:</span>
+					<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="voice">
+				</div>
 			</div>
+
+			<div class="col s12 m6">
+
+				<div data-settings="text-speed">
+					<h3 data-string="TextSpeed">Text Speed</h3>
+					<input type="range" min="1" max="50" step="1" data-action="set-text-speed">
+				</div>
+
+				<div data-settings="auto-play-speed">
+					<h3 data-string="AutoPlaySpeed">Auto Play Speed</h3>
+					<input type="range" min="1" max="60" step="1" data-action="set-auto-play-speed">
+				</div>
+				<div data-settings="language">
+					<h3 data-string="Language">Language</h3>
+					<div class="horizontal">
+						<select data-action="set-language">
+								<option value="English">English</option>
+								<option value="Español">Español</option>
+								<option value="Français">Français</option>
+								<option value="日本語">日本語</option>
+							</select>
+						<span class="fa fa-unsorted" data-select="set-language"></span>
+					</div>
+
+				</div>
+
+				<div data-settings="resolution" data-platform="electron">
+					<h3 data-string="Resolution">Resolution</h3>
+					<div class="horizontal">
+						<select data-action="set-resolution"></select>
+						<span class="fa fa-unsorted" data-select="set-resolution"></span>
+					</div>
+				</div>
+			</div>
+
 
 		</div>
 
-		<div data-settings="resolution" data-platform="electron">
-			<h3 data-string="Resolution">Resolution</h3>
-			<div class="horizontal">
-				<select data-action="set-resolution"></select>
-				<span class="fa fa-unsorted" data-select="set-resolution"></span>
-			</div>
-		</div>
 
 		<div class="horizontal align-center bottom animated bounceIn" data-ui="inner-menu">
 			<button data-action="back" data-string="Back">Back</button>
