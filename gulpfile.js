@@ -83,7 +83,7 @@ gulp.task("download-deps", () => {
 
 	download({
 		file: "animate.min.css",
-		url: "https://raw.githubusercontent.com/daneden/animate.css/master/animate.css"
+		url: "https://raw.githubusercontent.com/daneden/animate.css/master/animate.min.css"
 	}).pipe(gulp.dest("style/"));
 
 	// CSS Shake
