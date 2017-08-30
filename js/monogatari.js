@@ -1500,12 +1500,21 @@ $_ready(function () {
 							}
 
 							// Check if an animation or class was provided
-							// scene [scene] with [animation]
-							//   0      1     2       3
+							// scene [scene] with [animation] [infinite]
+							//   0      1     2       3           4
 
 							if (parts.length > 2) {
 								if (parts[2] == "with" && parts[3].trim () != "") {
-									window.animatelo[parts[3].trim ()]("[data-ui='background']");
+
+									if (typeof parts[4] !== "undefined") {
+										if (parts[4] == "infinite") {
+											window.animatelo[parts[3].trim ()]("[data-ui='background']", {iterations: Infinity});
+										} else {
+											window.animatelo[parts[3].trim ()]("[data-ui='background']");
+										}
+									} else {
+										window.animatelo[parts[3].trim ()]("[data-ui='background']");
+									}
 								}
 							}
 
