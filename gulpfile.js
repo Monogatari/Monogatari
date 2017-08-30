@@ -81,6 +81,11 @@ gulp.task("download-deps", () => {
 		url: "https://raw.githubusercontent.com/gibbok/animatelo/master/dist/animatelo.min.js"
 	}).pipe(gulp.dest("js/"));
 
+	download({
+		file: "animate.min.css",
+		url: "https://raw.githubusercontent.com/daneden/animate.css/master/animate.css"
+	}).pipe(gulp.dest("style/"));
+
 	// CSS Shake
 	download("https://raw.githubusercontent.com/elrumordelaluz/csshake/master/dist/csshake.min.css").pipe(gulp.dest("style/"));
 

@@ -13,6 +13,7 @@ var strings = {
 	"English": {
 		"AdvanceHelp": "To advance through the game, press the space key or click.",
 		"Audio": "Audio",
+		"AutoPlaySpeed": "Autoplay Speed",
 
 		"Back": "Back",
 		"BackButton": "Back.",
@@ -58,6 +59,8 @@ var strings = {
 		"Sound": "Sound Volume",
 		"Start": "Start",
 
+		"TextSpeed": "Text Speed",
+
 		"Voice": "Voice Volume",
 
 		"Windowed": "Windowed"
@@ -66,6 +69,7 @@ var strings = {
 	"Español": {
 		"AdvanceHelp": "Para avanzar en el juego, presiona espacio o haz click.",
 		"Audio": "Audio",
+		"AutoPlaySpeed": "Velocidad de Juego Automático",
 
 		"Back": "Atrás",
 		"BackButton": "Atrás.",
@@ -111,6 +115,8 @@ var strings = {
 		"Sound": "Volumen de los Sonidos",
 		"Start": "Comenzar",
 
+		"TextSpeed": "Velocidad del Texto",
+
 		"Voice": "Volumen de la Voz",
 
 		"Windowed": "Ventana"
@@ -119,6 +125,7 @@ var strings = {
 	"Français": {
 		"AdvanceHelp": "Pour avancer dans le jeu, appuyez sur la touche espace ou cliquez sur.",
 		"Audio": "Audio",
+		"AutoPlaySpeed": "Vitesse de lecture automatique",
 
 		"Back": "Retourner",
 		"BackButton": "Retourner.",
@@ -164,6 +171,8 @@ var strings = {
 		"Sound": "Volume des Sons",
 		"Start": "Démarrer",
 
+		"TextSpeed": "Vitesse du Texte",
+
 		"Voice": "Volume de la Voix",
 
 		"Windowed": "Fenêtre"
@@ -172,6 +181,7 @@ var strings = {
 	"日本語": {
 		"AdvanceHelp": "ゲームを進めるためには、スペースキーを押すかクリックします。",
 		"Audio": "オーディオ",
+		"AutoPlaySpeed": "自動再生速度",
 
 		"Back": "巻き戻し",
 		"BackButton": "巻き戻し",
@@ -216,6 +226,8 @@ var strings = {
 		"SettingsButton": "設定画面を開きます。",
 		"Sound": "効果音の音量",
 		"Start": "スタート",
+
+		"TextSpeed": "テキストスピード",
 
 		"Voice": "ボイスの音量",
 

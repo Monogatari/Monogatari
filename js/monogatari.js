@@ -248,6 +248,7 @@ $_ready(function () {
 
 		try {
 			window.$ = window.jQuery = require("./js/jquery.min.js");
+			window.animatelo = require ("./js/animatelo.min.js");
 		} catch (e) {
 			console.warn ("jQuery could not be loaded.");
 		}
@@ -1399,6 +1400,13 @@ $_ready(function () {
 
 					switch (parts[0]) {
 
+						case "wait":
+							block = true;
+							setTimeout(function () {
+								block = false;
+							}, parseInt (parts[1]));
+							break;
+
 						case "play":
 
 							if (parts[1] == "music") {
@@ -1496,11 +1504,11 @@ $_ready(function () {
 							//   0      1     2       3
 
 							if (parts.length > 2) {
-								if (parts[2] == "with" && parts[3].trim != "") {
-									$_("[data-ui='background']").addClass("animated");
-									$_("[data-ui='background']").addClass((parts.join(" ").replace("scene " + parts[1], "").replace(" with ", " ")).trim());
+								if (parts[2] == "with" && parts[3].trim () != "") {
+									window.animatelo[parts[3].trim ()]("[data-ui='background']");
 								}
 							}
+
 							engine.Scene = parts[1];
 							engine.SceneHistory.push(parts[1]);
 							whipeText();
