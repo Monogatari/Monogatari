@@ -77,11 +77,6 @@ gulp.task("download-deps", () => {
 
 	// Animate CSS
 	download({
-		file: "animatelo.min.js",
-		url: "https://raw.githubusercontent.com/gibbok/animatelo/master/dist/animatelo.min.js"
-	}).pipe(gulp.dest("js/"));
-
-	download({
 		file: "animate.min.css",
 		url: "https://raw.githubusercontent.com/daneden/animate.css/master/animate.min.css"
 	}).pipe(gulp.dest("style/"));

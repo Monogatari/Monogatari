@@ -248,7 +248,6 @@ $_ready(function () {
 
 		try {
 			window.$ = window.jQuery = require("./js/jquery.min.js");
-			window.animatelo = require ("./js/animatelo.min.js");
 		} catch (e) {
 			console.warn ("jQuery could not be loaded.");
 		}
@@ -694,9 +693,9 @@ $_ready(function () {
 				$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
 				resolve ();
 			};
-			image.onerror = function () {
+			image.onerror = function (e) {
 				$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-				reject ();
+				reject (e);
 			};
 			image.src = src;
 		});
@@ -784,6 +783,8 @@ $_ready(function () {
 			});
 			$_("[data-menu='main']").show();
 
+		}).catch (function (e) {
+			console.error (e);
 		});
 
 	} else {
@@ -1504,17 +1505,9 @@ $_ready(function () {
 							//   0      1     2       3           4
 
 							if (parts.length > 2) {
-								if (parts[2] == "with" && parts[3].trim () != "") {
-
-									if (typeof parts[4] !== "undefined") {
-										if (parts[4] == "infinite") {
-											window.animatelo[parts[3].trim ()]("[data-ui='background']", {iterations: Infinity});
-										} else {
-											window.animatelo[parts[3].trim ()]("[data-ui='background']");
-										}
-									} else {
-										window.animatelo[parts[3].trim ()]("[data-ui='background']");
-									}
+								if (parts[2] == "with" && parts[3].trim != "") {
+									$_("[data-ui='background']").addClass("animated");
+									$_("[data-ui='background']").addClass((parts.join(" ").replace("scene " + parts[1], "").replace(" with ", " ")).trim());
 								}
 							}
 
@@ -1525,11 +1518,11 @@ $_ready(function () {
 							break;
 
 						case "show":
-							// show [character] [expression] at [position] with [animation]
-							//   0      1             2       3     4        5       6
+							// show [character] [expression] at [position] with [animation] [infinite]
+							//   0      1             2       3     4        5       6         7
 
-							// show [character] [expression] with [animation]
-							//   0      1             2       3       4
+							// show [character] [expression] with [animation] [infinite]
+							//   0      1             2       3       4         5
 
 							// show [character] [expression]
 							//   0      1             2

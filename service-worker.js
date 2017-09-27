@@ -25,7 +25,6 @@ var files = [
 
 	// JavaScript Files
 	"js/particles.min.js",
-	"js/animatelo.min.js",
 	"js/jquery.min.js",
 	"js/artemis.min.js",
 	"js/typed.min.js",
