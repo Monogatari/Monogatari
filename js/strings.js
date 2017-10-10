@@ -123,12 +123,12 @@ var strings = {
 	},
 
 	"Français": {
-		"AdvanceHelp": "Pour avancer dans le jeu, appuyez sur la touche espace ou cliquez sur.",
+		"AdvanceHelp": "Pour avancer dans le jeu, appuyez sur la touche espace ou cliquez.",
 		"Audio": "Audio",
 		"AutoPlaySpeed": "Vitesse de lecture automatique",
 
-		"Back": "Retourner",
-		"BackButton": "Retourner.",
+		"Back": "Retour",
+		"BackButton": "Retour.",
 
 		"Cancel": "Annuler",
 		"Close": "Fermer",
@@ -143,17 +143,17 @@ var strings = {
 
 		"Language": "Langue",
 		"Load": "Charger",
-		"LoadAutoSaveSlots": "Jeux Sauvegardés Automatiquement",
+		"LoadAutoSaveSlots": "Parties Enregistrées Automatiquement",
 		"LoadButton": "Ouvrir l'écran de Chargement.",
-		"Loading": "Charge",
-		"LoadingMessage": "Attendez pendant que les fichiers sont chargés.",
-		"LoadSlots": "Jeux Sauvegardés",
-		"LocalStorageWarning": "Le stockage local n'est pas disponible dans ce navigateur.",
+		"Loading": "Chargement",
+		"LoadingMessage": "Veuillez patienter pendant que les fichiers sont chargés.",
+		"LoadSlots": "Parties Sauvegardées",
+		"LocalStorageWarning": "Le stockage local n'est pas disponible sur ce navigateur.",
 
 		"Music": "Volume de la Musique",
 
-		"NoSavedGames": "Pas de jeux sauvegardés.",
-		"NoAutoSavedGames": "Aucun jeu enregistré automatiquement.",
+		"NoSavedGames": "Pas de parties sauvegardées.",
+		"NoAutoSavedGames": "Aucune partie enregistrée automatiquement.",
 
 		"Overwrite": "Écraser",
 
@@ -165,7 +165,7 @@ var strings = {
 
 		"Save": "Sauvegarder",
 		"SaveButon": "Ouvrir l'écran de Sauvegarde.",
-		"SaveInSlot": "Enregistrer dans la fente",
+		"SaveInSlot": "Enregistrer à l'emplacement",
 		"Settings": "Préférences",
 		"SettingsButton": "Ouvrir l'écran des Préférences.",
 		"Sound": "Volume des Sons",
@@ -175,7 +175,7 @@ var strings = {
 
 		"Voice": "Volume de la Voix",
 
-		"Windowed": "Fenêtre"
+		"Windowed": "Fenêtré"
 	},
 
 	"日本語": {
