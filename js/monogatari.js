@@ -530,18 +530,25 @@ $_ready(function() {
 	 **/
 
 	// Start game automatically withouth going trough the main menu
-	if (typeof engine.ShowMenu != 'undefined') {
-		if (!engine["ShowMenu"]) {
-			stopAmbient();
-			playing = true;
-			$_("section").hide();
-			$_("#game").show();
-			analyseStatement(label[engine["Step"]]);
-			engine["Step"] += 1;
+	function showMainMenu () {
+		if (typeof engine.ShowMenu != 'undefined') {
+			if (!engine["ShowMenu"]) {
+				stopAmbient();
+				playing = true;
+				$_("section").hide();
+				$_("#game").show();
+				analyseStatement(label[engine["Step"]]);
+				engine["Step"] += 1;
+			} else {
+				$_("[data-menu='main']").show();
+			}
+		} else {
+			console.warn("The ShowMenu property is missing in the engine configuration.");
 		}
-	} else {
-		console.warn("The ShowMenu property is missing in the engine configuration.");
 	}
+
+	showMainMenu ();
+
 
 	/**
 	 * ==========================
@@ -663,16 +670,16 @@ $_ready(function() {
 				$_("[data-menu='loading']").fadeOut(400, function () {
 					$_("[data-menu='loading']").hide();
 				});
-				$_("[data-menu='main']").show();
+				showMainMenu ();
 
 			});
 
 		} else {
-			$_("[data-menu='main']").show();
+			showMainMenu ();
 		}
 	} else {
 		console.warn("The Preload property is missing in the engine configuration.");
-		$_("[data-menu='main']").show();
+		showMainMenu ();
 	}
 
 	/**
@@ -1682,7 +1689,7 @@ $_ready(function() {
 					if (statement["Choice"] != null) {
 						$_("[data-ui='choices']").html("");
 						for (var i in statement["Choice"]) {
-							var choice = label[engine["Step"]]["Choice"][i];
+							let choice = label[engine["Step"]]["Choice"][i];
 							if (choice["Condition"] != null && choice["Condition"] != "") {
 
 								assertAsync(label[engine["Step"]]["Choice"][i]["Condition"]).then(function () {
@@ -1709,7 +1716,7 @@ $_ready(function() {
 							$_("[data-ui='choices']").show();
 						}
 					} else if (statement["Conditional"] != null) {
-						var condition = statement["Conditional"];
+						let condition = statement["Conditional"];
 
 						assertAsync(condition["Condition"]).then(function () {
 							if (condition["True"].trim() == "") {
@@ -1728,7 +1735,7 @@ $_ready(function() {
 						$_("[data-ui='input']").addClass("active");
 
 						function inputButtonListener () {
-							var inputValue = $_("[data-ui='input'] input").value();
+							let inputValue = $_("[data-ui='input'] input").value();
 
 							assertAsync(statement["Input"]["Validation"], [inputValue]).then(function () {
 								assertAsync(statement["Input"]["Save"], [inputValue]).then(function () {
