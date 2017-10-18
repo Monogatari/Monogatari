@@ -880,7 +880,10 @@ $_ready(function() {
 	 **/
 
 	// Assert the result of a function
-	function assertAsync (callable, args = null) {
+	function assertAsync (callable, args) {
+		if (typeof args === "undefined") {
+			args = null;
+		}
 		block = true;
 		return new Promise (function (resolve, reject) {
 			var result = callable.apply(null, args);
