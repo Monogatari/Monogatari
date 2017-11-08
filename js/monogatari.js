@@ -51,12 +51,13 @@
 /* global videos */
 /* global voice */
 
-var label;
-var game;
-var textObject;
-var playing = false;
-var block = false;
-var autoPlay = null;
+let label;
+let game;
+let textObject;
+let playing = false;
+let block = false;
+let autoPlay = null;
+let finishedTyping = false;
 const storageStructure = JSON.stringify(storage);
 
 $_ready(function () {
@@ -138,7 +139,7 @@ $_ready(function () {
 	 * ======================
 	 **/
 
-	var local_settings = Storage.get("Settings");
+	const local_settings = Storage.get("Settings");
 
 	// Set the initial settings if they don't exist or load them.
 	if (local_settings === null || local_settings == "") {
@@ -163,7 +164,7 @@ $_ready(function () {
 		game = script[settings.Language];
 		$_("[data-action='set-language']").value(settings.Language);
 		$_("[data-string]").each(function (element) {
-			var string_translation = strings[$_("[data-action='set-language']").value()][$_(element).data("string")];
+			const string_translation = strings[$_("[data-action='set-language']").value()][$_(element).data("string")];
 			if (typeof string_translation !== "undefined" && string_translation != "") {
 				$_(element).text(string_translation);
 			}
@@ -191,7 +192,7 @@ $_ready(function () {
 	// Set all the dynamic backgrounds of the data-background property
 	$_("[data-background]").each(function (element) {
 		if ($_(element).data("background").indexOf(".") > -1) {
-			var src = "url('" + $_(element).data("background") + "') center / cover no-repeat";
+			const src = "url('" + $_(element).data("background") + "') center / cover no-repeat";
 			$_(element).style("background", src);
 		} else {
 			$_(element).style("background", $_(element).data("background"));
@@ -207,12 +208,18 @@ $_ready(function () {
 	 * ======================
 	 **/
 
-	var typedConfiguration = {
+	const typedConfiguration = {
 		strings: [],
 		typeSpeed: settings.TextSpeed,
 		fadeOut: true,
 		loop: false,
-		showCursor: false
+		showCursor: false,
+		preStringTyped: function () {
+			finishedTyping = false;
+		},
+		onStringTryped: function () {
+			finishedTyping = true;
+		}
 	};
 
 	/**
@@ -243,8 +250,8 @@ $_ready(function () {
 
 	// Set the electron quit handler.
 	if (isElectron()) {
-		var remote = require("electron").remote;
-		var win = remote.getCurrentWindow();
+		const remote = require("electron").remote;
+		const win = remote.getCurrentWindow();
 
 		try {
 			window.$ = window.jQuery = require("./js/jquery.min.js");
@@ -261,17 +268,17 @@ $_ready(function () {
 
 		if (!win.isResizable()) {
 			if (typeof engine.AspectRatio != "undefined") {
-				var aspectRatio = engine.AspectRatio.split(":");
-				var aspectRatioWidth = parseInt(aspectRatio[0]);
-				var aspectRatioHeight = parseInt(aspectRatio[1]);
+				const aspectRatio = engine.AspectRatio.split(":");
+				const aspectRatioWidth = parseInt(aspectRatio[0]);
+				const aspectRatioHeight = parseInt(aspectRatio[1]);
 				win.setResizable(true);
-				var minSize = win.getMinimumSize();
-				var {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
+				const minSize = win.getMinimumSize();
+				const {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
 				win.setResizable(false);
 
-				for (var i = 0; i < 488; i+=8) {
-					var calculatedWidth = aspectRatioWidth*i;
-					var calculatedHeight = aspectRatioHeight*i;
+				for (let i = 0; i < 488; i+=8) {
+					const calculatedWidth = aspectRatioWidth*i;
+					const calculatedHeight = aspectRatioHeight*i;
 
 					if (calculatedWidth >= minSize[0] && calculatedHeight >= minSize[1] && calculatedWidth <= width && calculatedHeight <= height) {
 						$_("[data-action='set-resolution']").append(`<option value="${calculatedWidth}x${calculatedHeight}">${getLocalizedString("Windowed")} ${calculatedWidth}x${calculatedHeight}</option>`);
@@ -284,7 +291,7 @@ $_ready(function () {
 					changeWindowResolution (settings.Resolution);
 				}
 				$_("[data-action='set-resolution']").change(function () {
-					var size = $_("[data-action='set-resolution']").value();
+					const size = $_("[data-action='set-resolution']").value();
 					changeWindowResolution (size);
 				});
 			} else {
@@ -301,9 +308,9 @@ $_ready(function () {
 
 	function changeWindowResolution (resolution) {
 		if (isElectron()) {
-			var remote = require("electron").remote;
-			var win = remote.getCurrentWindow();
-			var {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
+			const remote = require("electron").remote;
+			const win = remote.getCurrentWindow();
+			const {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
 			if (resolution) {
 				win.setResizable(true);
 
@@ -313,9 +320,9 @@ $_ready(function () {
 					Storage.set("Settings", JSON.stringify(settings));
 				} else if (resolution.indexOf("x") > -1) {
 					win.setFullScreen(false);
-					var size = resolution.split("x");
-					var chosenWidth = parseInt(size[0]);
-					var chosenHeight = parseInt(size[1]);
+					const size = resolution.split("x");
+					const chosenWidth = parseInt(size[0]);
+					const chosenHeight = parseInt(size[1]);
 
 					if (chosenWidth <= width && chosenHeight <= height) {
 						win.setSize(chosenWidth, chosenHeight, true);
@@ -367,16 +374,16 @@ $_ready(function () {
 			console.warn("The AutoSaveLabel property is missing in the engine configuration.");
 		}
 
-		for (var i = 1; i <= engine.Slots; i++) {
+		for (let i = 1; i <= engine.Slots; i++) {
 
-			var slot = Storage.get(engine.SaveLabel + i);
-			var autoSaveSlot = Storage.get(engine.AutoSaveLabel + i);
+			const slot = Storage.get(engine.SaveLabel + i);
+			const autoSaveSlot = Storage.get(engine.AutoSaveLabel + i);
 
 			if (slot === null) {
 				Storage.set(engine.SaveLabel + i, "");
 				$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><figcaption>${getLocalizedString("SaveInSlot")} #${i}</figcaption></figure>`);
 			} else if (slot != "") {
-				var data = JSON.parse(slot);
+				const data = JSON.parse(slot);
 
 				if (typeof scenes[data.Engine.Scene] !== "undefined") {
 
@@ -397,7 +404,7 @@ $_ready(function () {
 			if (autoSaveSlot === null) {
 				Storage.set(engine.AutoSaveLabel + i, "");
 			} else if (autoSaveSlot != "") {
-				var data = JSON.parse(autoSaveSlot);
+				const data = JSON.parse(autoSaveSlot);
 
 				if (typeof scenes[data.Engine.Scene] !== "undefined") {
 					$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data.Label + "' data-load-element='" + data.Engine.Step + "' data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data.Engine.Scene] + "' alt=''><figcaption>" + data.Date + " in " + data.Label + "</figcaption></figure>");
@@ -430,17 +437,17 @@ $_ready(function () {
 	function saveToSlot (slot) {
 		if (playing) {
 			document.body.style.cursor = "wait";
-			var date = new Date();
-			var day = date.getDate();
-			var month = date.getMonth() + 1;
-			var year = date.getFullYear();
-			var show = "";
+			const date = new Date();
+			const day = date.getDate();
+			const month = date.getMonth() + 1;
+			const year = date.getFullYear();
+			let show = "";
 
 			$_("#game img:not([data-ui='face'])").each(function (element) {
 				show += element.outerHTML.replace(/"/g, "'") + ",";
 			});
 
-			var saveData = {
+			const saveData = {
 				"Date": `${day}-${month}-${year}`,
 				"Engine": engine,
 				"Show": show,
@@ -464,14 +471,14 @@ $_ready(function () {
 
 		$_("section").hide();
 		$_("#game").show();
-		var data = JSON.parse(Storage.get(slot));
+		const data = JSON.parse(Storage.get(slot));
 		engine = Object.assign({}, engine, data.Engine);
 		fixEngine ();
 		storage = Object.assign({}, JSON.parse(storageStructure), data.Storage);
 
 		label = game[data.Label];
 
-		for (var i in data.Show.split(",")) {
+		for (const i in data.Show.split(",")) {
 			if (data.Show.split(",")[i].trim() != "") {
 				$_("#game").append(data.Show.split(",")[i]);
 			}
@@ -530,7 +537,7 @@ $_ready(function () {
 	});
 
 	// Auto Save
-	var currentAutoSaveSlot = 1;
+	let currentAutoSaveSlot = 1;
 	if (engine.AutoSave != 0 && typeof engine.AutoSave == "number") {
 		setInterval(function () {
 			saveToSlot(engine.AutoSaveLabel + currentAutoSaveSlot);
@@ -556,13 +563,12 @@ $_ready(function () {
 
 	// Volume bars listeners
 	$_("[data-action='set-volume']").on("change mouseover", function () {
-		var v = document.querySelector("[data-component='" + $_(this).data("target") + "']");
-		var value = $_(this).value();
+		const v = document.querySelector("[data-component='" + $_(this).data("target") + "']");
+		const value = $_(this).value();
 
 		switch ($_(this).data("target")) {
 			case "music":
-				var ambient = document.querySelector("[data-component='ambient']");
-				ambient.volume = value;
+				ambientPlayer.volume = value;
 				v.volume = value;
 				settings.Volume.Music = value;
 				break;
@@ -581,14 +587,14 @@ $_ready(function () {
 	});
 
 	$_("[data-action='set-text-speed']").on("change mouseover", function () {
-		var value =  maxTextSpeed - parseInt($_(this).value());
+		const value =  maxTextSpeed - parseInt($_(this).value());
 		typedConfiguration.typeSpeed = value;
 		settings.TextSpeed = value;
 		Storage.set("Settings", JSON.stringify(settings));
 	});
 
 	$_("[data-action='set-auto-play-speed']").on("change mouseover", function () {
-		var value = parseInt($_(this).value());
+		const value = parseInt($_(this).value());
 		if (autoPlay !== null) {
 			clearInterval (autoPlay);
 			autoPlay = setInterval (function () {
@@ -620,7 +626,7 @@ $_ready(function () {
 
 	// Fix for select labels
 	$_("[data-select]").click(function () {
-		var e = document.createEvent("MouseEvents");
+		const e = document.createEvent("MouseEvents");
 		e.initMouseEvent("mousedown");
 		$_("[data-action='" + $_(this).data("select") + "']").get(0).dispatchEvent(e);
 	});
@@ -634,10 +640,10 @@ $_ready(function () {
 	// Retrieve data from the storage variable
 	function getData (data) {
 		if (typeof storage != "undefined") {
-			var path = data.split(".");
+			const path = data.split(".");
 
 			data = storage[path[0]];
-			for (var i = 1; i < path.length; i++) {
+			for (let i = 1; i < path.length; i++) {
 				data = data[path[i]];
 			}
 			return data;
@@ -653,14 +659,20 @@ $_ready(function () {
 	 **/
 
 	// Start game automatically withouth going trough the main menu
-	if (!engine.ShowMenu) {
-		stopAmbient();
-		playing = true;
-		$_("section").hide();
-		$_("#game").show();
-		analyseStatement(label[engine.Step]);
-		engine.Step += 1;
+	function showMainMenu () {
+		if (!engine.ShowMenu) {
+			stopAmbient();
+			playing = true;
+			$_("section").hide();
+			$_("#game").show();
+			analyseStatement(label[engine.Step]);
+			engine.Step += 1;
+		} else {
+			$_("[data-menu='main']").show();
+		}
 	}
+
+	showMainMenu ();
 
 	/**
 	 * ==========================
@@ -688,7 +700,7 @@ $_ready(function () {
 
 	function preloadImage (src) {
 		return new Promise(function (resolve, reject) {
-			var image = new Image();
+			const image = new Image();
 			image.onload  = function () {
 				$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
 				resolve ();
@@ -710,8 +722,8 @@ $_ready(function () {
 		});
 	}
 
-	var preloadPromises = [];
-	var assetCount = 0;
+	const preloadPromises = [];
+	let assetCount = 0;
 	if (engine.Preload) {
 		// Show loading screen
 		$_("[data-menu='loading']").show();
@@ -719,28 +731,28 @@ $_ready(function () {
 		// Start by loading the image assets
 		if (typeof scenes == "object") {
 			assetCount += Object.keys(scenes).length;
-			for (var i in scenes) {
+			for (const i in scenes) {
 				preloadPromises.push(preloadImage("img/scenes/" + scenes[i]));
 			}
 		}
 
 		if (typeof characters == "object") {
-			for (var i in characters) {
-				var directory = "";
+			for (const i in characters) {
+				let directory = "";
 				if (typeof characters[i].Directory != "undefined") {
 					directory = characters[i].Directory + "/";
 				}
 
 				if (typeof characters[i].Images != "undefined") {
 					assetCount += Object.keys(characters[i].Images).length;
-					for (var j in characters[i].Images) {
+					for (const j in characters[i].Images) {
 						preloadPromises.push(preloadImage("img/characters/" + directory + characters[i].Images[j]));
 					}
 				}
 
 				if (typeof characters[i].Side != "undefined") {
 					assetCount += Object.keys(characters[i].Side).length;
-					for (var k in characters[i].Side) {
+					for (const k in characters[i].Side) {
 						preloadPromises.push(preloadImage("img/characters/" + directory + characters[i].Side[k]));
 					}
 				}
@@ -749,7 +761,7 @@ $_ready(function () {
 
 		if (typeof images == "object") {
 			assetCount += Object.keys(images).length;
-			for (var i in images) {
+			for (const i in images) {
 				preloadPromises.push(preloadImage("img/" + images[i]));
 			}
 		}
@@ -757,21 +769,21 @@ $_ready(function () {
 		// Load the audio assets
 		if (typeof music == "object") {
 			assetCount += Object.keys(music).length;
-			for (var i in music) {
+			for (const i in music) {
 				preloadPromises.push(preloadAudio("audio/music/" + music[i]));
 			}
 		}
 
 		if (typeof voice == "object") {
 			assetCount += Object.keys(voice).length;
-			for (var i in voice) {
+			for (const i in voice) {
 				preloadPromises.push(preloadAudio("audio/music/voice" + voice[i]));
 			}
 		}
 
 		if (typeof sound == "object") {
 			assetCount += Object.keys(sound).length;
-			for (var i in sound) {
+			for (const i in sound) {
 				preloadPromises.push(preloadAudio("audio/sound/" + sound[i]));
 			}
 		}
@@ -781,14 +793,14 @@ $_ready(function () {
 			$_("[data-menu='loading']").fadeOut(400, function () {
 				$_("[data-menu='loading']").hide();
 			});
-			$_("[data-menu='main']").show();
+			showMainMenu ();
 
 		}).catch (function (e) {
 			console.error (e);
 		});
 
 	} else {
-		$_("[data-menu='main']").show();
+		showMainMenu ();
 	}
 
 	/**
@@ -859,7 +871,7 @@ $_ready(function () {
 					$_(this).removeClass("fa-play-circle");
 					$_(this).addClass("fa-stop-circle");
 					autoPlay = setInterval (function () {
-						if (canProceed()) {
+						if (canProceed() && finishedTyping) {
 							hideCentered();
 							shutUp();
 							analyseStatement(label[engine.Step]);
@@ -966,7 +978,7 @@ $_ready(function () {
 		hideCentered();
 		shutUp();
 		if ($_(this).data("do") != "null" && $_(this).data("do") != "") {
-			var back = ["show", "play", "display", "hide", "scene", "stop", "pause"];
+			const back = ["show", "play", "display", "hide", "scene", "stop", "pause"];
 			try {
 				$_("[data-ui='choices']").hide();
 				$_("[data-ui='choices']").html("");
@@ -996,10 +1008,18 @@ $_ready(function () {
 
 	$_("#game").click(function () {
 		if (canProceed()) {
-			hideCentered();
-			shutUp();
-			analyseStatement(label[engine.Step]);
-			engine.Step += 1;
+			if (!finishedTyping && typeof textObject !== "undefined") {
+				const str = textObject.strings [0];
+				textObject.destroy ();
+				$_("[data-ui='say']").html (str);
+				finishedTyping = true;
+			} else {
+				hideCentered();
+				shutUp();
+				analyseStatement(label[engine.Step]);
+				engine.Step += 1;
+			}
+
 		}
 	});
 
@@ -1021,7 +1041,7 @@ $_ready(function () {
 	function assertAsync (callable, args = null) {
 		block = true;
 		return new Promise (function (resolve, reject) {
-			var result = callable.apply(null, args);
+			const result = callable.apply(null, args);
 			// Check if the function returned a simple boolean
 			// if the return value is true, the game will continue
 			if (typeof result === "boolean") {
@@ -1128,7 +1148,6 @@ $_ready(function () {
 
 	function playAmbient () {
 		if (engine.MenuMusic != "") {
-			var ambientPlayer = document.querySelector("[data-component='ambient']");
 			ambientPlayer.setAttribute("loop", "");
 
 			if (typeof music !== "undefined") {
@@ -1146,8 +1165,8 @@ $_ready(function () {
 
 	// Stop any playing music or sound
 	function silence () {
-		for (var i = 0; i < document.getElementsByTagName("audio").length; i++) {
-			var v = document.getElementsByTagName("audio");
+		for (let i = 0; i < document.getElementsByTagName("audio").length; i++) {
+			const v = document.getElementsByTagName("audio");
 			if (!v[i].paused && typeof v[i].src != "undefined" && v[i].src != "") {
 				v[i].pause();
 				v[i].currentTime = 0;
@@ -1156,7 +1175,6 @@ $_ready(function () {
 	}
 
 	function stopVideo () {
-		var videoPlayer = document.querySelector("[data-ui='player']");
 		videoPlayer.pause();
 		videoPlayer.currentTime = 0;
 		videoPlayer.setAttribute("src", "");
@@ -1165,15 +1183,13 @@ $_ready(function () {
 
 	// Stop the main menu's music
 	function stopAmbient () {
-		var a_player = document.querySelector("[data-component='ambient']");
-		if (!a_player.paused) {
-			a_player.pause();
+		if (!ambientPlayer.paused) {
+			ambientPlayer.pause();
 		}
 	}
 
 	// Stop the voice player
 	function shutUp () {
-		var voicePlayer = document.querySelector("[data-component='voice']");
 		if (!voicePlayer.paused && typeof voicePlayer.src != "undefined" && voicePlayer.src != "") {
 			voicePlayer.pause();
 			voicePlayer.currentTime = 0;
@@ -1205,12 +1221,12 @@ $_ready(function () {
 		shutUp();
 		if (engine.Step >= 2) {
 			engine.Step -= 2;
-			var back = ["show", "play", "display", "hide", "stop"];
-			var flag = true;
+			const back = ["show", "play", "display", "hide", "stop"];
+			let flag = true;
 			try {
 				if (typeof label[engine.Step] == "string") {
 					while (back.indexOf(label[engine.Step].split(" ")[0]) > -1 && engine.Step > 0 && flag) {
-						var parts = replaceVariables(label[engine.Step]).split(" ");
+						const parts = replaceVariables(label[engine.Step]).split(" ");
 						switch (parts[0]) {
 							case "show":
 								if (typeof characters[parts[1]] != "undefined") {
@@ -1219,7 +1235,7 @@ $_ready(function () {
 										engine.CharacterHistory.pop();
 									}
 
-									var last_character = engine.CharacterHistory.slice(-1)[0];
+									const last_character = engine.CharacterHistory.slice(-1)[0];
 									if (typeof last_character != "undefined") {
 										if (last_character.indexOf("data-character='" + parts[1] + "'") > -1) {
 											$_("#game").append(last_character);
@@ -1260,7 +1276,7 @@ $_ready(function () {
 
 							case "stop":
 								if (parts[1] == "music") {
-									var last_song = engine.MusicHistory.pop().split(" ");
+									const last_song = engine.MusicHistory.pop().split(" ");
 
 									if (last_song[3] == "loop") {
 										musicPlayer.setAttribute("loop", "");
@@ -1279,7 +1295,7 @@ $_ready(function () {
 									musicPlayer.play();
 									engine.Song = last_song.join(" ");
 								} else if (parts[1] == "sound") {
-									var last = engine.SoundHistory.pop().split(" ");
+									const last = engine.SoundHistory.pop().split(" ");
 
 									if (last[3] == "loop") {
 										soundPlayer.setAttribute("loop", "");
@@ -1374,12 +1390,12 @@ $_ready(function () {
 	 **/
 
 	function replaceVariables (statement) {
-		var matches = statement.match(/{{\S+}}/g);
+		const matches = statement.match(/{{\S+}}/g);
 		if (matches !== null) {
-			for (var i = 0; i < matches.length; i++) {
-				var path = matches[i].replace("{{", "").replace("}}", "").split(".");
-				var data = storage[path[0]];
-				for (var j = 1; j < path.length; j++) {
+			for (let i = 0; i < matches.length; i++) {
+				const path = matches[i].replace("{{", "").replace("}}", "").split(".");
+				let data = storage[path[0]];
+				for (let j = 1; j < path.length; j++) {
 					data = data[path[j]];
 				}
 				statement = statement.replace(matches[i], data);
@@ -1454,7 +1470,6 @@ $_ready(function () {
 								engine.SoundHistory.push(engine.Sound);
 								next();
 							} else if (parts[1] == "voice") {
-								var voicePlayer = document.querySelector("[data-component='voice']");
 
 								if (typeof voice !== "undefined") {
 									if (typeof voice[parts[2]] != "undefined") {
@@ -1528,11 +1543,11 @@ $_ready(function () {
 							//   0      1             2
 							var classes = "";
 							if (typeof characters[parts[1]] != "undefined") {
-								var directory = characters[parts[1]].Directory;
+								let directory = characters[parts[1]].Directory;
 								if (typeof directory == "undefined") {
 									directory = "";
 								}
-								var image = characters[parts[1]].Images[parts[2]];
+								const image = characters[parts[1]].Images[parts[2]];
 								$_("[data-character='" + parts[1] + "']").remove();
 
 								if (parts[3] == "at") {
@@ -1574,7 +1589,7 @@ $_ready(function () {
 									parts[2] = "center";
 								}
 
-								var src = "";
+								let src = "";
 								if (typeof images[parts[1]] != "undefined") {
 									src = images[parts[1]];
 								} else {
@@ -1583,7 +1598,7 @@ $_ready(function () {
 
 								classes = parts.join(" ").replace("show " + parts[1], "").replace(" at ", "").replace(" with ", " ");
 
-								var imageObject = "<img src='img/" + src + "' class='animated " + classes + "' data-image='" + parts[1] + "' data-sprite='" + parts[1] + "'>";
+								const imageObject = "<img src='img/" + src + "' class='animated " + classes + "' data-image='" + parts[1] + "' data-sprite='" + parts[1] + "'>";
 								$_("#game").append(imageObject);
 								engine.ImageHistory.push(imageObject);
 
@@ -1656,7 +1671,7 @@ $_ready(function () {
 
 							if (parts[1] == "message") {
 								if (typeof messages == "object") {
-									var mess = messages[parts[2]];
+									const mess = messages[parts[2]];
 									$_("[data-ui='message-content']").html("<h3>" + mess.Title + "</h3><p>" + mess.Subtitle + "</p>" + "<p>" + mess.Message + "</p>");
 									$_("[data-ui='messages']").addClass("active");
 								}
@@ -1721,7 +1736,7 @@ $_ready(function () {
 									// Let's check whether notification permissions have already been granted
 									if (Notification.permission === "granted") {
 										// If it's okay let's create a notification
-										var notification = new Notification(notifications[parts[1]].title, notifications[parts[1]]);
+										const notification = new Notification(notifications[parts[1]].title, notifications[parts[1]]);
 
 										if (parts[2]) {
 											setTimeout(function () {
@@ -1733,7 +1748,7 @@ $_ready(function () {
 										Notification.requestPermission(function (permission) {
 											// If the user accepts, let's create a notification
 											if (permission === "granted") {
-												var notification = new Notification(notifications[parts[1]].title, notifications[parts[1]]);
+												const notification = new Notification(notifications[parts[1]].title, notifications[parts[1]]);
 												if (parts[2]) {
 													setTimeout(function () {
 														notification.close();
@@ -1830,8 +1845,8 @@ $_ready(function () {
 				case "object":
 					if (typeof statement.Choice != "undefined") {
 						$_("[data-ui='choices']").html("");
-						for (var i in statement.Choice) {
-							var choice = label[engine.Step].Choice[i];
+						for (const i in statement.Choice) {
+							const choice = label[engine.Step].Choice[i];
 							if (typeof choice.Condition != "undefined" && choice.Condition != "") {
 
 								assertAsync(label[engine.Step].Choice[i].Condition).then(function () {
@@ -1858,7 +1873,7 @@ $_ready(function () {
 							$_("[data-ui='choices']").show();
 						}
 					} else if (typeof statement.Conditional != "undefined") {
-						var condition = statement.Conditional;
+						const condition = statement.Conditional;
 
 						assertAsync(condition.Condition).then(function () {
 							if (condition.True.trim() == "") {
@@ -1877,7 +1892,7 @@ $_ready(function () {
 						$_("[data-ui='input']").addClass("active");
 
 						function inputButtonListener () {
-							var inputValue = $_("[data-ui='input'] input").value();
+							const inputValue = $_("[data-ui='input'] input").value();
 
 							assertAsync(statement.Input.Validation, [inputValue]).then(function () {
 								assertAsync(statement.Input.Save, [inputValue]).then(function () {
