@@ -60,6 +60,28 @@ let autoPlay = null;
 let finishedTyping = false;
 const storageStructure = JSON.stringify(storage);
 
+// Object.assign polyfill for older browsers and OS
+if (typeof Object.assign != "function") {
+	Object.assign = function (target) {
+		if (target === null) {
+			throw new TypeError ("Cannot convert undefined or null to object");
+		}
+
+		target = Object (target);
+		for (var index = 1; index < arguments.length; index++) {
+			var source = arguments[index];
+			if (source !== null) {
+				for (var key in source) {
+					if (Object.prototype.hasOwnProperty.call (source, key)) {
+						target[key] = source[key];
+					}
+				}
+			}
+		}
+		return target;
+	};
+}
+
 $_ready(function () {
 
 	/**
@@ -94,19 +116,18 @@ $_ready(function () {
 	}
 
 	function fixEngine () {
-
 		if (typeof engine.ShowMenu !== "boolean") {
-			console.warn ("The 'ShowMenu' property is missing in the engine object, using default fallback.");
+			console.warn ("The 'ShowMenu' property is missing in the engine object, using default (true) fallback.");
 			engine.ShowMenu = true;
 		}
 
 		if (typeof engine.Preload !== "boolean") {
-			console.warn ("The 'Preload' property is missing in the engine object, using default fallback.");
+			console.warn ("The 'Preload' property is missing in the engine object, using default (true) fallback.");
 			engine.Preload = true;
 		}
 
 		if (typeof engine.AutoSave !== "number") {
-			console.warn ("The 'AutoSave' property is missing in the engine object, using default fallback.");
+			console.warn ("The 'AutoSave' property is missing in the engine object, using default (0) fallback.");
 			engine.AutoSave = 0;
 		}
 
@@ -217,7 +238,10 @@ $_ready(function () {
 		preStringTyped: function () {
 			finishedTyping = false;
 		},
-		onStringTryped: function () {
+		onStringTyped: function () {
+			finishedTyping = true;
+		},
+		onDestroy () {
 			finishedTyping = true;
 		}
 	};
@@ -333,6 +357,17 @@ $_ready(function () {
 				win.setResizable(false);
 			}
 		}
+	}
+
+	/**
+	 * =====================
+	 * Cordova Platform
+	 * =====================
+	 **/
+
+
+	function isCordova () {
+		return !!window.cordova;
 	}
 
 	/**
@@ -724,7 +759,7 @@ $_ready(function () {
 
 	const preloadPromises = [];
 	let assetCount = 0;
-	if (engine.Preload) {
+	if (engine.Preload && !isElectron()) {
 		// Show loading screen
 		$_("[data-menu='loading']").show();
 
@@ -1019,7 +1054,6 @@ $_ready(function () {
 				analyseStatement(label[engine.Step]);
 				engine.Step += 1;
 			}
-
 		}
 	});
 
@@ -1045,7 +1079,6 @@ $_ready(function () {
 			// Check if the function returned a simple boolean
 			// if the return value is true, the game will continue
 			if (typeof result === "boolean") {
-
 				if (result) {
 					resolve ();
 				} else {
@@ -1401,9 +1434,7 @@ $_ready(function () {
 				statement = statement.replace(matches[i], data);
 			}
 		}
-
 		return statement;
-
 	}
 
 	function analyseStatement (statement) {
@@ -1787,7 +1818,7 @@ $_ready(function () {
 							$_("[data-character]").removeClass("focus");
 							if (character.length > 1 && typeof characters[character[0]] !== "undefined") {
 								if (typeof characters[character[0]] != "undefined") {
-									$_("[data-ui='who']").html(characters[character[0]].Name);
+									$_("[data-ui='who']").html(replaceVariables(characters[character[0]].Name));
 									$_("[data-character='" + character[0] + "']").addClass("focus");
 									$_("[data-ui='who']").style("color", characters[character[0]].Color);
 									displayDialog (statement.replace(parts[0] + " ", ""));
@@ -1808,7 +1839,7 @@ $_ready(function () {
 
 								}
 							} else if (typeof characters[parts[0]] != "undefined") {
-								$_("[data-ui='who']").html(characters[parts[0]].Name);
+								$_("[data-ui='who']").html(replaceVariables(characters[parts[0]].Name));
 								$_("[data-character='" + parts[0] + "']").addClass("focus");
 								$_("[data-ui='who']").style("color", characters[parts[0]].Color);
 								displayDialog (statement.replace(parts[0] + " ", ""));
@@ -1878,12 +1909,14 @@ $_ready(function () {
 						assertAsync(condition.Condition).then(function () {
 							if (condition.True.trim() == "") {
 								analyseStatement("next");
+								engine.Step += 1;
 							} else {
 								analyseStatement(condition.True);
 							}
 							block = false;
 						}).catch(function () {
 							analyseStatement(condition.False);
+							engine.Step += 1;
 							block = false;
 						});
 

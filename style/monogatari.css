@@ -39,7 +39,6 @@ h3 {
 }
 
 body {
-	font-family: sans-serif;
 	height: 100vh;
 	width: 100vw;
 	max-height: 100vh;
@@ -68,6 +67,7 @@ button {
 	height: 5vmax;
 	background: rgba(0, 0, 0, 0.5);
 	color: #f7f7f7;
+	padding: 0;
 }
 
 section > div:not(.row) {
@@ -137,11 +137,6 @@ section > div:not(.row) {
  * Data Notice Styling
  * ===========================
 **/
-
-.modal {
-	width: 100vw;
-	height: 100vh;
-}
 
 .modal button {
 	display: inline-block;
