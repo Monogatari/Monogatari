@@ -60,28 +60,6 @@ let autoPlay = null;
 let finishedTyping = false;
 const storageStructure = JSON.stringify(storage);
 
-// Object.assign polyfill for older browsers and OS
-if (typeof Object.assign != "function") {
-	Object.assign = function (target) {
-		if (target === null) {
-			throw new TypeError ("Cannot convert undefined or null to object");
-		}
-
-		target = Object (target);
-		for (var index = 1; index < arguments.length; index++) {
-			var source = arguments[index];
-			if (source !== null) {
-				for (var key in source) {
-					if (Object.prototype.hasOwnProperty.call (source, key)) {
-						target[key] = source[key];
-					}
-				}
-			}
-		}
-		return target;
-	};
-}
-
 $_ready(function () {
 
 	/**
@@ -633,7 +611,7 @@ $_ready(function () {
 		if (autoPlay !== null) {
 			clearInterval (autoPlay);
 			autoPlay = setInterval (function () {
-				if (canProceed()) {
+				if (canProceed() && finishedTyping) {
 					hideCentered();
 					shutUp();
 					analyseStatement(label[engine.Step]);
@@ -715,7 +693,7 @@ $_ready(function () {
 	 * ==========================
 	 **/
 
-	if (!isElectron()) {
+	if (!isElectron() && !isCordova()) {
 		if ("serviceWorker" in navigator && engine.ServiceWorkers) {
 			if (location.protocol.indexOf ("http") > -1) {
 				navigator.serviceWorker.register("service-worker.js");
@@ -759,7 +737,7 @@ $_ready(function () {
 
 	const preloadPromises = [];
 	let assetCount = 0;
-	if (engine.Preload && !isElectron()) {
+	if (engine.Preload && !isElectron() && !isCordova()) {
 		// Show loading screen
 		$_("[data-menu='loading']").show();
 
