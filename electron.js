@@ -22,6 +22,9 @@ function createWindow () {
 	// Create the browser window.
 	win = new BrowserWindow({
 
+		// Title that will be shown in the window (Your game's title)
+		title: "",
+
 		// Set the minimal window size
 		minWidth: 640,
 		minHeight: 360,
@@ -41,7 +44,6 @@ function createWindow () {
 
 		// Full Screen options
 		fullscrenable: true,
-		fullscreen: false,
 
 		// Set an icon for the window
 		icon: __dirname + "/img/icons/icon_128x128.png"
