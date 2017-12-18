@@ -11,6 +11,9 @@ const zip = require("gulp-zip");
 const cssnano = require("gulp-cssnano");
 const download = require("gulp-download-stream");
 const runSequence = require("run-sequence");
+const eslint = require("gulp-eslint");
+const stylelint = require('gulp-stylelint');
+const htmlhint = require('gulp-htmlhint');
 
 gulp.task("default", () => {
 	// place code for your default task here
@@ -134,3 +137,30 @@ gulp.task("download-monogatari", () => {
 gulp.task("update", () => {
 	runSequence(["download-deps", "download-monogatari"]);
 });
+
+gulp.task("lint:js", () => {
+	return gulp.src(["./js/*.js", "!js/*.min.js"])
+		.pipe(eslint({ fix: true }))
+		.pipe(eslint.format())
+		.pipe(eslint.failAfterError());
+});
+
+gulp.task("lint:css", () => {
+	return gulp.src(["./style/*.css", "!style/*.min.css"])
+		.pipe(stylelint({
+			failAfterError: true,
+			reporters: [{
+				formatter: 'string',
+				console: true
+			}]
+		}));
+});
+
+gulp.task("lint:html", () => {
+	return gulp.src("./*.html")
+		.pipe(htmlhint())
+		.pipe(htmlhint.reporter())
+		.pipe(htmlhint.failAfterError());
+});
+
+gulp.task("lint", ["lint:js", "lint:css", "lint:html"]);
