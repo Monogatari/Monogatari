@@ -19,7 +19,7 @@ var messages = {
 	"Help": {
 		"Title": "Help",
 		"Subtitle": "Some useful Links",
-		"Message": "<p><a href='http://monogatari.hyuchia.com/documentation/'>Documentation</a> - Everything you need to know.</p><p><a href='http://monogatari.hyuchia.com/demo/'>Demo</a> - A simple Demo.</p>"
+		"Message": "<p><a href='https://monogatari.io/documentation//'>Documentation</a> - Everything you need to know.</p><p><a href='https://monogatari.io/demo/'>Demo</a> - A simple Demo.</p>"
 	}
 };
 
