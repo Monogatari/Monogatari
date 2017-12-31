@@ -51,9 +51,6 @@ Deny from env=block_bad_bots
     php_value session.cookie_httponly true
 </IfModule>
 
-# Prevent Iframe
-Header set X-Frame-Options DENY
-
 # Disable server signature
 ServerSignature Off
 

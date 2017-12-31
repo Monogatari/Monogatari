@@ -17,7 +17,7 @@ var files = [
 
 	// Style Sheets
 	"style/font-awesome.min.css",
-	"style/kayros.css",
+	"style/kayros.min.css",
 	"style/animate.min.css",
 	"style/csshake.min.css",
 	"style/monogatari.css",
