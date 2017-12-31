@@ -109,6 +109,11 @@ $_ready(function () {
 			engine.AutoSave = 0;
 		}
 
+		if (typeof engine.AutoSaveLabel == "undefined") {
+			console.warn("The 'AutoSaveLabel' property is missing in the engine object, using default ('AutoSave_') fallback.");
+			engine.AutoSaveLabel = "AutoSave_";
+		}
+
 		if (typeof engine.ServiceWorkers !== "boolean") {
 			engine.ServiceWorkers = true;
 		}
@@ -366,6 +371,18 @@ $_ready(function () {
 	 **/
 
 	// Create all save and load slots
+
+	function countSlots () {
+		const savedData = Object.keys(localStorage);
+		let count = 0;
+		for (const saveKey of savedData) {
+			if (saveKey.indexOf (engine.SaveLabel) === 0) {
+				count += 1;
+			}
+		}
+		return count;
+	}
+
 	function setSlots () {
 		if (!window.localStorage) {
 			return false;
@@ -375,56 +392,43 @@ $_ready(function () {
 		$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html("");
 		$_("[data-menu='save'] [data-ui='slots']").html("");
 
-		// Add missing statements in engine configuration
-		// in case they are not there
-		if (typeof engine.AutoSave == "undefined") {
-			engine.AutoSave = 0;
-			console.warn("The AutoSave property is missing in the engine configuration.");
-		}
+		$_("[data-menu='save'] [data-input='slotName']").value (niceDate ());
 
-		if (typeof engine.AutoSaveLabel == "undefined") {
-			engine.AutoSaveLabel = "AutoSave_";
-			console.warn("The AutoSaveLabel property is missing in the engine configuration.");
-		}
 
-		for (let i = 1; i <= engine.Slots; i++) {
+		const savedData = Object.keys(localStorage).sort ();
+		for (const saveKey of savedData) {
+			if (saveKey.indexOf (engine.SaveLabel) === 0) {
+				const slot = Storage.get(saveKey);
+				const i = saveKey.split (engine.SaveLabel)[1];
+				if (slot !== null && slot !== "") {
+					const data = JSON.parse(slot);
+					const name = data.Name ? data.Name : data.Date;
 
-			const slot = Storage.get(engine.SaveLabel + i);
-			const autoSaveSlot = Storage.get(engine.AutoSaveLabel + i);
+					if (typeof scenes[data.Engine.Scene] !== "undefined") {
 
-			if (slot === null) {
-				Storage.set(engine.SaveLabel + i, "");
-				$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><figcaption>${getLocalizedString("SaveInSlot")} #${i}</figcaption></figure>`);
-			} else if (slot != "") {
-				const data = JSON.parse(slot);
+						$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append("<figure data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data.Engine.Scene] + "' alt=''><figcaption>" + getLocalizedString("Load") + " #" + i + "<small> " +name + "</small></figcaption></figure>");
 
-				if (typeof scenes[data.Engine.Scene] !== "undefined") {
+						$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>${getLocalizedString("Overwrite")}<small>${data.Date}</small></figcaption></figure>`);
 
-					$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data.Label + "' data-load-element='" + data.Engine.Step + "' data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data.Engine.Scene] + "' alt=''><figcaption>" + getLocalizedString("Load") + " #" + i + "<small> " +data.Date + "</small></figcaption></figure>");
+					} else {
+						$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append("<figure data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + getLocalizedString("Load") + " #" + i + "<small> " + name + "</small></figcaption></figure>");
 
-					$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>${getLocalizedString("Overwrite")} #${i}<small>${data.Date}</small></figcaption></figure>`);
-
-				} else {
-					$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data.Label + "' data-load-element='" + data.Engine.Step + "' data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + getLocalizedString("Load") + " #" + i + "<small> " +data.Date + "</small></figcaption></figure>");
-
-					$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><figcaption>${getLocalizedString("Overwrite")} #${i}<small>${data.Date}</small></figcaption></figure>`);
+						$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><figcaption>${getLocalizedString("Overwrite")} #${i}<small>${name}</small></figcaption></figure>`);
+					}
 				}
+			} else if (saveKey.indexOf (engine.AutoSaveLabel) === 0) {
+				const slot = Storage.get(saveKey);
+				const i = saveKey.split (engine.SaveLabel)[1];
+				if (slot !== null && slot !== "") {
+					const data = JSON.parse(slot);
+					const name = data.Name ? data.Name : data.Date;
 
-			} else {
-				$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><figcaption>${getLocalizedString("SaveInSlot")} #${i}</figcaption></figure>`);
-			}
-
-			if (autoSaveSlot === null) {
-				Storage.set(engine.AutoSaveLabel + i, "");
-			} else if (autoSaveSlot != "") {
-				const data = JSON.parse(autoSaveSlot);
-
-				if (typeof scenes[data.Engine.Scene] !== "undefined") {
-					$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data.Label + "' data-load-element='" + data.Engine.Step + "' data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data.Engine.Scene] + "' alt=''><figcaption>" + data.Date + " in " + data.Label + "</figcaption></figure>");
-				} else {
-					$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append("<figure data-load-part='" + data.Label + "' data-load-element='" + data.Engine.Step + "' data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + data.Date + " in " + data.Label + "</figcaption></figure>");
+					if (typeof scenes[data.Engine.Scene] !== "undefined") {
+						$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append("<figure data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data.Engine.Scene] + "' alt=''><figcaption>" + name + " in " + data.Label + "</figcaption></figure>");
+					} else {
+						$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append("<figure data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + name + " in " + data.Label + "</figcaption></figure>");
+					}
 				}
-
 			}
 		}
 
@@ -447,28 +451,77 @@ $_ready(function () {
 	 * =======================
 	 **/
 
-	function saveToSlot (slot) {
+	function niceDate () {
+		const date = new Date();
+		const day = date.getDate();
+		const month = date.getMonth() + 1;
+		const year = date.getFullYear();
+		return `${day}-${month}-${year}`;
+	}
+
+	function newSave (name) {
+		// Check if the player is actually playing
 		if (playing) {
 			document.body.style.cursor = "wait";
-			const date = new Date();
-			const day = date.getDate();
-			const month = date.getMonth() + 1;
-			const year = date.getFullYear();
-			let show = "";
 
+			// Get a list of all the images being shown in screen except the
+			// face images so they can be shown next time the slot is loaded
+			let show = "";
 			$_("#game img:not([data-ui='face'])").each(function (element) {
 				show += element.outerHTML.replace(/"/g, "'") + ",";
 			});
 
+			// Build the save slot data with the current state of every
+			// important object
 			const saveData = {
-				"Date": `${day}-${month}-${year}`,
+				"Name": name,
+				"Date": niceDate (),
 				"Engine": engine,
 				"Show": show,
 				"Label": engine.Label,
 				"Storage": storage
 			};
 
-			Storage.set(slot, JSON.stringify(saveData));
+			Storage.set ("Save_" + (countSlots () + 1), JSON.stringify(saveData));
+			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html("");
+			$_("[data-menu='save'] [data-ui='slots']").html("");
+			setSlots();
+			document.body.style.cursor = "auto";
+		}
+	}
+
+	function saveToSlot (slot) {
+		// Check if the player is actually playing
+		if (playing) {
+			document.body.style.cursor = "wait";
+
+			// Get a list of all the images being shown in screen except the
+			// face images so they can be shown next time the slot is loaded
+			let show = "";
+			$_("#game img:not([data-ui='face'])").each(function (element) {
+				show += element.outerHTML.replace(/"/g, "'") + ",";
+			});
+
+			// Get the name of the Slot if it exists or use the current date.
+			const data = Storage.get (slot);
+			let name;
+			if (data.Name !== null && data.Name !== "" && typeof data.Name !== "undefined") {
+				name = data.Name;
+			} else {
+				name = niceDate ();
+			}
+			// Build the save slot data with the current state of every
+			// important object
+			const saveData = {
+				"Name": name,
+				"Date": niceDate (),
+				"Engine": engine,
+				"Show": show,
+				"Label": engine.Label,
+				"Storage": storage
+			};
+
+			Storage.set (slot, JSON.stringify(saveData));
 			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html("");
 			$_("[data-menu='save'] [data-ui='slots']").html("");
 			setSlots();
@@ -536,17 +589,17 @@ $_ready(function () {
 
 	// Load a saved game slot when it is pressed
 	$_("[data-menu='load'] [data-ui='saveSlots']").on("click", "figcaption, img", function () {
-		loadFromSlot(engine.SaveLabel + $_(this).parent().data("loadSlot"));
+		loadFromSlot (engine.SaveLabel + $_(this).parent().data("loadSlot"));
 	});
 
 	// Load an autosaved game slot when it is pressed
 	$_("[data-menu='load'] [data-ui='autoSaveSlots']").on("click", "figcaption, img", function () {
-		loadFromSlot(engine.AutoSaveLabel + $_(this).parent().data("loadSlot"));
+		loadFromSlot (engine.AutoSaveLabel + $_(this).parent().data("loadSlot"));
 	});
 
 	// Save to slot when a slot is pressed.
 	$_("[data-menu='save']").on("click", "figcaption, img", function () {
-		saveToSlot(engine.SaveLabel + $_(this).parent().data("save"));
+		saveToSlot (engine.SaveLabel + $_(this).parent().data("save"));
 	});
 
 	// Auto Save
@@ -565,7 +618,6 @@ $_ready(function () {
 		}, engine.AutoSave * 60000);
 	} else {
 		$_("[data-menu='load'] [data-ui='autoSaveSlots']").hide();
-
 	}
 
 	/**
@@ -909,14 +961,21 @@ $_ready(function () {
 				analyseStatement(label[engine.Step]);
 				engine.Step += 1;
 				break;
+
+			case "save":
+				const slotName = $_("[data-menu='save'] [data-input='slotName']").value ().trim ();
+				if (slotName !== "") {
+					newSave (slotName);
+				}
+				break;
 		}
 
 	});
 
 	$_("#game [data-action='back']").click(function (event) {
-		event.stopPropagation();
-		if (canProceed()) {
-			previous();
+		event.stopPropagation ();
+		if (canProceed ()) {
+			previous ();
 		}
 	});
 
@@ -924,9 +983,9 @@ $_ready(function () {
 		event.stopPropagation();
 		$_("section").hide();
 		if (playing) {
-			$_("#game").show();
+			$_("#game").show ();
 		} else {
-			$_("[data-menu='main']").show();
+			$_("[data-menu='main']").show ();
 		}
 	});
 

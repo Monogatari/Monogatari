@@ -359,11 +359,6 @@ textarea {
 	cursor: pointer;
 }
 
-[data-ui="slots"],
-[data-ui="settings"] {
-	margin-bottom: 10vmax;
-}
-
 [data-ui="slots"] figure {
 	width: 20vmax;
 	height: auto;
@@ -422,6 +417,11 @@ textarea {
 	background: transparent;
 }
 
+[data-menu='save'] input {
+	background: #fff;
+	border: 1px solid #666;
+}
+
 [data-menu="main"] {
 	background-repeat: no-repeat;
 	-webkit-background-size: cover;
@@ -432,6 +432,14 @@ textarea {
 
 [data-menu] button {
 	margin: 2vmin;
+}
+
+[data-menu] button[data-action="back"] {
+	position: absolute;
+	border-radius: 100%;
+	width: auto;
+	height: auto;
+	padding: 0.5em;
 }
 
 /**

@@ -158,7 +158,6 @@
 
 	<!-- Loading Screen -->
 	<section data-menu="loading" data-background="">
-
 		<div class="middle">
 			<h2 data-string="Loading">Loading</h2>
 			<progress data-ui="load-progress" value="0" max="100"></progress>
@@ -180,15 +179,18 @@
 
 	<!-- Save Screen -->
 	<section data-menu="save" data-background="">
-		<h2 data-string="Save">Save</h2>
-		<div data-ui="slots" class="horizontal align-center"></div>
-		<div class="horizontal align-center bottom animated bounceIn" data-ui="inner-menu">
-			<button data-action="back" data-string="Back">Back</button>
+		<button class="fa fa-arrow-left top left" data-action="back"></button>
+		<div class="horizontal">
+			<input type="text" placeholder="Save Slot Name" data-input="slotName" required>
+			<button data-string="Save" data-action="save">Save</button>
 		</div>
+		<div data-ui="slots" class="horizontal align-center"></div>
+
 	</section>
 
 	<!-- Load Screen -->
 	<section data-menu="load" data-background="">
+		<button class="fa fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Load">Load</h2>
 		<div data-ui="saveSlots">
 			<h3 data-string="LoadSlots">Saved Games</h3>
@@ -198,13 +200,11 @@
 			<h3 data-string="LoadAutoSaveSlots">Auto Saved Games</h3>
 			<div data-ui="slots" class="horizontal align-center"></div>
 		</div>
-		<div class="horizontal align-center bottom animated bounceIn" data-ui="inner-menu">
-			<button data-action="back" data-string="Back">Back</button>
-		</div>
 	</section>
 
 	<!-- Settings Screen -->
 	<section data-menu="settings" data-background="" class="align-center">
+		<button class="fa fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Settings">Settings</h2>
 		<div class="row spaced padded-1 align-center">
 			<div class="col xs12 s12 m6 l6 xl6 r6">
@@ -256,15 +256,11 @@
 
 
 		</div>
-
-
-		<div class="horizontal align-center bottom animated bounceIn" data-ui="inner-menu">
-			<button data-action="back" data-string="Back">Back</button>
-		</div>
 	</section>
 
 	<!--Help Screen -->
 	<section data-menu="help" data-background="">
+		<button class="fa fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Help">Help</h2>
 		<div class="align-left padded-1">
 			<p data-string="AdvanceHelp">To advance through the game, click anywhere on the game screen or press the space key.</p>
@@ -276,11 +272,6 @@
 			<p><span class="fa fa-gear"></span> <span data-string="SettingsButton">Open the Settings Screen.</span></p>
 			<p><span class="fa fa-times-circle-o"></span> <span data-string="QuitButton">Quit Game.</span></p>
 		</div>
-
-		<div class="horizontal align-center bottom animated bounceIn" data-ui="inner-menu">
-			<button data-action="back" data-string="Back">Back</button>
-		</div>
-
 	</section>
 
 </body>
