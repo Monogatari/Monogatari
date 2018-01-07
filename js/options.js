@@ -17,7 +17,7 @@ var engine = {
 	// Initial Label *
 	"Label": "Start",
 
-	// Number of Save Slots
+	// Number of AutoSave Slots
 	"Slots": 10,
 
 	// Current Media *
@@ -59,7 +59,15 @@ var engine = {
 
 	// The Aspect Ratio your background images are on. This has no effect on
 	// web deployed novels.
-	"AspectRatio": "16:9"
+	"AspectRatio": "16:9",
+
+	// Enables or disables the typing text animation for the whole game.
+	"TypeAnimation": true,
+
+	// Enables or disables the typing animation for the narrator.
+	// If the previous property was set to false, the narrator won't shown
+	// the animation even if this is set to true.
+	"NarratorTypeAnimation": true
 };
 
 // Initial Settings

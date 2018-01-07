@@ -121,6 +121,14 @@ $_ready(function () {
 		if (typeof engine.AspectRatio !== "string") {
 			engine.AspectRatio = "16:9";
 		}
+
+		if (typeof engine.TypeAnimation !== "boolean") {
+			engine.TypeAnimation = true;
+		}
+
+		if (typeof engine.NarratorTypeAnimation !== "boolean") {
+			engine.NarratorTypeAnimation = true;
+		}
 	}
 
 	/**
@@ -161,6 +169,12 @@ $_ready(function () {
 
 	if (typeof Typed == "undefined") {
 		console.error ("Typed library not found, dialogs will not be shown.");
+	}
+
+	if (typeof engine.TypeAnimation !== "undefined") {
+		if (engine.TypeAnimation === false) {
+			$_("[data-settings='text-speed']").hide ();
+		}
 	}
 
 	// Set the game language or hide the option if the game is not multilingual
@@ -218,6 +232,7 @@ $_ready(function () {
 		fadeOut: true,
 		loop: false,
 		showCursor: false,
+		contentType: "html",
 		preStringTyped: function () {
 			finishedTyping = false;
 		},
@@ -963,7 +978,7 @@ $_ready(function () {
 				break;
 
 			case "save":
-				const slotName = $_("[data-menu='save'] [data-input='slotName']").value ().trim ();
+				var slotName = $_("[data-menu='save'] [data-input='slotName']").value ().trim ();
 				if (slotName !== "") {
 					newSave (slotName);
 				}
@@ -1100,12 +1115,41 @@ $_ready(function () {
 	 * =======================
 	 **/
 
-	function displayDialog (dialog) {
+	function displayDialog (dialog, animation) {
+
+		// Destroy the previous textObject so the text is rewritten.
+		// If not destroyed, the text would be appended instead of replaced.
 		if (typeof textObject != "undefined") {
 			textObject.destroy ();
 		}
-		typedConfiguration.strings = [dialog];
-		textObject = new Typed ("[data-ui='say']", typedConfiguration);
+
+		// Remove contents from the dialog area.
+		$_("[data-ui='say']").html ("");
+
+		// Check if the typing animation flag is set to true in order to show it
+		if (animation === true) {
+
+			// Check if the TypeAnimation property exists in the engine configuration
+			if (typeof engine.TypeAnimation !== "undefined") {
+
+				// If the property is set to true, the animation will be shown
+				// if it is set to false, even if the flag was set to true,
+				// no animation will be shown in the game.
+				if (engine.TypeAnimation === true) {
+					typedConfiguration.strings = [dialog];
+					textObject = new Typed ("[data-ui='say']", typedConfiguration);
+				} else {
+					$_("[data-ui='say']").html (dialog);
+					finishedTyping = true;
+				}
+			} else {
+				typedConfiguration.strings = [dialog];
+				textObject = new Typed ("[data-ui='say']", typedConfiguration);
+			}
+		} else {
+			$_("[data-ui='say']").html (dialog);
+			finishedTyping = true;
+		}
 	}
 
 	// Assert the result of a function
@@ -1837,34 +1881,62 @@ $_ready(function () {
 							// Default case, used to show the dialog.
 							var character = parts[0].split(":");
 							var directory;
+
+							// Remove focus from previous character.
 							$_("[data-character]").removeClass("focus");
+
+							// The character length condition checks if the split from above (:) contains two elements.
+							// If there are two elements, then it's probable that it is a character identifier and
+							// a face expression to be shown.
+
+							// The typeof check, is to see if the character actually exists, if it does not, then it is
+							// treated as a normal work and the narrator is used to show the dialog
 							if (character.length > 1 && typeof characters[character[0]] !== "undefined") {
-								if (typeof characters[character[0]] != "undefined") {
-									$_("[data-ui='who']").html(replaceVariables(characters[character[0]].Name));
-									$_("[data-character='" + character[0] + "']").addClass("focus");
-									$_("[data-ui='who']").style("color", characters[character[0]].Color);
-									displayDialog (statement.replace(parts[0] + " ", ""));
-									if (typeof characters[character[0]].Side != "undefined") {
-										if (typeof characters[character[0]].Side[character[1]] != "undefined" && characters[character[0]].Side[character[1]] != "") {
-											directory = characters[character[0]].Directory;
-											if (typeof directory == "undefined") {
-												directory = "";
-											}
-											$_("[data-ui='face']").attribute("src", "img/characters/" + directory + "/" + characters[character[0]].Side[character[1]]);
-											$_("[data-ui='face']").show();
-										} else {
-											$_("[data-ui='face']").hide();
+								$_("[data-ui='who']").html(replaceVariables(characters[character[0]].Name));
+								$_("[data-character='" + character[0] + "']").addClass("focus");
+								$_("[data-ui='who']").style("color", characters[character[0]].Color);
+
+								// Check if the character object defines if the type animation should be used.
+								if (typeof characters[character[0]].TypeAnimation !== "undefined") {
+									if (characters[character[0]].TypeAnimation === true) {
+										displayDialog (statement.replace(parts[0] + " ", ""), true);
+									} else {
+										displayDialog (statement.replace(parts[0] + " ", ""), false);
+									}
+								} else {
+									displayDialog (statement.replace(parts[0] + " ", ""), true);
+								}
+
+								if (typeof characters[character[0]].Side != "undefined") {
+									if (typeof characters[character[0]].Side[character[1]] != "undefined" && characters[character[0]].Side[character[1]] != "") {
+										directory = characters[character[0]].Directory;
+										if (typeof directory == "undefined") {
+											directory = "";
 										}
+										$_("[data-ui='face']").attribute("src", "img/characters/" + directory + "/" + characters[character[0]].Side[character[1]]);
+										$_("[data-ui='face']").show();
 									} else {
 										$_("[data-ui='face']").hide();
 									}
-
+								} else {
+									$_("[data-ui='face']").hide();
 								}
 							} else if (typeof characters[parts[0]] != "undefined") {
 								$_("[data-ui='who']").html(replaceVariables(characters[parts[0]].Name));
 								$_("[data-character='" + parts[0] + "']").addClass("focus");
 								$_("[data-ui='who']").style("color", characters[parts[0]].Color);
-								displayDialog (statement.replace(parts[0] + " ", ""));
+
+								// Check if the character object defines if the type animation should be used.
+								if (typeof characters[character[0]].TypeAnimation !== "undefined") {
+									if (characters[character[0]].TypeAnimation === true) {
+										displayDialog (statement.replace(parts[0] + " ", ""), true);
+									} else {
+										displayDialog (statement.replace(parts[0] + " ", ""), false);
+									}
+								} else {
+									displayDialog (statement.replace(parts[0] + " ", ""), true);
+								}
+
 								if (typeof characters[parts[0]].Face != "undefined" && characters[parts[0]].Face != "") {
 									directory = characters[parts[0]].Directory;
 									if (typeof directory == "undefined") {
@@ -1879,7 +1951,16 @@ $_ready(function () {
 								// The narrator is speaking
 								$_("[data-ui='face']").hide();
 								document.querySelector("[data-ui='who']").innerHTML = "";
-								displayDialog (statement);
+
+								if (typeof engine.NarratorTypeAnimation !== "undefined") {
+									if (engine.NarratorTypeAnimation === true) {
+										displayDialog (statement, true);
+									} else {
+										displayDialog (statement, false);
+									}
+								} else {
+									displayDialog (statement, true);
+								}
 							}
 							break;
 					}
