@@ -1309,16 +1309,8 @@ $_ready(function () {
 									if (typeof last_character != "undefined") {
 										if (last_character.indexOf("data-character='" + parts[1] + "'") > -1) {
 											$_("#game").append(last_character);
-											if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-												if (Screen.isLandscape()) {
-													$_("[data-character]").style("height", "80%");
-												} else {
-													$_("[data-character]").style("height", "60%");
-												}
-											}
 										}
 									}
-
 								} else {
 									if (typeof parts[3] != "undefined" && parts[3] != "") {
 										$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
@@ -1630,13 +1622,6 @@ $_ready(function () {
 
 
 								$_("#game").append("<img src='img/characters/" + directory + "/" + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
-								if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-									if (Screen.isLandscape()) {
-										$_("[data-character]").style("height", "80%");
-									} else {
-										$_("[data-character]").style("height", "60%");
-									}
-								}
 								engine.CharacterHistory.push("<img src='img/characters/" + directory + "/" + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
 
 							} else {
