@@ -58,6 +58,8 @@ let playing = false;
 let block = false;
 let autoPlay = null;
 let finishedTyping = false;
+let deleteSlot;
+let overwriteSlot;
 const storageStructure = JSON.stringify(storage);
 
 $_ready(function () {
@@ -387,15 +389,19 @@ $_ready(function () {
 
 	// Create all save and load slots
 
-	function countSlots () {
+	function getMaxSlotId () {
 		const savedData = Object.keys(localStorage);
-		let count = 0;
+
+		let max = 1;
 		for (const saveKey of savedData) {
 			if (saveKey.indexOf (engine.SaveLabel) === 0) {
-				count += 1;
+				const number = parseInt(saveKey.split (engine.SaveLabel)[1]);
+				if (number > max) {
+					max = number;
+				}
 			}
 		}
-		return count;
+		return max;
 	}
 
 	function setSlots () {
@@ -410,7 +416,11 @@ $_ready(function () {
 		$_("[data-menu='save'] [data-input='slotName']").value (niceDate ());
 
 
-		const savedData = Object.keys(localStorage).sort ();
+		const savedData = Object.keys(localStorage).sort (function (a, b) {
+			const aNumber = parseInt (a.split (engine.SaveLabel)[1]);
+			const bNumber = parseInt (b.split (engine.SaveLabel)[1]);
+			return aNumber - bNumber;
+		});
 		for (const saveKey of savedData) {
 			if (saveKey.indexOf (engine.SaveLabel) === 0) {
 				const slot = Storage.get(saveKey);
@@ -421,14 +431,14 @@ $_ready(function () {
 
 					if (typeof scenes[data.Engine.Scene] !== "undefined") {
 
-						$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append("<figure data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data.Engine.Scene] + "' alt=''><figcaption>" + getLocalizedString("Load") + " #" + i + "<small> " +name + "</small></figcaption></figure>");
+						$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]} alt=''><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
 
-						$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>${getLocalizedString("Overwrite")}<small>${data.Date}</small></figcaption></figure>`);
+						$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}' class='col xs6 m4 l3 xl3'><button class='fa fa-close' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>${getLocalizedString("Overwrite")} #${$i}<small>${name}</small></figcaption></figure>`);
 
 					} else {
-						$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append("<figure data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + getLocalizedString("Load") + " #" + i + "<small> " + name + "</small></figcaption></figure>");
+						$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete=${i}></button><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
 
-						$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}'><figcaption>${getLocalizedString("Overwrite")} #${i}<small>${name}</small></figcaption></figure>`);
+						$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}' class='col xs6 m4 l3 xl3'><figcaption><button class='fa fa-close' data-delete=${i}></button>${getLocalizedString("Overwrite")} #${i}<small>${name}</small></figcaption></figure>`);
 					}
 				}
 			} else if (saveKey.indexOf (engine.AutoSaveLabel) === 0) {
@@ -439,9 +449,9 @@ $_ready(function () {
 					const name = data.Name ? data.Name : data.Date;
 
 					if (typeof scenes[data.Engine.Scene] !== "undefined") {
-						$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append("<figure data-load-slot='" + i + "' class='animated flipInX'><img src='img/scenes/" + scenes[data.Engine.Scene] + "' alt=''><figcaption>" + name + " in " + data.Label + "</figcaption></figure>");
+						$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append("<figure data-load-slot='" + i + "' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete=${i}></button><img src='img/scenes/" + scenes[data.Engine.Scene] + "' alt=''><figcaption>" + name + " in " + data.Label + "</figcaption></figure>");
 					} else {
-						$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append("<figure data-load-slot='" + i + "' class='animated flipInX'><figcaption>" + name + " in " + data.Label + "</figcaption></figure>");
+						$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append("<figure data-load-slot='" + i + "' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete=${i}></button><figcaption>" + name + " in " + data.Label + "</figcaption></figure>");
 					}
 				}
 			}
@@ -497,7 +507,7 @@ $_ready(function () {
 				"Storage": storage
 			};
 
-			Storage.set ("Save_" + (countSlots () + 1), JSON.stringify(saveData));
+			Storage.set (engine.SaveLabel + (getMaxSlotId () + 1), JSON.stringify(saveData));
 			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html("");
 			$_("[data-menu='save'] [data-ui='slots']").html("");
 			setSlots();
@@ -505,7 +515,7 @@ $_ready(function () {
 		}
 	}
 
-	function saveToSlot (slot) {
+	function saveToSlot (slot, customName) {
 		// Check if the player is actually playing
 		if (playing) {
 			document.body.style.cursor = "wait";
@@ -524,6 +534,10 @@ $_ready(function () {
 				name = data.Name;
 			} else {
 				name = niceDate ();
+			}
+
+			if (typeof customName !== "undefined") {
+				name = customName;
 			}
 			// Build the save slot data with the current state of every
 			// important object
@@ -614,7 +628,41 @@ $_ready(function () {
 
 	// Save to slot when a slot is pressed.
 	$_("[data-menu='save']").on("click", "figcaption, img", function () {
-		saveToSlot (engine.SaveLabel + $_(this).parent().data("save"));
+		console.log ($_(this).parent ().data ("save"));
+		overwriteSlot = $_(this).parent ().data ("save");
+		const data = JSON.parse(Storage.get (engine.SaveLabel + overwriteSlot));
+
+		if (typeof data.Name !== "undefined") {
+			$_("[data-notice='slot-overwrite'] input").value (data.Name);
+		} else {
+			$_("[data-notice='slot-overwrite'] input").value (data.Date);
+		}
+		$_("[data-notice='slot-overwrite']").addClass ("active");
+	});
+
+	$_("[data-menu='save']").on("click", "small", function () {
+		console.log ($_(this).parent ().data ("save"));
+		overwriteSlot = $_(this).parent ().parent ().data ("save");
+		const data = JSON.parse(Storage.get (engine.SaveLabel + overwriteSlot));
+
+		if (typeof data.Name !== "undefined") {
+			$_("[data-notice='slot-overwrite'] input").value (data.Name);
+		} else {
+			$_("[data-notice='slot-overwrite'] input").value (data.Date);
+		}
+		$_("[data-notice='slot-overwrite']").addClass ("active");
+	});
+
+	$_("[data-menu='save'], [data-menu='load']").on("click", "[data-delete]", function () {
+		deleteSlot = $_(this).data ("delete");
+		const data = JSON.parse(Storage.get (engine.SaveLabel + deleteSlot));
+		if (typeof data.Name !== "undefined") {
+			$_("[data-notice='slot-deletion'] small").text (data.Name);
+		} else {
+			$_("[data-notice='slot-deletion'] small").text (data.Date);
+		}
+
+		$_("[data-notice='slot-deletion']").addClass ("active");
 	});
 
 	// Auto Save
@@ -981,6 +1029,22 @@ $_ready(function () {
 				var slotName = $_("[data-menu='save'] [data-input='slotName']").value ().trim ();
 				if (slotName !== "") {
 					newSave (slotName);
+				}
+				break;
+
+			case "delete-slot":
+				Storage.remove (engine.SaveLabel + deleteSlot);
+				$_(`[data-load-slot='${deleteSlot}'], [data-save='${deleteSlot}']`).remove ();
+				deleteSlot = null;
+				$_("[data-notice='slot-deletion']").removeClass ("active");
+				break;
+
+			case "overwrite-slot":
+				var customName = $_("[data-notice='slot-overwrite'] input").value ().trim ();
+				if (customName !== "") {
+					saveToSlot (engine.SaveLabel + overwriteSlot, customName);
+					overwriteSlot = null;
+					$_("[data-notice='slot-overwrite']").removeClass ("active");
 				}
 				break;
 		}

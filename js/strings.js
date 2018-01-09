@@ -2,6 +2,14 @@
  * ============================================================
  * Translations for the Interface, add as many as you want!
  * ============================================================
+ *
+ * Translators:
+ *
+ * English - Hyuchia <diego@hyuchia.com>
+ * Español - Hyuchia <diego@hyuchia.com>
+ * Français - BakaKiller
+ * 日本語
+ * Nederlands - Natsukeep
  **/
 
 "use strict";
@@ -56,6 +64,8 @@ var strings = {
 		"SaveInSlot": "Save in slot",
 		"Settings": "Settings",
 		"SettingsButton": "Open the Settings Screen.",
+		"SlotDeletion": "Are you sure you want to delete this slot?",
+		"SlotOverwrite": "Are you sure you want to overwrite this slot?",
 		"Sound": "Sound Volume",
 		"Start": "Start",
 
@@ -112,6 +122,8 @@ var strings = {
 		"SaveInSlot": "Guardar en ranura",
 		"Settings": "Configuración",
 		"SettingsButton": "Abrir la Pantalla de Configuración.",
+		"SlotDeletion": "¿Está seguro de querer eliminar este juego?",
+		"SlotOverwrite": "¿Está seguro de querer Sobreescribir este juego?",
 		"Sound": "Volumen de los Sonidos",
 		"Start": "Comenzar",
 
@@ -168,6 +180,8 @@ var strings = {
 		"SaveInSlot": "Enregistrer à l'emplacement",
 		"Settings": "Préférences",
 		"SettingsButton": "Ouvrir l'écran des Préférences.",
+		"SlotDeletion": "",
+		"SlotOverwrite": "",
 		"Sound": "Volume des Sons",
 		"Start": "Démarrer",
 
@@ -224,6 +238,8 @@ var strings = {
 		"SaveInSlot": "スロットにセーブする",
 		"Settings": "環境設定",
 		"SettingsButton": "設定画面を開きます。",
+		"SlotDeletion": "",
+		"SlotOverwrite": "",
 		"Sound": "効果音の音量",
 		"Start": "スタート",
 
@@ -234,25 +250,24 @@ var strings = {
 		"Windowed": "窓"
 	},
 	"Nederlands": {
-		//Translated by Natsukeep
 		"AdvanceHelp": "Gebruik de spatiebalk of linker muisknop om te spelen.",
 		"Audio": "Audio",
 		"AutoPlaySpeed": "Autoplay snelheid",
-		
+
 		"Back": "Terug",
 		"BackButton": "Terug",
-		
+
 		"Cancel": "Stop",
 		"Close": "Sluit",
 		"Confirm": "Ben je zeker dat je wilt stoppen?",
-		
+
 		"FullScreen": "Volledig scherm",
-		
+
 		"Help": "Help",
 		"HideButton": "Verberg tekst.",
-		
+
 		"iOSAudioWarning": "Audio instellingen worden niet ondersteund door iOS.",
-		
+
 		"Language": "Taal",
 		"Load": "Laad",
 		"LoadAutoSaveSlots": "Automatisch opgeslagen spellen",
@@ -261,32 +276,34 @@ var strings = {
 		"LoadingMessage": "Wacht tot de onderdelen zijn geladen.",
 		"LoadSlots": "Opgeslagen spellen",
 		"LocalStorageWarning": "Locale Opslag is niet mogelijk in deze Browser.",
-		
+
 		"Music": "Muziek Volume",
-		
+
 		"NoSavedGames": "Geen opgeslagen spellen.",
 		"NoAutoSavedGames": "Geen automatsch opgeslagen spellen.",
-		
+
 		"Overwrite": "Overschrijven",
-		
+
 		"QuickButtons": "Snelmenu knoppen",
 		"Quit": "sluit",
 		"QuitButton": "Sluit spel.",
-		
+
 		"Resolution": "Resolutie",
-		
+
 		"Save": "Opslaan",
 		"SaveButon": "Open de Save Screen.",
 		"SaveInSlot": "Sla op in slot",
 		"Settings": "Instellingen",
 		"SettingsButton": "Open de instellingen",
+		"SlotDeletion": "",
+		"SlotOverwrite": "",
 		"Sound": "Geluids volume",
 		"Start": "Start",
-		
+
 		"TextSpeed": "Tekst snelheid",
-		
+
 		"Voice": "Stem Volume",
-		
+
 		"Windowed": "Window modus"
 	}
 };
