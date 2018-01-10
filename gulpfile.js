@@ -12,8 +12,11 @@ const cssnano = require("gulp-cssnano");
 const download = require("gulp-download-stream");
 const runSequence = require("run-sequence");
 const eslint = require("gulp-eslint");
-const stylelint = require('gulp-stylelint');
-const htmlhint = require('gulp-htmlhint');
+const stylelint = require("gulp-stylelint");
+const htmlhint = require("gulp-htmlhint");
+const concat = require("gulp-concat");
+const rename = require("gulp-rename");
+const closureCompiler = require("google-closure-compiler").gulp();
 
 gulp.task("default", () => {
 	// place code for your default task here
@@ -150,7 +153,7 @@ gulp.task("lint:css", () => {
 		.pipe(stylelint({
 			failAfterError: true,
 			reporters: [{
-				formatter: 'string',
+				formatter: "string",
 				console: true
 			}]
 		}));
@@ -164,3 +167,67 @@ gulp.task("lint:html", () => {
 });
 
 gulp.task("lint", ["lint:js", "lint:css", "lint:html"]);
+
+gulp.task("package:js", () => {
+	return gulp.src([
+		"js/pollyfill.min.js",
+		"js/jquery.min.js",
+		"js/particles.min.js",
+		"js/typed.min.js",
+		"js/artemis.min.js",
+		"js/strings.js",
+		"js/options.js",
+		"js/script.js",
+		"js/monogatari.js",
+		"js/main.js"
+	])
+		.pipe(concat({ path: packageJson.name + ".js", stat: { mode: "0664" }, newLine: "\r\n"}))
+		.pipe(closureCompiler({
+			compilation_level: "WHITESPACE_ONLY",
+			language_in: "ECMASCRIPT6_STRICT",
+			language_out: "ECMASCRIPT5_STRICT",
+			js_output_file: packageJson.name + ".min.js"
+		}))
+		.pipe(gulp.dest("build/"));
+});
+
+gulp.task("package:style", () => {
+	return gulp.src([
+		"style/cssshake.min.css",
+		"style/animate.min.css",
+		"style/font-awesome.min.css",
+		"style/kayros.min.css",
+		"style/monogatari.css",
+		"style/main.css"
+	])
+		.pipe(concat({ path: packageJson.name + ".css", stat: { mode: "0664" }, newLine: "\r\n\r\n"}))
+		.pipe(cssnano({zindex: false}))
+		.pipe(rename({ extname: ".min.css" }))
+		.pipe(gulp.dest("build/"));
+});
+
+gulp.task("package:misc", () => {
+	return gulp.src([
+		"./**",
+		"!./**/.DS_Store",
+		"!./**/.thumbs",
+		"!./**/.md",
+		"!./**/.gitignore",
+		"!./**/.editorconfig",
+		"!./**/.buildconfig",
+		"!.git/**",
+		"!node_modules/**",
+		"!build/**",
+		"!.git",
+		"!node_modules",
+		"!build",
+		"!style",
+		"!js",
+		"!build/**",
+		"!style/**",
+		"!js/**"
+	])
+		.pipe(gulp.dest("build/"));
+});
+
+gulp.task("package", ["package:js", "package:style", "package:misc"]);

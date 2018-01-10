@@ -1,6 +1,6 @@
 {
-  "name": "Monogatari",
-  "version": "1.3.3",
+  "name": "monogatari",
+  "version": "1.4.0",
   "main": "electron.js",
   "description": "Monogatari is a simple web visual novel engine created to bring Visual Novels to the web.",
   "repository": {
@@ -14,8 +14,10 @@
   },
   "homepage": "https://monogatari.io",
   "devDependencies": {
+    "google-closure-compiler": "^20151216.2.0",
     "gulp": "^3.9.1",
     "gulp-atom-electron": "^1.7.1",
+    "gulp-concat": "^2.6.0",
     "gulp-cssnano": "^2.1.2",
     "gulp-download-stream": "0.0.13",
     "gulp-electron": "^0.1.3",
@@ -23,6 +25,7 @@
     "gulp-htmlhint": "^1.0.0",
     "gulp-imagemin": "^3.0.2",
     "gulp-jsbeautifier": "^2.0.3",
+    "gulp-rename": "^1.2.2",
     "gulp-stylelint": "^5.0.0",
     "gulp-zip": "^3.2.0",
     "run-sequence": "^1.2.2",
