@@ -21,6 +21,7 @@ var strings = {
 	"English": {
 		"AdvanceHelp": "To advance through the game, press the space key or click.",
 		"Audio": "Audio",
+		"AutoPlay": "Auto",
 		"AutoPlaySpeed": "Autoplay Speed",
 
 		"Back": "Back",
@@ -33,6 +34,7 @@ var strings = {
 		"FullScreen": "Full Screen",
 
 		"Help": "Help",
+		"Hide": "Hide",
 		"HideButton": "Hide Text.",
 
 		"iOSAudioWarning": "Audio settings are not supported on iOS.",
@@ -64,10 +66,12 @@ var strings = {
 		"SaveInSlot": "Save in slot",
 		"Settings": "Settings",
 		"SettingsButton": "Open the Settings Screen.",
+		"Show": "Show",
 		"SlotDeletion": "Are you sure you want to delete this slot?",
 		"SlotOverwrite": "Are you sure you want to overwrite this slot?",
 		"Sound": "Sound Volume",
 		"Start": "Start",
+		"Stop": "Stop",
 
 		"TextSpeed": "Text Speed",
 
@@ -79,6 +83,7 @@ var strings = {
 	"Español": {
 		"AdvanceHelp": "Para avanzar en el juego, presiona espacio o haz click.",
 		"Audio": "Audio",
+		"AutoPlay": "Auto",
 		"AutoPlaySpeed": "Velocidad de Juego Automático",
 
 		"Back": "Atrás",
@@ -91,6 +96,7 @@ var strings = {
 		"FullScreen": "Pantalla Completa",
 
 		"Help": "Ayuda",
+		"Hide": "Ocultar",
 		"HideButton": "Esconder el Texto.",
 
 		"iOSAudioWarning": "Las configuraciones de Audio no están disponibles en iOS.",
@@ -122,10 +128,12 @@ var strings = {
 		"SaveInSlot": "Guardar en ranura",
 		"Settings": "Configuración",
 		"SettingsButton": "Abrir la Pantalla de Configuración.",
+		"Show": "Mostrar",
 		"SlotDeletion": "¿Está seguro de querer eliminar este juego?",
 		"SlotOverwrite": "¿Está seguro de querer Sobreescribir este juego?",
 		"Sound": "Volumen de los Sonidos",
 		"Start": "Comenzar",
+		"Stop": "Detener",
 
 		"TextSpeed": "Velocidad del Texto",
 
@@ -137,6 +145,7 @@ var strings = {
 	"Français": {
 		"AdvanceHelp": "Pour avancer dans le jeu, appuyez sur la touche espace ou cliquez.",
 		"Audio": "Audio",
+		"AutoPlay": "Auto",
 		"AutoPlaySpeed": "Vitesse de lecture automatique",
 
 		"Back": "Retour",
@@ -149,6 +158,7 @@ var strings = {
 		"FullScreen": "Plein Écran",
 
 		"Help": "Aide",
+		"Hide": "",
 		"HideButton": "Cacher le Texte.",
 
 		"iOSAudioWarning": "Les paramètres audio ne sont pas pris en charge par iOS.",
@@ -180,10 +190,12 @@ var strings = {
 		"SaveInSlot": "Enregistrer à l'emplacement",
 		"Settings": "Préférences",
 		"SettingsButton": "Ouvrir l'écran des Préférences.",
+		"Show": "",
 		"SlotDeletion": "",
 		"SlotOverwrite": "",
 		"Sound": "Volume des Sons",
 		"Start": "Démarrer",
+		"Stop": "",
 
 		"TextSpeed": "Vitesse du Texte",
 
@@ -195,6 +207,7 @@ var strings = {
 	"日本語": {
 		"AdvanceHelp": "ゲームを進めるためには、スペースキーを押すかクリックします。",
 		"Audio": "オーディオ",
+		"AutoPlay": "",
 		"AutoPlaySpeed": "自動再生速度",
 
 		"Back": "巻き戻し",
@@ -207,6 +220,7 @@ var strings = {
 		"FullScreen": "全画面表示",
 
 		"Help": "ヘルプ",
+		"Hide": "",
 		"HideButton": "テキストを隠します。",
 
 		"iOSAudioWarning": "iOSではオーディオ設定がサポートされていません。",
@@ -238,10 +252,12 @@ var strings = {
 		"SaveInSlot": "スロットにセーブする",
 		"Settings": "環境設定",
 		"SettingsButton": "設定画面を開きます。",
+		"Show": "",
 		"SlotDeletion": "",
 		"SlotOverwrite": "",
 		"Sound": "効果音の音量",
 		"Start": "スタート",
+		"Stop": "",
 
 		"TextSpeed": "テキストスピード",
 
@@ -252,6 +268,7 @@ var strings = {
 	"Nederlands": {
 		"AdvanceHelp": "Gebruik de spatiebalk of linker muisknop om te spelen.",
 		"Audio": "Audio",
+		"AutoPlay": "",
 		"AutoPlaySpeed": "Autoplay snelheid",
 
 		"Back": "Terug",
@@ -264,6 +281,7 @@ var strings = {
 		"FullScreen": "Volledig scherm",
 
 		"Help": "Help",
+		"Hide": "",
 		"HideButton": "Verberg tekst.",
 
 		"iOSAudioWarning": "Audio instellingen worden niet ondersteund door iOS.",
@@ -295,10 +313,12 @@ var strings = {
 		"SaveInSlot": "Sla op in slot",
 		"Settings": "Instellingen",
 		"SettingsButton": "Open de instellingen",
+		"Show": "",
 		"SlotDeletion": "",
 		"SlotOverwrite": "",
 		"Sound": "Geluids volume",
 		"Start": "Start",
+		"Stop": "",
 
 		"TextSpeed": "Tekst snelheid",
 

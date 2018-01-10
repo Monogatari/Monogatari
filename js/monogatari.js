@@ -378,6 +378,8 @@ $_ready(function () {
 
 	// Disable audio settings in iOS since they are not supported
 	if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+		// iOS handles the volume using the system volume, therefore there is now way to
+		// handle each of the sound sources individually and as such, this is disabled.
 		$_("[data-settings='audio']").html(`<p>${getLocalizedString("iOSAudioWarning")}</p>`);
 	}
 
@@ -387,8 +389,7 @@ $_ready(function () {
 	 * =======================
 	 **/
 
-	// Create all save and load slots
-
+	// Get's the highest number currently available as a slot id (Save_{?})
 	function getMaxSlotId () {
 		const savedData = Object.keys(localStorage);
 
@@ -404,6 +405,7 @@ $_ready(function () {
 		return max;
 	}
 
+	// Create all save and load slots
 	function setSlots () {
 		if (!window.localStorage) {
 			return false;
@@ -421,6 +423,7 @@ $_ready(function () {
 			const bNumber = parseInt (b.split (engine.SaveLabel)[1]);
 			return aNumber - bNumber;
 		});
+
 		for (const saveKey of savedData) {
 			if (saveKey.indexOf (engine.SaveLabel) === 0) {
 				const slot = Storage.get(saveKey);
@@ -433,7 +436,7 @@ $_ready(function () {
 
 						$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]} alt=''><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
 
-						$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}' class='col xs6 m4 l3 xl3'><button class='fa fa-close' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>${getLocalizedString("Overwrite")} #${$i}<small>${name}</small></figcaption></figure>`);
+						$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}' class='col xs6 m4 l3 xl3'><button class='fa fa-close' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>${getLocalizedString("Overwrite")} #${i}<small>${name}</small></figcaption></figure>`);
 
 					} else {
 						$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete=${i}></button><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
@@ -628,7 +631,6 @@ $_ready(function () {
 
 	// Save to slot when a slot is pressed.
 	$_("[data-menu='save']").on("click", "figcaption, img", function () {
-		console.log ($_(this).parent ().data ("save"));
 		overwriteSlot = $_(this).parent ().data ("save");
 		const data = JSON.parse(Storage.get (engine.SaveLabel + overwriteSlot));
 
@@ -641,7 +643,6 @@ $_ready(function () {
 	});
 
 	$_("[data-menu='save']").on("click", "small", function () {
-		console.log ($_(this).parent ().data ("save"));
 		overwriteSlot = $_(this).parent ().parent ().data ("save");
 		const data = JSON.parse(Storage.get (engine.SaveLabel + overwriteSlot));
 
@@ -981,20 +982,30 @@ $_ready(function () {
 				break;
 
 			case "distraction-free":
-				event.stopPropagation();
 				if ($_(this).hasClass("fa-eye")) {
 					$_(this).removeClass("fa-eye");
 					$_(this).addClass("fa-eye-slash");
+					$_(this).parent ().find ("[data-string]").text (getLocalizedString ("Show"));
 					$_("[data-ui='text']").hide();
 				} else if ($_(this).hasClass("fa-eye-slash")) {
 					$_(this).removeClass("fa-eye-slash");
 					$_(this).addClass("fa-eye");
+					$_(this).parent ().find ("[data-string]").text (getLocalizedString ("Hide"));
 					$_("[data-ui='text']").show();
+				} else if ($_(this).text () === "Show") {
+					$_(this).text (getLocalizedString("Hide"));
+					$_(this).parent ().find (".fa").removeClass ("fa-eye-slash");
+					$_(this).parent ().find (".fa").addClass ("fa-eye");
+					$_("[data-ui='text']").show ();
+				} else if ($_(this).text () === "Hide") {
+					$_(this).text (getLocalizedString ("Show"));
+					$_(this).parent ().find (".fa").removeClass ("fa-eye");
+					$_(this).parent ().find (".fa").addClass ("fa-eye-slash");
+					$_("[data-ui='text']").hide ();
 				}
 				break;
 
 			case "auto-play":
-				event.stopPropagation();
 				if ($_(this).hasClass("fa-play-circle")) {
 					$_(this).removeClass("fa-play-circle");
 					$_(this).addClass("fa-stop-circle");
@@ -1009,6 +1020,20 @@ $_ready(function () {
 				} else if ($_(this).hasClass("fa-stop-circle")) {
 					$_(this).removeClass("fa-stop-circle");
 					$_(this).addClass("fa-play-circle");
+					clearInterval (autoPlay);
+					autoPlay = null;
+				} else if ($_(this).text () === "Auto") {
+					$_(this).text (getLocalizedString("Stop"));
+					autoPlay = setInterval (function () {
+						if (canProceed() && finishedTyping) {
+							hideCentered();
+							shutUp();
+							analyseStatement(label[engine.Step]);
+							engine.Step += 1;
+						}
+					}, settings.AutoPlaySpeed * 1000);
+				} else if ($_(this).text () === "Stop") {
+					$_(this).text (getLocalizedString ("AutoPlay"));
 					clearInterval (autoPlay);
 					autoPlay = null;
 				}
@@ -1048,10 +1073,10 @@ $_ready(function () {
 				}
 				break;
 		}
-
+		return false;
 	});
 
-	$_("#game [data-action='back']").click(function (event) {
+	$_("#game [data-action='back'], #game [data-action='back'] *").click(function (event) {
 		event.stopPropagation ();
 		if (canProceed ()) {
 			previous ();
@@ -1152,9 +1177,9 @@ $_ready(function () {
 		}
 	});
 
-	$_("#game [data-ui='quick-menu'] *").click(function (e) {
+	$_("#game [data-ui='quick-menu'], #game [data-ui='quick-menu'] *").click(function (event) {
 		// Clicked Child
-		e.stopPropagation();
+		event.stopPropagation();
 	});
 
 	$_("#game").click(function () {
