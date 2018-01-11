@@ -88,7 +88,7 @@ gulp.task("download-deps", () => {
 	}).pipe(gulp.dest("style/"));
 
 	// CSS Shake
-	download("https://raw.githubusercontent.com/elrumordelaluz/csshake/master/dist/csshake.min.css").pipe(gulp.dest("style/"));
+	download("https://raw.githubusercontent.com/Monogatari/csshake/master/dist/csshake.min.css").pipe(gulp.dest("style/"));
 
 	// Kayros
 	download({
