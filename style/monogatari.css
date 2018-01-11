@@ -31,7 +31,7 @@ html {
 h1,
 h2 {
 	padding: 0.03em;
-	font-size: 7vmax;
+	font-size: 5rem;
 }
 
 h3 {
@@ -43,7 +43,7 @@ body {
 	width: 100vw;
 	max-height: 100vh;
 	max-width: 100vw;
-	font-size: 2vmax;
+	font-size: 1.5rem;
 	text-align: center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -63,8 +63,8 @@ li {
 }
 
 button {
-	width: 15vmax;
-	height: 5vmax;
+	width: 10rem;
+	height: 3.5rem;
 	background: rgba(0, 0, 0, 0.5);
 	color: #f7f7f7;
 	padding: 0;
@@ -148,8 +148,8 @@ section > div:not(.row) {
 	border-radius: 4px;
 }
 
-.modal  > p {
-	font-size: 2.5vmax;
+.modal p {
+	font-size: 2rem;
 }
 
 .modal > .row {
@@ -179,7 +179,7 @@ section > div:not(.row) {
 	transition: all 0.5s;
 	overflow-y: scroll;
 	padding: 2vmin;
-	font-size: 1.5vmax;
+	font-size: 1.25rem;
 	color: rgba(66, 66, 66, 0.9);
 }
 
@@ -252,11 +252,20 @@ section > div:not(.row) {
 	padding: 1vmin;
 }
 
+[data-ui="input-message"] {
+	font-size: 1.5rem;
+}
+
 [data-ui="input"] input,
 textarea {
 	padding: 1vmin;
 	background: #eee;
 	min-width: 50%;
+}
+
+[data-ui="input"] button {
+	width: 5rem;
+	height: 3rem;
 }
 
 [data-ui="player"] {
@@ -294,7 +303,7 @@ textarea {
 	background-color: rgba(0, 0, 0, 0.5);
 	min-height: 20%;
 	max-height: 25%;
-	overflow-y: scroll;
+	overflow-y: auto;
 	width: 100%;
 	z-index: 10;
 	text-align: left;
