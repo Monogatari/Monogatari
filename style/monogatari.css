@@ -31,7 +31,7 @@ html {
 h1,
 h2 {
 	padding: 0.03em;
-	font-size: 5rem;
+	font-size: 3rem;
 }
 
 h3 {
@@ -43,7 +43,7 @@ body {
 	width: 100vw;
 	max-height: 100vh;
 	max-width: 100vw;
-	font-size: 1.5rem;
+	font-size: 1rem;
 	text-align: center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -63,8 +63,8 @@ li {
 }
 
 button {
-	width: 10rem;
-	height: 3.5rem;
+	width: 8rem;
+	height: 2.5rem;
 	background: rgba(0, 0, 0, 0.5);
 	color: #f7f7f7;
 	padding: 0;
@@ -139,21 +139,16 @@ section > div:not(.row) {
  * ===========================
 **/
 
-.modal button {
-	display: inline-block;
-	margin: 0 auto;
-}
-
 .modal  > div {
 	border-radius: 4px;
 }
 
-.modal p {
-	font-size: 2rem;
+.modal > * {
+	padding: 1rem;
 }
 
-.modal > .row {
-	width: auto;
+.modal p {
+	font-size: 1rem;
 }
 
 /**
@@ -169,7 +164,7 @@ section > div:not(.row) {
 [data-component="modal"] {
 	height: auto;
 	max-height: 70%;
-	width: 80%;
+	width: 100%;
 	margin: 0 auto;
 	background: #fff;
 	z-index: 15;
@@ -252,8 +247,12 @@ section > div:not(.row) {
 	padding: 1vmin;
 }
 
+[data-ui="input"] small {
+	margin: 0.5rem auto;
+}
+
 [data-ui="input-message"] {
-	font-size: 1.5rem;
+	font-size: 1rem;
 }
 
 [data-ui="input"] input,
@@ -264,8 +263,9 @@ textarea {
 }
 
 [data-ui="input"] button {
-	width: 5rem;
-	height: 3rem;
+	width: 3.5rem;
+	height: 2rem;
+	font-size: 1rem;
 }
 
 [data-ui="player"] {
@@ -308,7 +308,7 @@ textarea {
 	z-index: 10;
 	text-align: left;
 	position: absolute;
-	bottom: 2.5rem;
+	bottom: 0;
 	color: rgb(255, 255, 255);
 }
 
@@ -341,11 +341,11 @@ textarea {
 }
 
 [data-ui="quick-menu"] {
-	background-color: rgba(0, 0, 0, 0.5);
-	color: rgba(255, 255, 255, 0.5);
+	top: 0;
+	background: transparent;
+
 	z-index: 3;
 	position: absolute;
-	bottom: 0;
 	height: 2.5rem;
 	max-height: 2.5rem;
 }
@@ -354,15 +354,24 @@ textarea {
 	color: rgba(0, 0, 0, 0.5);
 }
 
+[data-ui="quick-menu"].transparent {
+	background: transparent;
+}
+
 [data-ui="quick-menu"] span {
 	display: inline-block;
 	width: auto;
-	font-size: 1.25rem;
+	font-size: 1rem;
 	margin: 0.25rem;
 }
 
-[data-ui="quick-menu"] > span > .fa {
+[data-ui="quick-menu"] > span > [data-string] {
 	display: none;
+}
+
+[data-ui="quick-menu"] > span > .fa {
+	display: inline-block;
+	font-size: 1.5rem;
 }
 
 [data-ui="quick-menu"] span:hover {
@@ -468,6 +477,7 @@ textarea {
 	width: auto;
 	height: auto;
 	padding: 0.5em;
+	margin: 1rem;
 }
 
 [data-menu="load"] h3, [data-menu="save"] h3 {
@@ -529,37 +539,129 @@ input[type=range] {
  * ====================================
 **/
 
-@media (max-width: 35rem) {
+/** Default Style. Don't change. (320px) **/
+@media screen and  (max-width: 20em) {}
+
+/** Extra Small Devices, Phones (480px) **/
+@media screen and (min-width : 30em) {}
+
+/** Medium Screens, Tablets (601px) **/
+@media screen and (min-width: 37.56255em) {
+
+	[data-ui="input"] button {
+		width: 5rem;
+		height: 3rem;
+	}
+
+	[data-ui="input-message"],
+	.modal p {
+		font-size: 1.5rem;
+	}
 
 	[data-ui="text"] {
-		bottom: 0;
+		bottom: 2.5rem;
+	}
+
+	[data-component="modal"] {
+		width: 80%;
+	}
+
+	.modal > * {
+		width: 70%;
+	}
+
+	[data-ui="text"] {
+		bottom: 2.5rem;
 	}
 
 	[data-ui="quick-menu"] span {
-		font-size: 3.5vmax;
+		font-size: 1.25rem;
+	}
+
+	[data-ui="quick-menu"] span {
+		font-size: 1.25rem;
 		margin: 0.25em;
 	}
 
 	[data-ui="quick-menu"] {
-		top: 0;
-		position: absolute;
-		background: transparent;
+		bottom: 0;
+		top: auto;
+		background-color: rgba(0, 0, 0, 0.5);
+		color: rgba(255, 255, 255, 0.5);
 	}
 
 	[data-ui="quick-menu"] > span > [data-string] {
-		display: none;
-	}
-
-	[data-ui="quick-menu"] > span > .fa {
 		display: inline-block;
 	}
 
-	.modal > .row,
-	[data-component="modal"] {
-		width: 100%;
+	[data-ui="quick-menu"] > span > .fa {
+		display: none;
 	}
 
 	[data-ui="load-progress"] {
 		width: 80%;
 	}
 }
+
+/** Medium Devices, Desktops (768px)**/
+@media screen and (min-width: 48em) {
+	body {
+		font-size: 1.5rem;
+	}
+
+	button {
+		width: 10rem;
+		height: 3.5rem;
+	}
+
+	.modal > * {
+		width: 60%;
+	}
+
+	[data-component="modal"] {
+		width: 70%;
+	}
+}
+
+/** Medium Devices, Desktops (992px)**/
+@media screen and (min-width: 62em) {
+	h1,
+	h2 {
+		font-size: 5rem;
+	}
+
+	.modal > * {
+		width: 50%;
+	}
+
+	[data-component="modal"] {
+		width: 60%;
+	}
+}
+
+/** HD Screen, Large Devices, Wide Screens (1200px) **/
+@media screen and (min-width: 75em) {
+	.modal > * {
+		width: 40%;
+	}
+
+	[data-component="modal"] {
+		width: 50%;
+	}
+}
+
+/** Full HD Screen, Large Devices, Wide Screens (1920px) **/
+@media screen and (min-width: 120em) {
+	.modal > * {
+		width: 30%;
+	}
+}
+
+/** Retina Screen , Large Devices, Wide Screens(2560px) **/
+@media screen and (min-width: 160em) {}
+
+/** 4k Screens, Large Devices, Wide Screens (3840px) **/
+@media screen and (min-width: 240em) {}
+
+/** 5k Screens, Large Devices, Wide Screens (5120px) **/
+@media screen and (min-width: 320em) {}

@@ -1035,21 +1035,25 @@ $_ready(function () {
 					$_(this).removeClass("fa-eye");
 					$_(this).addClass("fa-eye-slash");
 					$_(this).parent ().find ("[data-string]").text (getLocalizedString ("Show"));
+					$_("[data-ui='quick-menu']").addClass ("transparent");
 					$_("[data-ui='text']").hide();
 				} else if ($_(this).hasClass("fa-eye-slash")) {
 					$_(this).removeClass("fa-eye-slash");
 					$_(this).addClass("fa-eye");
 					$_(this).parent ().find ("[data-string]").text (getLocalizedString ("Hide"));
+					$_("[data-ui='quick-menu']").removeClass ("transparent");
 					$_("[data-ui='text']").show();
 				} else if ($_(this).text () === "Show") {
 					$_(this).text (getLocalizedString("Hide"));
 					$_(this).parent ().find (".fa").removeClass ("fa-eye-slash");
 					$_(this).parent ().find (".fa").addClass ("fa-eye");
+						$_("[data-ui='quick-menu']").removeClass ("transparent");
 					$_("[data-ui='text']").show ();
 				} else if ($_(this).text () === "Hide") {
 					$_(this).text (getLocalizedString ("Show"));
 					$_(this).parent ().find (".fa").removeClass ("fa-eye");
 					$_(this).parent ().find (".fa").addClass ("fa-eye-slash");
+					$_("[data-ui='quick-menu']").addClass ("transparent");
 					$_("[data-ui='text']").hide ();
 				}
 				break;
