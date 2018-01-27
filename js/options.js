@@ -90,7 +90,9 @@ var settings = {
 	// Speed at which dialog text will appear
 	"TextSpeed": 20,
 
-	// Speed at which dialog text will appear
+	// Speed at which the Auto Play feature will show the next statement
+	// It is measured in seconds and starts counting after the text is
+	// completely displayed.
 	"AutoPlaySpeed": 5
 };
 

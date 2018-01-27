@@ -146,6 +146,7 @@ $_ready(function () {
 	const voicePlayer = document.querySelector("[data-component='voice']");
 
 	const maxTextSpeed = parseInt($_("[data-action='set-text-speed']").property ("max"));
+	const maxAutoPlaySpeed = parseInt($_("[data-action='set-auto-play-speed']").property ("max"));
 
 	/**
 	 * ======================
@@ -239,6 +240,17 @@ $_ready(function () {
 			finishedTyping = false;
 		},
 		onStringTyped: function () {
+			if (autoPlay !== null) {
+				autoPlay = setTimeout (function () {
+					if (canProceed() && finishedTyping) {
+						hideCentered();
+						shutUp();
+						analyseStatement(label[engine.Step]);
+						engine.Step += 1;
+					}
+				}, settings.AutoPlaySpeed * 1000);
+			}
+
 			finishedTyping = true;
 		},
 		onDestroy () {
@@ -772,18 +784,7 @@ $_ready(function () {
 	});
 
 	$_("[data-action='set-auto-play-speed']").on("change mouseover", function () {
-		const value = parseInt($_(this).value());
-		if (autoPlay !== null) {
-			clearInterval (autoPlay);
-			autoPlay = setInterval (function () {
-				if (canProceed() && finishedTyping) {
-					hideCentered();
-					shutUp();
-					analyseStatement(label[engine.Step]);
-					engine.Step += 1;
-				}
-			}, settings.AutoPlaySpeed * 1000);
-		}
+		const value = maxAutoPlaySpeed - parseInt($_(this).value());
 		settings.AutoPlaySpeed = value;
 		Storage.set("Settings", JSON.stringify(settings));
 	});
@@ -1062,7 +1063,7 @@ $_ready(function () {
 				if ($_(this).hasClass("fa-play-circle")) {
 					$_(this).removeClass("fa-play-circle");
 					$_(this).addClass("fa-stop-circle");
-					autoPlay = setInterval (function () {
+					autoPlay = setTimeout (function () {
 						if (canProceed() && finishedTyping) {
 							hideCentered();
 							shutUp();
@@ -1073,11 +1074,11 @@ $_ready(function () {
 				} else if ($_(this).hasClass("fa-stop-circle")) {
 					$_(this).removeClass("fa-stop-circle");
 					$_(this).addClass("fa-play-circle");
-					clearInterval (autoPlay);
+					clearTimeout (autoPlay);
 					autoPlay = null;
 				} else if ($_(this).text () === "Auto") {
 					$_(this).text (getLocalizedString("Stop"));
-					autoPlay = setInterval (function () {
+					autoPlay = setTimeout(function () {
 						if (canProceed() && finishedTyping) {
 							hideCentered();
 							shutUp();
@@ -1087,7 +1088,7 @@ $_ready(function () {
 					}, settings.AutoPlaySpeed * 1000);
 				} else if ($_(this).text () === "Stop") {
 					$_(this).text (getLocalizedString ("AutoPlay"));
-					clearInterval (autoPlay);
+					clearTimeout (autoPlay);
 					autoPlay = null;
 				}
 				break;
@@ -1282,6 +1283,16 @@ $_ready(function () {
 					textObject = new Typed ("[data-ui='say']", typedConfiguration);
 				} else {
 					$_("[data-ui='say']").html (dialog);
+					if (autoPlay !== null) {
+						autoPlay = setTimeout (function () {
+							if (canProceed() && finishedTyping) {
+								hideCentered();
+								shutUp();
+								analyseStatement(label[engine.Step]);
+								engine.Step += 1;
+							}
+						}, settings.AutoPlaySpeed * 1000);
+					}
 					finishedTyping = true;
 				}
 			} else {
@@ -1290,6 +1301,16 @@ $_ready(function () {
 			}
 		} else {
 			$_("[data-ui='say']").html (dialog);
+			if (autoPlay !== null) {
+				autoPlay = setTimeout (function () {
+					if (canProceed() && finishedTyping) {
+						hideCentered();
+						shutUp();
+						analyseStatement(label[engine.Step]);
+						engine.Step += 1;
+					}
+				}, settings.AutoPlaySpeed * 1000);
+			}
 			finishedTyping = true;
 		}
 	}
