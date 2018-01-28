@@ -95,10 +95,3 @@ var settings = {
 	// completely displayed.
 	"AutoPlaySpeed": 5
 };
-
-// Persistent Storage Variable
-var storage = {
-	player: {
-		name: ""
-	}
-};
