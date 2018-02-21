@@ -1688,6 +1688,8 @@ $_ready(function () {
 							block = true;
 							setTimeout(function () {
 								block = false;
+								analyseStatement(label[engine.Step]);
+								engine.Step += 1;
 							}, parseInt (parts[1]));
 							break;
 
