@@ -1389,8 +1389,8 @@ $_ready(function () {
 		clearInterval (autoPlay);
 		autoPlay = null;
 
-		$_("[data-action='auto-play']").removeClass("fa-stop-circle");
-		$_("[data-action='auto-play']").addClass("fa-play-circle");
+		$_("[data-action='auto-play'].fa").removeClass("fa-stop-circle");
+		$_("[data-action='auto-play'].fa").addClass("fa-play-circle");
 
 		// Reset Storage
 		storage = JSON.parse(storageStructure);
