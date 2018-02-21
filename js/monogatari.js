@@ -632,7 +632,18 @@ $_ready(function () {
 		$_("section").hide();
 		$_("#game").show();
 		const data = JSON.parse(Storage.get(slot));
-		engine = Object.assign({}, engine, data.Engine);
+		engine = Object.assign({}, engine, {
+			"Label": data.Engine.Label,
+			"Song": data.Engine.Song,
+			"Sound": data.Engine.Sound,
+			"Scene": data.Engine.Scene,
+			"Step": data.Engine.Step,
+			"MusicHistory": data.Engine.MusicHistory,
+			"SoundHistory": data.Engine.SoundHistory,
+			"ImageHistory": data.Engine.ImageHistory,
+			"CharacterHistory": data.Engine.CharacterHistory,
+			"SceneHistory": data.Engine.SceneHistory,
+		});
 		fixEngine ();
 		storage = Object.assign({}, JSON.parse(storageStructure), data.Storage);
 
