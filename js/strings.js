@@ -158,7 +158,7 @@ var strings = {
 		"FullScreen": "Plein Écran",
 
 		"Help": "Aide",
-		"Hide": "",
+		"Hide": "Cacher",
 		"HideButton": "Cacher le Texte.",
 
 		"iOSAudioWarning": "Les paramètres audio ne sont pas pris en charge par iOS.",
@@ -190,12 +190,12 @@ var strings = {
 		"SaveInSlot": "Enregistrer à l'emplacement",
 		"Settings": "Préférences",
 		"SettingsButton": "Ouvrir l'écran des Préférences.",
-		"Show": "",
-		"SlotDeletion": "",
-		"SlotOverwrite": "",
+		"Show": "Monter",
+		"SlotDeletion": "Êtes-vous sûr de vouloir supprimer cet emplacement ?",
+		"SlotOverwrite": "Êtes vous sûr de vouloir remplacer cet emplacement ?",
 		"Sound": "Volume des Sons",
 		"Start": "Démarrer",
-		"Stop": "",
+		"Stop": "Arrêter",
 
 		"TextSpeed": "Vitesse du Texte",
 
@@ -281,7 +281,7 @@ var strings = {
 		"FullScreen": "Volledig scherm",
 
 		"Help": "Help",
-		"Hide": "",
+		"Hide": "Verberg",
 		"HideButton": "Verberg tekst.",
 
 		"iOSAudioWarning": "Audio instellingen worden niet ondersteund door iOS.",
