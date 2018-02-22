@@ -522,7 +522,7 @@ $_ready(function () {
 			// Get a list of all the images being shown in screen except the
 			// face images so they can be shown next time the slot is loaded
 			let show = "";
-			$_("#game img:not([data-ui='face'])").each(function (element) {
+			$_("#game img:not([data-ui='face']):not([data-visibility='invisible'])").each(function (element) {
 				show += element.outerHTML.replace(/"/g, "'") + ",";
 			});
 
@@ -550,7 +550,7 @@ $_ready(function () {
 			// Get a list of all the images being shown in screen except the
 			// face images so they can be shown next time the slot is loaded
 			let show = "";
-			$_("#game img:not([data-ui='face'])").each(function (element) {
+			$_("#game img:not([data-ui='face']):not([data-visibility='invisible'])").each(function (element) {
 				show += element.outerHTML.replace(/"/g, "'") + ",";
 			});
 
@@ -582,7 +582,7 @@ $_ready(function () {
 			// Get a list of all the images being shown in screen except the
 			// face images so they can be shown next time the slot is loaded
 			let show = "";
-			$_("#game img:not([data-ui='face'])").each(function (element) {
+			$_("#game img:not([data-ui='face']):not([data-visibility='invisible'])").each(function (element) {
 				show += element.outerHTML.replace(/"/g, "'") + ",";
 			});
 
@@ -1919,6 +1919,7 @@ $_ready(function () {
 							if (typeof characters[parts[1]] != "undefined") {
 								if (typeof parts[3] != "undefined" && parts[3] != "") {
 									$_("[data-character='" + parts[1] + "']").addClass(parts[3]);
+									$_("[data-character='" + parts[1] + "']").data ("visibility", "invisible");
 								} else {
 									$_("[data-character='" + parts[1] + "']").remove();
 								}
@@ -1926,6 +1927,7 @@ $_ready(function () {
 							} else if (typeof images[parts[1]] != "undefined") {
 								if (typeof parts[3] != "undefined" && parts[3] != "") {
 									$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
+									$_("[data-image='" + parts[1] + "']").data ("visibility", "invisible");
 								} else {
 									$_("[data-image='" + parts[1] + "']").remove();
 								}
@@ -1933,6 +1935,7 @@ $_ready(function () {
 							} else {
 								if (typeof parts[3] != "undefined" && parts[3] != "") {
 									$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
+									$_("[data-image='" + parts[1] + "']").data ("visibility", "invisible");
 								} else {
 									$_("[data-image='" + parts[1] + "']").remove();
 								}
