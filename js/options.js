@@ -12,7 +12,7 @@
 /* exported storage */
 /* exported settings */
 
-var engine = {
+let engine = {
 
 	// Initial Label *
 	"Label": "Start",
@@ -71,7 +71,7 @@ var engine = {
 };
 
 // Initial Settings
-var settings = {
+let settings = {
 
 	// Initial Language for Multilanguage Games or for the Default GUI Language.
 	"Language": "English",

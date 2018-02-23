@@ -15,7 +15,7 @@
 /* global storage */
 
 // Define the messages used in the game.
-var messages = {
+let messages = {
 	"Help": {
 		"Title": "Help",
 		"Subtitle": "Some useful Links",
@@ -24,7 +24,7 @@ var messages = {
 };
 
 // Define the notifications used in the game
-var notifications = {
+let notifications = {
 	"Welcome": {
 		title: "Welcome",
 		body: "This is the Monogatari VN Engine",
@@ -33,49 +33,49 @@ var notifications = {
 };
 
 // Define the Particles JS Configurations used in the game
-var particles = {
+let particles = {
 
 };
 
 // Define the music used in the game.
-var music = {
+const music = {
 
 };
 
 // Define the voice files used in the game.
-var voice = {
+const voice = {
 
 };
 
 // Define the sounds used in the game.
-var sound = {
+const sound = {
 
 };
 
 // Define the videos used in the game.
-var videos = {
+const videos = {
 
 };
 
 // Define the images used in the game.
-var images = {
+const images = {
 
 };
 
 // Define the backgrounds for each scene.
-var scenes = {
+const scenes = {
 
 };
 
 // Define the Characters
-var characters = {
+const characters = {
 	"h": {
 		"Name": "Hikaru",
 		"Color": "#5bcaff"
 	}
 };
 
-var script = {
+let script = {
 	// The game starts here.
 	"Start": [
 		"notify Welcome",

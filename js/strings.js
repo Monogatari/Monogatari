@@ -16,7 +16,7 @@
 
 /* exported strings */
 
-var strings = {
+const strings = {
 
 	"English": {
 		"AdvanceHelp": "To advance through the game, press the space key or click.",

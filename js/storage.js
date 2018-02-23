@@ -1,5 +1,7 @@
+"use strict";
 // Persistent Storage Variable
-var storage = {
+
+let storage = {
 	player: {
 		name: ""
 	}
