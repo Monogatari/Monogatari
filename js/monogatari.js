@@ -2045,6 +2045,7 @@ $_ready(function () {
 								if (particles[parts[1]]) {
 									if (typeof particlesJS != "undefined") {
 										particlesJS(particles[parts[1]]);
+										next ();
 									} else {
 										console.error("particlesJS is not loaded, are you sure you added it?");
 									}
@@ -2159,10 +2160,10 @@ $_ready(function () {
 					if (typeof statement.Choice != "undefined") {
 						$_("[data-ui='choices']").html("");
 						for (const i in statement.Choice) {
-							const choice = label[engine.Step].Choice[i];
+							const choice = statement.Choice[i];
 							if (typeof choice.Condition != "undefined" && choice.Condition != "") {
 
-								assertAsync(label[engine.Step].Choice[i].Condition).then(function () {
+								assertAsync(statement.Choice[i].Condition).then(function () {
 									if (typeof choice.Class != "undefined") {
 										$_("[data-ui='choices']").append("<button data-do='" + choice.Do + "' class='" + choice.Class + "'>" + choice.Text + "</button>");
 									} else {
@@ -2189,9 +2190,13 @@ $_ready(function () {
 						const condition = statement.Conditional;
 
 						assertAsync(condition.Condition).then(function () {
-							if (condition.True.trim() == "") {
-								analyseStatement("next");
-								engine.Step += 1;
+							if (typeof condition.True === "string") {
+								if (condition.True.trim() == "") {
+									analyseStatement("next");
+									engine.Step += 1;
+								} else {
+									analyseStatement(condition.True);
+								}
 							} else {
 								analyseStatement(condition.True);
 							}
