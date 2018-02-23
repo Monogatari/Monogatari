@@ -116,7 +116,15 @@ button:hover {
  * ===========================
 **/
 
-/* Quick Meny Style */
+/* Quick Menu Style */
 [data-ui="quick-menu"] {
+
+}
+
+[data-ui="quick-menu"] span {
+
+}
+
+[data-ui="quick-menu"] span:hover {
 
 }

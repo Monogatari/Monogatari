@@ -78,6 +78,11 @@ section > div:not(.row) {
 	width: 100vw;
 }
 
+input,
+select {
+	color: inherit;
+}
+
 /**
  * ===========================
  * Support Classes
@@ -183,11 +188,9 @@ section > div:not(.row) {
 }
 
 [data-component="video"] {
-	position: relative;
 	height: auto;
-	top: 100%;
 	margin: 0 auto;
-	z-index: 2;
+	z-index: 15;
 }
 
 [data-component="modal"] img,
@@ -614,8 +617,9 @@ input[type=range] {
 	}
 
 	button {
-		width: 10rem;
+		width: auto;
 		height: 3.5rem;
+		padding: 1rem;
 	}
 
 	.modal > * {
