@@ -467,7 +467,7 @@ $_ready(function () {
 			const aNumber = parseInt (a.split (label)[1]);
 			const bNumber = parseInt (b.split (label)[1]);
 
-			return bNumber - aNumber;
+			return aNumber - bNumber;
 		});
 
 		for (let i = 0; i < savedData.length; i++) {
