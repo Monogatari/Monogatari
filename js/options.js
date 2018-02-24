@@ -70,7 +70,12 @@ let engine = {
 	// Enables or disables the typing animation for the narrator.
 	// If the previous property was set to false, the narrator won't shown
 	// the animation even if this is set to true.
-	"NarratorTypeAnimation": true
+	"NarratorTypeAnimation": true,
+
+	// Enables or disables the typing animation for the special centered
+	// character. If the TypeAnimation property was set to false, the centered
+	// character won't shown the animation even if this is set to true.
+	"CenteredTypeAnimation": true
 };
 
 // Initial Settings

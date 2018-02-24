@@ -136,6 +136,11 @@ $_ready(function () {
 			engine.NarratorTypeAnimation = true;
 		}
 
+		if (typeof engine.CenteredTypeAnimation !== "boolean") {
+			console.warn("The 'CenteredTypeAnimation' property is missing in the engine object, using default ('true') fallback.");
+			engine.CenteredTypeAnimation = true;
+		}
+
 		if (typeof engine.Particles !== "string") {
 			console.warn("The 'Particles' property is missing in the engine object, using default ('') fallback.");
 			engine.Particles = "";
@@ -1247,7 +1252,7 @@ $_ready(function () {
 		hideCentered();
 		shutUp();
 		if ($_(this).data("do") != "null" && $_(this).data("do") != "") {
-			const back = ["show", "play", "display", "hide", "scene", "stop", "pause"];
+			const back = ["show", "play", "display", "hide", "stop", "particles", "wait", "scene", "clear", "vibrate", "notify", "next"];
 			try {
 				$_("[data-ui='choices']").hide();
 				$_("[data-ui='choices']").html("");
@@ -2074,7 +2079,17 @@ $_ready(function () {
 
 						case "centered":
 							$_("[data-ui='text']").hide();
-							$_("#game").append("<div class='middle align-center' data-ui='centered'>" + statement.replace(parts[0] + " ", "") + "</div>");
+							$_("#game").append("<div class='middle align-center' data-ui='centered'></div>");
+							if (engine.TypeAnimation) {
+								if (engine.CenteredTypeAnimation) {
+									typedConfiguration.strings = [statement.replace(parts[0] + " ", "")];
+									textObject = new Typed ("[data-ui='centered']", typedConfiguration);
+								} else {
+									$_("[data-ui='centered']").html (statement.replace(parts[0] + " ", ""));
+								}
+							} else {
+								$_("[data-ui='centered']").html (statement.replace(parts[0] + " ", ""));
+							}
 							break;
 
 						case "vibrate":
