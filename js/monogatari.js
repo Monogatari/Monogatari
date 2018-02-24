@@ -2363,7 +2363,6 @@ $_ready(function () {
 							block = false;
 						}).catch(function () {
 							analyseStatement(condition.False);
-							engine.Step += 1;
 							block = false;
 						});
 
