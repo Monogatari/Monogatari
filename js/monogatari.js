@@ -1251,10 +1251,22 @@ $_ready(function () {
 				case 32:
 				case 39:
 					if (canProceed()) {
-						hideCentered();
-						shutUp();
-						analyseStatement(label[engine.Step]);
-						engine.Step += 1;
+						if (!finishedTyping && typeof textObject !== "undefined") {
+							const str = textObject.strings [0];
+							const element = $_(textObject.el).data ("ui");
+							textObject.destroy ();
+							if (element == "centered") {
+								$_("[data-ui='centered']").html (str);
+							} else {
+								$_("[data-ui='say']").html (str);
+							}
+							finishedTyping = true;
+						} else {
+							hideCentered();
+							shutUp();
+							analyseStatement(label[engine.Step]);
+							engine.Step += 1;
+						}
 					}
 					break;
 
@@ -1322,8 +1334,13 @@ $_ready(function () {
 		if (canProceed()) {
 			if (!finishedTyping && typeof textObject !== "undefined") {
 				const str = textObject.strings [0];
+				const element = $_(textObject.el).data ("ui");
 				textObject.destroy ();
-				$_("[data-ui='say']").html (str);
+				if (element == "centered") {
+					$_("[data-ui='centered']").html (str);
+				} else {
+					$_("[data-ui='say']").html (str);
+				}
 				finishedTyping = true;
 			} else {
 				hideCentered();
