@@ -445,7 +445,7 @@ $_ready(function () {
 		const name = data.Name ? data.Name : data.Date;
 		if (typeof scenes[data.Engine.Scene] !== "undefined") {
 
-			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]} alt=''><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
+			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
 
 			$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}' class='col xs6 m4 l3 xl3'><button class='fa fa-close' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>${getLocalizedString("Overwrite")} #${i}<small>${name}</small></figcaption></figure>`);
 
@@ -463,6 +463,43 @@ $_ready(function () {
 			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete=${i}></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
 		} else {
 			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete=${i}></button><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
+		}
+	}
+
+	function updateAutoSlots () {
+		if (!window.localStorage) {
+			return false;
+		}
+
+		$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html("");
+		const savedData = Object.keys(localStorage).sort (function (a, b) {
+			let label;
+			if (a.indexOf (engine.AutoSaveLabel) === 0 && b.indexOf (engine.AutoSaveLabel) === 0) {
+				label = engine.AutoSaveLabel;
+			} else {
+				return 0;
+			}
+
+			const aNumber = parseInt (a.split (label)[1]);
+			const bNumber = parseInt (b.split (label)[1]);
+
+			return aNumber - bNumber;
+		});
+
+		for (let i = 0; i < savedData.length; i++) {
+			const label = savedData[i];
+			if (label.indexOf (engine.AutoSaveLabel) === 0) {
+				const slot = Storage.get (savedData[i]);
+				const id = label.split (engine.AutoSaveLabel)[1];
+				if (slot !== null && slot !== "") {
+					addAutoSlot (id, JSON.parse(slot));
+				}
+			}
+		}
+
+		// Check if there are no Auto Saved games.
+		if ($_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html().trim() == "") {
+			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html(`<p>${getLocalizedString("NoAutoSavedGames")}</p>`);
 		}
 	}
 
@@ -504,7 +541,7 @@ $_ready(function () {
 				}
 			} else if (label.indexOf (engine.AutoSaveLabel) === 0) {
 				const slot = Storage.get (savedData[i]);
-				const id = label.split (engine.SaveLabel)[1];
+				const id = label.split (engine.AutoSaveLabel)[1];
 				if (slot !== null && slot !== "") {
 					addAutoSlot (id, JSON.parse(slot));
 				}
@@ -783,6 +820,7 @@ $_ready(function () {
 			} else {
 				currentAutoSaveSlot += 1;
 			}
+			updateAutoSlots ();
 
 		}, engine.AutoSave * 60000);
 	} else {
