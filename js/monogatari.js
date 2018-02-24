@@ -1514,9 +1514,7 @@ $_ready(function () {
 
 		$_("[data-ui='input'] [data-ui='warning']").text("");
 
-		$_("#game").style({
-			"background": "initial"
-		});
+		$_("[data-ui='background']").style("background", "initial");
 		whipeText();
 	}
 
