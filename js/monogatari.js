@@ -643,6 +643,7 @@ $_ready(function () {
 			"ImageHistory": data.Engine.ImageHistory,
 			"CharacterHistory": data.Engine.CharacterHistory,
 			"SceneHistory": data.Engine.SceneHistory,
+			"SceneElementsHistory": data.Engine.SceneElementsHistory
 		});
 		fixEngine ();
 		storage = Object.assign({}, JSON.parse(storageStructure), data.Storage);
@@ -1509,7 +1510,7 @@ $_ready(function () {
 		shutUp();
 		if (engine.Step >= 2) {
 			engine.Step -= 2;
-			const back = ["show", "play", "display", "hide", "stop"];
+			const back = ["show", "play", "display", "hide", "stop", "particles", "wait", "scene", "clear"];
 			let flag = true;
 			try {
 				if (typeof label[engine.Step] == "string") {
@@ -1605,11 +1606,26 @@ $_ready(function () {
 								if (typeof engine.Scene != "undefined") {
 									$_("[data-character]").remove();
 									$_("[data-image]").remove();
+									$_("[data-ui='background']").removeClass ();
 
 									if (typeof scenes[parts[1]] != "undefined") {
 										$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[engine.Scene] + ") center / cover no-repeat");
 									} else {
 										$_("[data-ui='background']").style("background", engine.Scene);
+									}
+
+									if (typeof  engine.SceneElementsHistory !== "undefined") {
+										if (engine.SceneElementsHistory.length > 0) {
+											var scene_elements = engine.SceneElementsHistory.pop ();
+
+											if (typeof scene_elements === "object") {
+												for (const element of scene_elements) {
+													$_("#game").append (element);
+												}
+											}
+										}
+									} else {
+										engine.SceneElementsHistory = [];
 									}
 								}
 
@@ -1636,15 +1652,31 @@ $_ready(function () {
 									engine.Step += 1;
 								}
 								break;
+
+							case "particles":
+								$_("#particles-js").html("");
+								break;
 						}
 						if ((engine.Step - 1) >= 0) {
 							engine.Step -= 1;
+						}
+
+						if (typeof label[engine.Step] !== "string") {
+							flag = false;
+							previous ();
 						}
 					}
 
 				} else if (typeof label[engine.Step] == "object") {
 					while (typeof label[engine.Step] == "object") {
+						if (typeof label[engine.Step].Function !== "undefined") {
 
+							assertAsync(label[engine.Step].Function.Reverse).then(function () {
+								block = false;
+							}).catch(function () {
+								block = false;
+							});
+						}
 						if ((engine.Step - 1) >= 0) {
 							engine.Step -= 1;
 						}
@@ -1659,6 +1691,9 @@ $_ready(function () {
 	}
 
 	function whipeText () {
+		if (typeof textObject != "undefined") {
+			textObject.destroy ();
+		}
 		$_("[data-ui='who']").html("");
 		$_("[data-ui='say']").html("");
 	}
@@ -1783,6 +1818,16 @@ $_ready(function () {
 							break;
 
 						case "scene":
+
+							var scene_elements = [];
+							$_("#game img:not([data-ui='face']):not([data-visibility='invisible'])").each(function (element) {
+								scene_elements.push (element.outerHTML);
+							});
+							if (typeof engine.SceneElementsHistory !== "object") {
+								engine.SceneElementsHistory = [];
+							}
+							engine.SceneElementsHistory.push (scene_elements);
+
 							$_("[data-character]").remove();
 							$_("[data-image]").remove();
 							$_("[data-ui='background']").removeClass();
@@ -1987,6 +2032,7 @@ $_ready(function () {
 
 						case "clear":
 							whipeText();
+							next ();
 							break;
 
 						case "centered":
@@ -2237,6 +2283,14 @@ $_ready(function () {
 						}
 
 						$_("[data-ui='input'] [data-action='submit']").click(inputButtonListener);
+					} else if (typeof statement.Function !== "undefined") {
+						assertAsync(statement.Function.Apply).then(function () {
+							block = false;
+							analyseStatement(label[engine.Step]);
+							engine.Step += 1;
+						}).catch(function () {
+							block = false;
+						});
 					}
 					break;
 			}

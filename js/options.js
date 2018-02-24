@@ -34,6 +34,7 @@ let engine = {
 	"ImageHistory": [],
 	"CharacterHistory": [],
 	"SceneHistory": [],
+	"SceneElementsHistory": [],
 
 	// Change to true for a MultiLanguage Game.
 	"MultiLanguage": false,
