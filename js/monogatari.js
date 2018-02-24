@@ -933,8 +933,6 @@ $_ready(function () {
 		}
 	}
 
-	showMainMenu ();
-
 	/**
 	 * ==========================
 	 * Service Workers
