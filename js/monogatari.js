@@ -117,19 +117,38 @@ $_ready(function () {
 		}
 
 		if (typeof engine.ServiceWorkers !== "boolean") {
+			console.warn("The 'ServiceWorkers' property is missing in the engine object, using default ('true') fallback.");
 			engine.ServiceWorkers = true;
 		}
 
 		if (typeof engine.AspectRatio !== "string") {
+			console.warn("The 'AspectRatio' property is missing in the engine object, using default ('16:9') fallback.");
 			engine.AspectRatio = "16:9";
 		}
 
 		if (typeof engine.TypeAnimation !== "boolean") {
+			console.warn("The 'TypeAnimation' property is missing in the engine object, using default ('true') fallback.");
 			engine.TypeAnimation = true;
 		}
 
 		if (typeof engine.NarratorTypeAnimation !== "boolean") {
+			console.warn("The 'NarratorTypeAnimation' property is missing in the engine object, using default ('true') fallback.");
 			engine.NarratorTypeAnimation = true;
+		}
+
+		if (typeof engine.Particles !== "string") {
+			console.warn("The 'Particles' property is missing in the engine object, using default ('') fallback.");
+			engine.Particles = "";
+		}
+
+		if (typeof engine.ParticlesHistory !== "object") {
+			console.warn("The 'ParticlesHistory' property is missing in the engine object, using default ('[]') fallback.");
+			engine.ParticlesHistory = [];
+		}
+
+		if (typeof engine.SceneElementsHistory !== "object") {
+			console.warn("The 'SceneElementsHistory' property is missing in the engine object, using default ('[]') fallback.");
+			engine.SceneElementsHistory = [];
 		}
 	}
 
@@ -507,7 +526,7 @@ $_ready(function () {
 	 **/
 
 	function niceDate () {
-		return new Date ().toLocaleDateString ()
+		return new Date ().toLocaleDateString ();
 	}
 
 	function niceDateTime () {
@@ -637,13 +656,15 @@ $_ready(function () {
 			"Song": data.Engine.Song,
 			"Sound": data.Engine.Sound,
 			"Scene": data.Engine.Scene,
+			"Particles": data.Engine.Particles,
 			"Step": data.Engine.Step,
 			"MusicHistory": data.Engine.MusicHistory,
 			"SoundHistory": data.Engine.SoundHistory,
 			"ImageHistory": data.Engine.ImageHistory,
 			"CharacterHistory": data.Engine.CharacterHistory,
 			"SceneHistory": data.Engine.SceneHistory,
-			"SceneElementsHistory": data.Engine.SceneElementsHistory
+			"SceneElementsHistory": data.Engine.SceneElementsHistory,
+			"ParticlesHistory": data.Engine.ParticlesHistory
 		});
 		fixEngine ();
 		storage = Object.assign({}, JSON.parse(storageStructure), data.Storage);
@@ -675,6 +696,12 @@ $_ready(function () {
 		if (engine.Sound != "") {
 			analyseStatement(engine.Sound);
 			engine.Step -= 1;
+		}
+
+		if (engine.Particles != "" && typeof engine.Particles == "string") {
+			if (typeof particles[engine.Particles] !== "undefined") {
+				particlesJS (particles[engine.Particles]);
+			}
 		}
 
 		if (engine.Step > 0) {
@@ -1510,7 +1537,7 @@ $_ready(function () {
 		shutUp();
 		if (engine.Step >= 2) {
 			engine.Step -= 2;
-			const back = ["show", "play", "display", "hide", "stop", "particles", "wait", "scene", "clear"];
+			const back = ["show", "play", "display", "hide", "stop", "particles", "wait", "scene", "clear", "vibrate", "notify", "next"];
 			let flag = true;
 			try {
 				while (engine.Step > 0 && flag) {
@@ -1597,6 +1624,16 @@ $_ready(function () {
 
 										soundPlayer.play();
 										engine.Sound = last.join(" ");
+									} else if (parts[1] == "particles") {
+										if (typeof engine.ParticlesHistory === "object") {
+											if (engine.ParticlesHistory.length > 0) {
+												var last_particles = engine.ParticlesHistory.pop ();
+												if (typeof particles[last_particles] !== "undefined") {
+													particlesJS (particles[last_particles]);
+													engine.Particles = last_particles;
+												}
+											}
+										}
 									}
 									break;
 
@@ -2093,6 +2130,11 @@ $_ready(function () {
 								if (particles[parts[1]]) {
 									if (typeof particlesJS != "undefined") {
 										particlesJS(particles[parts[1]]);
+										if (typeof engine.ParticlesHistory !== "object") {
+											engine.ParticlesHistory = [];
+										}
+										engine.ParticlesHistory.push (parts[1]);
+										engine.Particles = parts[1];
 										next ();
 									} else {
 										console.error("particlesJS is not loaded, are you sure you added it?");

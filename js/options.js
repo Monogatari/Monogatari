@@ -24,6 +24,7 @@ let engine = {
 	"Song": "",
 	"Sound": "",
 	"Scene": "",
+	"Particles": "",
 
 	// Current Statement *.
 	"Step": 0,
@@ -35,6 +36,7 @@ let engine = {
 	"CharacterHistory": [],
 	"SceneHistory": [],
 	"SceneElementsHistory": [],
+	"ParticlesHistory": [],
 
 	// Change to true for a MultiLanguage Game.
 	"MultiLanguage": false,
