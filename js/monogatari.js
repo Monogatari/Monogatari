@@ -1798,11 +1798,13 @@ $_ready(function () {
 							// Check if an animation or class was provided
 							// scene [scene] with [animation] [infinite]
 							//   0      1     2       3           4
-
 							if (parts.length > 2) {
 								if (parts[2] == "with" && parts[3].trim != "") {
-									$_("[data-ui='background']").addClass("animated");
-									$_("[data-ui='background']").addClass((parts.join(" ").replace("scene " + parts[1], "").replace(" with ", " ")).trim());
+									$_("[data-ui='background']").addClass ("animated");
+									var class_list = (parts.join(" ").replace ("scene " + parts[1], "").replace (" with ", " ")).trim ().split (" ");
+									for (const newClass of class_list) {
+										$_("[data-ui='background']").addClass (newClass);
+									}
 								}
 							}
 
