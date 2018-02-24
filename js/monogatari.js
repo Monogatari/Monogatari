@@ -1513,164 +1513,162 @@ $_ready(function () {
 			const back = ["show", "play", "display", "hide", "stop", "particles", "wait", "scene", "clear"];
 			let flag = true;
 			try {
-				if (typeof label[engine.Step] == "string") {
-					while (back.indexOf(label[engine.Step].split(" ")[0]) > -1 && engine.Step > 0 && flag) {
-						const parts = replaceVariables(label[engine.Step]).split(" ");
-						switch (parts[0]) {
-							case "show":
-								if (typeof characters[parts[1]] != "undefined") {
-									$_("[data-character='" + parts[1] + "']").remove();
-									if (engine.CharacterHistory.length > 1) {
-										engine.CharacterHistory.pop();
-									}
-
-									const last_character = engine.CharacterHistory.slice(-1)[0];
-									if (typeof last_character != "undefined") {
-										if (last_character.indexOf("data-character='" + parts[1] + "'") > -1) {
-											$_("#game").append(last_character);
+				while (engine.Step > 0 && flag) {
+					if (typeof label[engine.Step] == "string") {
+						if (back.indexOf(label[engine.Step].split(" ")[0]) > -1) {
+							const parts = replaceVariables(label[engine.Step]).split(" ");
+							switch (parts[0]) {
+								case "show":
+									if (typeof characters[parts[1]] != "undefined") {
+										$_("[data-character='" + parts[1] + "']").remove();
+										if (engine.CharacterHistory.length > 1) {
+											engine.CharacterHistory.pop();
 										}
-									}
-								} else {
-									if (typeof parts[3] != "undefined" && parts[3] != "") {
-										$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
-									} else {
-										$_("[data-image='" + parts[1] + "']").remove();
-									}
-									engine.ImageHistory.pop();
-								}
-								break;
 
-							case "play":
-								if (parts[1] == "music") {
-									musicPlayer.removeAttribute("loop");
-									musicPlayer.setAttribute("src", "");
-									engine.Song = "";
-									musicPlayer.pause();
-									musicPlayer.currentTime = 0;
-								} else if (parts[1] == "sound") {
-									soundPlayer.removeAttribute("loop");
-									soundPlayer.setAttribute("src", "");
-									soundPlayer.pause();
-									soundPlayer.currentTime = 0;
-								}
-								break;
-
-							case "stop":
-								if (parts[1] == "music") {
-									const last_song = engine.MusicHistory.pop().split(" ");
-
-									if (last_song[3] == "loop") {
-										musicPlayer.setAttribute("loop", "");
-									} else if (last_song[3] == "noloop") {
-										musicPlayer.removeAttribute("loop");
-									}
-									if (typeof music !== "undefined") {
-										if (typeof music[last_song[2]] != "undefined") {
-											musicPlayer.setAttribute("src", "audio/music/" + music[last_song[2]]);
-										} else {
-											musicPlayer.setAttribute("src", "audio/music/" + last_song[2]);
-										}
-									} else {
-										musicPlayer.setAttribute("src", "audio/music/" + last_song[2]);
-									}
-									musicPlayer.play();
-									engine.Song = last_song.join(" ");
-								} else if (parts[1] == "sound") {
-									const last = engine.SoundHistory.pop().split(" ");
-
-									if (last[3] == "loop") {
-										soundPlayer.setAttribute("loop", "");
-									} else if (last[3] == "noloop") {
-										soundPlayer.removeAttribute("loop");
-									}
-
-									if (typeof sound !== "undefined") {
-										if (typeof sound[last[2]] != "undefined") {
-											soundPlayer.setAttribute("src", "audio/sound/" + sound[last[2]]);
-										} else {
-											soundPlayer.setAttribute("src", "audio/sound/" + last[2]);
-										}
-									} else {
-										soundPlayer.setAttribute("src", "audio/sound/" + last[2]);
-									}
-
-									soundPlayer.play();
-									engine.Sound = last.join(" ");
-								}
-								break;
-
-							case "scene":
-								engine.SceneHistory.pop();
-								engine.Scene = engine.SceneHistory.slice(-1)[0];
-
-								if (typeof engine.Scene != "undefined") {
-									$_("[data-character]").remove();
-									$_("[data-image]").remove();
-									$_("[data-ui='background']").removeClass ();
-
-									if (typeof scenes[parts[1]] != "undefined") {
-										$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[engine.Scene] + ") center / cover no-repeat");
-									} else {
-										$_("[data-ui='background']").style("background", engine.Scene);
-									}
-
-									if (typeof  engine.SceneElementsHistory !== "undefined") {
-										if (engine.SceneElementsHistory.length > 0) {
-											var scene_elements = engine.SceneElementsHistory.pop ();
-
-											if (typeof scene_elements === "object") {
-												for (const element of scene_elements) {
-													$_("#game").append (element);
-												}
+										const last_character = engine.CharacterHistory.slice(-1)[0];
+										if (typeof last_character != "undefined") {
+											if (last_character.indexOf("data-character='" + parts[1] + "'") > -1) {
+												$_("#game").append(last_character);
 											}
 										}
 									} else {
-										engine.SceneElementsHistory = [];
+										if (typeof parts[3] != "undefined" && parts[3] != "") {
+											$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
+										} else {
+											$_("[data-image='" + parts[1] + "']").remove();
+										}
+										engine.ImageHistory.pop();
 									}
-								}
+									break;
 
-								whipeText();
-								break;
+								case "play":
+									if (parts[1] == "music") {
+										musicPlayer.removeAttribute("loop");
+										musicPlayer.setAttribute("src", "");
+										engine.Song = "";
+										musicPlayer.pause();
+										musicPlayer.currentTime = 0;
+									} else if (parts[1] == "sound") {
+										soundPlayer.removeAttribute("loop");
+										soundPlayer.setAttribute("src", "");
+										soundPlayer.pause();
+										soundPlayer.currentTime = 0;
+									}
+									break;
 
-							case "display":
-								if (parts[1] == "message") {
-									$_("[data-ui='message-content']").html("");
-									$_("[data-ui='messages']").removeClass("active");
-								} else if (parts[1] == "image") {
-									$_("[data-image='" + parts[2] + "']").remove();
-								}
-								break;
-							case "hide":
-								if (typeof characters[parts[1]] != "undefined" && engine.CharacterHistory.length > 0) {
-									$_("#game").append(engine.CharacterHistory.pop());
+								case "stop":
+									if (parts[1] == "music") {
+										const last_song = engine.MusicHistory.pop().split(" ");
 
-								} else if (typeof images[parts[1]] != "undefined" && engine.ImageHistory > 0) {
-									$_("#game").append(engine.ImageHistory.pop());
+										if (last_song[3] == "loop") {
+											musicPlayer.setAttribute("loop", "");
+										} else if (last_song[3] == "noloop") {
+											musicPlayer.removeAttribute("loop");
+										}
+										if (typeof music !== "undefined") {
+											if (typeof music[last_song[2]] != "undefined") {
+												musicPlayer.setAttribute("src", "audio/music/" + music[last_song[2]]);
+											} else {
+												musicPlayer.setAttribute("src", "audio/music/" + last_song[2]);
+											}
+										} else {
+											musicPlayer.setAttribute("src", "audio/music/" + last_song[2]);
+										}
+										musicPlayer.play();
+										engine.Song = last_song.join(" ");
+									} else if (parts[1] == "sound") {
+										const last = engine.SoundHistory.pop().split(" ");
 
-								} else {
+										if (last[3] == "loop") {
+											soundPlayer.setAttribute("loop", "");
+										} else if (last[3] == "noloop") {
+											soundPlayer.removeAttribute("loop");
+										}
+
+										if (typeof sound !== "undefined") {
+											if (typeof sound[last[2]] != "undefined") {
+												soundPlayer.setAttribute("src", "audio/sound/" + sound[last[2]]);
+											} else {
+												soundPlayer.setAttribute("src", "audio/sound/" + last[2]);
+											}
+										} else {
+											soundPlayer.setAttribute("src", "audio/sound/" + last[2]);
+										}
+
+										soundPlayer.play();
+										engine.Sound = last.join(" ");
+									}
+									break;
+
+								case "scene":
+									engine.SceneHistory.pop();
+									engine.Scene = engine.SceneHistory.slice(-1)[0];
+
+									if (typeof engine.Scene != "undefined") {
+										$_("[data-character]").remove();
+										$_("[data-image]").remove();
+										$_("[data-ui='background']").removeClass ();
+
+										if (typeof scenes[engine.Scene] !== "undefined") {
+											$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[engine.Scene] + ") center / cover no-repeat");
+										} else {
+											$_("[data-ui='background']").style("background", engine.Scene);
+										}
+
+										if (typeof  engine.SceneElementsHistory !== "undefined") {
+											if (engine.SceneElementsHistory.length > 0) {
+												var scene_elements = engine.SceneElementsHistory.pop ();
+
+												if (typeof scene_elements === "object") {
+													for (const element of scene_elements) {
+														$_("#game").append (element);
+													}
+												}
+											}
+										} else {
+											engine.SceneElementsHistory = [];
+										}
+									}
+
+									whipeText();
+									break;
+
+								case "display":
+									if (parts[1] == "message") {
+										$_("[data-ui='message-content']").html("");
+										$_("[data-ui='messages']").removeClass("active");
+									} else if (parts[1] == "image") {
+										$_("[data-image='" + parts[2] + "']").remove();
+									}
+									break;
+								case "hide":
+									if (typeof characters[parts[1]] != "undefined" && engine.CharacterHistory.length > 0) {
+										$_("#game").append(engine.CharacterHistory.pop());
+
+									} else if (typeof images[parts[1]] != "undefined" && engine.ImageHistory > 0) {
+										$_("#game").append(engine.ImageHistory.pop());
+
+									} else {
+										flag = false;
+										engine.Step += 1;
+									}
+									break;
+
+								case "particles":
+									$_("#particles-js").html("");
+									break;
+								default:
 									flag = false;
-									engine.Step += 1;
-								}
-								break;
-
-							case "particles":
-								$_("#particles-js").html("");
-								break;
-						}
-						if ((engine.Step - 1) >= 0) {
-							engine.Step -= 1;
-						}
-
-						if (typeof label[engine.Step] !== "string") {
+									break;
+							}
+							if ((engine.Step - 1) >= 0) {
+								engine.Step -= 1;
+							}
+						} else {
 							flag = false;
-							previous ();
 						}
-					}
-
-				} else if (typeof label[engine.Step] == "object") {
-					while (typeof label[engine.Step] == "object") {
+					} else if (typeof label[engine.Step] == "object") {
 						if (typeof label[engine.Step].Function !== "undefined") {
-
 							assertAsync(label[engine.Step].Function.Reverse).then(function () {
 								block = false;
 							}).catch(function () {
@@ -1680,6 +1678,8 @@ $_ready(function () {
 						if ((engine.Step - 1) >= 0) {
 							engine.Step -= 1;
 						}
+					} else {
+						flag = false;
 					}
 				}
 				analyseStatement(label[engine.Step]);
