@@ -17,6 +17,11 @@
  * ===========================
 **/
 
+/* General Style */
+body {
+
+}
+
 /* Simple Button styles*/
 button {
 
@@ -69,6 +74,11 @@ button:hover {
 
 }
 
+/* Slots Delete Button Style */
+[data-ui="slots"] button {
+
+}
+
 /**
  * ===========================
  * Game Elements Styling
@@ -116,15 +126,43 @@ button:hover {
  * ===========================
 **/
 
+/* These styles are applied to the Mobile version of the Quick Menu */
+
 /* Quick Menu Style */
 [data-ui="quick-menu"] {
 
 }
 
+/* Quick Menu Buttons Style */
 [data-ui="quick-menu"] span {
 
 }
 
+/* Quick Menu Buttons Style on Hover */
 [data-ui="quick-menu"] span:hover {
 
+}
+
+/* Quick Menu Buttons Icon Style */
+[data-ui="quick-menu"] > span > .fa {
+
+}
+
+/* Styles for the desktop version of the Quick Menu*/
+@media screen and (min-width: 37.56255em) {
+
+	/* Quick Menu Style */
+	[data-ui="quick-menu"] {
+
+	}
+
+	/* Quick Menu Buttons Style */
+	[data-ui="quick-menu"] span {
+
+	}
+
+	/* Quick Menu Buttons Style on Hover */
+	[data-ui="quick-menu"] span:hover {
+
+	}
 }
