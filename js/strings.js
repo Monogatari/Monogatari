@@ -207,7 +207,7 @@ const strings = {
 	"日本語": {
 		"AdvanceHelp": "ゲームを進めるためには、スペースキーを押すかクリックします。",
 		"Audio": "オーディオ",
-		"AutoPlay": "",
+		"AutoPlay": "自動",
 		"AutoPlaySpeed": "自動再生速度",
 
 		"Back": "巻き戻し",
@@ -220,7 +220,7 @@ const strings = {
 		"FullScreen": "全画面表示",
 
 		"Help": "ヘルプ",
-		"Hide": "",
+		"Hide": "「非表示」",
 		"HideButton": "テキストを隠します。",
 
 		"iOSAudioWarning": "iOSではオーディオ設定がサポートされていません。",
@@ -252,12 +252,12 @@ const strings = {
 		"SaveInSlot": "スロットにセーブする",
 		"Settings": "環境設定",
 		"SettingsButton": "設定画面を開きます。",
-		"Show": "",
-		"SlotDeletion": "",
-		"SlotOverwrite": "",
+		"Show": "ショー",
+		"SlotDeletion": "本当にこのスロットを削除しますか？",
+		"SlotOverwrite": "本当にこのスロットを上書きしますか？",
 		"Sound": "効果音の音量",
 		"Start": "スタート",
-		"Stop": "",
+		"Stop": "停止",
 
 		"TextSpeed": "テキストスピード",
 
@@ -268,7 +268,7 @@ const strings = {
 	"Nederlands": {
 		"AdvanceHelp": "Gebruik de spatiebalk of linker muisknop om te spelen.",
 		"Audio": "Audio",
-		"AutoPlay": "",
+		"AutoPlay": "Auto",
 		"AutoPlaySpeed": "Autoplay snelheid",
 
 		"Back": "Terug",
@@ -313,12 +313,12 @@ const strings = {
 		"SaveInSlot": "Sla op in slot",
 		"Settings": "Instellingen",
 		"SettingsButton": "Open de instellingen",
-		"Show": "",
-		"SlotDeletion": "",
-		"SlotOverwrite": "",
+		"Show": "Tonen",
+		"SlotDeletion": "Weet u zeker dat u dit slot verwijderen?",
+		"SlotOverwrite": "Weet u zeker dat u dit slot overschrijven?",
 		"Sound": "Geluids volume",
 		"Start": "Start",
-		"Stop": "",
+		"Stop": "Stop",
 
 		"TextSpeed": "Tekst snelheid",
 
