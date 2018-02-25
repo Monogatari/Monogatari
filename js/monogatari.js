@@ -269,8 +269,7 @@ $_ready(function () {
 					if (canProceed() && finishedTyping) {
 						hideCentered();
 						shutUp();
-						analyseStatement(label[engine.Step]);
-						engine.Step += 1;
+						next ();
 					}
 				}, settings.AutoPlaySpeed * 1000);
 			}
@@ -752,7 +751,6 @@ $_ready(function () {
 
 		$_("#game").show();
 		analyseStatement(label[engine.Step]);
-		engine.Step += 1;
 		document.body.style.cursor = "auto";
 	}
 
@@ -927,7 +925,6 @@ $_ready(function () {
 			$_("section").hide();
 			$_("#game").show();
 			analyseStatement(label[engine.Step]);
-			engine.Step += 1;
 		} else {
 			$_("[data-menu='main']").show();
 		}
@@ -1086,7 +1083,6 @@ $_ready(function () {
 				$_("section").hide();
 				$_("#game").show();
 				analyseStatement(label[engine.Step]);
-				engine.Step += 1;
 				break;
 
 			case "close":
@@ -1147,8 +1143,7 @@ $_ready(function () {
 						if (canProceed() && finishedTyping) {
 							hideCentered();
 							shutUp();
-							analyseStatement(label[engine.Step]);
-							engine.Step += 1;
+							next ();
 						}
 					}, settings.AutoPlaySpeed * 1000);
 				} else if ($_(this).hasClass("fa-stop-circle")) {
@@ -1162,8 +1157,7 @@ $_ready(function () {
 						if (canProceed() && finishedTyping) {
 							hideCentered();
 							shutUp();
-							analyseStatement(label[engine.Step]);
-							engine.Step += 1;
+							next ();
 						}
 					}, settings.AutoPlaySpeed * 1000);
 				} else if ($_(this).text () === "Stop") {
@@ -1181,7 +1175,6 @@ $_ready(function () {
 				$_("section").hide();
 				$_("#game").show();
 				analyseStatement(label[engine.Step]);
-				engine.Step += 1;
 				break;
 
 			case "save":
@@ -1262,8 +1255,7 @@ $_ready(function () {
 						} else {
 							hideCentered();
 							shutUp();
-							analyseStatement(label[engine.Step]);
-							engine.Step += 1;
+							next ();
 						}
 					}
 					break;
@@ -1300,23 +1292,10 @@ $_ready(function () {
 		hideCentered();
 		shutUp();
 		if ($_(this).data("do") != "null" && $_(this).data("do") != "") {
-			const back = ["show", "play", "display", "hide", "stop", "particles", "wait", "scene", "clear", "vibrate", "notify", "next"];
 			try {
 				$_("[data-ui='choices']").hide();
 				$_("[data-ui='choices']").html("");
-				if (back.indexOf($_(this).data("do").split(" ")[0]) > -1) {
-					engine.Step -= 1;
-					analyseStatement($_(this).data("do"));
-					engine.Step += 1;
-				} else {
-					if ($_(this).data("do").split(" ")[0] == "jump") {
-						analyseStatement($_(this).data("do"));
-						engine.Step += 1;
-					} else {
-						analyseStatement($_(this).data("do"));
-					}
-				}
-
+				analyseStatement($_(this).data("do"));
 			} catch (e) {
 				console.error("An error ocurred while trying to execute the choice's action.\n" + e);
 			}
@@ -1341,10 +1320,9 @@ $_ready(function () {
 				}
 				finishedTyping = true;
 			} else {
-				hideCentered();
+				hideCentered ();
 				shutUp();
-				analyseStatement(label[engine.Step]);
-				engine.Step += 1;
+				next ();
 			}
 		}
 	});
@@ -1385,8 +1363,7 @@ $_ready(function () {
 							if (canProceed() && finishedTyping) {
 								hideCentered();
 								shutUp();
-								analyseStatement(label[engine.Step]);
-								engine.Step += 1;
+								next ();
 							}
 						}, settings.AutoPlaySpeed * 1000);
 					}
@@ -1403,8 +1380,7 @@ $_ready(function () {
 					if (canProceed() && finishedTyping) {
 						hideCentered();
 						shutUp();
-						analyseStatement(label[engine.Step]);
-						engine.Step += 1;
+						next ();
 					}
 				}, settings.AutoPlaySpeed * 1000);
 			}
@@ -1591,8 +1567,8 @@ $_ready(function () {
 
 		hideCentered();
 		shutUp();
-		if (engine.Step >= 2) {
-			engine.Step -= 2;
+		if (engine.Step >= 1) {
+			engine.Step -= 1;
 			const back = ["show", "play", "display", "hide", "stop", "particles", "wait", "scene", "clear", "vibrate", "notify", "next"];
 			let flag = true;
 			try {
@@ -1773,10 +1749,10 @@ $_ready(function () {
 						}
 					} else {
 						flag = false;
+						engine.Step += 1;
 					}
 				}
-				analyseStatement(label[engine.Step]);
-				engine.Step += 1;
+				analyseStatement (label[engine.Step]);
 			} catch (e) {
 				console.error("An error ocurred while trying to exectute the previous statement.\n" + e);
 			}
@@ -1827,8 +1803,7 @@ $_ready(function () {
 							block = true;
 							setTimeout(function () {
 								block = false;
-								analyseStatement(label[engine.Step]);
-								engine.Step += 1;
+								next ();
 							}, parseInt (parts[1]));
 							break;
 
@@ -2305,8 +2280,7 @@ $_ready(function () {
 				case "function":
 					assertAsync(statement).then(function () {
 						block = false;
-						analyseStatement(label[engine.Step]);
-						engine.Step += 1;
+						next ();
 					}).catch(function () {
 						block = false;
 					});
@@ -2346,16 +2320,7 @@ $_ready(function () {
 						const condition = statement.Conditional;
 
 						assertAsync(condition.Condition).then(function () {
-							if (typeof condition.True === "string") {
-								if (condition.True.trim() == "") {
-									analyseStatement("next");
-									engine.Step += 1;
-								} else {
-									analyseStatement(condition.True);
-								}
-							} else {
-								analyseStatement(condition.True);
-							}
+							analyseStatement(condition.True);
 							block = false;
 						}).catch(function () {
 							analyseStatement(condition.False);
@@ -2376,6 +2341,7 @@ $_ready(function () {
 									$_("[data-ui='input'] input").value("");
 									$_("[data-ui='input'] [data-action='submit']").get(0).removeEventListener("click", inputButtonListener);
 									block = false;
+									next ();
 								}).catch(function () {
 									$_("[data-ui='input']").removeClass("active");
 									$_("[data-ui='input'] [data-ui='warning']").text("");
@@ -2393,8 +2359,7 @@ $_ready(function () {
 					} else if (typeof statement.Function !== "undefined") {
 						assertAsync(statement.Function.Apply).then(function () {
 							block = false;
-							analyseStatement(label[engine.Step]);
-							engine.Step += 1;
+							next ();
 						}).catch(function () {
 							block = false;
 						});
