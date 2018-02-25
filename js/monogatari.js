@@ -745,10 +745,6 @@ $_ready(function () {
 			}
 		}
 
-		if (engine.Step > 0) {
-			engine.Step -= 1;
-		}
-
 		$_("#game").show();
 		analyseStatement(label[engine.Step]);
 		document.body.style.cursor = "auto";
