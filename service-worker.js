@@ -24,6 +24,7 @@ var files = [
 	// "style/main.css",
 
 	// JavaScript Files
+	"js/polyfill.min.js",
 	"js/particles.min.js",
 	"js/jquery.min.js",
 	"js/artemis.min.js",
@@ -31,7 +32,9 @@ var files = [
 	"js/monogatari.js",
 	"js/strings.js",
 	// "js/options.js",
+	// "js/storage.js"
 	// "js/script.js",
+	// "js/main.js"
 
 	// Fonts
 	"fonts/fontawesome-webfont.eot",
