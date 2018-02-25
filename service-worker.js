@@ -32,7 +32,7 @@ var files = [
 	"js/monogatari.js",
 	"js/strings.js",
 	// "js/options.js",
-	// "js/storage.js"
+	// "js/storage.js",
 	// "js/script.js",
 	// "js/main.js"
 
