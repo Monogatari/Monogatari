@@ -471,12 +471,12 @@ $_ready(function () {
 		}
 
 		$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html("");
-		const savedData = Object.keys(localStorage).sort (function (a, b) {
+		const savedData = Object.keys(localStorage).filter(function (key) {
+			return key.indexOf (engine.AutoSaveLabel) == 0;
+		}).sort (function (a, b) {
 			let label;
 			if (a.indexOf (engine.AutoSaveLabel) === 0 && b.indexOf (engine.AutoSaveLabel) === 0) {
 				label = engine.AutoSaveLabel;
-			} else {
-				return 1;
 			}
 
 			const aNumber = parseInt (a.split (label)[1]);
@@ -520,14 +520,14 @@ $_ready(function () {
 
 		$_("[data-menu='save'] [data-input='slotName']").value (niceDateTime ());
 
-		const savedData = Object.keys(localStorage).sort (function (a, b) {
+		const savedData = Object.keys(localStorage).filter(function (key) {
+			return key.indexOf (engine.SaveLabel) == 0 || key.indexOf (engine.AutoSaveLabel) == 0;
+		}).sort (function (a, b) {
 			let label;
 			if (a.indexOf (engine.SaveLabel) === 0 && b.indexOf (engine.SaveLabel) === 0) {
 				label = engine.SaveLabel;
 			} else if (a.indexOf (engine.AutoSaveLabel) === 0 && b.indexOf (engine.AutoSaveLabel) === 0) {
 				label = engine.AutoSaveLabel;
-			} else {
-				return 1;
 			}
 
 			const aNumber = parseInt (a.split (label)[1]);
