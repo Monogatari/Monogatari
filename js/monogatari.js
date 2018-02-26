@@ -465,7 +465,7 @@ $_ready(function () {
 		}
 	}
 
-	function updateAutoSlots () {
+	function setAutoSlots () {
 		if (!window.localStorage) {
 			return false;
 		}
@@ -474,13 +474,8 @@ $_ready(function () {
 		const savedData = Object.keys(localStorage).filter(function (key) {
 			return key.indexOf (engine.AutoSaveLabel) == 0;
 		}).sort (function (a, b) {
-			let label;
-			if (a.indexOf (engine.AutoSaveLabel) === 0 && b.indexOf (engine.AutoSaveLabel) === 0) {
-				label = engine.AutoSaveLabel;
-			}
-
-			const aNumber = parseInt (a.split (label)[1]);
-			const bNumber = parseInt (b.split (label)[1]);
+			const aNumber = parseInt (a.split (engine.AutoSaveLabel)[1]);
+			const bNumber = parseInt (b.split (engine.AutoSaveLabel)[1]);
 
 			if (aNumber > bNumber) {
 				return 1;
@@ -515,23 +510,15 @@ $_ready(function () {
 		}
 
 		$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html("");
-		$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html("");
 		$_("[data-menu='save'] [data-ui='slots']").html("");
 
 		$_("[data-menu='save'] [data-input='slotName']").value (niceDateTime ());
 
 		const savedData = Object.keys(localStorage).filter(function (key) {
-			return key.indexOf (engine.SaveLabel) == 0 || key.indexOf (engine.AutoSaveLabel) == 0;
+			return key.indexOf (engine.SaveLabel) == 0;
 		}).sort (function (a, b) {
-			let label;
-			if (a.indexOf (engine.SaveLabel) === 0 && b.indexOf (engine.SaveLabel) === 0) {
-				label = engine.SaveLabel;
-			} else if (a.indexOf (engine.AutoSaveLabel) === 0 && b.indexOf (engine.AutoSaveLabel) === 0) {
-				label = engine.AutoSaveLabel;
-			}
-
-			const aNumber = parseInt (a.split (label)[1]);
-			const bNumber = parseInt (b.split (label)[1]);
+			const aNumber = parseInt (a.split (engine.SaveLabel)[1]);
+			const bNumber = parseInt (b.split (engine.SaveLabel)[1]);
 			if (aNumber > bNumber) {
 				return 1;
 			} else if (aNumber < bNumber) {
@@ -543,18 +530,10 @@ $_ready(function () {
 
 		for (let i = 0; i < savedData.length; i++) {
 			const label = savedData[i];
-			if (label.indexOf (engine.SaveLabel) === 0) {
-				const slot = Storage.get(label);
-				const id = label.split (engine.SaveLabel)[1];
-				if (slot !== null && slot !== "") {
-					addSlot (id, JSON.parse (slot));
-				}
-			} else if (label.indexOf (engine.AutoSaveLabel) === 0) {
-				const slot = Storage.get (savedData[i]);
-				const id = label.split (engine.AutoSaveLabel)[1];
-				if (slot !== null && slot !== "") {
-					addAutoSlot (id, JSON.parse(slot));
-				}
+			const slot = Storage.get(label);
+			const id = label.split (engine.SaveLabel)[1];
+			if (slot !== null && slot !== "") {
+				addSlot (id, JSON.parse (slot));
 			}
 		}
 
@@ -562,11 +541,7 @@ $_ready(function () {
 		if ($_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html().trim() == "") {
 			$_("[data-menu='load'] [data-ui='slots']").html(`<p>${getLocalizedString("NoSavedGames")}</p>`);
 		}
-
-		// Check if there are no Auto Saved games.
-		if ($_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html().trim() == "") {
-			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html(`<p>${getLocalizedString("NoAutoSavedGames")}</p>`);
-		}
+		setAutoSlots ();
 	}
 
 	setSlots();
@@ -862,7 +837,7 @@ $_ready(function () {
 			} else {
 				currentAutoSaveSlot += 1;
 			}
-			updateAutoSlots ();
+			setAutoSlots ();
 
 		}, engine.AutoSave * 60000);
 	} else {
