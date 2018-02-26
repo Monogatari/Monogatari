@@ -730,13 +730,50 @@ $_ready(function () {
 		});
 
 		if (engine.Song != "") {
-			analyseStatement(engine.Song);
-			engine.Step -= 1;
+			const parts = engine.Song.split (" ");
+			if (parts[1] == "music") {
+
+				if (parts[3] == "loop") {
+					musicPlayer.setAttribute("loop", "");
+				} else if (parts[3] == "noloop") {
+					musicPlayer.removeAttribute("loop");
+				}
+
+				if (typeof music !== "undefined") {
+					if (typeof music[parts[2]] != "undefined") {
+						musicPlayer.setAttribute("src", "audio/music/" + music[parts[2]]);
+					} else {
+						musicPlayer.setAttribute("src", "audio/music/" + parts[2]);
+					}
+				} else {
+					musicPlayer.setAttribute("src", "audio/music/" + parts[2]);
+				}
+
+				musicPlayer.play();
+			}
 		}
 
 		if (engine.Sound != "") {
-			analyseStatement(engine.Sound);
-			engine.Step -= 1;
+			const parts = engine.Sound.split (" ");
+			if (parts[1] == "sound") {
+				if (parts[3] == "loop") {
+					soundPlayer.setAttribute("loop", "");
+				} else if (parts[3] == "noloop") {
+					soundPlayer.removeAttribute("loop");
+				}
+
+				if (typeof sound !== "undefined") {
+					if (typeof sound[parts[2]] != "undefined") {
+						soundPlayer.setAttribute("src", "audio/sound/" + sound[parts[2]]);
+					} else {
+						soundPlayer.setAttribute("src", "audio/sound/" + parts[2]);
+					}
+				} else {
+					soundPlayer.setAttribute("src", "audio/sound/" + parts[2]);
+				}
+
+				soundPlayer.play();
+			}
 		}
 
 		if (engine.Particles != "" && typeof engine.Particles == "string") {
