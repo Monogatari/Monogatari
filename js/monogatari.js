@@ -1315,7 +1315,7 @@ $_ready(function () {
 			try {
 				$_("[data-ui='choices']").hide();
 				$_("[data-ui='choices']").html("");
-				analyseStatement($_(this).data("do"));
+				analyseStatement($_(this).data("do"), false);
 			} catch (e) {
 				console.error("An error ocurred while trying to execute the choice's action.\n" + e);
 			}
@@ -1829,8 +1829,10 @@ $_ready(function () {
 		return statement;
 	}
 
-	function analyseStatement (statement) {
-
+	function analyseStatement (statement, advance) {
+		if (typeof advance !== "boolean") {
+			advance = true;
+		}
 		try {
 
 			switch (typeof statement) {
@@ -1844,7 +1846,9 @@ $_ready(function () {
 							block = true;
 							setTimeout(function () {
 								block = false;
-								next ();
+								if (advance) {
+									next ();
+								}
 							}, parseInt (parts[1]));
 							break;
 
@@ -1871,7 +1875,9 @@ $_ready(function () {
 								musicPlayer.play();
 								engine.Song = parts.join(" ");
 								engine.MusicHistory.push(engine.Song);
-								next();
+								if (advance) {
+									next ();
+								}
 							} else if (parts[1] == "sound") {
 								if (parts[3] == "loop") {
 									soundPlayer.setAttribute("loop", "");
@@ -1892,7 +1898,9 @@ $_ready(function () {
 								soundPlayer.play();
 								engine.Sound = parts.join(" ");
 								engine.SoundHistory.push(engine.Sound);
-								next();
+								if (advance) {
+									next ();
+								}
 							} else if (parts[1] == "voice") {
 
 								if (typeof voice !== "undefined") {
@@ -1906,7 +1914,9 @@ $_ready(function () {
 								}
 
 								voicePlayer.play();
-								next();
+								if (advance) {
+									next ();
+								}
 							} else if (parts[1] == "video") {
 
 
@@ -1965,7 +1975,9 @@ $_ready(function () {
 							engine.Scene = parts[1];
 							engine.SceneHistory.push(parts[1]);
 							whipeText();
-							next();
+							if (advance) {
+								next ();
+							}
 							break;
 
 						case "show":
@@ -2032,7 +2044,9 @@ $_ready(function () {
 								engine.ImageHistory.push(imageObject);
 
 							}
-							next();
+							if (advance) {
+								next ();
+							}
 							break;
 
 						case "jump":
@@ -2059,7 +2073,9 @@ $_ready(function () {
 							} else if (parts[1] == "particles") {
 								stopParticles ();
 							}
-							next();
+							if (advance) {
+								next ();
+							}
 							break;
 
 						case "pause":
@@ -2068,7 +2084,9 @@ $_ready(function () {
 							} else if (parts[1] == "sound") {
 								soundPlayer.pause();
 							}
-							next();
+							if (advance) {
+								next ();
+							}
 							break;
 
 						case "hide":
@@ -2096,7 +2114,9 @@ $_ready(function () {
 									$_("[data-image='" + parts[1] + "']").remove();
 								}
 							}
-							next();
+							if (advance) {
+								next ();
+							}
 							break;
 
 						case "display":
@@ -2141,7 +2161,9 @@ $_ready(function () {
 
 						case "clear":
 							whipeText();
-							next ();
+							if (advance) {
+								next ();
+							}
 							break;
 
 						case "centered":
@@ -2170,7 +2192,9 @@ $_ready(function () {
 									}
 								}
 							}
-							next();
+							if (advance) {
+								next ();
+							}
 							break;
 
 						case "notify":
@@ -2204,7 +2228,9 @@ $_ready(function () {
 							} else {
 								console.error("The notifications object is not defined.");
 							}
-							next();
+							if (advance) {
+								next ();
+							}
 							break;
 
 						case "particles":
@@ -2217,7 +2243,9 @@ $_ready(function () {
 										}
 										engine.ParticlesHistory.push (parts[1]);
 										engine.Particles = parts[1];
-										next ();
+										if (advance) {
+											next ();
+										}
 									} else {
 										console.error("particlesJS is not loaded, are you sure you added it?");
 									}
@@ -2321,7 +2349,9 @@ $_ready(function () {
 				case "function":
 					assertAsync(statement).then(function () {
 						block = false;
-						next ();
+						if (advance) {
+							next ();
+						}
 					}).catch(function () {
 						block = false;
 					});
@@ -2352,19 +2382,18 @@ $_ready(function () {
 										$_("[data-ui='choices']").append("<button data-do='" + choice.Do + "'>" + choice.Text + "</button>");
 									}
 								} else if (typeof choice == "string") {
-									analyseStatement(choice);
+									analyseStatement(choice, false);
 								}
 							}
 							$_("[data-ui='choices']").show();
 						}
 					} else if (typeof statement.Conditional != "undefined") {
 						const condition = statement.Conditional;
-
 						assertAsync(condition.Condition).then(function () {
-							analyseStatement(condition.True);
+							analyseStatement(condition.True, false);
 							block = false;
 						}).catch(function () {
-							analyseStatement(condition.False);
+							analyseStatement(condition.False, false);
 							block = false;
 						});
 
@@ -2372,7 +2401,9 @@ $_ready(function () {
 						$_("[data-ui='input'] [data-ui='input-message']").text(statement.Input.Text);
 						$_("[data-ui='input']").addClass("active");
 
-						function inputButtonListener () {
+						function inputButtonListener (event) {
+							event.stopPropagation ();
+							event.preventDefault ();
 							const inputValue = $_("[data-ui='input'] input").value();
 
 							assertAsync(statement.Input.Validation, [inputValue]).then(function () {
@@ -2381,8 +2412,8 @@ $_ready(function () {
 									$_("[data-ui='input'] [data-ui='warning']").text("");
 									$_("[data-ui='input'] input").value("");
 									$_("[data-ui='input'] [data-action='submit']").get(0).removeEventListener("click", inputButtonListener);
-									block = false;
 									next ();
+									block = false;
 								}).catch(function () {
 									$_("[data-ui='input']").removeClass("active");
 									$_("[data-ui='input'] [data-ui='warning']").text("");
@@ -2400,7 +2431,9 @@ $_ready(function () {
 					} else if (typeof statement.Function !== "undefined") {
 						assertAsync(statement.Function.Apply).then(function () {
 							block = false;
-							next ();
+							if (advance) {
+								next ();
+							}
 						}).catch(function () {
 							block = false;
 						});
