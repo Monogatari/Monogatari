@@ -41,6 +41,7 @@
 /* global particles */
 /* global require */
 /* global particlesJS */
+/* global pJSDom */
 /* global Typed */
 /* global scenes */
 /* global script */
@@ -1581,6 +1582,26 @@ $_ready(function () {
 		analyseStatement(label[engine.Step]);
 	}
 
+	function stopParticles () {
+		try {
+			if (typeof pJSDom === "object") {
+				if (pJSDom.length > 0) {
+					for (let i = 0; i < pJSDom.length; i++) {
+						if (typeof pJSDom[i].pJS !== "undefined") {
+							cancelAnimationFrame(pJSDom[i].pJS.fn.drawAnimFrame);
+							pJSDom.shift ();
+						}
+					}
+				}
+			}
+		} catch (e) {
+			console.error ("An error ocurred while trying to stop particle system.");
+		}
+
+		engine.Particles = "";
+		$_("#particles-js").html("");
+	}
+
 	// Function to execute the previous statement in the script.
 	function previous () {
 
@@ -1744,8 +1765,7 @@ $_ready(function () {
 									break;
 
 								case "particles":
-									engine.Particles = "";
-									$_("#particles-js").html("");
+									stopParticles ();
 									break;
 								default:
 									flag = false;
@@ -2037,8 +2057,7 @@ $_ready(function () {
 								soundPlayer.pause();
 								soundPlayer.currentTime = 0;
 							} else if (parts[1] == "particles") {
-								engine.Particles = "";
-								$_("#particles-js").html("");
+								stopParticles ();
 							}
 							next();
 							break;
