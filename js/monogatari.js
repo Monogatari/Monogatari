@@ -1606,6 +1606,7 @@ $_ready(function () {
 									} else if (parts[1] == "sound") {
 										soundPlayer.removeAttribute("loop");
 										soundPlayer.setAttribute("src", "");
+										engine.Sound = "";
 										soundPlayer.pause();
 										soundPlayer.currentTime = 0;
 									}
@@ -1720,6 +1721,7 @@ $_ready(function () {
 									break;
 
 								case "particles":
+									engine.Particles = "";
 									$_("#particles-js").html("");
 									break;
 								default:
