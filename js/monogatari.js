@@ -476,13 +476,19 @@ $_ready(function () {
 			if (a.indexOf (engine.AutoSaveLabel) === 0 && b.indexOf (engine.AutoSaveLabel) === 0) {
 				label = engine.AutoSaveLabel;
 			} else {
-				return 0;
+				return 1;
 			}
 
 			const aNumber = parseInt (a.split (label)[1]);
 			const bNumber = parseInt (b.split (label)[1]);
 
-			return aNumber - bNumber;
+			if (aNumber > bNumber) {
+				return 1;
+			} else if (aNumber < bNumber) {
+				return -1;
+			} else {
+				return 0;
+			}
 		});
 
 		for (let i = 0; i < savedData.length; i++) {
@@ -521,13 +527,18 @@ $_ready(function () {
 			} else if (a.indexOf (engine.AutoSaveLabel) === 0 && b.indexOf (engine.AutoSaveLabel) === 0) {
 				label = engine.AutoSaveLabel;
 			} else {
-				return 0;
+				return 1;
 			}
 
 			const aNumber = parseInt (a.split (label)[1]);
 			const bNumber = parseInt (b.split (label)[1]);
-
-			return aNumber - bNumber;
+			if (aNumber > bNumber) {
+				return 1;
+			} else if (aNumber < bNumber) {
+				return -1;
+			} else {
+				return 0;
+			}
 		});
 
 		for (let i = 0; i < savedData.length; i++) {

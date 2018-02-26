@@ -409,6 +409,7 @@ textarea {
 	right: -1rem;
 	margin: 0;
 	font-size: 0.5em;
+	padding: 0;
 }
 
 [data-ui="slots"] img {
