@@ -2014,6 +2014,7 @@ $_ready(function () {
 								soundPlayer.pause();
 								soundPlayer.currentTime = 0;
 							} else if (parts[1] == "particles") {
+								engine.Particles = "";
 								$_("#particles-js").html("");
 							}
 							next();
