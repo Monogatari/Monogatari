@@ -3,11 +3,13 @@ Built to bring Visual Novels to the modern web and take them to the next level, 
 
 Website: https://monogatari.io/
 
+Demo: https://monogatari.io/demo/
+
 ## Features
 - Responsive out of the box
 - Plays nice with Electron for Desktop apps and Cordova for mobile apps
 - Simple Syntax
-- Progressive Web App Features allowing offline gameplay
+- Progressive Web App Features allowing offline game play
 - Allows you to use any kind of media supported by browsers
 - Compatible with all major browsers
 - Includes libraries for animations and particle effects
@@ -19,7 +21,7 @@ The first thing about Monogatari that you should probably know is that with it, 
 
 ### Set up your environment
 
-To develop in Monogatari you would need the same as to develop a webpage, you just need a text editor capable of editing HTML, Javascript and CSS, which means that pretty much any text editor should work, even Windows NotePad but to make it easier, you probably want one with code syntax highlightning.
+To develop in Monogatari you would need the same as to develop a webpage, you just need a text editor capable of editing HTML, Javascript and CSS, which means that pretty much any text editor should work, even Windows NotePad but to make it easier, you probably want one with code syntax highlighting.
 
 Some recommended (and free) ones include:
 
