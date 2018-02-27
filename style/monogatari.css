@@ -428,6 +428,10 @@ textarea {
 	display: block;
 }
 
+[data-notice="slot-overwrite"] input {
+	text-align: center;
+}
+
 [data-ui="centered"] {
 	margin: 0;
 }
