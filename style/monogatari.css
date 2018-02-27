@@ -203,6 +203,10 @@ select {
 	display: block;
 }
 
+[data-notice] p {
+	font-size: 1.5rem;
+}
+
 /**
  * ===========================
  * Data UI Styling
@@ -381,7 +385,7 @@ textarea {
 }
 
 [data-ui="quick-menu"] span:hover {
-	color: rgb(255, 255, 255);
+	color: rgba(125, 125, 125, 0.5);
 	cursor: pointer;
 }
 
@@ -486,6 +490,7 @@ textarea {
 	height: auto;
 	padding: 0.5em;
 	margin: 1rem;
+	z-index: 2;
 }
 
 [data-menu="load"] h3,
@@ -587,6 +592,14 @@ input[type=range] {
 		top: auto;
 		background-color: rgba(0, 0, 0, 0.5);
 		color: rgba(255, 255, 255, 0.5);
+	}
+
+	[data-ui="quick-menu"] span:hover {
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	[data-ui="quick-menu"].transparent {
+		color: rgba(0, 0, 0, 0.5);
 	}
 
 	[data-ui="quick-menu"] > span > [data-string] {

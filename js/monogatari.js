@@ -1116,7 +1116,6 @@ $_ready(function () {
 			case "quit":
 				$_("[data-notice='exit']").removeClass("active");
 				endGame();
-				engine.Step = 0;
 				break;
 
 			case "dismiss-notice":
@@ -1480,7 +1479,7 @@ $_ready(function () {
 		// Reset Conditions
 		engine.Label = "Start";
 		label = game[engine.Label];
-		engine.Step = -1;
+		engine.Step = 0;
 
 		// Reset History
 		engine.MusicHistory = [];
@@ -1488,6 +1487,14 @@ $_ready(function () {
 		engine.ImageHistory = [];
 		engine.CharacterHistory = [];
 		engine.SceneHistory = [];
+		engine.SceneElementsHistory = [];
+		engine.ParticlesHistory = [];
+
+		// Reset other States
+		engine.Sound = "";
+		engine.Song = "";
+		engine.Particles = "";
+		engine.Scene = "";
 	}
 
 	function hideCentered () {

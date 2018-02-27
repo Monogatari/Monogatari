@@ -87,6 +87,7 @@ let script = {
 				},
 				"Save": function (input) {
 					storage.player.Name = input;
+					return true;
 				},
 				"Warning": "You must enter a name!"
 			}
