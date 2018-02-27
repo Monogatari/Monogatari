@@ -177,6 +177,7 @@ gulp.task("package:js", () => {
 		"js/artemis.min.js",
 		"js/strings.js",
 		"js/options.js",
+		"js/storage.js",
 		"js/script.js",
 		"js/monogatari.js",
 		"js/main.js"
