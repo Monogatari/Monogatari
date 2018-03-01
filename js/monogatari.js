@@ -1091,7 +1091,13 @@ $_ready(function () {
 
 			case "open-menu":
 				$_("section").hide();
+
+				if ($_(this).data("open") == "save") {
+					$_("[data-menu='save'] [data-input='slotName']").value (niceDateTime ());
+				}
+
 				$_("[data-menu='" + $_(this).data("open") + "']").show();
+
 				break;
 
 			case "pause":
