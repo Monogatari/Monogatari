@@ -1176,7 +1176,7 @@ $_ready(function () {
 					$_(this).addClass("fa-play-circle");
 					clearTimeout (autoPlay);
 					autoPlay = null;
-				} else if ($_(this).text () === "Auto") {
+				} else if ($_(this).text () === getLocalizedString ("Auto")) {
 					$_(this).text (getLocalizedString("Stop"));
 					autoPlay = setTimeout(function () {
 						if (canProceed() && finishedTyping) {
@@ -1185,7 +1185,7 @@ $_ready(function () {
 							next ();
 						}
 					}, settings.AutoPlaySpeed * 1000);
-				} else if ($_(this).text () === "Stop") {
+				} else if ($_(this).text () === getLocalizedString ("Stop")) {
 					$_(this).text (getLocalizedString ("AutoPlay"));
 					clearTimeout (autoPlay);
 					autoPlay = null;
