@@ -1145,13 +1145,13 @@ $_ready(function () {
 					$_(this).parent ().find ("[data-string]").text (getLocalizedString ("Hide"));
 					$_("[data-ui='quick-menu']").removeClass ("transparent");
 					$_("[data-ui='text']").show();
-				} else if ($_(this).text () === "Show") {
+				} else if ($_(this).text () === getLocalizedString ("Show")) {
 					$_(this).text (getLocalizedString("Hide"));
 					$_(this).parent ().find (".fa").removeClass ("fa-eye-slash");
 					$_(this).parent ().find (".fa").addClass ("fa-eye");
 						$_("[data-ui='quick-menu']").removeClass ("transparent");
 					$_("[data-ui='text']").show ();
-				} else if ($_(this).text () === "Hide") {
+				} else if ($_(this).text () === getLocalizedString ("Hide")) {
 					$_(this).text (getLocalizedString ("Show"));
 					$_(this).parent ().find (".fa").removeClass ("fa-eye");
 					$_(this).parent ().find (".fa").addClass ("fa-eye-slash");
@@ -1176,7 +1176,7 @@ $_ready(function () {
 					$_(this).addClass("fa-play-circle");
 					clearTimeout (autoPlay);
 					autoPlay = null;
-				} else if ($_(this).text () === getLocalizedString ("Auto")) {
+				} else if ($_(this).text () === getLocalizedString ("AutoPlay")) {
 					$_(this).text (getLocalizedString("Stop"));
 					autoPlay = setTimeout(function () {
 						if (canProceed() && finishedTyping) {
