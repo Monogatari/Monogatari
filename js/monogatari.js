@@ -198,6 +198,10 @@ $_ready(function () {
 	// Set the label in which the game will start
 	label = game[engine.Label];
 
+	// Set the startLabel property, which will be used when
+	// the game is reset.
+	engine.startLabel = engine.Label;
+
 	// Set the volume of all the media components
 	musicPlayer.volume = settings.Volume.Music;
 	ambientPlayer.volume = settings.Volume.Music;
@@ -1385,6 +1389,7 @@ $_ready(function () {
 		storage = JSON.parse(storageStructure);
 
 		// Reset Conditions
+		engine.Label = engine.startLabel;
 		label = game[engine.Label];
 		engine.Step = -1;
 
