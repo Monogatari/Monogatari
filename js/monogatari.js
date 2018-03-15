@@ -1385,7 +1385,6 @@ $_ready(function () {
 		storage = JSON.parse(storageStructure);
 
 		// Reset Conditions
-		engine.Label = "Start";
 		label = game[engine.Label];
 		engine.Step = -1;
 
