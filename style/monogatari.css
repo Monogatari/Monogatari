@@ -305,7 +305,7 @@ textarea {
 [data-ui="face"] {
 	display: inline-block;
 	float: left;
-	max-height: 20% !important;
+	max-height: 20vh !important;
 	position: initial !important;
 }
 
