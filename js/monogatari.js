@@ -1362,7 +1362,7 @@ $_ready(function () {
 	 * =======================
 	 **/
 
-	function displayDialog (dialog, animation) {
+	function displayDialog (dialog, character, animation) {
 
 		// Destroy the previous textObject so the text is rewritten.
 		// If not destroyed, the text would be appended instead of replaced.
@@ -1372,6 +1372,7 @@ $_ready(function () {
 
 		// Remove contents from the dialog area.
 		$_("[data-ui='say']").html ("");
+		$_("[data-ui='say']").data ("speaking", character);
 
 		// Check if the typing animation flag is set to true in order to show it
 		if (animation === true) {
@@ -2296,12 +2297,12 @@ $_ready(function () {
 								// Check if the character object defines if the type animation should be used.
 								if (typeof characters[character[0]].TypeAnimation !== "undefined") {
 									if (characters[character[0]].TypeAnimation === true) {
-										displayDialog (statement.replace(parts[0] + " ", ""), true);
+										displayDialog (statement.replace(parts[0] + " ", ""), character[0], true);
 									} else {
-										displayDialog (statement.replace(parts[0] + " ", ""), false);
+										displayDialog (statement.replace(parts[0] + " ", ""), character[0], false);
 									}
 								} else {
-									displayDialog (statement.replace(parts[0] + " ", ""), true);
+									displayDialog (statement.replace(parts[0] + " ", ""), character[0], true);
 								}
 
 								if (typeof characters[character[0]].Side != "undefined") {
@@ -2326,12 +2327,12 @@ $_ready(function () {
 								// Check if the character object defines if the type animation should be used.
 								if (typeof characters[character[0]].TypeAnimation !== "undefined") {
 									if (characters[character[0]].TypeAnimation === true) {
-										displayDialog (statement.replace(parts[0] + " ", ""), true);
+										displayDialog (statement.replace(parts[0] + " ", ""), character[0], true);
 									} else {
-										displayDialog (statement.replace(parts[0] + " ", ""), false);
+										displayDialog (statement.replace(parts[0] + " ", ""), character[0], false);
 									}
 								} else {
-									displayDialog (statement.replace(parts[0] + " ", ""), true);
+									displayDialog (statement.replace(parts[0] + " ", ""), character[0], true);
 								}
 
 								if (typeof characters[parts[0]].Face != "undefined" && characters[parts[0]].Face != "") {
@@ -2351,12 +2352,12 @@ $_ready(function () {
 
 								if (typeof engine.NarratorTypeAnimation !== "undefined") {
 									if (engine.NarratorTypeAnimation === true) {
-										displayDialog (statement, true);
+										displayDialog (statement, "narrator", true);
 									} else {
-										displayDialog (statement, false);
+										displayDialog (statement, "narrator", false);
 									}
 								} else {
-									displayDialog (statement, true);
+									displayDialog (statement, "narrator", true);
 								}
 							}
 							break;
