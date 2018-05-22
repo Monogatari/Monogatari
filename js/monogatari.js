@@ -2012,6 +2012,8 @@ $_ready(function () {
 								let directory = characters[parts[1]].Directory;
 								if (typeof directory == "undefined") {
 									directory = "";
+								} else {
+									directory += "/";
 								}
 								const image = characters[parts[1]].Images[parts[2]];
 								$_("[data-character='" + parts[1] + "']").remove();
@@ -2027,8 +2029,8 @@ $_ready(function () {
 								classes = parts.join(" ").replace("show " + parts[1] +" "+ parts[2], "").replace(" at ", "").replace(" with ", " ");
 
 
-								$_("#game").append("<img src='img/characters/" + directory + "/" + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
-								engine.CharacterHistory.push("<img src='img/characters/" + directory + "/" + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
+								$_("#game").append("<img src='img/characters/" + directory + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
+								engine.CharacterHistory.push("<img src='img/characters/" + directory + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
 
 							} else {
 								// show [image] at [position] with [animation]
@@ -2310,8 +2312,10 @@ $_ready(function () {
 										directory = characters[character[0]].Directory;
 										if (typeof directory == "undefined") {
 											directory = "";
+										} else {
+											directory += "/";
 										}
-										$_("[data-ui='face']").attribute("src", "img/characters/" + directory + "/" + characters[character[0]].Side[character[1]]);
+										$_("[data-ui='face']").attribute("src", "img/characters/" + directory + characters[character[0]].Side[character[1]]);
 										$_("[data-ui='face']").show();
 									} else {
 										$_("[data-ui='face']").hide();
@@ -2339,8 +2343,10 @@ $_ready(function () {
 									directory = characters[parts[0]].Directory;
 									if (typeof directory == "undefined") {
 										directory = "";
+									} else {
+										directory += "/";
 									}
-									$_("[data-ui='face']").attribute("src", "img/characters/" + directory + "/" + characters[parts[0]].Face);
+									$_("[data-ui='face']").attribute("src", "img/characters/" + directory + characters[parts[0]].Face);
 									$_("[data-ui='face']").show();
 								} else {
 									$_("[data-ui='face']").hide();
