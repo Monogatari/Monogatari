@@ -2292,7 +2292,11 @@ $_ready(function () {
 							// The typeof check, is to see if the character actually exists, if it does not, then it is
 							// treated as a normal work and the narrator is used to show the dialog
 							if (character.length > 1 && typeof characters[character[0]] !== "undefined") {
-								$_("[data-ui='who']").html(replaceVariables(characters[character[0]].Name));
+								if (typeof characters[character[0]].Name !== "undefined") {
+									$_("[data-ui='who']").html(replaceVariables(characters[character[0]].Name));
+								} else {
+									document.querySelector("[data-ui='who']").innerHTML = "";
+								}
 								$_("[data-character='" + character[0] + "']").addClass("focus");
 								$_("[data-ui='who']").style("color", characters[character[0]].Color);
 
@@ -2324,7 +2328,11 @@ $_ready(function () {
 									$_("[data-ui='face']").hide();
 								}
 							} else if (typeof characters[parts[0]] != "undefined") {
-								$_("[data-ui='who']").html(replaceVariables(characters[parts[0]].Name));
+								if (typeof characters[character[0]].Name !== "undefined") {
+									$_("[data-ui='who']").html(replaceVariables(characters[character[0]].Name));
+								} else {
+									document.querySelector("[data-ui='who']").innerHTML = "";
+								}
 								$_("[data-character='" + parts[0] + "']").addClass("focus");
 								$_("[data-ui='who']").style("color", characters[parts[0]].Color);
 
