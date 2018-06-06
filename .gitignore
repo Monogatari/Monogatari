@@ -13,3 +13,5 @@ package-lock.json
 /release
 /dist
 package-lock.json
+.cache
+yarn.lock
