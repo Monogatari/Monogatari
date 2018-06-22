@@ -22,7 +22,7 @@
  * 18) Statements Functioning
  * ====================================
  **/
-"use strict";
+'use strict';
 
 /**
  * ======================
@@ -30,8 +30,7 @@
  * ======================
  **/
 
-/* global $_ */
-/* global $_ready */
+/* global Artemis */
 /* global characters */
 /* global engine */
 /* global images */
@@ -63,7 +62,12 @@ let deleteSlot;
 let overwriteSlot;
 const storageStructure = JSON.stringify(storage);
 
-$_ready(function () {
+const { $_, $_ready, Space, Platform, Preload } = Artemis;
+
+const Storage = new Space ();
+
+
+$_ready(() => {
 
 	/**
 	 * ======================
@@ -93,7 +97,7 @@ $_ready(function () {
 			settings.AutoPlaySpeed = 5;
 		}
 
-		Storage.set("Settings", JSON.stringify(settings));
+		Storage.set ("Settings", settings);
 	}
 
 	function fixEngine () {
@@ -179,14 +183,12 @@ $_ready(function () {
 	 * ======================
 	 **/
 
-	const local_settings = Storage.get("Settings");
-
 	// Set the initial settings if they don't exist or load them.
-	if (local_settings === null || local_settings == "") {
-		Storage.set("Settings", JSON.stringify(settings));
-	} else {
-		settings = Object.assign({}, settings, JSON.parse(local_settings));
-	}
+	Storage.get ("Settings").then ((local_settings) => {
+		settings = Object.assign ({}, settings, local_settings);
+	}).catch (() => {
+		Storage.set ("Settings", settings);
+	});
 
 	fixOptions ();
 
@@ -308,12 +310,8 @@ $_ready(function () {
 	 * ======================
 	 **/
 
-	function isElectron () {
-		return window && window.process && window.process.type;
-	}
-
 	// Set the electron quit handler.
-	if (isElectron()) {
+	if (Platform.electron ()) {
 		const remote = require("electron").remote;
 		const win = remote.getCurrentWindow();
 
@@ -371,7 +369,7 @@ $_ready(function () {
 	}
 
 	function changeWindowResolution (resolution) {
-		if (isElectron()) {
+		if (Platform.electron ()) {
 			const remote = require("electron").remote;
 			const win = remote.getCurrentWindow();
 			const {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
@@ -400,24 +398,13 @@ $_ready(function () {
 	}
 
 	/**
-	 * =====================
-	 * Cordova Platform
-	 * =====================
-	 **/
-
-
-	function isCordova () {
-		return !!window.cordova;
-	}
-
-	/**
 	 * ======================
 	 * Set iOS Conditions
 	 * ======================
 	 **/
 
 	// Disable audio settings in iOS since they are not supported
-	if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+	if (Platform.mobile ("iOS")) {
 		// iOS handles the volume using the system volume, therefore there is now way to
 		// handle each of the sound sources individually and as such, this is disabled.
 		$_("[data-settings='audio']").html(`<p>${getLocalizedString("iOSAudioWarning")}</p>`);
@@ -449,14 +436,14 @@ $_ready(function () {
 		const name = data.Name ? data.Name : data.Date;
 		if (typeof scenes[data.Engine.Scene] !== "undefined") {
 
-			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
+			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'><button class='fas fa-times' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
 
-			$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}' class='col xs6 m4 l3 xl3'><button class='fa fa-close' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>${getLocalizedString("Overwrite")} #${i}<small>${name}</small></figcaption></figure>`);
+			$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3'><button class='fas fa-times' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>${getLocalizedString("Overwrite")} #${i}<small>${name}</small></figcaption></figure>`);
 
 		} else {
-			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete=${i}></button><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
+			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'><button class='fas fa-times' data-delete=${i}></button><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
 
-			$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}' class='col xs6 m4 l3 xl3'><figcaption><button class='fa fa-close' data-delete=${i}></button>${getLocalizedString("Overwrite")} #${i}<small>${name}</small></figcaption></figure>`);
+			$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3'><figcaption><button class='fas fa-times' data-delete=${i}></button>${getLocalizedString("Overwrite")} #${i}<small>${name}</small></figcaption></figure>`);
 		}
 	}
 
@@ -464,9 +451,9 @@ $_ready(function () {
 		const name = data.Name ? data.Name : data.Date;
 
 		if (typeof scenes[data.Engine.Scene] !== "undefined") {
-			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete=${i}></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
+			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'><button class='fas fa-times' data-delete=${i}></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
 		} else {
-			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='col xs6 m4 l3 xl3 animated flipInX'><button class='fa fa-close' data-delete=${i}></button><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
+			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'><button class='fas fa-times' data-delete=${i}></button><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
 		}
 	}
 
@@ -494,11 +481,12 @@ $_ready(function () {
 		for (let i = 0; i < savedData.length; i++) {
 			const label = savedData[i];
 			if (label.indexOf (engine.AutoSaveLabel) === 0) {
-				const slot = Storage.get (savedData[i]);
-				const id = label.split (engine.AutoSaveLabel)[1];
-				if (slot !== null && slot !== "") {
-					addAutoSlot (id, JSON.parse(slot));
-				}
+				Storage.get (savedData[i]).then ((slot) => {
+					const id = label.split (engine.AutoSaveLabel)[1];
+					if (slot !== null && slot !== "") {
+						addAutoSlot (id, slot);
+					}
+				});
 			}
 		}
 
@@ -533,20 +521,26 @@ $_ready(function () {
 			}
 		});
 
+		const promises = [];
 		for (let i = 0; i < savedData.length; i++) {
 			const label = savedData[i];
-			const slot = Storage.get(label);
-			const id = label.split (engine.SaveLabel)[1];
-			if (slot !== null && slot !== "") {
-				addSlot (id, JSON.parse (slot));
-			}
+			promises.push(Storage.get (label).then ((slot) => {
+				const id = label.split (engine.SaveLabel)[1];
+				if (slot !== null && slot !== "") {
+					addSlot (id, slot);
+				}
+			}));
 		}
 
-		// Check if there are no Saved games.
-		if ($_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html().trim() == "") {
-			$_("[data-menu='load'] [data-ui='slots']").html(`<p>${getLocalizedString("NoSavedGames")}</p>`);
-		}
-		setAutoSlots ();
+		Promise.all (promises).then(() => {
+
+			// Check if there are no Saved games.
+			if ($_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html ().trim() === "") {
+				$_("[data-menu='load'] [data-ui='slots']").html(`<p>${getLocalizedString("NoSavedGames")}</p>`);
+			}
+			setAutoSlots ();
+		});
+
 	}
 
 	setSlots();
@@ -588,9 +582,11 @@ $_ready(function () {
 				"Storage": storage
 			};
 			const id = getMaxSlotId () + 1;
-			Storage.set (engine.SaveLabel + id, JSON.stringify(saveData));
-			addSlot (id, saveData );
-			document.body.style.cursor = "auto";
+			Storage.set (engine.SaveLabel + id, saveData).then ((savedData) => {
+				addSlot (id, saveData );
+				document.body.style.cursor = "auto";
+			});
+
 		}
 	}
 
@@ -618,10 +614,12 @@ $_ready(function () {
 				"Storage": storage
 			};
 
-			Storage.set (slot, JSON.stringify(saveData));
-			$_(`[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (name);
-			$_(`[data-menu='save'] [data-ui='autoSaveSlots'] [data-ui='slots'] [data-save='${id}'] small`).text (name);
-			document.body.style.cursor = "auto";
+			Storage.set (slot, JSON.stringify(saveData)).then (() => {
+				$_(`[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (name);
+				$_(`[data-menu='save'] [data-ui='autoSaveSlots'] [data-ui='slots'] [data-save='${id}'] small`).text (name);
+				document.body.style.cursor = "auto";
+			});
+
 		}
 	}
 
@@ -638,39 +636,43 @@ $_ready(function () {
 			});
 
 			// Get the name of the Slot if it exists or use the current date.
-			let data = Storage.get (slot);
+			Storage.get (slot).then ((data) => {
+				let name;
 
-			let name;
-
-			if (data !== null && data !== "") {
-				data = JSON.parse (data);
-				if (data.Name !== null && data.Name !== "" && typeof data.Name !== "undefined") {
-					name = data.Name;
+				if (data !== null && data !== "") {
+					data = JSON.parse (data);
+					if (data.Name !== null && data.Name !== "" && typeof data.Name !== "undefined") {
+						name = data.Name;
+					} else {
+						name = niceDateTime ();
+					}
 				} else {
 					name = niceDateTime ();
 				}
-			} else {
-				name = niceDateTime ();
-			}
 
-			if (typeof customName !== "undefined") {
-				name = customName;
-			}
-			// Build the save slot data with the current state of every
-			// important object
-			const saveData = {
-				"Name": name,
-				"Date": niceDateTime (),
-				"Engine": engine,
-				"Show": show,
-				"Label": engine.Label,
-				"Storage": storage
-			};
+				if (typeof customName !== "undefined") {
+					name = customName;
+				}
+				// Build the save slot data with the current state of every
+				// important object
+				const saveData = {
+					"Name": name,
+					"Date": niceDateTime (),
+					"Engine": engine,
+					"Show": show,
+					"Label": engine.Label,
+					"Storage": storage
+				};
 
-			Storage.set (slot, JSON.stringify(saveData));
-			$_(`[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (name);
-			$_(`[data-menu='save'] [data-ui='slots'] [data-save='${id}'] small`).text (name);
-			document.body.style.cursor = "auto";
+				Storage.set (slot, JSON.stringify(saveData)).then (() => {
+					$_(`[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (name);
+					$_(`[data-menu='save'] [data-ui='slots'] [data-save='${id}'] small`).text (name);
+					document.body.style.cursor = "auto";
+				});
+
+			});
+
+
 		}
 	}
 
@@ -682,100 +684,103 @@ $_ready(function () {
 
 		$_("section").hide();
 		$_("#game").show();
-		const data = JSON.parse(Storage.get(slot));
-		engine = Object.assign({}, engine, {
-			"Label": data.Engine.Label,
-			"Song": data.Engine.Song,
-			"Sound": data.Engine.Sound,
-			"Scene": data.Engine.Scene,
-			"Particles": data.Engine.Particles,
-			"Step": data.Engine.Step,
-			"MusicHistory": data.Engine.MusicHistory,
-			"SoundHistory": data.Engine.SoundHistory,
-			"ImageHistory": data.Engine.ImageHistory,
-			"CharacterHistory": data.Engine.CharacterHistory,
-			"SceneHistory": data.Engine.SceneHistory,
-			"SceneElementsHistory": data.Engine.SceneElementsHistory,
-			"ParticlesHistory": data.Engine.ParticlesHistory
-		});
-		fixEngine ();
-		storage = Object.assign({}, JSON.parse(storageStructure), data.Storage);
+		Storage.get(slot).then ((data) => {
 
-		label = game[data.Label];
+			engine = Object.assign({}, engine, {
+				"Label": data.Engine.Label,
+				"Song": data.Engine.Song,
+				"Sound": data.Engine.Sound,
+				"Scene": data.Engine.Scene,
+				"Particles": data.Engine.Particles,
+				"Step": data.Engine.Step,
+				"MusicHistory": data.Engine.MusicHistory,
+				"SoundHistory": data.Engine.SoundHistory,
+				"ImageHistory": data.Engine.ImageHistory,
+				"CharacterHistory": data.Engine.CharacterHistory,
+				"SceneHistory": data.Engine.SceneHistory,
+				"SceneElementsHistory": data.Engine.SceneElementsHistory,
+				"ParticlesHistory": data.Engine.ParticlesHistory
+			});
 
-		for (const i in data.Show.split(",")) {
-			if (data.Show.split(",")[i].trim() != "") {
-				$_("#game").append(data.Show.split(",")[i]);
-			}
-		}
+			fixEngine ();
+			storage = Object.assign({}, JSON.parse(storageStructure), data.Storage);
 
-		$_("[data-ui='background']").fadeOut(200, function () {
+			label = game[data.Label];
 
-			if (typeof scenes[data.Engine.Scene] !== "undefined") {
-				$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[data.Engine.Scene] + ") center / cover no-repeat");
-			} else {
-				$_("[data-ui='background']").style("background", data.Engine.Scene);
+			for (const i in data.Show.split(",")) {
+				if (data.Show.split(",")[i].trim() != "") {
+					$_("#game").append(data.Show.split(",")[i]);
+				}
 			}
 
-			$_("[data-ui='background']").fadeIn(200);
-		});
+			$_("[data-ui='background']").fadeOut(200, function () {
 
-		if (engine.Song != "") {
-			const parts = engine.Song.split (" ");
-			if (parts[1] == "music") {
-
-				if (parts[3] == "loop") {
-					musicPlayer.setAttribute("loop", "");
-				} else if (parts[3] == "noloop") {
-					musicPlayer.removeAttribute("loop");
+				if (typeof scenes[data.Engine.Scene] !== "undefined") {
+					$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[data.Engine.Scene] + ") center / cover no-repeat");
+				} else {
+					$_("[data-ui='background']").style("background", data.Engine.Scene);
 				}
 
-				if (typeof music !== "undefined") {
-					if (typeof music[parts[2]] != "undefined") {
-						musicPlayer.setAttribute("src", "audio/music/" + music[parts[2]]);
+				$_("[data-ui='background']").fadeIn(200);
+			});
+
+			if (engine.Song != "") {
+				const parts = engine.Song.split (" ");
+				if (parts[1] == "music") {
+
+					if (parts[3] == "loop") {
+						musicPlayer.setAttribute("loop", "");
+					} else if (parts[3] == "noloop") {
+						musicPlayer.removeAttribute("loop");
+					}
+
+					if (typeof music !== "undefined") {
+						if (typeof music[parts[2]] != "undefined") {
+							musicPlayer.setAttribute("src", "audio/music/" + music[parts[2]]);
+						} else {
+							musicPlayer.setAttribute("src", "audio/music/" + parts[2]);
+						}
 					} else {
 						musicPlayer.setAttribute("src", "audio/music/" + parts[2]);
 					}
-				} else {
-					musicPlayer.setAttribute("src", "audio/music/" + parts[2]);
-				}
 
-				musicPlayer.play();
+					musicPlayer.play();
+				}
 			}
-		}
 
-		if (engine.Sound != "") {
-			const parts = engine.Sound.split (" ");
-			if (parts[1] == "sound") {
-				if (parts[3] == "loop") {
-					soundPlayer.setAttribute("loop", "");
-				} else if (parts[3] == "noloop") {
-					soundPlayer.removeAttribute("loop");
-				}
+			if (engine.Sound != "") {
+				const parts = engine.Sound.split (" ");
+				if (parts[1] == "sound") {
+					if (parts[3] == "loop") {
+						soundPlayer.setAttribute("loop", "");
+					} else if (parts[3] == "noloop") {
+						soundPlayer.removeAttribute("loop");
+					}
 
-				if (typeof sound !== "undefined") {
-					if (typeof sound[parts[2]] != "undefined") {
-						soundPlayer.setAttribute("src", "audio/sound/" + sound[parts[2]]);
+					if (typeof sound !== "undefined") {
+						if (typeof sound[parts[2]] != "undefined") {
+							soundPlayer.setAttribute("src", "audio/sound/" + sound[parts[2]]);
+						} else {
+							soundPlayer.setAttribute("src", "audio/sound/" + parts[2]);
+						}
 					} else {
 						soundPlayer.setAttribute("src", "audio/sound/" + parts[2]);
 					}
-				} else {
-					soundPlayer.setAttribute("src", "audio/sound/" + parts[2]);
+
+					soundPlayer.play();
 				}
-
-				soundPlayer.play();
 			}
-		}
 
-		if (engine.Particles != "" && typeof engine.Particles == "string") {
-			if (typeof particles[engine.Particles] !== "undefined") {
-				particlesJS (particles[engine.Particles]);
+			if (engine.Particles != "" && typeof engine.Particles == "string") {
+				if (typeof particles[engine.Particles] !== "undefined") {
+					particlesJS (particles[engine.Particles]);
+				}
 			}
-		}
 
-		$_("#game").show();
-		analyseStatement(label[engine.Step]);
-		document.body.style.cursor = "auto";
+			$_("#game").show();
+			analyseStatement(label[engine.Step]);
+			document.body.style.cursor = "auto";
+		});
 	}
 
 	/**
@@ -797,38 +802,39 @@ $_ready(function () {
 	// Save to slot when a slot is pressed.
 	$_("[data-menu='save']").on("click", "figcaption, img", function () {
 		overwriteSlot = $_(this).parent ().data ("save");
-		const data = JSON.parse(Storage.get (engine.SaveLabel + overwriteSlot));
-
-		if (typeof data.Name !== "undefined") {
-			$_("[data-notice='slot-overwrite'] input").value (data.Name);
-		} else {
-			$_("[data-notice='slot-overwrite'] input").value (data.Date);
-		}
-		$_("[data-notice='slot-overwrite']").addClass ("active");
+		Storage.get (engine.SaveLabel + overwriteSlot).then ((data) => {
+			if (typeof data.Name !== "undefined") {
+				$_("[data-notice='slot-overwrite'] input").value (data.Name);
+			} else {
+				$_("[data-notice='slot-overwrite'] input").value (data.Date);
+			}
+			$_("[data-notice='slot-overwrite']").addClass ("active");
+		});
 	});
 
 	$_("[data-menu='save']").on("click", "small", function () {
 		overwriteSlot = $_(this).parent ().parent ().data ("save");
-		const data = JSON.parse(Storage.get (engine.SaveLabel + overwriteSlot));
-
-		if (typeof data.Name !== "undefined") {
-			$_("[data-notice='slot-overwrite'] input").value (data.Name);
-		} else {
-			$_("[data-notice='slot-overwrite'] input").value (data.Date);
-		}
-		$_("[data-notice='slot-overwrite']").addClass ("active");
+		Storage.get (engine.SaveLabel + overwriteSlot).then ((data) => {
+			if (typeof data.Name !== "undefined") {
+				$_("[data-notice='slot-overwrite'] input").value (data.Name);
+			} else {
+				$_("[data-notice='slot-overwrite'] input").value (data.Date);
+			}
+			$_("[data-notice='slot-overwrite']").addClass ("active");
+		});
 	});
 
 	$_("[data-menu='save'], [data-menu='load']").on("click", "[data-delete]", function () {
 		deleteSlot = $_(this).data ("delete");
-		const data = JSON.parse(Storage.get (engine.SaveLabel + deleteSlot));
-		if (typeof data.Name !== "undefined") {
-			$_("[data-notice='slot-deletion'] small").text (data.Name);
-		} else {
-			$_("[data-notice='slot-deletion'] small").text (data.Date);
-		}
+		Storage.get (engine.SaveLabel + deleteSlot).then ((data) => {
+			if (typeof data.Name !== "undefined") {
+				$_("[data-notice='slot-deletion'] small").text (data.Name);
+			} else {
+				$_("[data-notice='slot-deletion'] small").text (data.Date);
+			}
 
-		$_("[data-notice='slot-deletion']").addClass ("active");
+			$_("[data-notice='slot-deletion']").addClass ("active");
+		});
 	});
 
 	// Auto Save
@@ -877,20 +883,20 @@ $_ready(function () {
 				settings.Volume.Sound = value;
 				break;
 		}
-		Storage.set("Settings", JSON.stringify(settings));
+		Storage.set("Settings", settings);
 	});
 
 	$_("[data-action='set-text-speed']").on("change mouseover", function () {
 		const value =  maxTextSpeed - parseInt($_(this).value());
 		typedConfiguration.typeSpeed = value;
 		settings.TextSpeed = value;
-		Storage.set("Settings", JSON.stringify(settings));
+		Storage.set("Settings", settings);
 	});
 
 	$_("[data-action='set-auto-play-speed']").on("change mouseover", function () {
 		const value = maxAutoPlaySpeed - parseInt($_(this).value());
 		settings.AutoPlaySpeed = value;
-		Storage.set("Settings", JSON.stringify(settings));
+		Storage.set("Settings", settings);
 	});
 
 	// Language select listener
@@ -898,7 +904,7 @@ $_ready(function () {
 		settings.Language = $_("[data-action='set-language']").value();
 		game = script[settings.Language];
 		label = game[engine.Label];
-		Storage.set("Settings", JSON.stringify(settings));
+		Storage.set("Settings", settings);
 
 		$_("[data-string]").each(function (element) {
 			$_(element).text(strings[$_("[data-action='set-language']").value()][$_(element).data("string")]);
@@ -909,9 +915,9 @@ $_ready(function () {
 
 	// Fix for select labels
 	$_("[data-select]").click(function () {
-		const e = document.createEvent("MouseEvents");
-		e.initMouseEvent("mousedown");
-		$_("[data-action='" + $_(this).data("select") + "']").get(0).dispatchEvent(e);
+		const e = document.createEvent ("MouseEvents");
+		e.initMouseEvent ("mousedown");
+		$_("[data-action='" + $_(this).data ("select") + "']").get (0). dispatchEvent (e);
 	});
 
 	/**
@@ -960,7 +966,7 @@ $_ready(function () {
 	 * ==========================
 	 **/
 
-	if (!isElectron() && !isCordova()) {
+	if (!Platform.electron () && !Platform.cordova ()) {
 		if ("serviceWorker" in navigator && engine.ServiceWorkers) {
 			if (location.protocol.indexOf ("http") > -1) {
 				navigator.serviceWorker.register("service-worker.js");
@@ -978,21 +984,6 @@ $_ready(function () {
 	 * ==========================
 	 **/
 
-	function preloadImage (src) {
-		return new Promise(function (resolve, reject) {
-			const image = new Image();
-			image.onload  = function () {
-				$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-				resolve ();
-			};
-			image.onerror = function (e) {
-				$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-				reject (e);
-			};
-			image.src = src;
-		});
-	}
-
 
 	function preloadAudio (src) {
 		return Request.get(src, null, "blob").then(function () {
@@ -1004,7 +995,7 @@ $_ready(function () {
 
 	const preloadPromises = [];
 	let assetCount = 0;
-	if (engine.Preload && !isElectron() && !isCordova()) {
+	if (engine.Preload && !Platform.electron () && !Platform.cordova ()) {
 		// Show loading screen
 		$_("[data-menu='loading']").show();
 
@@ -1012,7 +1003,11 @@ $_ready(function () {
 		if (typeof scenes == "object") {
 			assetCount += Object.keys(scenes).length;
 			for (const i in scenes) {
-				preloadPromises.push(preloadImage("img/scenes/" + scenes[i]));
+				preloadPromises.push(Preload.image ("img/scenes/" + scenes[i]).then (() => {
+					$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+				}).catch (() => {
+					$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+				}));
 			}
 		}
 
@@ -1026,14 +1021,22 @@ $_ready(function () {
 				if (typeof characters[i].Images != "undefined") {
 					assetCount += Object.keys(characters[i].Images).length;
 					for (const j in characters[i].Images) {
-						preloadPromises.push(preloadImage("img/characters/" + directory + characters[i].Images[j]));
+						preloadPromises.push(Preload.image ("img/characters/" + directory + characters[i].Images[j]).then (() => {
+							$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+						}).catch (() => {
+							$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+						}));
 					}
 				}
 
 				if (typeof characters[i].Side != "undefined") {
 					assetCount += Object.keys(characters[i].Side).length;
 					for (const k in characters[i].Side) {
-						preloadPromises.push(preloadImage("img/characters/" + directory + characters[i].Side[k]));
+						preloadPromises.push(Preload.image ("img/characters/" + directory + characters[i].Side[k]).then (() => {
+							$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+						}).catch (() => {
+							$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+						}));
 					}
 				}
 			}
@@ -1042,7 +1045,11 @@ $_ready(function () {
 		if (typeof images == "object") {
 			assetCount += Object.keys(images).length;
 			for (const i in images) {
-				preloadPromises.push(preloadImage("img/" + images[i]));
+				preloadPromises.push(Preload.image ("img/" + images[i]).then (() => {
+					$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+				}).catch (() => {
+					$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+				}));
 			}
 		}
 
@@ -1151,14 +1158,14 @@ $_ready(function () {
 					$_("[data-ui='text']").show();
 				} else if ($_(this).text () === getLocalizedString ("Show")) {
 					$_(this).text (getLocalizedString("Hide"));
-					$_(this).parent ().find (".fa").removeClass ("fa-eye-slash");
-					$_(this).parent ().find (".fa").addClass ("fa-eye");
-						$_("[data-ui='quick-menu']").removeClass ("transparent");
+					$_(this).parent ().find (".fas").removeClass ("fa-eye-slash");
+					$_(this).parent ().find (".fas").addClass ("fa-eye");
+					$_("[data-ui='quick-menu']").removeClass ("transparent");
 					$_("[data-ui='text']").show ();
 				} else if ($_(this).text () === getLocalizedString ("Hide")) {
 					$_(this).text (getLocalizedString ("Show"));
-					$_(this).parent ().find (".fa").removeClass ("fa-eye");
-					$_(this).parent ().find (".fa").addClass ("fa-eye-slash");
+					$_(this).parent ().find (".fas").removeClass ("fa-eye");
+					$_(this).parent ().find (".fas").addClass ("fa-eye-slash");
 					$_("[data-ui='quick-menu']").addClass ("transparent");
 					$_("[data-ui='text']").hide ();
 				}
@@ -1239,9 +1246,9 @@ $_ready(function () {
 		}
 	});
 
-	$_("[data-action='back']:not(#game)").click(function (event) {
-		event.stopPropagation();
-		$_("section").hide();
+	$_("[data-menu]").on ("click", "[data-action='back']:not(#game)", (event) => {
+		event.stopPropagation ();
+		$_("section").hide ();
 		if (playing) {
 			$_("#game").show ();
 		} else {
@@ -2417,7 +2424,7 @@ $_ready(function () {
 									analyseStatement(choice, false);
 								}
 							}
-							$_("[data-ui='choices']").show();
+							$_("[data-ui='choices']").show ("flex");
 						}
 					} else if (typeof statement.Conditional != "undefined") {
 						const condition = statement.Conditional;

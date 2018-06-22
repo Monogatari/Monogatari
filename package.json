@@ -5,7 +5,7 @@
   "description": "Monogatari is a simple web visual novel engine created to bring Visual Novels to the web.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Monogatari/Monogatari.git"
+    "url": "https://github.com/Monogatari/Monogatari.git"
   },
   "author": "Diego Islas Ocampo",
   "license": "MIT",
@@ -13,7 +13,12 @@
     "url": "https://github.com/Monogatari/Monogatari/issues"
   },
   "homepage": "https://monogatari.io",
+  "scripts": {
+	"start": "parcel serve index.html",
+	"update": "gulp download:dependencies"
+  },
   "devDependencies": {
+    "eslint": "^4.19.1",
     "google-closure-compiler": "^20151216.2.0",
     "gulp": "^3.9.1",
     "gulp-atom-electron": "^1.7.1",
@@ -28,8 +33,10 @@
     "gulp-rename": "^1.2.2",
     "gulp-stylelint": "^5.0.0",
     "gulp-zip": "^3.2.0",
+    "htmlhint": "^0.9.13",
+    "parcel": "^1.9.2",
     "run-sequence": "^1.2.2",
-    "stylelint": "^7.12.0",
+    "stylelint": "^9.3.0",
     "stylelint-config-standard": "^16.0.0"
   }
 }

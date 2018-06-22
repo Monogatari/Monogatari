@@ -74,10 +74,6 @@ button:hover {
 	background: rgba(0, 0, 0, 0.5);
 }
 
-section > div:not(.row) {
-	width: 100vw;
-}
-
 input,
 select {
 	color: inherit;
@@ -290,7 +286,7 @@ textarea {
 	max-height: 100vh;
 	overflow-y: auto;
 	height: auto;
-	width: 100vw;
+	width: 90%;
 }
 
 [data-ui="choices"] button {
@@ -353,7 +349,7 @@ textarea {
 [data-ui="quick-menu"] {
 	top: 0;
 	background: transparent;
-
+	width: 100%;
 	z-index: 3;
 	position: absolute;
 	height: 2.5rem;
@@ -379,13 +375,18 @@ textarea {
 	display: none;
 }
 
-[data-ui="quick-menu"] > span > .fa {
+[data-ui="quick-menu"] > span > .fas {
 	display: inline-block;
 	font-size: 1.5rem;
 }
 
 [data-ui="quick-menu"] span:hover {
 	color: rgba(125, 125, 125, 0.5);
+	cursor: pointer;
+}
+
+[data-ui="quick-menu"].transparent span:hover {
+	color: rgba(0, 0, 0, 0.5);
 	cursor: pointer;
 }
 
@@ -412,8 +413,10 @@ textarea {
 	position: absolute;
 	right: -1rem;
 	margin: 0;
-	font-size: 0.5em;
-	padding: 0;
+	font-size: 0.5rem;
+	padding: 0.5rem;
+	background-color: rgba(0, 0, 0, 0.5);
+	color: #f7f7f7;
 }
 
 [data-ui="slots"] img {
@@ -446,6 +449,10 @@ textarea {
 [data-ui="background"] {
 	width: 100%;
 	height: 100%;
+}
+
+[data-ui='inner-menu'] {
+	width: 100%;
 }
 
 /**
@@ -487,14 +494,16 @@ textarea {
 	margin: 2vmin;
 }
 
-[data-menu] button[data-action="back"] {
+[data-menu] [data-action="back"] {
 	position: absolute;
 	border-radius: 100%;
-	width: auto;
-	height: auto;
+	width: 3rem;
+	height: 3rem;
 	padding: 0.5em;
 	margin: 1rem;
 	z-index: 2;
+	background-color: rgba(0, 0, 0, 0.5);
+	color: #f7f7f7;
 }
 
 [data-menu="load"] h3,
@@ -610,7 +619,7 @@ input[type=range] {
 		display: inline-block;
 	}
 
-	[data-ui="quick-menu"] > span > .fa {
+	[data-ui="quick-menu"] > span > .fas {
 		display: none;
 	}
 
@@ -623,6 +632,10 @@ input[type=range] {
 @media screen and (min-width: 48em) {
 	body {
 		font-size: 1.5rem;
+	}
+
+	[data-ui="choices"] {
+		width: 70%;
 	}
 
 	button {
@@ -647,6 +660,10 @@ input[type=range] {
 		font-size: 5rem;
 	}
 
+	[data-ui="choices"] {
+		width: 60%;
+	}
+
 	.modal > * {
 		width: 50%;
 	}
@@ -658,6 +675,11 @@ input[type=range] {
 
 /** HD Screen, Large Devices, Wide Screens (1200px) **/
 @media screen and (min-width: 75em) {
+
+	[data-ui="choices"] {
+		width: 50%;
+	}
+
 	.modal > * {
 		width: 40%;
 	}

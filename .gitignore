@@ -15,3 +15,4 @@ package-lock.json
 package-lock.json
 .cache
 yarn.lock
+*.log

@@ -68,24 +68,31 @@
 
 	<link rel="manifest" href="manifest.json">
 
-	<link rel="stylesheet" href="style/animate.min.css">
-	<link rel="stylesheet" href="style/csshake.min.css">
-	<link rel="stylesheet" href="style/font-awesome.min.css">
-	<link rel="stylesheet" href="style/kayros.min.css">
-	<link rel="stylesheet" href="style/monogatari.css">
-	<link rel="stylesheet" href="style/main.css">
+	<!-- Third Party CSS Libraries -->
+	<link rel="stylesheet" href="./style/animate.min.css">
+	<link rel="stylesheet" href="./style/csshake.min.css">
+	<link rel="stylesheet" href="./style/font-awesome.min.css">
+	<link rel="stylesheet" href="./style/kayros.min.css">
 
-	<script src="js/polyfill.min.js"></script>
-	<script src="js/jquery.min.js"></script>
-	<script src="js/particles.min.js"></script>
-	<script src="js/typed.min.js"></script>
-	<script src="js/artemis.min.js"></script>
-	<script src="js/strings.js"></script>
-	<script src="js/options.js"></script>
-	<script src="js/storage.js"></script>
-	<script src="js/script.js"></script>
-	<script src="js/monogatari.js"></script>
-	<script src="js/main.js"></script>
+	<!-- Monogatari CSS Libraries -->
+	<link rel="stylesheet" href="./style/monogatari.css">
+	<link rel="stylesheet" href="./style/main.css">
+
+	<!-- Third Party JavaScript Libraries -->
+	<script src="./js/polyfill.min.js"></script>
+	<script src="./js/font-awesome.min.js"></script>
+	<script src="./js/jquery.min.js"></script>
+	<script src="./js/particles.min.js"></script>
+	<script src="./js/typed.min.js"></script>
+	<script src="./js/artemis.min.js"></script>
+
+	<!-- Monogatari JavaScript Libraries -->
+	<script src="./js/strings.js"></script>
+	<script src="./js/options.js"></script>
+	<script src="./js/storage.js"></script>
+	<script src="./js/script.js"></script>
+	<script src="./js/monogatari.js"></script>
+	<script src="./js/main.js"></script>
 
 </head>
 
@@ -93,7 +100,7 @@
 
 	<!-- Fallback when JavaScript is not available -->
 	<noscript>
-		<div class="middle align-center">
+		<div class="middle text--center">
 			<h2>JavaScript Disabled or not Supported.</h2>
 			<small>To play this game, please enable JavaScript executing or use a different browser.</small>
 		</div>
@@ -101,7 +108,7 @@
 
 	<!-- Notice messages -->
 	<div data-notice="exit" class="modal">
-		<div class="row spaced">
+		<div class="row row--spaced">
 			<p data-string="Confirm" class="col xs12 m12 l12 xl12">Do you want to quit</p>
 			<div class="col xs12 m12 l12 xl12">
 				<button data-action="quit" data-string="Quit">Quit</button>
@@ -140,14 +147,14 @@
 			<audio type="audio/mpeg" data-component="music"></audio>
 			<audio type="audio/mpeg" data-component="voice"></audio>
 			<audio type="audio/mpeg" data-component="sound"></audio>
-			<div class="video-wrapper align-center vertical middle" data-component="video" data-ui="video-player">
+			<div class="video-wrapper text--center vertical middle" data-component="video" data-ui="video-player">
 				<video type="video/mp4" data-ui="player" controls="true"></video>
 				<button data-action="close-video" data-string="Close">Close</button>
 			</div>
 
 			<div data-component="modal" data-ui="messages" class="middle">
 				<div data-ui="message-content"></div>
-				<div class="horizontal align-center" data-ui="inner-menu">
+				<div class="horizontal horizontal--center" data-ui="inner-menu">
 					<button data-action="close" data-close="messages" data-string="Close">Close</button>
 				</div>
 			</div>
@@ -161,20 +168,20 @@
 			</div>
 		</div>
 
-		<div data-ui="choices" class="vertical align-center middle"></div>
+		<div data-ui="choices" class="vertical text--center middle"></div>
 		<div data-ui="text">
 			<img data-ui="face" alt="">
 			<span data-ui="who"></span>
 			<p data-ui="say"></p>
 		</div>
-		<div data-ui="quick-menu" class="align-right">
-			<span data-action="back"><span class="fa fa-arrow-left"></span> <span data-string="Back">Back</span></span>
-			<span data-action="distraction-free"><span class="fa fa-eye" data-action="distraction-free"></span> <span data-string="Hide" data-action="distraction-free">Hide</span></span>
-			<span data-action="auto-play"><span class="fa fa-play-circle" data-action="auto-play"></span> <span data-string="AutoPlay" data-action="auto-play">Auto</span></span>
-			<span data-action="open-menu" data-open="save"><span class="fa fa-save" data-action="open-menu" data-open="save"></span> <span data-string="Save" data-action="open-menu" data-open="save">Save</span></span>
-			<span data-action="open-menu" data-open="load"><span class="fa fa-undo" data-action="open-menu" data-open="load"></span> <span data-string="Load" data-action="open-menu" data-open="load">Load</span></span>
-			<span data-action="open-menu" data-open="settings"><span class="fa fa-gear" data-action="open-menu" data-open="settings"></span> <span data-string="Settings" data-action="open-menu" data-open="settings">Settings</span></span>
-			<span data-action="end"><span class="fa fa-times-circle-o" data-action="end"></span> <span data-string="Quit" data-action="end">Quit</span></span>
+		<div data-ui="quick-menu" class="text--right">
+			<span data-action="back"><span class="fas fa-arrow-left"></span> <span data-string="Back">Back</span></span>
+			<span data-action="distraction-free"><span class="fas fa-eye" data-action="distraction-free"></span> <span data-string="Hide" data-action="distraction-free">Hide</span></span>
+			<span data-action="auto-play"><span class="fas fa-play-circle" data-action="auto-play"></span> <span data-string="AutoPlay" data-action="auto-play">Auto</span></span>
+			<span data-action="open-menu" data-open="save"><span class="fas fa-save" data-action="open-menu" data-open="save"></span> <span data-string="Save" data-action="open-menu" data-open="save">Save</span></span>
+			<span data-action="open-menu" data-open="load"><span class="fas fa-undo" data-action="open-menu" data-open="load"></span> <span data-string="Load" data-action="open-menu" data-open="load">Load</span></span>
+			<span data-action="open-menu" data-open="settings"><span class="fas fa-cog" data-action="open-menu" data-open="settings"></span> <span data-string="Settings" data-action="open-menu" data-open="settings">Settings</span></span>
+			<span data-action="end"><span class="fas fa-times-circle" data-action="end"></span> <span data-string="Quit" data-action="end">Quit</span></span>
 		</div>
 	</section>
 
@@ -191,7 +198,7 @@
 	<section data-menu="main" data-background="">
 		<audio type="audio/mpeg" data-component="ambient"></audio>
 
-		<div class="vertical align-right bottom animated bounceIn" data-ui="inner-menu">
+		<div class="vertical vertical--right text--right bottom animated bounceIn" data-ui="inner-menu">
 			<button data-action="start" data-string="Start">Start</button>
 			<button data-action="open-menu" data-open="load" data-string="Load">Load</button>
 			<button data-action="open-menu" data-open="settings" data-string="Settings">Settings</button>
@@ -201,35 +208,35 @@
 
 	<!-- Save Screen -->
 	<section data-menu="save" data-background="">
-		<button class="fa fa-arrow-left top left" data-action="back"></button>
-		<div class="horizontal">
+		<button class="fas fa-arrow-left top left" data-action="back"></button>
+		<div class="horizontal horizontal--center">
 			<input type="text" placeholder="Save Slot Name" data-input="slotName" required>
 			<button data-string="Save" data-action="save">Save</button>
 		</div>
-		<div data-ui="slots" class="row spaced align-center"></div>
+		<div data-ui="slots" class="row row--spaced padded"></div>
 	</section>
 
 	<!-- Load Screen -->
 	<section data-menu="load" data-background="">
-		<button class="fa fa-arrow-left top left" data-action="back"></button>
+		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Load">Load</h2>
 		<div data-ui="saveSlots">
 			<h3 data-string="LoadSlots">Saved Games</h3>
-			<div data-ui="slots" class="row spaced align-center"></div>
+			<div data-ui="slots" class="row row--spaced padded"></div>
 		</div>
 		<div data-ui="autoSaveSlots">
 			<h3 data-string="LoadAutoSaveSlots">Auto Saved Games</h3>
-			<div data-ui="slots" class="row spaced align-center"></div>
+			<div data-ui="slots" class="row row--spaced padded"></div>
 		</div>
 	</section>
 
 	<!-- Settings Screen -->
-	<section data-menu="settings" data-background="" class="align-center">
-		<button class="fa fa-arrow-left top left" data-action="back"></button>
+	<section data-menu="settings" data-background="" class="text--center">
+		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Settings">Settings</h2>
-		<div class="row spaced padded-1 align-center">
-			<div class="col xs12 s12 m6 l6 xl6 r6">
-				<div data-settings="audio" class="vertical align-center">
+		<div class="row row--spaced padded text---center">
+			<div class="row__column row__column--12 row__column--phone--12 row__column--phablet--12 row__column--tablet--6 row__column--desktop--6 row__column--desktop-large--6 row__column--retina--6">
+				<div data-settings="audio" class="vertical vertical--center text--center">
 					<h3 data-string="Audio">Audio</h3>
 					<span data-string="Music">Music Volume:</span>
 					<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="music">
@@ -240,7 +247,7 @@
 				</div>
 			</div>
 
-			<div class="col xs12 s12 m6 l6 xl6 r6">
+			<div class="row__column row__column--12 row__column--phone--12 row__column--phablet--12 row__column--tablet--6 row__column--desktop--6 row__column--desktop-large--6 row__column--retina--6">
 
 				<div data-settings="text-speed">
 					<h3 data-string="TextSpeed">Text Speed</h3>
@@ -270,7 +277,7 @@
 					<h3 data-string="Resolution">Resolution</h3>
 					<div class="horizontal">
 						<select data-action="set-resolution"></select>
-						<span class="fa fa-unsorted" data-select="set-resolution"></span>
+						<span class="fas fa-sort" data-select="set-resolution"></span>
 					</div>
 				</div>
 			</div>
@@ -279,17 +286,17 @@
 
 	<!--Help Screen -->
 	<section data-menu="help" data-background="">
-		<button class="fa fa-arrow-left top left" data-action="back"></button>
+		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Help">Help</h2>
-		<div class="align-left padded-1">
+		<div class="text--left padded">
 			<p data-string="AdvanceHelp">To advance through the game, click anywhere on the game screen or press the space key.</p>
 			<h3 data-string="QuickButtons">Quick Menu Buttons</h3>
-			<p><span class="fa fa-arrow-left"></span> <span data-string="BackButton">Back.</span></p>
-			<p><span class="fa fa-eye"></span> <span data-string="HideButton">Hide Text.</span></p>
-			<p><span class="fa fa-save"></span> <span data-string="SaveButon">Open the Save Screen.</span></p>
-			<p><span class="fa fa-undo"></span> <span data-string="LoadButton">Open the Load Screen.</span></p>
-			<p><span class="fa fa-gear"></span> <span data-string="SettingsButton">Open the Settings Screen.</span></p>
-			<p><span class="fa fa-times-circle-o"></span> <span data-string="QuitButton">Quit Game.</span></p>
+			<p><span class="fas fa-arrow-left"></span> <span data-string="BackButton">Back.</span></p>
+			<p><span class="fas fa-eye"></span> <span data-string="HideButton">Hide Text.</span></p>
+			<p><span class="fas fa-save"></span> <span data-string="SaveButon">Open the Save Screen.</span></p>
+			<p><span class="fas fa-undo"></span> <span data-string="LoadButton">Open the Load Screen.</span></p>
+			<p><span class="fas fa-cog"></span> <span data-string="SettingsButton">Open the Settings Screen.</span></p>
+			<p><span class="fas fa-times-circle"></span> <span data-string="QuitButton">Quit Game.</span></p>
 		</div>
 	</section>
 

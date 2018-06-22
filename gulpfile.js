@@ -67,64 +67,39 @@ gulp.task("release", () => {
 });
 
 // Update Dependencies
-gulp.task("download-deps", () => {
+gulp.task("download:dependencies", () => {
 
 	// Artemis JS
-	download("https://raw.githubusercontent.com/AegisFramework/Artemis/master/dist/artemis.min.js").pipe(gulp.dest("js/"));
+	download("https://gitlab.com/AegisFramework/Artemis/raw/master/dist/artemis.min.js").pipe(gulp.dest("js/"));
+	download("https://gitlab.com/AegisFramework/Artemis/raw/master/dist/artemis.min.map").pipe(gulp.dest("js/"));
 
 	// jQuery
 	download({
 		file: "jquery.min.js",
-		url: "https://code.jquery.com/jquery-3.2.1.min.js"
+		url: "https://code.jquery.com/jquery-3.3.1.min.js"
 	}).pipe(gulp.dest("js/"));
 
 	// Particles JS
 	download("https://raw.githubusercontent.com/VincentGarreau/particles.js/master/particles.min.js").pipe(gulp.dest("js/"));
 
 	// Animate CSS
-	download({
-		file: "animate.min.css",
-		url: "https://raw.githubusercontent.com/daneden/animate.css/master/animate.min.css"
-	}).pipe(gulp.dest("style/"));
+	download("https://raw.githubusercontent.com/daneden/animate.css/master/animate.min.css").pipe(gulp.dest("style/"));
 
 	// CSS Shake
 	download("https://raw.githubusercontent.com/Monogatari/csshake/master/dist/csshake.min.css").pipe(gulp.dest("style/"));
 
 	// Kayros
-	download({
-		file: "kayros.min.css",
-		url: "https://raw.githubusercontent.com/AegisFramework/Kayros/master/dist/kayros.min.css"
-	}).pipe(gulp.dest("style/"));
+	download("https://gitlab.com/AegisFramework/Kayros/raw/master/dist/kayros.min.css").pipe(gulp.dest("style/"));
 
 	// Font Awesome
-	download("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/css/font-awesome.min.css").pipe(gulp.dest("style/"));
-
 	download({
-		file: "FontAwesome.otf",
-		url: "https://github.com/FortAwesome/Font-Awesome/blob/master/fonts/FontAwesome.otf?raw=true"
-	}).pipe(gulp.dest("fonts/"));
-
+		file: "font-awesome.min.css",
+		url: "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/svg-with-js/css/fa-svg-with-js.min.css"
+	}).pipe(gulp.dest("style/"));
 	download({
-		file: "fontawesome-webfont.eot",
-		url: "https://github.com/FortAwesome/Font-Awesome/blob/master/fonts/fontawesome-webfont.eot?raw=true"
-	}).pipe(gulp.dest("fonts/"));
-
-	download({
-		file: "fontawesome-webfont.ttf",
-		url: "https://github.com/FortAwesome/Font-Awesome/blob/master/fonts/fontawesome-webfont.ttf?raw=true"
-	}).pipe(gulp.dest("fonts/"));
-
-	download({
-		file: "fontawesome-webfont.woff",
-		url: "https://github.com/FortAwesome/Font-Awesome/blob/master/fonts/fontawesome-webfont.woff?raw=true"
-	}).pipe(gulp.dest("fonts/"));
-
-	download({
-		file: "fontawesome-webfont.woff2",
-		url: "https://github.com/FortAwesome/Font-Awesome/blob/master/fonts/fontawesome-webfont.woff2?raw=true"
-	}).pipe(gulp.dest("fonts/"));
-
-	download("https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/fonts/fontawesome-webfont.svg").pipe(gulp.dest("fonts/"));
+		file: "font-awesome.min.js",
+		url: "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/svg-with-js/js/fontawesome-all.min.js"
+	}).pipe(gulp.dest("js/"));
 });
 
 
