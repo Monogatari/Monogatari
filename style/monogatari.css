@@ -65,13 +65,16 @@ li {
 button {
 	width: 8rem;
 	height: 2.5rem;
-	background: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.5);
 	color: #f7f7f7;
 	padding: 0;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
 }
 
 button:hover {
-	background: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.5);
 }
 
 input,
@@ -165,6 +168,15 @@ select {
 
 [data-component] {
 	display: none;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+[data-component]::before {
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
 }
 
 [data-component="modal"] {
@@ -172,7 +184,7 @@ select {
 	max-height: 70%;
 	width: 100%;
 	margin: 0 auto;
-	background: #fff;
+	background-color: #fff;
 	z-index: 15;
 	-webkit-transition: all 0.5s;
 	-moz-transition: all 0.5s;
@@ -265,7 +277,7 @@ select {
 [data-ui="input"] input,
 textarea {
 	padding: 1vmin;
-	background: #eee;
+	background-color: #eee;
 	min-width: 50%;
 }
 
@@ -349,7 +361,7 @@ textarea {
 
 [data-ui="quick-menu"] {
 	top: 0;
-	background: transparent;
+	background-color: transparent;
 	width: 100%;
 	z-index: 3;
 	position: absolute;
@@ -362,7 +374,7 @@ textarea {
 }
 
 [data-ui="quick-menu"].transparent {
-	background: transparent;
+	background-color: transparent;
 }
 
 [data-ui="quick-menu"] span {
@@ -399,7 +411,7 @@ textarea {
 [data-ui="slots"] figure {
 	width: 20vmax;
 	height: auto;
-	background: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.5);
 	border-radius: 3px;
 	vertical-align: middle;
 	cursor: pointer;
@@ -475,11 +487,11 @@ textarea {
 [data-menu='settings'] input,
 [data-menu='settings'] select {
 	margin: 2vmax;
-	background: transparent;
+	background-color: transparent;
 }
 
 [data-menu='save'] input {
-	background: #fff;
+	background-color: #fff;
 	border: 1px solid #666;
 }
 
