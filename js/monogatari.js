@@ -160,6 +160,11 @@ $_ready(() => {
 			console.warn("The 'SceneElementsHistory' property is missing in the engine object, using default ('[]') fallback.");
 			engine.SceneElementsHistory = [];
 		}
+
+		if (typeof engine.Orientation !== 'string') {
+			console.warn('The "Orientation" property is missing in the engine object, using default ("any") fallback.');
+			engine.Orientation = 'any';
+		}
 	}
 
 	/**
@@ -191,6 +196,22 @@ $_ready(() => {
 	});
 
 	fixOptions ();
+
+	if (engine.Orientation !== 'any' && Platform.mobile ()) {
+		// Set the event listener for device orientation so we can display a message
+		window.addEventListener ('orientationchange', () => {
+			if (Platform.orientation () !== engine.Orientation) {
+				$_('[data-notice="orientation"]').addClass ('modal--active');
+			} else {
+				$_('[data-notice="orientation"]').removeClass ('modal--active');
+			}
+		}, false);
+
+		if (Platform.orientation () !== engine.Orientation) {
+			$_('[data-notice="orientation"]').addClass ('modal--active');
+		}
+	}
+
 
 	// Disable the load and save slots in case Local Storage is not supported.
 	if (!window.localStorage) {
