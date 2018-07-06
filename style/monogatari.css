@@ -116,6 +116,7 @@ select {
 	width: 100%;
 	display: none;
 	position: relative;
+	background-color: #000000;
 }
 
 #game img {
