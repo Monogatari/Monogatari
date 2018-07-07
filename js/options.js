@@ -9,34 +9,15 @@
 
 'use strict';
 /* exported engine */
-/* exported storage */
 /* exported settings */
 
-let engine = {
+const engine = {
 
 	// Initial Label *
 	'Label': 'Start',
 
 	// Number of AutoSave Slots
 	'Slots': 10,
-
-	// Current Media *
-	'Song': '',
-	'Sound': '',
-	'Scene': '',
-	'Particles': '',
-
-	// Current Statement *.
-	'Step': 0,
-
-	// History for the previous function *.
-	'MusicHistory': [],
-	'SoundHistory': [],
-	'ImageHistory': [],
-	'CharacterHistory': [],
-	'SceneHistory': [],
-	'SceneElementsHistory': [],
-	'ParticlesHistory': [],
 
 	// Change to true for a MultiLanguage Game.
 	'MultiLanguage': false,
@@ -85,7 +66,7 @@ let engine = {
 };
 
 // Initial Settings
-let settings = {
+const settings = {
 
 	// Initial Language for Multilanguage Games or for the Default GUI Language.
 	'Language': 'English',

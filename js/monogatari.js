@@ -30,142 +30,29 @@
  * ======================
  **/
 
-/* global Artemis */
-/* global characters */
+/* global $_ */
+/* global $_ready */
+/* global Platform */
+/* global Storage */
 /* global engine */
-/* global images */
 /* global messages */
-/* global music */
 /* global notifications */
 /* global particles */
 /* global require */
 /* global particlesJS */
-/* global pJSDom */
 /* global Typed */
-/* global scenes */
-/* global script */
 /* global settings */
-/* global sound */
-/* global storage */
-/* global strings */
-/* global videos */
-/* global voice */
-
-let label;
-let game;
-let textObject;
-let playing = false;
-let block = false;
-let autoPlay = null;
-let finishedTyping = false;
-let deleteSlot;
-let overwriteSlot;
-const storageStructure = JSON.stringify(storage);
-
-const { $_, $_ready, Space, Platform, Preload } = Artemis;
-
-const Storage = new Space ();
-
+/* global Monogatari */
+/* global globals */
 
 $_ready(() => {
 
-	/**
-	 * ======================
-	 * Fixer functions
-	 * ======================
-	 **/
+	Monogatari.settings (engine);
+	Monogatari.preferences (settings);
 
-	function fixOptions () {
-		fixSettings ();
-		fixEngine ();
-	}
+	Monogatari.init ();
 
-	// Fill missing settings properties with the engine's defaults
-	function fixSettings () {
-		if (typeof settings.Resolution !== "string") {
-			console.warn ("The 'Resolution' property is missing in the settings object, using default fallback.");
-			settings.Resolution = "800x600";
-		}
-
-		if (typeof settings.TextSpeed !== "number") {
-			console.warn ("The 'TextSpeed' property is missing in the settings object, using default fallback.");
-			settings.TextSpeed = 20;
-		}
-
-		if (typeof settings.AutoPlaySpeed !== "number") {
-			console.warn ("The 'AutoPlaySpeed' property is missing in the settings object, using default fallback.");
-			settings.AutoPlaySpeed = 5;
-		}
-
-		Storage.set ("Settings", settings);
-	}
-
-	function fixEngine () {
-		if (typeof engine.ShowMenu !== "boolean") {
-			console.warn ("The 'ShowMenu' property is missing in the engine object, using default (true) fallback.");
-			engine.ShowMenu = true;
-		}
-
-		if (typeof engine.Preload !== "boolean") {
-			console.warn ("The 'Preload' property is missing in the engine object, using default (true) fallback.");
-			engine.Preload = true;
-		}
-
-		if (typeof engine.AutoSave !== "number") {
-			console.warn ("The 'AutoSave' property is missing in the engine object, using default (0) fallback.");
-			engine.AutoSave = 0;
-		}
-
-		if (typeof engine.AutoSaveLabel == "undefined") {
-			console.warn("The 'AutoSaveLabel' property is missing in the engine object, using default ('AutoSave_') fallback.");
-			engine.AutoSaveLabel = "AutoSave_";
-		}
-
-		if (typeof engine.ServiceWorkers !== "boolean") {
-			console.warn("The 'ServiceWorkers' property is missing in the engine object, using default ('true') fallback.");
-			engine.ServiceWorkers = true;
-		}
-
-		if (typeof engine.AspectRatio !== "string") {
-			console.warn("The 'AspectRatio' property is missing in the engine object, using default ('16:9') fallback.");
-			engine.AspectRatio = "16:9";
-		}
-
-		if (typeof engine.TypeAnimation !== "boolean") {
-			console.warn("The 'TypeAnimation' property is missing in the engine object, using default ('true') fallback.");
-			engine.TypeAnimation = true;
-		}
-
-		if (typeof engine.NarratorTypeAnimation !== "boolean") {
-			console.warn("The 'NarratorTypeAnimation' property is missing in the engine object, using default ('true') fallback.");
-			engine.NarratorTypeAnimation = true;
-		}
-
-		if (typeof engine.CenteredTypeAnimation !== "boolean") {
-			console.warn("The 'CenteredTypeAnimation' property is missing in the engine object, using default ('true') fallback.");
-			engine.CenteredTypeAnimation = true;
-		}
-
-		if (typeof engine.Particles !== "string") {
-			console.warn("The 'Particles' property is missing in the engine object, using default ('') fallback.");
-			engine.Particles = "";
-		}
-
-		if (typeof engine.ParticlesHistory !== "object") {
-			console.warn("The 'ParticlesHistory' property is missing in the engine object, using default ('[]') fallback.");
-			engine.ParticlesHistory = [];
-		}
-
-		if (typeof engine.SceneElementsHistory !== "object") {
-			console.warn("The 'SceneElementsHistory' property is missing in the engine object, using default ('[]') fallback.");
-			engine.SceneElementsHistory = [];
-		}
-
-		if (typeof engine.Orientation !== 'string') {
-			console.warn('The "Orientation" property is missing in the engine object, using default ("any") fallback.');
-			engine.Orientation = 'any';
-		}
-	}
+	const storageStructure = JSON.stringify(Monogatari.storage ());
 
 	/**
 	 * ======================
@@ -173,540 +60,22 @@ $_ready(() => {
 	 * ======================
 	 **/
 
-	const ambientPlayer = document.querySelector("[data-component='ambient']");
-	const musicPlayer = document.querySelector("[data-component='music']");
-	const soundPlayer = document.querySelector("[data-component='sound']");
-	const videoPlayer = document.querySelector("[data-ui='player']");
-	const voicePlayer = document.querySelector("[data-component='voice']");
-
-	const maxTextSpeed = parseInt($_("[data-action='set-text-speed']").property ("max"));
-	const maxAutoPlaySpeed = parseInt($_("[data-action='set-auto-play-speed']").property ("max"));
-
-	/**
-	 * ======================
-	 * Set Initial Settings
-	 * ======================
-	 **/
-
-	// Set the initial settings if they don't exist or load them.
-	Storage.get ("Settings").then ((local_settings) => {
-		settings = Object.assign ({}, settings, local_settings);
-	}).catch (() => {
-		Storage.set ("Settings", settings);
-	});
-
-	fixOptions ();
-
-	if (engine.Orientation !== 'any' && Platform.mobile ()) {
-		// Set the event listener for device orientation so we can display a message
-		window.addEventListener ('orientationchange', () => {
-			if (Platform.orientation () !== engine.Orientation) {
-				$_('[data-notice="orientation"]').addClass ('modal--active');
-			} else {
-				$_('[data-notice="orientation"]').removeClass ('modal--active');
-			}
-		}, false);
-
-		if (Platform.orientation () !== engine.Orientation) {
-			$_('[data-notice="orientation"]').addClass ('modal--active');
-		}
-	}
-
-
-	// Disable the load and save slots in case Local Storage is not supported.
-	if (!window.localStorage) {
-		$_("[data-ui='slots']").html(`<p>${getLocalizedString("LocalStorageWarning")}</p>`);
-	}
-
-	if (typeof Typed == "undefined") {
-		console.error ("Typed library not found, dialogs will not be shown.");
-	}
-
-	if (typeof engine.TypeAnimation !== "undefined") {
-		if (engine.TypeAnimation === false) {
-			$_("[data-settings='text-speed']").hide ();
-		}
-	}
-
-	// Set the game language or hide the option if the game is not multilingual
-	if (engine.MultiLanguage) {
-		game = script[settings.Language];
-		$_("[data-action='set-language']").value(settings.Language);
-		$_("[data-string]").each(function (element) {
-			const string_translation = strings[$_("[data-action='set-language']").value()][$_(element).data("string")];
-			if (typeof string_translation !== "undefined" && string_translation != "") {
-				$_(element).text(string_translation);
-			}
-		});
-	} else {
-		game = script;
-		$_("[data-settings='language']").hide();
-	}
-
-	// Set the label in which the game will start
-	label = game[engine.Label];
-
-	// Set the startLabel property, which will be used when
-	// the game is reset.
-	engine.startLabel = engine.Label;
-
-	// Set the volume of all the media components
-	musicPlayer.volume = settings.Volume.Music;
-	ambientPlayer.volume = settings.Volume.Music;
-	voicePlayer.volume = settings.Volume.Voice;
-	soundPlayer.volume = settings.Volume.Sound;
-	document.querySelector("[data-target='music']").value = settings.Volume.Music;
-	document.querySelector("[data-target='voice']").value = settings.Volume.Voice;
-	document.querySelector("[data-target='sound']").value = settings.Volume.Sound;
-
-	document.querySelector("[data-action='set-text-speed']").value = settings.TextSpeed;
-	document.querySelector("[data-action='set-auto-play-speed']").value = settings.AutoPlaySpeed;
-
-	// Set all the dynamic backgrounds of the data-background property
-	$_("[data-background]").each(function (element) {
-		if ($_(element).data("background").indexOf(".") > -1) {
-			const src = "url('" + $_(element).data("background") + "') center / cover no-repeat";
-			$_(element).style("background", src);
-		} else {
-			$_(element).style("background", $_(element).data("background"));
-		}
-	});
-
-	// Play the main menu song
-	playAmbient();
-
-	/**
-	 * ======================
-	 * Library Settings
-	 * ======================
-	 **/
-
-	const typedConfiguration = {
-		strings: [],
-		typeSpeed: settings.TextSpeed,
-		fadeOut: true,
-		loop: false,
-		showCursor: false,
-		contentType: "html",
-		preStringTyped: function () {
-			finishedTyping = false;
-		},
-		onStringTyped: function () {
-			if (autoPlay !== null) {
-				autoPlay = setTimeout (function () {
-					if (canProceed() && finishedTyping) {
-						hideCentered();
-						shutUp();
-						next ();
-					}
-				}, settings.AutoPlaySpeed * 1000);
-			}
-
-			finishedTyping = true;
-		},
-		onDestroy () {
-			finishedTyping = true;
-		}
-	};
-
-	/**
-	 * ======================
-	 * Localization
-	 * ======================
-	 **/
-
-	function getLocalizedString (string) {
-		return strings[settings.Language][string];
-	}
-
-	// Set the initial language translations
-	$_("[data-string]").each(function (element) {
-		$_(element).text(getLocalizedString($_(element).data("string")));
-	});
-
-
-	/**
-	 * ======================
-	 * Electron Platform
-	 * ======================
-	 **/
-
-	// Set the electron quit handler.
-	if (Platform.electron ()) {
-		const remote = require("electron").remote;
-		const win = remote.getCurrentWindow();
-
-		try {
-			window.$ = window.jQuery = require("./js/jquery.min.js");
-		} catch (e) {
-			console.warn ("jQuery could not be loaded.");
-		}
-
-		$_("[data-action='set-resolution']").value(settings.Resolution);
-
-		window.addEventListener("beforeunload", function (event) {
-			event.preventDefault();
-			$_("[data-notice='exit']").addClass("active");
-		});
-
-		if (!win.isResizable()) {
-			if (typeof engine.AspectRatio != "undefined") {
-				const aspectRatio = engine.AspectRatio.split(":");
-				const aspectRatioWidth = parseInt(aspectRatio[0]);
-				const aspectRatioHeight = parseInt(aspectRatio[1]);
-				win.setResizable(true);
-				const minSize = win.getMinimumSize();
-				const {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
-				win.setResizable(false);
-
-				for (let i = 0; i < 488; i+=8) {
-					const calculatedWidth = aspectRatioWidth*i;
-					const calculatedHeight = aspectRatioHeight*i;
-
-					if (calculatedWidth >= minSize[0] && calculatedHeight >= minSize[1] && calculatedWidth <= width && calculatedHeight <= height) {
-						$_("[data-action='set-resolution']").append(`<option value="${calculatedWidth}x${calculatedHeight}">${getLocalizedString("Windowed")} ${calculatedWidth}x${calculatedHeight}</option>`);
-					}
-				}
-
-				$_("[data-action='set-resolution']").append(`<option value="fullscreen">${getLocalizedString("FullScreen")}</option>`);
-
-				if (typeof settings.Resolution != "undefined") {
-					changeWindowResolution (settings.Resolution);
-				}
-				$_("[data-action='set-resolution']").change(function () {
-					const size = $_("[data-action='set-resolution']").value();
-					changeWindowResolution (size);
-				});
-			} else {
-				$_("[data-settings='resolution']").hide();
-				win.setResizable(true);
-			}
-		} else {
-			$_("[data-settings='resolution']").hide();
-		}
-
-	} else {
-		$_("[data-platform='electron']").hide();
-	}
-
-	function changeWindowResolution (resolution) {
-		if (Platform.electron ()) {
-			const remote = require("electron").remote;
-			const win = remote.getCurrentWindow();
-			const {width, height} = remote.screen.getPrimaryDisplay().workAreaSize;
-			if (resolution) {
-				win.setResizable(true);
-
-				if (resolution == "fullscreen" && !win.isFullScreen() && win.isFullScreenable ()) {
-					win.setFullScreen(true);
-					settings.Resolution = resolution;
-					Storage.set("Settings", JSON.stringify(settings));
-				} else if (resolution.indexOf("x") > -1) {
-					win.setFullScreen(false);
-					const size = resolution.split("x");
-					const chosenWidth = parseInt(size[0]);
-					const chosenHeight = parseInt(size[1]);
-
-					if (chosenWidth <= width && chosenHeight <= height) {
-						win.setSize(chosenWidth, chosenHeight, true);
-						settings.Resolution = resolution;
-						Storage.set("Settings", JSON.stringify(settings));
-					}
-				}
-				win.setResizable(false);
-			}
-		}
-	}
-
-	/**
-	 * ======================
-	 * Set iOS Conditions
-	 * ======================
-	 **/
-
-	// Disable audio settings in iOS since they are not supported
-	if (Platform.mobile ("iOS")) {
-		// iOS handles the volume using the system volume, therefore there is now way to
-		// handle each of the sound sources individually and as such, this is disabled.
-		$_("[data-settings='audio']").html(`<p>${getLocalizedString("iOSAudioWarning")}</p>`);
-	}
-
-	/**
-	 * =======================
-	 * Set Save and Load Slots
-	 * =======================
-	 **/
-
-	// Get's the highest number currently available as a slot id (Save_{?})
-	function getMaxSlotId () {
-		const savedData = Object.keys(localStorage);
-
-		let max = 1;
-		for (const saveKey of savedData) {
-			if (saveKey.indexOf (engine.SaveLabel) === 0) {
-				const number = parseInt(saveKey.split (engine.SaveLabel)[1]);
-				if (number > max) {
-					max = number;
-				}
-			}
-		}
-		return max;
-	}
-
-	function addSlot (i, data) {
-		const name = data.Name ? data.Name : data.Date;
-		if (typeof scenes[data.Engine.Scene] !== "undefined") {
-
-			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'><button class='fas fa-times' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
-
-			$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3'><button class='fas fa-times' data-delete='${i}'></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>${getLocalizedString("Overwrite")} #${i}<small>${name}</small></figcaption></figure>`);
-
-		} else {
-			$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'><button class='fas fa-times' data-delete=${i}></button><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
-
-			$_("[data-menu='save'] [data-ui='slots']").append(`<figure data-save='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3'><figcaption><button class='fas fa-times' data-delete=${i}></button>${getLocalizedString("Overwrite")} #${i}<small>${name}</small></figcaption></figure>`);
-		}
-	}
-
-	function addAutoSlot (i, data) {
-		const name = data.Name ? data.Name : data.Date;
-
-		if (typeof scenes[data.Engine.Scene] !== "undefined") {
-			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'><button class='fas fa-times' data-delete=${i}></button><img src='img/scenes/${scenes[data.Engine.Scene]}' alt=''><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
-		} else {
-			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").append(`<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'><button class='fas fa-times' data-delete=${i}></button><figcaption>` + getLocalizedString("Load") + ` #${i} <small>${name}</small></figcaption></figure>`);
-		}
-	}
-
-	function setAutoSlots () {
-		if (!window.localStorage) {
-			return false;
-		}
-
-		$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html("");
-		const savedData = Object.keys(localStorage).filter(function (key) {
-			return key.indexOf (engine.AutoSaveLabel) == 0;
-		}).sort (function (a, b) {
-			const aNumber = parseInt (a.split (engine.AutoSaveLabel)[1]);
-			const bNumber = parseInt (b.split (engine.AutoSaveLabel)[1]);
-
-			if (aNumber > bNumber) {
-				return 1;
-			} else if (aNumber < bNumber) {
-				return -1;
-			} else {
-				return 0;
-			}
-		});
-
-		for (let i = 0; i < savedData.length; i++) {
-			const label = savedData[i];
-			if (label.indexOf (engine.AutoSaveLabel) === 0) {
-				Storage.get (savedData[i]).then ((slot) => {
-					const id = label.split (engine.AutoSaveLabel)[1];
-					if (slot !== null && slot !== "") {
-						addAutoSlot (id, slot);
-					}
-				});
-			}
-		}
-
-		// Check if there are no Auto Saved games.
-		if ($_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html().trim() == "") {
-			$_("[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots']").html(`<p>${getLocalizedString("NoAutoSavedGames")}</p>`);
-		}
-	}
-
-	// Create all save and load slots
-	function setSlots () {
-		if (!window.localStorage) {
-			return false;
-		}
-
-		$_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html("");
-		$_("[data-menu='save'] [data-ui='slots']").html("");
-
-		$_("[data-menu='save'] [data-input='slotName']").value (niceDateTime ());
-
-		const savedData = Object.keys(localStorage).filter(function (key) {
-			return key.indexOf (engine.SaveLabel) == 0;
-		}).sort (function (a, b) {
-			const aNumber = parseInt (a.split (engine.SaveLabel)[1]);
-			const bNumber = parseInt (b.split (engine.SaveLabel)[1]);
-			if (aNumber > bNumber) {
-				return 1;
-			} else if (aNumber < bNumber) {
-				return -1;
-			} else {
-				return 0;
-			}
-		});
-
-		const promises = [];
-		for (let i = 0; i < savedData.length; i++) {
-			const label = savedData[i];
-			promises.push(Storage.get (label).then ((slot) => {
-				const id = label.split (engine.SaveLabel)[1];
-				if (slot !== null && slot !== "") {
-					addSlot (id, slot);
-				}
-			}));
-		}
-
-		Promise.all (promises).then(() => {
-
-			// Check if there are no Saved games.
-			if ($_("[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots']").html ().trim() === "") {
-				$_("[data-menu='load'] [data-ui='slots']").html(`<p>${getLocalizedString("NoSavedGames")}</p>`);
-			}
-			setAutoSlots ();
-		});
-
-	}
-
-	setSlots();
-
 	/**
 	 * =======================
 	 * Save and Load Functions
 	 * =======================
 	 **/
 
-	function niceDate () {
-		return new Date ().toLocaleDateString ();
-	}
-
-	function niceDateTime () {
-		return new Date ().toLocaleString ();
-	}
-
-	function newSave (name) {
-		// Check if the player is actually playing
-		if (playing) {
-			document.body.style.cursor = "wait";
-
-			// Get a list of all the images being shown in screen except the
-			// face images so they can be shown next time the slot is loaded
-			let show = "";
-			$_("#game img:not([data-ui='face']):not([data-visibility='invisible'])").each(function (element) {
-				show += element.outerHTML.replace(/"/g, "'") + ",";
-			});
-
-			// Build the save slot data with the current state of every
-			// important object
-			const saveData = {
-				"Name": name,
-				"Date": niceDateTime (),
-				"Engine": engine,
-				"Show": show,
-				"Label": engine.Label,
-				"Storage": storage
-			};
-			const id = getMaxSlotId () + 1;
-			Storage.set (engine.SaveLabel + id, saveData).then ((savedData) => {
-				addSlot (id, saveData );
-				document.body.style.cursor = "auto";
-			});
-
-		}
-	}
-
-	function autoSave (id, slot) {
-		if (playing) {
-			document.body.style.cursor = "wait";
-
-			// Get a list of all the images being shown in screen except the
-			// face images so they can be shown next time the slot is loaded
-			let show = "";
-			$_("#game img:not([data-ui='face']):not([data-visibility='invisible'])").each(function (element) {
-				show += element.outerHTML.replace(/"/g, "'") + ",";
-			});
-
-			const name = niceDateTime ();
-
-			// Build the save slot data with the current state of every
-			// important object
-			const saveData = {
-				"Name": name,
-				"Date": name,
-				"Engine": engine,
-				"Show": show,
-				"Label": engine.Label,
-				"Storage": storage
-			};
-
-			Storage.set (slot, JSON.stringify(saveData)).then (() => {
-				$_(`[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (name);
-				$_(`[data-menu='save'] [data-ui='autoSaveSlots'] [data-ui='slots'] [data-save='${id}'] small`).text (name);
-				document.body.style.cursor = "auto";
-			});
-
-		}
-	}
-
-	function saveToSlot (id, slot, customName) {
-		// Check if the player is actually playing
-		if (playing) {
-			document.body.style.cursor = "wait";
-
-			// Get a list of all the images being shown in screen except the
-			// face images so they can be shown next time the slot is loaded
-			let show = "";
-			$_("#game img:not([data-ui='face']):not([data-visibility='invisible'])").each(function (element) {
-				show += element.outerHTML.replace(/"/g, "'") + ",";
-			});
-
-			// Get the name of the Slot if it exists or use the current date.
-			Storage.get (slot).then ((data) => {
-				let name;
-
-				if (data !== null && data !== "") {
-					data = JSON.parse (data);
-					if (data.Name !== null && data.Name !== "" && typeof data.Name !== "undefined") {
-						name = data.Name;
-					} else {
-						name = niceDateTime ();
-					}
-				} else {
-					name = niceDateTime ();
-				}
-
-				if (typeof customName !== "undefined") {
-					name = customName;
-				}
-				// Build the save slot data with the current state of every
-				// important object
-				const saveData = {
-					"Name": name,
-					"Date": niceDateTime (),
-					"Engine": engine,
-					"Show": show,
-					"Label": engine.Label,
-					"Storage": storage
-				};
-
-				Storage.set (slot, JSON.stringify(saveData)).then (() => {
-					$_(`[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (name);
-					$_(`[data-menu='save'] [data-ui='slots'] [data-save='${id}'] small`).text (name);
-					document.body.style.cursor = "auto";
-				});
-
-			});
-
-
-		}
-	}
 
 	function loadFromSlot (slot) {
 		document.body.style.cursor = "wait";
-		playing = true;
+		globals.playing = true;
 
 		resetGame ();
 
-		$_("section").hide();
-		$_("#game").show();
-		Storage.get(slot).then ((data) => {
-
+		$_('section').hide();
+		$_('#game').show();
+		Storage.get (slot).then ((data) => {
 			engine = Object.assign({}, engine, {
 				"Label": data.Engine.Label,
 				"Song": data.Engine.Song,
@@ -722,22 +91,20 @@ $_ready(() => {
 				"SceneElementsHistory": data.Engine.SceneElementsHistory,
 				"ParticlesHistory": data.Engine.ParticlesHistory
 			});
+			Monogatari.storage (Object.assign({}, JSON.parse(storageStructure), data.Storage));
 
-			fixEngine ();
-			storage = Object.assign({}, JSON.parse(storageStructure), data.Storage);
-
-			label = game[data.Label];
+			globals.label = globals.game[data.Label];
 
 			for (const i in data.Show.split(",")) {
-				if (data.Show.split(",")[i].trim() != "") {
-					$_("#game").append(data.Show.split(",")[i]);
+				if (data.Show.split(",")[i].trim() != '') {
+					$_('#game').append(data.Show.split(",")[i]);
 				}
 			}
 
 			$_("[data-ui='background']").fadeOut(200, function () {
 
-				if (typeof scenes[data.Engine.Scene] !== "undefined") {
-					$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[data.Engine.Scene] + ") center / cover no-repeat");
+				if (typeof Monogatari.assets ('scenes', data.Engine.Scene) !== 'undefined') {
+					$_("[data-ui='background']").style("background", "url(img/scenes/" + Monogatari.assets ('scenes', data.Engine.Scene) + ") center / cover no-repeat");
 				} else {
 					$_("[data-ui='background']").style("background", data.Engine.Scene);
 				}
@@ -745,61 +112,53 @@ $_ready(() => {
 				$_("[data-ui='background']").fadeIn(200);
 			});
 
-			if (engine.Song != "") {
-				const parts = engine.Song.split (" ");
+			if (Monogatari.setting ('Song') != '') {
+				const parts = Monogatari.setting ('Song').split (' ');
 				if (parts[1] == "music") {
 
 					if (parts[3] == "loop") {
-						musicPlayer.setAttribute("loop", "");
+						Monogatari.musicPlayer.setAttribute("loop", '');
 					} else if (parts[3] == "noloop") {
-						musicPlayer.removeAttribute("loop");
+						Monogatari.musicPlayer.removeAttribute("loop");
 					}
 
-					if (typeof music !== "undefined") {
-						if (typeof music[parts[2]] != "undefined") {
-							musicPlayer.setAttribute("src", "audio/music/" + music[parts[2]]);
-						} else {
-							musicPlayer.setAttribute("src", "audio/music/" + parts[2]);
-						}
+					if (typeof Monogatari.assets ('music', parts[2]) != 'undefined') {
+						Monogatari.musicPlayer.setAttribute('src', "audio/music/" + Monogatari.assets ('music', parts[2]));
 					} else {
-						musicPlayer.setAttribute("src", "audio/music/" + parts[2]);
+						Monogatari.musicPlayer.setAttribute('src', "audio/music/" + parts[2]);
 					}
 
-					musicPlayer.play();
+					Monogatari.musicPlayer.play();
 				}
 			}
 
-			if (engine.Sound != "") {
-				const parts = engine.Sound.split (" ");
+			if (Monogatari.setting ('Sound') != '') {
+				const parts = Monogatari.setting ('Sound').split (' ');
 				if (parts[1] == "sound") {
 					if (parts[3] == "loop") {
-						soundPlayer.setAttribute("loop", "");
+						Monogatari.soundPlayer.setAttribute("loop", '');
 					} else if (parts[3] == "noloop") {
-						soundPlayer.removeAttribute("loop");
+						Monogatari.soundPlayer.removeAttribute("loop");
 					}
 
-					if (typeof sound !== "undefined") {
-						if (typeof sound[parts[2]] != "undefined") {
-							soundPlayer.setAttribute("src", "audio/sound/" + sound[parts[2]]);
-						} else {
-							soundPlayer.setAttribute("src", "audio/sound/" + parts[2]);
-						}
+					if (typeof  Monogatari.assets ('sound', parts[2]) != 'undefined') {
+						Monogatari.soundPlayer.setAttribute('src', "audio/sound/" + Monogatari.assets ('sound', parts[2]));
 					} else {
-						soundPlayer.setAttribute("src", "audio/sound/" + parts[2]);
+						Monogatari.soundPlayer.setAttribute('src', "audio/sound/" + parts[2]);
 					}
 
-					soundPlayer.play();
+					Monogatari.soundPlayer.play();
 				}
 			}
 
-			if (engine.Particles != "" && typeof engine.Particles == "string") {
-				if (typeof particles[engine.Particles] !== "undefined") {
-					particlesJS (particles[engine.Particles]);
+			if (Monogatari.setting ('Particles') != '' && typeof Monogatari.setting ('Particles') == "string") {
+				if (typeof particles[Monogatari.setting ('Particles')] !== 'undefined') {
+					particlesJS (particles[Monogatari.setting ('Particles')]);
 				}
 			}
 
-			$_("#game").show();
-			analyseStatement(label[engine.Step]);
+			$_('#game').show();
+			analyseStatement(globals.label[Monogatari.setting ('Step')]);
 			document.body.style.cursor = "auto";
 		});
 	}
@@ -812,69 +171,15 @@ $_ready(() => {
 
 	// Load a saved game slot when it is pressed
 	$_("[data-menu='load'] [data-ui='saveSlots']").on("click", "figcaption, img", function () {
-		loadFromSlot (engine.SaveLabel + $_(this).parent().data("loadSlot"));
+		loadFromSlot (Monogatari.setting ('SaveLabel') + $_(this).parent().data("loadSlot"));
 	});
 
 	// Load an autosaved game slot when it is pressed
 	$_("[data-menu='load'] [data-ui='autoSaveSlots']").on("click", "figcaption, img", function () {
-		loadFromSlot (engine.AutoSaveLabel + $_(this).parent().data("loadSlot"));
+		loadFromSlot (Monogatari.setting ('AutoSaveLabel') + $_(this).parent().data("loadSlot"));
 	});
 
-	// Save to slot when a slot is pressed.
-	$_("[data-menu='save']").on("click", "figcaption, img", function () {
-		overwriteSlot = $_(this).parent ().data ("save");
-		Storage.get (engine.SaveLabel + overwriteSlot).then ((data) => {
-			if (typeof data.Name !== "undefined") {
-				$_("[data-notice='slot-overwrite'] input").value (data.Name);
-			} else {
-				$_("[data-notice='slot-overwrite'] input").value (data.Date);
-			}
-			$_("[data-notice='slot-overwrite']").addClass ("active");
-		});
-	});
 
-	$_("[data-menu='save']").on("click", "small", function () {
-		overwriteSlot = $_(this).parent ().parent ().data ("save");
-		Storage.get (engine.SaveLabel + overwriteSlot).then ((data) => {
-			if (typeof data.Name !== "undefined") {
-				$_("[data-notice='slot-overwrite'] input").value (data.Name);
-			} else {
-				$_("[data-notice='slot-overwrite'] input").value (data.Date);
-			}
-			$_("[data-notice='slot-overwrite']").addClass ("active");
-		});
-	});
-
-	$_("[data-menu='save'], [data-menu='load']").on("click", "[data-delete]", function () {
-		deleteSlot = $_(this).data ("delete");
-		Storage.get (engine.SaveLabel + deleteSlot).then ((data) => {
-			if (typeof data.Name !== "undefined") {
-				$_("[data-notice='slot-deletion'] small").text (data.Name);
-			} else {
-				$_("[data-notice='slot-deletion'] small").text (data.Date);
-			}
-
-			$_("[data-notice='slot-deletion']").addClass ("active");
-		});
-	});
-
-	// Auto Save
-	let currentAutoSaveSlot = 1;
-	if (engine.AutoSave != 0 && typeof engine.AutoSave == "number") {
-		setInterval(function () {
-			autoSave (currentAutoSaveSlot, engine.AutoSaveLabel + currentAutoSaveSlot);
-
-			if (currentAutoSaveSlot == engine.Slots) {
-				currentAutoSaveSlot = 1;
-			} else {
-				currentAutoSaveSlot += 1;
-			}
-			setAutoSlots ();
-
-		}, engine.AutoSave * 60000);
-	} else {
-		$_("[data-menu='load'] [data-ui='autoSaveSlots']").hide();
-	}
 
 	/**
 	 * =======================
@@ -882,85 +187,13 @@ $_ready(() => {
 	 * =======================
 	 **/
 
-	// Volume bars listeners
-	$_("[data-action='set-volume']").on("change mouseover", function () {
-		const v = document.querySelector("[data-component='" + $_(this).data("target") + "']");
-		const value = $_(this).value();
 
-		switch ($_(this).data("target")) {
-			case "music":
-				ambientPlayer.volume = value;
-				v.volume = value;
-				settings.Volume.Music = value;
-				break;
-
-			case "voice":
-				v.volume = value;
-				settings.Volume.Voice = value;
-				break;
-
-			case "sound":
-				v.volume = value;
-				settings.Volume.Sound = value;
-				break;
-		}
-		Storage.set("Settings", settings);
-	});
-
-	$_("[data-action='set-text-speed']").on("change mouseover", function () {
-		const value =  maxTextSpeed - parseInt($_(this).value());
-		typedConfiguration.typeSpeed = value;
-		settings.TextSpeed = value;
-		Storage.set("Settings", settings);
-	});
-
-	$_("[data-action='set-auto-play-speed']").on("change mouseover", function () {
-		const value = maxAutoPlaySpeed - parseInt($_(this).value());
-		settings.AutoPlaySpeed = value;
-		Storage.set("Settings", settings);
-	});
 
 	// Language select listener
 	$_("[data-action='set-language']").change(function () {
-		settings.Language = $_("[data-action='set-language']").value();
-		game = script[settings.Language];
-		label = game[engine.Label];
-		Storage.set("Settings", settings);
-
-		$_("[data-string]").each(function (element) {
-			$_(element).text(strings[$_("[data-action='set-language']").value()][$_(element).data("string")]);
-		});
-
-		setSlots();
+		globals.game =  Monogatari.script (Monogatari.preference ('Language'));
+		globals.label = globals.game[Monogatari.setting ('Label')];
 	});
-
-	// Fix for select labels
-	$_("[data-select]").click(function () {
-		const e = document.createEvent ("MouseEvents");
-		e.initMouseEvent ("mousedown");
-		$_("[data-action='" + $_(this).data ("select") + "']").get (0). dispatchEvent (e);
-	});
-
-	/**
-	 * =======================
-	 * Storage
-	 * =======================
-	 **/
-
-	// Retrieve data from the storage variable
-	function getData (data) {
-		if (typeof storage != "undefined") {
-			const path = data.split(".");
-
-			data = storage[path[0]];
-			for (let i = 1; i < path.length; i++) {
-				data = data[path[i]];
-			}
-			return data;
-		} else {
-			console.error("The storage object is not defined.");
-		}
-	}
 
 	/**
 	 * ==========================
@@ -970,146 +203,32 @@ $_ready(() => {
 
 	// Start game automatically withouth going trough the main menu
 	function showMainMenu () {
-		if (!engine.ShowMenu) {
-			stopAmbient();
-			playing = true;
-			$_("section").hide();
-			$_("#game").show();
-			analyseStatement(label[engine.Step]);
+		if (!Monogatari.setting ('ShowMenu')) {
+			Monogatari.stopAmbient();
+			globals.playing = true;
+			$_('section').hide ();
+			$_('#game').show ();
+			analyseStatement(globals.label[Monogatari.setting ('Step')]);
 		} else {
 			$_("[data-menu='main']").show();
 		}
 	}
 
-	/**
-	 * ==========================
-	 * Service Workers
-	 * ==========================
-	 **/
-
-	if (!Platform.electron () && !Platform.cordova ()) {
-		if ("serviceWorker" in navigator && engine.ServiceWorkers) {
-			if (location.protocol.indexOf ("http") > -1) {
-				navigator.serviceWorker.register("service-worker.js");
-			} else {
-				console.warn ("Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/");
-			}
-		} else {
-			console.warn("Service Workers are not available in this browser or have been disabled in the engine configuration.");
-		}
-	}
 
 	/**
 	 * ==========================
 	 * Preload Assets
 	 * ==========================
 	 **/
-
-
-	function preloadAudio (src) {
-		return Request.get(src, null, "blob").then(function () {
-			$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-		}).catch(function () {
-			$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
+	Monogatari.preload ().then(() => {
+		$_('[data-menu="loading"]').fadeOut (400, () => {
+			$_('[data-menu="loading"]').hide ();
 		});
-	}
-
-	const preloadPromises = [];
-	let assetCount = 0;
-	if (engine.Preload && !Platform.electron () && !Platform.cordova ()) {
-		// Show loading screen
-		$_("[data-menu='loading']").show();
-
-		// Start by loading the image assets
-		if (typeof scenes == "object") {
-			assetCount += Object.keys(scenes).length;
-			for (const i in scenes) {
-				preloadPromises.push(Preload.image ("img/scenes/" + scenes[i]).then (() => {
-					$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-				}).catch (() => {
-					$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-				}));
-			}
-		}
-
-		if (typeof characters == "object") {
-			for (const i in characters) {
-				let directory = "";
-				if (typeof characters[i].Directory != "undefined") {
-					directory = characters[i].Directory + "/";
-				}
-
-				if (typeof characters[i].Images != "undefined") {
-					assetCount += Object.keys(characters[i].Images).length;
-					for (const j in characters[i].Images) {
-						preloadPromises.push(Preload.image ("img/characters/" + directory + characters[i].Images[j]).then (() => {
-							$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-						}).catch (() => {
-							$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-						}));
-					}
-				}
-
-				if (typeof characters[i].Side != "undefined") {
-					assetCount += Object.keys(characters[i].Side).length;
-					for (const k in characters[i].Side) {
-						preloadPromises.push(Preload.image ("img/characters/" + directory + characters[i].Side[k]).then (() => {
-							$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-						}).catch (() => {
-							$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-						}));
-					}
-				}
-			}
-		}
-
-		if (typeof images == "object") {
-			assetCount += Object.keys(images).length;
-			for (const i in images) {
-				preloadPromises.push(Preload.image ("img/" + images[i]).then (() => {
-					$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-				}).catch (() => {
-					$_("[data-ui='load-progress']").value(parseInt($_("[data-ui='load-progress']").value()) + 1);
-				}));
-			}
-		}
-
-		// Load the audio assets
-		if (typeof music == "object") {
-			assetCount += Object.keys(music).length;
-			for (const i in music) {
-				preloadPromises.push(preloadAudio("audio/music/" + music[i]));
-			}
-		}
-
-		if (typeof voice == "object") {
-			assetCount += Object.keys(voice).length;
-			for (const i in voice) {
-				preloadPromises.push(preloadAudio("audio/voice/" + voice[i]));
-			}
-		}
-
-		if (typeof sound == "object") {
-			assetCount += Object.keys(sound).length;
-			for (const i in sound) {
-				preloadPromises.push(preloadAudio("audio/sound/" + sound[i]));
-			}
-		}
-
-		$_("[data-ui='load-progress']").attribute("max", assetCount);
-		Promise.all(preloadPromises).then(function () {
-			$_("[data-menu='loading']").fadeOut(400, function () {
-				$_("[data-menu='loading']").hide();
-			});
-			showMainMenu ();
-
-		}).catch (function (e) {
-			console.error (e);
-		});
-
-	} else {
+	}).catch ((e) => {
+		console.error (e);
+	}).finally (() => {
 		showMainMenu ();
-	}
+	});
 
 	/**
 	 * ==========================
@@ -1122,10 +241,10 @@ $_ready(() => {
 		switch ($_(this).data("action")) {
 
 			case "open-menu":
-				$_("section").hide();
+				$_('section').hide();
 
 				if ($_(this).data("open") == "save") {
-					$_("[data-menu='save'] [data-input='slotName']").value (niceDateTime ());
+					$_("[data-menu='save'] [data-input='slotName']").value (Monogatari.niceDateTime ());
 				}
 
 				$_("[data-menu='" + $_(this).data("open") + "']").show();
@@ -1136,11 +255,11 @@ $_ready(() => {
 				break;
 
 			case "start":
-				stopAmbient();
-				playing = true;
-				$_("section").hide();
-				$_("#game").show();
-				analyseStatement(label[engine.Step]);
+				Monogatari.stopAmbient();
+				globals.playing = true;
+				$_('section').hide();
+				$_('#game').show();
+				analyseStatement(globals.label[Monogatari.setting ('Step')]);
 				break;
 
 			case "close":
@@ -1148,43 +267,43 @@ $_ready(() => {
 				break;
 
 			case "close-video":
-				stopVideo();
+				Monogatari.stopVideo();
 				break;
 
 			case "quit":
-				$_("[data-notice='exit']").removeClass("active");
+				$_("[data-notice='exit']").removeClass("modal--active");
 				endGame();
 				break;
 
 			case "dismiss-notice":
-				$_("[data-notice]").removeClass("active");
+				$_("[data-notice]").removeClass("modal--active");
 				break;
 
 			case "end":
-				$_("[data-notice='exit']").addClass("active");
+				$_("[data-notice='exit']").addClass("modal--active");
 				break;
 
 			case "distraction-free":
 				if ($_(this).hasClass("fa-eye")) {
 					$_(this).removeClass("fa-eye");
 					$_(this).addClass("fa-eye-slash");
-					$_(this).parent ().find ("[data-string]").text (getLocalizedString ("Show"));
+					$_(this).parent ().find ("[data-string]").text (Monogatari.string ("Show"));
 					$_("[data-ui='quick-menu']").addClass ("transparent");
 					$_("[data-ui='text']").hide();
 				} else if ($_(this).hasClass("fa-eye-slash")) {
 					$_(this).removeClass("fa-eye-slash");
 					$_(this).addClass("fa-eye");
-					$_(this).parent ().find ("[data-string]").text (getLocalizedString ("Hide"));
+					$_(this).parent ().find ("[data-string]").text (Monogatari.string ("Hide"));
 					$_("[data-ui='quick-menu']").removeClass ("transparent");
 					$_("[data-ui='text']").show();
-				} else if ($_(this).text () === getLocalizedString ("Show")) {
-					$_(this).text (getLocalizedString("Hide"));
+				} else if ($_(this).text () === Monogatari.string ("Show")) {
+					$_(this).text (Monogatari.string("Hide"));
 					$_(this).parent ().find (".fas").removeClass ("fa-eye-slash");
 					$_(this).parent ().find (".fas").addClass ("fa-eye");
 					$_("[data-ui='quick-menu']").removeClass ("transparent");
 					$_("[data-ui='text']").show ();
-				} else if ($_(this).text () === getLocalizedString ("Hide")) {
-					$_(this).text (getLocalizedString ("Show"));
+				} else if ($_(this).text () === Monogatari.string ("Hide")) {
+					$_(this).text (Monogatari.string ("Show"));
 					$_(this).parent ().find (".fas").removeClass ("fa-eye");
 					$_(this).parent ().find (".fas").addClass ("fa-eye-slash");
 					$_("[data-ui='quick-menu']").addClass ("transparent");
@@ -1196,64 +315,64 @@ $_ready(() => {
 				if ($_(this).hasClass("fa-play-circle")) {
 					$_(this).removeClass("fa-play-circle");
 					$_(this).addClass("fa-stop-circle");
-					autoPlay = setTimeout (function () {
-						if (canProceed() && finishedTyping) {
-							hideCentered();
-							shutUp();
+					globals.autoPlay = setTimeout (function () {
+						if (Monogatari.canProceed() && globals.finishedTyping) {
+							Monogatari.hideCentered();
+							Monogatari.shutUp();
 							next ();
 						}
-					}, settings.AutoPlaySpeed * 1000);
+					}, Monogatari.preference ('AutoPlaySpeed') * 1000);
 				} else if ($_(this).hasClass("fa-stop-circle")) {
 					$_(this).removeClass("fa-stop-circle");
 					$_(this).addClass("fa-play-circle");
-					clearTimeout (autoPlay);
-					autoPlay = null;
-				} else if ($_(this).text () === getLocalizedString ("AutoPlay")) {
-					$_(this).text (getLocalizedString("Stop"));
-					autoPlay = setTimeout(function () {
-						if (canProceed() && finishedTyping) {
-							hideCentered();
-							shutUp();
+					clearTimeout (globals.autoPlay);
+					globals.autoPlay = null;
+				} else if ($_(this).text () === Monogatari.string ("AutoPlay")) {
+					$_(this).text (Monogatari.string("Stop"));
+					globals.autoPlay = setTimeout(function () {
+						if (Monogatari.canProceed() && globals.finishedTyping) {
+							Monogatari.hideCentered();
+							Monogatari.shutUp();
 							next ();
 						}
-					}, settings.AutoPlaySpeed * 1000);
-				} else if ($_(this).text () === getLocalizedString ("Stop")) {
-					$_(this).text (getLocalizedString ("AutoPlay"));
-					clearTimeout (autoPlay);
-					autoPlay = null;
+					}, Monogatari.preference ('AutoPlaySpeed') * 1000);
+				} else if ($_(this).text () === Monogatari.string ("Stop")) {
+					$_(this).text (Monogatari.string ("AutoPlay"));
+					clearTimeout (globals.autoPlay);
+					globals.autoPlay = null;
 				}
 				break;
 
 			case "jump":
-				stopAmbient();
-				label = game[$_(this).data("jump")];
-				engine.Step = 0;
-				playing = true;
-				$_("section").hide();
-				$_("#game").show();
-				analyseStatement(label[engine.Step]);
+				Monogatari.stopAmbient();
+				globals.label = globals.game[$_(this).data("jump")];
+				Monogatari.setting ('Step', 0);
+				globals.playing = true;
+				$_('section').hide();
+				$_('#game').show();
+				analyseStatement(globals.label[Monogatari.setting ('Step')]);
 				break;
 
 			case "save":
 				var slotName = $_("[data-menu='save'] [data-input='slotName']").value ().trim ();
-				if (slotName !== "") {
-					newSave (slotName);
+				if (slotName !== '') {
+					Monogatari.newSave (slotName);
 				}
 				break;
 
 			case "delete-slot":
-				Storage.remove (engine.SaveLabel + deleteSlot);
-				$_(`[data-load-slot='${deleteSlot}'], [data-save='${deleteSlot}']`).remove ();
-				deleteSlot = null;
-				$_("[data-notice='slot-deletion']").removeClass ("active");
+				Storage.remove (Monogatari.setting ('SaveLabel') + globals.deleteSlot);
+				$_(`[data-load-slot='${globals.deleteSlot}'], [data-save='${globals.deleteSlot}']`).remove ();
+				globals.deleteSlot = null;
+				$_("[data-notice='slot-deletion']").removeClass ("modal--active");
 				break;
 
 			case "overwrite-slot":
 				var customName = $_("[data-notice='slot-overwrite'] input").value ().trim ();
-				if (customName !== "") {
-					saveToSlot (overwriteSlot, engine.SaveLabel + overwriteSlot, customName);
-					overwriteSlot = null;
-					$_("[data-notice='slot-overwrite']").removeClass ("active");
+				if (customName !== '') {
+					Monogatari.saveToSlot (globals.overwriteSlot, Monogatari.setting ('SaveLabel') + globals.overwriteSlot, customName);
+					globals.overwriteSlot = null;
+					$_("[data-notice='slot-overwrite']").removeClass ("modal--active");
 				}
 				break;
 		}
@@ -1262,18 +381,8 @@ $_ready(() => {
 
 	$_("#game [data-action='back'], #game [data-action='back'] *").click(function (event) {
 		event.stopPropagation ();
-		if (canProceed ()) {
+		if (Monogatari.canProceed ()) {
 			previous ();
-		}
-	});
-
-	$_("[data-menu]").on ("click", "[data-action='back']:not(#game)", (event) => {
-		event.stopPropagation ();
-		$_("section").hide ();
-		if (playing) {
-			$_("#game").show ();
-		} else {
-			$_("[data-menu='main']").show ();
 		}
 	});
 
@@ -1289,8 +398,8 @@ $_ready(() => {
 
 				// Escape Key
 				case 27:
-					if ($_("#game").isVisible()) {
-						$_("#game").hide();
+					if ($_('#game').isVisible()) {
+						$_('#game').hide();
 						$_("[data-menu='settings']").show();
 					}
 					break;
@@ -1298,20 +407,20 @@ $_ready(() => {
 				// Spacebar and Right Arrow
 				case 32:
 				case 39:
-					if (canProceed()) {
-						if (!finishedTyping && typeof textObject !== "undefined") {
-							const str = textObject.strings [0];
-							const element = $_(textObject.el).data ("ui");
-							textObject.destroy ();
+					if (Monogatari.canProceed()) {
+						if (!globals.finishedTyping && typeof globals.textObject !== 'undefined') {
+							const str = globals.textObject.strings [0];
+							const element = $_(globals.textObject.el).data ("ui");
+							globals.textObject.destroy ();
 							if (element == "centered") {
 								$_("[data-ui='centered']").html (str);
 							} else {
 								$_("[data-ui='say']").html (str);
 							}
-							finishedTyping = true;
+							globals.finishedTyping = true;
 						} else {
-							hideCentered();
-							shutUp();
+							Monogatari.hideCentered();
+							Monogatari.shutUp();
 							next ();
 						}
 					}
@@ -1346,12 +455,12 @@ $_ready(() => {
 	});
 
 	$_("body").on("click", "[data-do]", function () {
-		hideCentered();
-		shutUp();
-		if ($_(this).data("do") != "null" && $_(this).data("do") != "") {
+		Monogatari.hideCentered();
+		Monogatari.shutUp();
+		if ($_(this).data("do") != "null" && $_(this).data("do") != '') {
 			try {
 				$_("[data-ui='choices']").hide();
-				$_("[data-ui='choices']").html("");
+				$_("[data-ui='choices']").html('');
 				analyseStatement($_(this).data("do"), false);
 			} catch (e) {
 				console.error("An error ocurred while trying to execute the choice's action.\n" + e);
@@ -1364,21 +473,21 @@ $_ready(() => {
 		event.stopPropagation();
 	});
 
-	$_("#game").click(function () {
-		if (canProceed()) {
-			if (!finishedTyping && typeof textObject !== "undefined") {
-				const str = textObject.strings [0];
-				const element = $_(textObject.el).data ("ui");
-				textObject.destroy ();
+	$_('#game').click(function () {
+		if (Monogatari.canProceed()) {
+			if (!globals.finishedTyping && typeof globals.textObject !== 'undefined') {
+				const str = globals.textObject.strings [0];
+				const element = $_(globals.textObject.el).data ("ui");
+				globals.textObject.destroy ();
 				if (element == "centered") {
 					$_("[data-ui='centered']").html (str);
 				} else {
 					$_("[data-ui='say']").html (str);
 				}
-				finishedTyping = true;
+				globals.finishedTyping = true;
 			} else {
-				hideCentered ();
-				shutUp();
+				Monogatari.hideCentered ();
+				Monogatari.shutUp();
 				next ();
 			}
 		}
@@ -1394,157 +503,92 @@ $_ready(() => {
 
 		// Destroy the previous textObject so the text is rewritten.
 		// If not destroyed, the text would be appended instead of replaced.
-		if (typeof textObject != "undefined") {
-			textObject.destroy ();
+		if (typeof globals.textObject != 'undefined') {
+			globals.textObject.destroy ();
 		}
 
 		// Remove contents from the dialog area.
-		$_("[data-ui='say']").html ("");
+		$_("[data-ui='say']").html ('');
 		$_("[data-ui='say']").data ("speaking", character);
 
 		// Check if the typing animation flag is set to true in order to show it
 		if (animation === true) {
 
-			// Check if the TypeAnimation property exists in the engine configuration
-			if (typeof engine.TypeAnimation !== "undefined") {
-
-				// If the property is set to true, the animation will be shown
-				// if it is set to false, even if the flag was set to true,
-				// no animation will be shown in the game.
-				if (engine.TypeAnimation === true) {
-					typedConfiguration.strings = [dialog];
-					textObject = new Typed ("[data-ui='say']", typedConfiguration);
-				} else {
-					$_("[data-ui='say']").html (dialog);
-					if (autoPlay !== null) {
-						autoPlay = setTimeout (function () {
-							if (canProceed() && finishedTyping) {
-								hideCentered();
-								shutUp();
-								next ();
-							}
-						}, settings.AutoPlaySpeed * 1000);
-					}
-					finishedTyping = true;
-				}
+			// If the property is set to true, the animation will be shown
+			// if it is set to false, even if the flag was set to true,
+			// no animation will be shown in the game.
+			if (Monogatari.setting ('TypeAnimation') === true) {
+				globals.typedConfiguration.strings = [dialog];
+				globals.textObject = new Typed ("[data-ui='say']", globals.typedConfiguration);
 			} else {
-				typedConfiguration.strings = [dialog];
-				textObject = new Typed ("[data-ui='say']", typedConfiguration);
+				$_("[data-ui='say']").html (dialog);
+				if (globals.autoPlay !== null) {
+					globals.autoPlay = setTimeout (function () {
+						if (Monogatari.canProceed() && globals.finishedTyping) {
+							Monogatari.hideCentered();
+							Monogatari.shutUp();
+							next ();
+						}
+					}, Monogatari.preference ('AutoPlaySpeed') * 1000);
+				}
+				globals.finishedTyping = true;
 			}
 		} else {
 			$_("[data-ui='say']").html (dialog);
-			if (autoPlay !== null) {
-				autoPlay = setTimeout (function () {
-					if (canProceed() && finishedTyping) {
-						hideCentered();
-						shutUp();
+			if (globals.autoPlay !== null) {
+				globals.autoPlay = setTimeout (function () {
+					if (Monogatari.canProceed() && globals.finishedTyping) {
+						Monogatari.hideCentered();
+						Monogatari.shutUp();
 						next ();
 					}
-				}, settings.AutoPlaySpeed * 1000);
+				}, Monogatari.preference ('AutoPlaySpeed') * 1000);
 			}
-			finishedTyping = true;
-		}
-	}
-
-	// Assert the result of a function
-	function assertAsync (callable, args = null) {
-		block = true;
-		return new Promise (function (resolve, reject) {
-			const result = callable.apply(null, args);
-			// Check if the function returned a simple boolean
-			// if the return value is true, the game will continue
-			if (typeof result === "boolean") {
-				if (result) {
-					resolve ();
-				} else {
-					reject ();
-				}
-			} else if (typeof result === "object") {
-				// Check if the result was a promise
-				if (typeof result.then != "undefined") {
-
-					result.then(function (value) {
-						if (typeof value === "boolean") {
-							if (value) {
-								resolve ();
-							} else {
-								reject ();
-							}
-						}
-					});
-				} else {
-					resolve ();
-				}
-			} else {
-				reject ();
-			}
-		});
-	}
-
-	function canProceed () {
-		if (!$_("[data-ui='choices']").isVisible()
-			&& $_("#game").isVisible()
-			&& !$_("[data-component='modal']").isVisible()
-			&& (
-				$_("[data-ui='text']").isVisible()
-				|| (
-					!$_("[data-ui='text']").isVisible()
-					&& $_("[data-ui='centered']").isVisible()
-					)
-				)
-			&& !$_("[data-component='video']").isVisible()
-			&& !block
-			) {
-			return true;
-		} else {
-			return false;
+			globals.finishedTyping = true;
 		}
 	}
 
 	function resetGame () {
-		stopVideo();
-		silence();
+		Monogatari.stopVideo();
+		Monogatari.silence();
 		hideGameElements();
 
-		clearInterval (autoPlay);
-		autoPlay = null;
+		clearInterval (globals.autoPlay);
+		globals.autoPlay = null;
 
 		$_("[data-action='auto-play'].fa").removeClass("fa-stop-circle");
 		$_("[data-action='auto-play'].fa").addClass("fa-play-circle");
 
 		// Reset Storage
-		storage = JSON.parse(storageStructure);
+		Monogatari.storage (JSON.parse(storageStructure));
 
 		// Reset Conditions
-		engine.Label = engine.startLabel;
-		label = game[engine.Label];
-		engine.Step = 0;
+		Monogatari.setting ('Label', Monogatari.setting ('startLabel'));
+		globals.label = globals.game[Monogatari.setting ('Label')];
+		Monogatari.setting ('Step', 0);
 
 		// Reset History
-		engine.MusicHistory = [];
-		engine.SoundHistory = [];
-		engine.ImageHistory = [];
-		engine.CharacterHistory = [];
-		engine.SceneHistory = [];
-		engine.SceneElementsHistory = [];
-		engine.ParticlesHistory = [];
+		Monogatari.setting ('MusicHistory', []);
+		Monogatari.setting ('SoundHistory', []);
+		Monogatari.setting ('ImageHistory', []);
+		Monogatari.setting ('CharacterHistory', []);
+		Monogatari.setting ('SceneHistory', []);
+		Monogatari.setting ('SceneElementsHistory', []);
+		Monogatari.setting ('ParticlesHistory', []);
 
 		// Reset other States
-		engine.Sound = "";
-		engine.Song = "";
-		engine.Particles = "";
-		engine.Scene = "";
+		Monogatari.setting ('Sound', '');
+		Monogatari.setting ('Song', '');
+		Monogatari.setting ('Particles', '');
+		Monogatari.setting ('Scene', '');
 	}
 
-	function hideCentered () {
-		$_("[data-ui='centered']").remove();
-		$_("[data-ui='text']").show();
-	}
+
 
 	function hideGameElements () {
 		// Hide in-game elements
 		$_("[data-ui='choices']").hide();
-		$_("[data-ui='choices']").html("");
+		$_("[data-ui='choices']").html('');
 
 		$_("[data-component='modal']").removeClass("active");
 		$_("[data-ui='messages']").removeClass("active");
@@ -1554,202 +598,132 @@ $_ready(() => {
 		$_("#game [data-character]").remove();
 		$_("#game [data-image]").remove();
 
-		$_("[data-ui='input'] [data-ui='warning']").text("");
+		$_("[data-ui='input'] [data-ui='warning']").text('');
 
 		$_("[data-ui='background']").style("background", "initial");
 		whipeText();
 	}
 
-	function playAmbient () {
-		if (engine.MenuMusic != "") {
-			ambientPlayer.setAttribute("loop", "");
 
-			if (typeof music !== "undefined") {
-				if (typeof music[engine.MenuMusic] !== "undefined") {
-					ambientPlayer.setAttribute("src", "audio/music/" + music[engine.MenuMusic]);
-				} else {
-					ambientPlayer.setAttribute("src", "audio/music/" + engine.MenuMusic);
-				}
-			} else {
-				ambientPlayer.setAttribute("src", "audio/music/" + engine.MenuMusic);
-			}
-			ambientPlayer.play();
-		}
-	}
 
-	// Stop any playing music or sound
-	function silence () {
-		for (let i = 0; i < document.getElementsByTagName("audio").length; i++) {
-			const v = document.getElementsByTagName("audio");
-			if (!v[i].paused && typeof v[i].src != "undefined" && v[i].src != "") {
-				v[i].pause();
-				v[i].currentTime = 0;
-			}
-		}
-	}
 
-	function stopVideo () {
-		videoPlayer.pause();
-		videoPlayer.currentTime = 0;
-		videoPlayer.setAttribute("src", "");
-		$_("[data-component='video']").removeClass("active");
-	}
 
-	// Stop the main menu's music
-	function stopAmbient () {
-		if (!ambientPlayer.paused) {
-			ambientPlayer.pause();
-		}
-	}
 
-	// Stop the voice player
-	function shutUp () {
-		if (!voicePlayer.paused && typeof voicePlayer.src != "undefined" && voicePlayer.src != "") {
-			voicePlayer.pause();
-			voicePlayer.currentTime = 0;
-		}
-	}
 
 	// Function to end the game.
 	function endGame () {
-		playing = false;
+		globals.playing = false;
 
 		resetGame ();
 
 		// Show main menu
-		$_("section").hide();
-		playAmbient();
+		$_('section').hide();
+		Monogatari.playAmbient();
 		$_("[data-menu='main']").show();
 	}
 
 	// Function to execute the next statement in the script.
 	function next () {
-		engine.Step += 1;
-		analyseStatement(label[engine.Step]);
+		Monogatari.setting ('Step', Monogatari.setting ('Step') + 1);
+		analyseStatement (globals.label[Monogatari.setting ('Step')]);
 	}
 
-	function stopParticles () {
-		try {
-			if (typeof pJSDom === "object") {
-				if (pJSDom.length > 0) {
-					for (let i = 0; i < pJSDom.length; i++) {
-						if (typeof pJSDom[i].pJS !== "undefined") {
-							cancelAnimationFrame(pJSDom[i].pJS.fn.drawAnimFrame);
-							pJSDom.shift ();
-						}
-					}
-				}
-			}
-		} catch (e) {
-			console.error ("An error ocurred while trying to stop particle system.");
-		}
 
-		engine.Particles = "";
-		$_("#particles-js").html("");
-	}
 
 	// Function to execute the previous statement in the script.
 	function previous () {
 
-		hideCentered();
-		shutUp();
-		if (engine.Step >= 1) {
-			engine.Step -= 1;
+		Monogatari.hideCentered();
+		Monogatari.shutUp();
+		if (Monogatari.setting ('Step') >= 1) {
+			Monogatari.setting ('Step',Monogatari.setting ('Step') - 1);
 			const back = ["show", "play", "display", "hide", "stop", "particles", "wait", "scene", "clear", "vibrate", "notify", "next"];
 			let flag = true;
 			try {
-				while (engine.Step > 0 && flag) {
-					if (typeof label[engine.Step] == "string") {
-						if (back.indexOf(label[engine.Step].split(" ")[0]) > -1) {
-							const parts = replaceVariables(label[engine.Step]).split(" ");
+				while (Monogatari.setting ('Step') > 0 && flag) {
+					if (typeof globals.label[Monogatari.setting ('Step')] == "string") {
+						if (back.indexOf(globals.label[Monogatari.setting ('Step')].split(' ')[0]) > -1) {
+							const parts = Monogatari.replaceVariables(globals.label[Monogatari.setting ('Step')]).split(' ');
 							switch (parts[0]) {
 								case "show":
-									if (typeof characters[parts[1]] != "undefined") {
+									if (typeof Monogatari.character (parts[1]) != 'undefined') {
 										$_("[data-character='" + parts[1] + "']").remove();
-										if (engine.CharacterHistory.length > 1) {
-											engine.CharacterHistory.pop();
+										if (Monogatari.setting ('CharacterHistory').length > 1) {
+											Monogatari.setting ('CharacterHistory').pop();
 										}
 
-										const last_character = engine.CharacterHistory.slice(-1)[0];
-										if (typeof last_character != "undefined") {
+										const last_character = Monogatari.setting ('CharacterHistory').slice(-1)[0];
+										if (typeof last_character != 'undefined') {
 											if (last_character.indexOf("data-character='" + parts[1] + "'") > -1) {
-												$_("#game").append(last_character);
+												$_('#game').append(last_character);
 											}
 										}
 									} else {
-										if (typeof parts[3] != "undefined" && parts[3] != "") {
+										if (typeof parts[3] != 'undefined' && parts[3] != '') {
 											$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
 										} else {
 											$_("[data-image='" + parts[1] + "']").remove();
 										}
-										engine.ImageHistory.pop();
+										Monogatari.setting ('ImageHistory').pop();
 									}
 									break;
 
 								case "play":
 									if (parts[1] == "music") {
-										musicPlayer.removeAttribute("loop");
-										musicPlayer.setAttribute("src", "");
-										engine.Song = "";
-										musicPlayer.pause();
-										musicPlayer.currentTime = 0;
+										Monogatari.musicPlayer.removeAttribute("loop");
+										Monogatari.musicPlayer.setAttribute('src', '');
+										Monogatari.setting ('Song', '');
+										Monogatari.musicPlayer.pause();
+										Monogatari.musicPlayer.currentTime = 0;
 									} else if (parts[1] == "sound") {
-										soundPlayer.removeAttribute("loop");
-										soundPlayer.setAttribute("src", "");
-										engine.Sound = "";
-										soundPlayer.pause();
-										soundPlayer.currentTime = 0;
+										Monogatari.soundPlayer.removeAttribute("loop");
+										Monogatari.soundPlayer.setAttribute('src', '');
+										Monogatari.setting ('Sound', '');
+										Monogatari.soundPlayer.pause();
+										Monogatari.soundPlayer.currentTime = 0;
 									}
 									break;
 
 								case "stop":
 									if (parts[1] == "music") {
-										const last_song = engine.MusicHistory.pop().split(" ");
+										const last_song = Monogatari.setting ('MusicHistory').pop().split(' ');
 
 										if (last_song[3] == "loop") {
-											musicPlayer.setAttribute("loop", "");
+											Monogatari.musicPlayer.setAttribute("loop", '');
 										} else if (last_song[3] == "noloop") {
-											musicPlayer.removeAttribute("loop");
+											Monogatari.musicPlayer.removeAttribute("loop");
 										}
-										if (typeof music !== "undefined") {
-											if (typeof music[last_song[2]] != "undefined") {
-												musicPlayer.setAttribute("src", "audio/music/" + music[last_song[2]]);
-											} else {
-												musicPlayer.setAttribute("src", "audio/music/" + last_song[2]);
-											}
+										if (typeof music[last_song[2]] != 'undefined') {
+											Monogatari.musicPlayer.setAttribute('src', "audio/music/" + Monogatari.assets ('music', last_song[2]));
 										} else {
-											musicPlayer.setAttribute("src", "audio/music/" + last_song[2]);
+											Monogatari.musicPlayer.setAttribute('src', "audio/music/" + last_song[2]);
 										}
-										musicPlayer.play();
-										engine.Song = last_song.join(" ");
+										Monogatari.musicPlayer.play();
+										Monogatari.setting ('Song', last_song.join(' '));
 									} else if (parts[1] == "sound") {
-										const last = engine.SoundHistory.pop().split(" ");
+										const last = Monogatari.setting ('SoundHistory').pop().split(' ');
 
 										if (last[3] == "loop") {
-											soundPlayer.setAttribute("loop", "");
+											Monogatari.soundPlayer.setAttribute("loop", '');
 										} else if (last[3] == "noloop") {
-											soundPlayer.removeAttribute("loop");
+											Monogatari.soundPlayer.removeAttribute("loop");
 										}
 
-										if (typeof sound !== "undefined") {
-											if (typeof sound[last[2]] != "undefined") {
-												soundPlayer.setAttribute("src", "audio/sound/" + sound[last[2]]);
-											} else {
-												soundPlayer.setAttribute("src", "audio/sound/" + last[2]);
-											}
+										if (typeof sound[last[2]] != 'undefined') {
+											Monogatari.soundPlayer.setAttribute('src', "audio/sound/" + Monogatari.assets ('sound', last[2]));
 										} else {
-											soundPlayer.setAttribute("src", "audio/sound/" + last[2]);
+											Monogatari.soundPlayer.setAttribute('src', "audio/sound/" + last[2]);
 										}
 
-										soundPlayer.play();
-										engine.Sound = last.join(" ");
+										Monogatari.soundPlayer.play();
+										Monogatari.setting ('Sound', last.join(' '));
 									} else if (parts[1] == "particles") {
-										if (typeof engine.ParticlesHistory === "object") {
-											if (engine.ParticlesHistory.length > 0) {
-												var last_particles = engine.ParticlesHistory.pop ();
-												if (typeof particles[last_particles] !== "undefined") {
+										if (typeof Monogatari.setting ('ParticlesHistory') === "object") {
+											if (Monogatari.setting ('ParticlesHistory').length > 0) {
+												var last_particles = Monogatari.setting ('ParticlesHistory').pop ();
+												if (typeof particles[last_particles] !== 'undefined') {
 													particlesJS (particles[last_particles]);
-													engine.Particles = last_particles;
+													Monogatari.setting ('Particles', last_particles);
 												}
 											}
 										}
@@ -1757,32 +731,32 @@ $_ready(() => {
 									break;
 
 								case "scene":
-									engine.SceneHistory.pop();
-									engine.Scene = engine.SceneHistory.slice(-1)[0];
+									Monogatari.setting ('SceneHistory').pop();
+									Monogatari.setting ('Scene', Monogatari.setting ('SceneHistory').slice(-1)[0]);
 
-									if (typeof engine.Scene != "undefined") {
+									if (typeof Monogatari.setting ('Scene') != 'undefined') {
 										$_("[data-character]").remove();
 										$_("[data-image]").remove();
 										$_("[data-ui='background']").removeClass ();
 
-										if (typeof scenes[engine.Scene] !== "undefined") {
-											$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[engine.Scene] + ") center / cover no-repeat");
+										if (typeof Monogatari.assets ('scenes', Monogatari.setting ('Scene')) !== 'undefined') {
+											$_("[data-ui='background']").style("background", "url(img/scenes/" + Monogatari.assets ('scenes', Monogatari.setting ('Scene')) + ") center / cover no-repeat");
 										} else {
-											$_("[data-ui='background']").style("background", engine.Scene);
+											$_("[data-ui='background']").style("background", Monogatari.setting ('Scene'));
 										}
 
-										if (typeof  engine.SceneElementsHistory !== "undefined") {
-											if (engine.SceneElementsHistory.length > 0) {
-												var scene_elements = engine.SceneElementsHistory.pop ();
+										if (typeof  Monogatari.setting ('SceneElementsHistory') !== 'undefined') {
+											if (Monogatari.setting ('SceneElementsHistory').length > 0) {
+												var scene_elements = Monogatari.setting ('SceneElementsHistory').pop ();
 
 												if (typeof scene_elements === "object") {
 													for (const element of scene_elements) {
-														$_("#game").append (element);
+														$_('#game').append (element);
 													}
 												}
 											}
 										} else {
-											engine.SceneElementsHistory = [];
+											Monogatari.setting ('SceneElementsHistory', []);
 										}
 									}
 
@@ -1791,55 +765,55 @@ $_ready(() => {
 
 								case "display":
 									if (parts[1] == "message") {
-										$_("[data-ui='message-content']").html("");
+										$_("[data-ui='message-content']").html('');
 										$_("[data-ui='messages']").removeClass("active");
 									} else if (parts[1] == "image") {
 										$_("[data-image='" + parts[2] + "']").remove();
 									}
 									break;
 								case "hide":
-									if (typeof characters[parts[1]] != "undefined" && engine.CharacterHistory.length > 0) {
-										$_("#game").append(engine.CharacterHistory.pop());
+									if (typeof Monogatari.character (parts[1]) != 'undefined' && Monogatari.setting ('CharacterHistory').length > 0) {
+										$_('#game').append(Monogatari.setting ('CharacterHistory').pop());
 
-									} else if (typeof images[parts[1]] != "undefined" && engine.ImageHistory > 0) {
-										$_("#game").append(engine.ImageHistory.pop());
+									} else if (typeof Monogatari.assets ('images', parts[1]) != 'undefined' && Monogatari.setting ('ImageHistory') > 0) {
+										$_('#game').append(Monogatari.setting ('ImageHistory').pop());
 
 									} else {
 										flag = false;
-										engine.Step += 1;
+										Monogatari.setting ('Step', Monogatari.setting ('Step') + 1);
 									}
 									break;
 
 								case "particles":
-									stopParticles ();
+									Monogatari.stopParticles ();
 									break;
 								default:
 									flag = false;
 									break;
 							}
-							if ((engine.Step - 1) >= 0) {
-								engine.Step -= 1;
+							if ((Monogatari.setting ('Step') - 1) >= 0) {
+								Monogatari.setting ('Step', Monogatari.setting ('Step') - 1);
 							}
 						} else {
 							flag = false;
 						}
-					} else if (typeof label[engine.Step] == "object") {
-						if (typeof label[engine.Step].Function !== "undefined") {
-							assertAsync(label[engine.Step].Function.Reverse).then(function () {
-								block = false;
+					} else if (typeof globals.label[Monogatari.setting ('Step')] == "object") {
+						if (typeof globals.label[Monogatari.setting ('Step')].Function !== 'undefined') {
+							Monogatari.assertAsync(globals.label[Monogatari.setting ('Step')].Function.Reverse).then(function () {
+								globals.block = false;
 							}).catch(function () {
-								block = false;
+								globals.block = false;
 							});
 						}
-						if ((engine.Step - 1) >= 0) {
-							engine.Step -= 1;
+						if ((Monogatari.setting ('Step') - 1) >= 0) {
+							Monogatari.setting ('Step', Monogatari.setting ('Step') - 1);
 						}
 					} else {
 						flag = false;
-						engine.Step += 1;
+						Monogatari.setting ('Step',  Monogatari.setting ('Step') + 1);
 					}
 				}
-				analyseStatement (label[engine.Step]);
+				analyseStatement (globals.label[Monogatari.setting ('Step')]);
 			} catch (e) {
 				console.error("An error ocurred while trying to exectute the previous statement.\n" + e);
 			}
@@ -1847,11 +821,11 @@ $_ready(() => {
 	}
 
 	function whipeText () {
-		if (typeof textObject != "undefined") {
-			textObject.destroy ();
+		if (typeof globals.textObject != 'undefined') {
+			globals.textObject.destroy ();
 		}
-		$_("[data-ui='who']").html("");
-		$_("[data-ui='say']").html("");
+		$_("[data-ui='who']").html('');
+		$_("[data-ui='say']").html('');
 	}
 
 	/**
@@ -1859,21 +833,6 @@ $_ready(() => {
 	 * Statements Functioning
 	 * =======================
 	 **/
-
-	function replaceVariables (statement) {
-		const matches = statement.match(/{{\S+}}/g);
-		if (matches !== null) {
-			for (let i = 0; i < matches.length; i++) {
-				const path = matches[i].replace("{{", "").replace("}}", "").split(".");
-				let data = storage[path[0]];
-				for (let j = 1; j < path.length; j++) {
-					data = data[path[j]];
-				}
-				statement = statement.replace(matches[i], data);
-			}
-		}
-		return statement;
-	}
 
 	function analyseStatement (statement, advance) {
 		if (typeof advance !== "boolean") {
@@ -1883,15 +842,15 @@ $_ready(() => {
 
 			switch (typeof statement) {
 				case "string":
-					statement = replaceVariables(statement);
-					var parts = statement.split(" ");
+					statement = Monogatari.replaceVariables(statement);
+					var parts = statement.split(' ');
 
 					switch (parts[0]) {
 
 						case "wait":
-							block = true;
+							globals.block = true;
 							setTimeout(function () {
-								block = false;
+								globals.block = false;
 								if (advance) {
 									next ();
 								}
@@ -1903,81 +862,67 @@ $_ready(() => {
 							if (parts[1] == "music") {
 
 								if (parts[3] == "loop") {
-									musicPlayer.setAttribute("loop", "");
+									Monogatari.musicPlayer.setAttribute("loop", '');
 								} else if (parts[3] == "noloop") {
-									musicPlayer.removeAttribute("loop");
+									Monogatari.musicPlayer.removeAttribute("loop");
 								}
 
-								if (typeof music !== "undefined") {
-									if (typeof music[parts[2]] != "undefined") {
-										musicPlayer.setAttribute("src", "audio/music/" + music[parts[2]]);
+								if (typeof music !== 'undefined') {
+									if (typeof music[parts[2]] != 'undefined') {
+										Monogatari.musicPlayer.setAttribute('src', "audio/music/" + Monogatari.assets ('music', parts[2]));
 									} else {
-										musicPlayer.setAttribute("src", "audio/music/" + parts[2]);
+										Monogatari.musicPlayer.setAttribute('src', "audio/music/" + parts[2]);
 									}
 								} else {
-									musicPlayer.setAttribute("src", "audio/music/" + parts[2]);
+									Monogatari.musicPlayer.setAttribute('src', "audio/music/" + parts[2]);
 								}
 
-								musicPlayer.play();
-								engine.Song = parts.join(" ");
-								engine.MusicHistory.push(engine.Song);
+								Monogatari.musicPlayer.play();
+								Monogatari.setting ('Song', parts.join(' '));
+								Monogatari.setting ('MusicHistory').push(Monogatari.setting ('Song'));
 								if (advance) {
 									next ();
 								}
 							} else if (parts[1] == "sound") {
 								if (parts[3] == "loop") {
-									soundPlayer.setAttribute("loop", "");
+									Monogatari.soundPlayer.setAttribute("loop", '');
 								} else if (parts[3] == "noloop") {
-									soundPlayer.removeAttribute("loop");
+									Monogatari.soundPlayer.removeAttribute("loop");
 								}
-
-								if (typeof sound !== "undefined") {
-									if (typeof sound[parts[2]] != "undefined") {
-										soundPlayer.setAttribute("src", "audio/sound/" + sound[parts[2]]);
-									} else {
-										soundPlayer.setAttribute("src", "audio/sound/" + parts[2]);
-									}
+								if (typeof sound[parts[2]] != 'undefined') {
+									Monogatari.soundPlayer.setAttribute('src', "audio/sound/" + Monogatari.assets ('sound', parts[2]));
 								} else {
-									soundPlayer.setAttribute("src", "audio/sound/" + parts[2]);
+									Monogatari.soundPlayer.setAttribute('src', "audio/sound/" + parts[2]);
 								}
 
-								soundPlayer.play();
-								engine.Sound = parts.join(" ");
-								engine.SoundHistory.push(engine.Sound);
+								Monogatari.soundPlayer.play();
+								Monogatari.setting ('Sound', parts.join(' '));
+								Monogatari.setting ('SoundHistory').push(Monogatari.setting ('Sound'));
 								if (advance) {
 									next ();
 								}
 							} else if (parts[1] == "voice") {
 
-								if (typeof voice !== "undefined") {
-									if (typeof voice[parts[2]] != "undefined") {
-										voicePlayer.setAttribute("src", "audio/voice/" + voice[parts[2]]);
-									} else {
-										voicePlayer.setAttribute("src", "audio/voice/" + parts[2]);
-									}
+								if (typeof voice[parts[2]] != 'undefined') {
+									Monogatari.voicePlayer.setAttribute('src', "audio/voice/" + Monogatari.assets ('voice', parts[2]));
 								} else {
-									voicePlayer.setAttribute("src", "audio/voice/" + parts[2]);
+									Monogatari.voicePlayer.setAttribute('src', "audio/voice/" + parts[2]);
 								}
 
-								voicePlayer.play();
+								Monogatari.voicePlayer.play();
 								if (advance) {
 									next ();
 								}
 							} else if (parts[1] == "video") {
 
-
-								if (typeof videos !== "undefined") {
-									if (typeof videos[parts[2]] != "undefined") {
-										videoPlayer.setAttribute("src", "video/" + videos[parts[2]]);
-									} else {
-										videoPlayer.setAttribute("src", "video/" + parts[2]);
-									}
+								if (typeof videos[parts[2]] != 'undefined') {
+									Monogatari.videoPlayer.setAttribute('src', "video/" + Monogatari.assets ('video', parts[2]));
 								} else {
-									videoPlayer.setAttribute("src", "video/" + parts[2]);
+									Monogatari.videoPlayer.setAttribute('src', "video/" + parts[2]);
 								}
 
 								$_("[data-component='video']").addClass("active");
-								videoPlayer.play();
+								Monogatari.videoPlayer.play();
 							}
 
 							break;
@@ -1988,10 +933,10 @@ $_ready(() => {
 							$_("#game img:not([data-ui='face']):not([data-visibility='invisible'])").each(function (element) {
 								scene_elements.push (element.outerHTML);
 							});
-							if (typeof engine.SceneElementsHistory !== "object") {
-								engine.SceneElementsHistory = [];
+							if (typeof Monogatari.setting ('SceneElementsHistory') !== "object") {
+								Monogatari.setting ('SceneElementsHistory', []);
 							}
-							engine.SceneElementsHistory.push (scene_elements);
+							Monogatari.setting ('SceneElementsHistory').push (scene_elements);
 
 							$_("[data-character]").remove();
 							$_("[data-image]").remove();
@@ -1999,8 +944,8 @@ $_ready(() => {
 
 							// scene [scene]
 							//   0      1
-							if (typeof scenes[parts[1]] != "undefined") {
-								$_("[data-ui='background']").style("background", "url(img/scenes/" + scenes[parts[1]] + ") center / cover no-repeat");
+							if (typeof Monogatari.assets ('scenes', parts[1]) != 'undefined') {
+								$_("[data-ui='background']").style("background", "url(img/scenes/" + Monogatari.assets ('scenes', parts[1]) + ") center / cover no-repeat");
 							} else {
 								$_("[data-ui='background']").style("background", parts[1]);
 							}
@@ -2009,17 +954,17 @@ $_ready(() => {
 							// scene [scene] with [animation] [infinite]
 							//   0      1     2       3           4
 							if (parts.length > 2) {
-								if (parts[2] == "with" && parts[3].trim != "") {
+								if (parts[2] == "with" && parts[3].trim != '') {
 									$_("[data-ui='background']").addClass ("animated");
-									var class_list = (parts.join(" ").replace ("scene " + parts[1], "").replace (" with ", " ")).trim ().split (" ");
+									var class_list = (parts.join(' ').replace ("scene " + parts[1], '').replace (" with ", ' ')).trim ().split (' ');
 									for (const newClass of class_list) {
 										$_("[data-ui='background']").addClass (newClass);
 									}
 								}
 							}
 
-							engine.Scene = parts[1];
-							engine.SceneHistory.push(parts[1]);
+							Monogatari.setting ('Scene', parts[1]);
+							Monogatari.setting ('SceneHistory').push(parts[1]);
 							whipeText();
 							if (advance) {
 								next ();
@@ -2035,30 +980,30 @@ $_ready(() => {
 
 							// show [character] [expression]
 							//   0      1             2
-							var classes = "";
-							if (typeof characters[parts[1]] != "undefined") {
-								let directory = characters[parts[1]].Directory;
-								if (typeof directory == "undefined") {
-									directory = "";
+							var classes = '';
+							if (typeof Monogatari.character (parts[1]) != 'undefined') {
+								let directory = Monogatari.character (parts[1]).Directory;
+								if (typeof directory == 'undefined') {
+									directory = '';
 								} else {
 									directory += "/";
 								}
-								const image = characters[parts[1]].Images[parts[2]];
+								const image = Monogatari.character (parts[1]).Images[parts[2]];
 								$_("[data-character='" + parts[1] + "']").remove();
 
 								if (parts[3] == "at") {
 									parts[3] == parts[4];
 								}
 
-								if (parts[3] == "with" || typeof parts[3] == "undefined") {
+								if (parts[3] == "with" || typeof parts[3] == 'undefined') {
 									parts[3] = "center";
 								}
 
-								classes = parts.join(" ").replace("show " + parts[1] +" "+ parts[2], "").replace(" at ", "").replace(" with ", " ");
+								classes = parts.join(' ').replace("show " + parts[1] +' '+ parts[2], '').replace(" at ", '').replace(" with ", ' ');
 
 
-								$_("#game").append("<img src='img/characters/" + directory + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
-								engine.CharacterHistory.push("<img src='img/characters/" + directory + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
+								$_('#game').append("<img src='img/characters/" + directory + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
+								Monogatari.setting ('CharacterHistory').push("<img src='img/characters/" + directory + image + "' class='animated " + classes + "' data-character='" + parts[1] + "' data-sprite='" + parts[2] + "'>");
 
 							} else {
 								// show [image] at [position] with [animation]
@@ -2074,22 +1019,22 @@ $_ready(() => {
 									parts[2] == parts[3];
 								}
 
-								if (parts[2] == "with" || typeof parts[2] == "undefined") {
+								if (parts[2] == "with" || typeof parts[2] == 'undefined') {
 									parts[2] = "center";
 								}
 
-								let src = "";
-								if (typeof images[parts[1]] != "undefined") {
-									src = images[parts[1]];
+								let src = '';
+								if (typeof Monogatari.assets ('images', parts[1]) != 'undefined') {
+									src = Monogatari.assets ('images', parts[1]);
 								} else {
 									src = parts[1];
 								}
 
-								classes = parts.join(" ").replace("show " + parts[1], "").replace(" at ", "").replace(" with ", " ");
+								classes = parts.join(' ').replace("show " + parts[1], '').replace(" at ", '').replace(" with ", ' ');
 
 								const imageObject = "<img src='img/" + src + "' class='animated " + classes + "' data-image='" + parts[1] + "' data-sprite='" + parts[1] + "'>";
-								$_("#game").append(imageObject);
-								engine.ImageHistory.push(imageObject);
+								$_('#game').append(imageObject);
+								Monogatari.setting ('ImageHistory').push(imageObject);
 
 							}
 							if (advance) {
@@ -2098,28 +1043,28 @@ $_ready(() => {
 							break;
 
 						case "jump":
-							engine.Step = 0;
-							label = game[parts[1]];
-							engine.Label = parts[1];
+							Monogatari.setting ('Step', 0);
+							globals.label = globals.game[parts[1]];
+							Monogatari.setting ('Label', parts[1]);
 							whipeText();
-							analyseStatement(label[engine.Step]);
+							analyseStatement(globals.label[Monogatari.setting ('Step')]);
 							break;
 
 						case "stop":
 							if (parts[1] == "music") {
-								musicPlayer.removeAttribute("loop");
-								musicPlayer.setAttribute("src", "");
-								engine.Song = "";
-								musicPlayer.pause();
-								musicPlayer.currentTime = 0;
+								Monogatari.musicPlayer.removeAttribute("loop");
+								Monogatari.musicPlayer.setAttribute('src', '');
+								Monogatari.setting ('Song', '');
+								Monogatari.musicPlayer.pause();
+								Monogatari.musicPlayer.currentTime = 0;
 							} else if (parts[1] == "sound") {
-								soundPlayer.removeAttribute("loop");
-								soundPlayer.setAttribute("src", "");
-								engine.Sound = "";
-								soundPlayer.pause();
-								soundPlayer.currentTime = 0;
+								Monogatari.soundPlayer.removeAttribute("loop");
+								Monogatari.soundPlayer.setAttribute('src', '');
+								Monogatari.setting ('Sound', '');
+								Monogatari.soundPlayer.pause();
+								Monogatari.soundPlayer.currentTime = 0;
 							} else if (parts[1] == "particles") {
-								stopParticles ();
+								Monogatari.stopParticles ();
 							}
 							if (advance) {
 								next ();
@@ -2128,9 +1073,9 @@ $_ready(() => {
 
 						case "pause":
 							if (parts[1] == "music") {
-								musicPlayer.pause();
+								Monogatari.musicPlayer.pause();
 							} else if (parts[1] == "sound") {
-								soundPlayer.pause();
+								Monogatari.soundPlayer.pause();
 							}
 							if (advance) {
 								next ();
@@ -2138,16 +1083,16 @@ $_ready(() => {
 							break;
 
 						case "hide":
-							if (typeof characters[parts[1]] != "undefined") {
-								if (typeof parts[3] != "undefined" && parts[3] != "") {
+							if (typeof Monogatari.character (parts[1]) != 'undefined') {
+								if (typeof parts[3] != 'undefined' && parts[3] != '') {
 									$_("[data-character='" + parts[1] + "']").addClass(parts[3]);
 									$_("[data-character='" + parts[1] + "']").data ("visibility", "invisible");
 								} else {
 									$_("[data-character='" + parts[1] + "']").remove();
 								}
 
-							} else if (typeof images[parts[1]] != "undefined") {
-								if (typeof parts[3] != "undefined" && parts[3] != "") {
+							} else if (typeof Monogatari.assets ('images', parts[1]) != 'undefined') {
+								if (typeof parts[3] != 'undefined' && parts[3] != '') {
 									$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
 									$_("[data-image='" + parts[1] + "']").data ("visibility", "invisible");
 								} else {
@@ -2155,7 +1100,7 @@ $_ready(() => {
 								}
 
 							} else {
-								if (typeof parts[3] != "undefined" && parts[3] != "") {
+								if (typeof parts[3] != 'undefined' && parts[3] != '') {
 									$_("[data-image='" + parts[1] + "']").addClass(parts[3]);
 									$_("[data-image='" + parts[1] + "']").data ("visibility", "invisible");
 								} else {
@@ -2176,19 +1121,19 @@ $_ready(() => {
 									$_("[data-ui='messages']").addClass("active");
 								}
 							} else if (parts[1] == "image") {
-								if (typeof parts[3] === "undefined") {
+								if (typeof parts[3] === 'undefined') {
 									parts[3] = "center";
 								}
 								if (parts[3] == "with") {
 									parts[3] = "center";
 									parts[5] = parts[4];
 								}
-								if (typeof images[parts[2]] !== "undefined") {
-									$_("#game").append("<img src='img/" + images[parts[2]] + "' class='animated " + parts[5] + " " + parts[3] + "' data-image='" + parts[2] + "'>");
-									engine.ImageHistory.push("<img src='img/" + images[parts[2]] + "' class='animated " + parts[5] + " " + parts[3] + "' data-image='" + parts[2] + "'>");
+								if (typeof Monogatari.assets ('images', parts[2]) !== 'undefined') {
+									$_('#game').append("<img src='img/" + Monogatari.assets ('images', parts[2]) + "' class='animated " + parts[5] + ' ' + parts[3] + "' data-image='" + parts[2] + "'>");
+									Monogatari.setting ('ImageHistory').push("<img src='img/" + Monogatari.assets ('images', parts[2]) + "' class='animated " + parts[5] + ' ' + parts[3] + "' data-image='" + parts[2] + "'>");
 								} else {
-									$_("#game").append("<img src='img/" + parts[2] + "' class='animated " + parts[5] + " " + parts[3] + "' data-image='" + parts[2] + "'>");
-									engine.ImageHistory.push("<img src='img/" + parts[2] + "' class='animated " + parts[5] + " " + parts[3] + "' data-image='" + parts[2] + "'>");
+									$_('#game').append("<img src='img/" + parts[2] + "' class='animated " + parts[5] + ' ' + parts[3] + "' data-image='" + parts[2] + "'>");
+									Monogatari.setting ('ImageHistory').push("<img src='img/" + parts[2] + "' class='animated " + parts[5] + ' ' + parts[3] + "' data-image='" + parts[2] + "'>");
 								}
 
 							}
@@ -2202,11 +1147,6 @@ $_ready(() => {
 							next();
 							break;
 
-						case "$":
-							console.error("Executing inline javascript has been deprecated for security.");
-							next();
-							break;
-
 						case "clear":
 							whipeText();
 							if (advance) {
@@ -2216,16 +1156,16 @@ $_ready(() => {
 
 						case "centered":
 							$_("[data-ui='text']").hide();
-							$_("#game").append("<div class='middle align-center' data-ui='centered'></div>");
-							if (engine.TypeAnimation) {
-								if (engine.CenteredTypeAnimation) {
-									typedConfiguration.strings = [statement.replace(parts[0] + " ", "")];
-									textObject = new Typed ("[data-ui='centered']", typedConfiguration);
+							$_('#game').append("<div class='middle align-center' data-ui='centered'></div>");
+							if (Monogatari.setting ('TypeAnimation')) {
+								if (Monogatari.setting ('CenteredTypeAnimation')) {
+									globals.typedConfiguration.strings = [statement.replace(parts[0] + ' ', '')];
+									globals.textObject = new Typed ("[data-ui='centered']", globals.typedConfiguration);
 								} else {
-									$_("[data-ui='centered']").html (statement.replace(parts[0] + " ", ""));
+									$_("[data-ui='centered']").html (statement.replace(parts[0] + ' ', ''));
 								}
 							} else {
-								$_("[data-ui='centered']").html (statement.replace(parts[0] + " ", ""));
+								$_("[data-ui='centered']").html (statement.replace(parts[0] + ' ', ''));
 							}
 							break;
 
@@ -2284,13 +1224,13 @@ $_ready(() => {
 						case "particles":
 							if (typeof particles == "object") {
 								if (particles[parts[1]]) {
-									if (typeof particlesJS != "undefined") {
+									if (typeof particlesJS != 'undefined') {
 										particlesJS(particles[parts[1]]);
-										if (typeof engine.ParticlesHistory !== "object") {
-											engine.ParticlesHistory = [];
+										if (typeof Monogatari.setting ('ParticlesHistory') !== "object") {
+											Monogatari.setting ('ParticlesHistory', []);
 										}
-										engine.ParticlesHistory.push (parts[1]);
-										engine.Particles = parts[1];
+										Monogatari.setting ('ParticlesHistory').push (parts[1]);
+										Monogatari.setting ('Particles', parts[1]);
 										if (advance) {
 											next ();
 										}
@@ -2319,35 +1259,35 @@ $_ready(() => {
 
 							// The typeof check, is to see if the character actually exists, if it does not, then it is
 							// treated as a normal work and the narrator is used to show the dialog
-							if (character.length > 1 && typeof characters[character[0]] !== "undefined") {
-								if (typeof characters[character[0]].Name !== "undefined") {
-									$_("[data-ui='who']").html(replaceVariables(characters[character[0]].Name));
+							if (character.length > 1 && typeof Monogatari.character (character[0]) !== 'undefined') {
+								if (typeof Monogatari.character (character[0]).Name !== 'undefined') {
+									$_("[data-ui='who']").html(Monogatari.replaceVariables(Monogatari.character (character[0]).Name));
 								} else {
-									document.querySelector("[data-ui='who']").innerHTML = "";
+									document.querySelector("[data-ui='who']").innerHTML = '';
 								}
 								$_("[data-character='" + character[0] + "']").addClass("focus");
-								$_("[data-ui='who']").style("color", characters[character[0]].Color);
+								$_("[data-ui='who']").style("color", Monogatari.character (character[0]).Color);
 
 								// Check if the character object defines if the type animation should be used.
-								if (typeof characters[character[0]].TypeAnimation !== "undefined") {
-									if (characters[character[0]].TypeAnimation === true) {
-										displayDialog (statement.replace(parts[0] + " ", ""), character[0], true);
+								if (typeof Monogatari.character (character[0]).TypeAnimation !== 'undefined') {
+									if (Monogatari.character (character[0]).TypeAnimation === true) {
+										displayDialog (statement.replace(parts[0] + ' ', ''), character[0], true);
 									} else {
-										displayDialog (statement.replace(parts[0] + " ", ""), character[0], false);
+										displayDialog (statement.replace(parts[0] + ' ', ''), character[0], false);
 									}
 								} else {
-									displayDialog (statement.replace(parts[0] + " ", ""), character[0], true);
+									displayDialog (statement.replace(parts[0] + ' ', ''), character[0], true);
 								}
 
-								if (typeof characters[character[0]].Side != "undefined") {
-									if (typeof characters[character[0]].Side[character[1]] != "undefined" && characters[character[0]].Side[character[1]] != "") {
-										directory = characters[character[0]].Directory;
-										if (typeof directory == "undefined") {
-											directory = "";
+								if (typeof Monogatari.character (character[0]).Side != 'undefined') {
+									if (typeof Monogatari.character (character[0]).Side[character[1]] != 'undefined' && Monogatari.character (character[0]).Side[character[1]] != '') {
+										directory = Monogatari.character (character[0]).Directory;
+										if (typeof directory == 'undefined') {
+											directory = '';
 										} else {
 											directory += "/";
 										}
-										$_("[data-ui='face']").attribute("src", "img/characters/" + directory + characters[character[0]].Side[character[1]]);
+										$_("[data-ui='face']").attribute('src', "img/characters/" + directory + Monogatari.character (character[0]).Side[character[1]]);
 										$_("[data-ui='face']").show();
 									} else {
 										$_("[data-ui='face']").hide();
@@ -2355,34 +1295,34 @@ $_ready(() => {
 								} else {
 									$_("[data-ui='face']").hide();
 								}
-							} else if (typeof characters[parts[0]] != "undefined") {
-								if (typeof characters[character[0]].Name !== "undefined") {
-									$_("[data-ui='who']").html(replaceVariables(characters[character[0]].Name));
+							} else if (typeof Monogatari.character (parts[0]) != 'undefined') {
+								if (typeof Monogatari.character (character[0]).Name !== 'undefined') {
+									$_("[data-ui='who']").html(Monogatari.replaceVariables(Monogatari.character (character[0]).Name));
 								} else {
-									document.querySelector("[data-ui='who']").innerHTML = "";
+									document.querySelector("[data-ui='who']").innerHTML = '';
 								}
 								$_("[data-character='" + parts[0] + "']").addClass("focus");
-								$_("[data-ui='who']").style("color", characters[parts[0]].Color);
+								$_("[data-ui='who']").style("color", Monogatari.character (parts[0]).Color);
 
 								// Check if the character object defines if the type animation should be used.
-								if (typeof characters[character[0]].TypeAnimation !== "undefined") {
-									if (characters[character[0]].TypeAnimation === true) {
-										displayDialog (statement.replace(parts[0] + " ", ""), character[0], true);
+								if (typeof Monogatari.character (character[0]).TypeAnimation !== 'undefined') {
+									if (Monogatari.character (character[0]).TypeAnimation === true) {
+										displayDialog (statement.replace(parts[0] + ' ', ''), character[0], true);
 									} else {
-										displayDialog (statement.replace(parts[0] + " ", ""), character[0], false);
+										displayDialog (statement.replace(parts[0] + ' ', ''), character[0], false);
 									}
 								} else {
-									displayDialog (statement.replace(parts[0] + " ", ""), character[0], true);
+									displayDialog (statement.replace(parts[0] + ' ', ''), character[0], true);
 								}
 
-								if (typeof characters[parts[0]].Face != "undefined" && characters[parts[0]].Face != "") {
-									directory = characters[parts[0]].Directory;
-									if (typeof directory == "undefined") {
-										directory = "";
+								if (typeof Monogatari.character (parts[0]).Face != 'undefined' && Monogatari.character (parts[0]).Face != '') {
+									directory = Monogatari.character (parts[0]).Directory;
+									if (typeof directory == 'undefined') {
+										directory = '';
 									} else {
 										directory += "/";
 									}
-									$_("[data-ui='face']").attribute("src", "img/characters/" + directory + characters[parts[0]].Face);
+									$_("[data-ui='face']").attribute('src', "img/characters/" + directory + Monogatari.character (parts[0]).Face);
 									$_("[data-ui='face']").show();
 								} else {
 									$_("[data-ui='face']").hide();
@@ -2390,10 +1330,10 @@ $_ready(() => {
 							} else {
 								// The narrator is speaking
 								$_("[data-ui='face']").hide();
-								document.querySelector("[data-ui='who']").innerHTML = "";
+								document.querySelector("[data-ui='who']").innerHTML = '';
 
-								if (typeof engine.NarratorTypeAnimation !== "undefined") {
-									if (engine.NarratorTypeAnimation === true) {
+								if (typeof Monogatari.setting ('NarratorTypeAnimation') !== 'undefined') {
+									if (Monogatari.setting ('NarratorTypeAnimation') === true) {
 										displayDialog (statement, "narrator", true);
 									} else {
 										displayDialog (statement, "narrator", false);
@@ -2407,36 +1347,36 @@ $_ready(() => {
 					break;
 
 				case "function":
-					assertAsync(statement).then(function () {
-						block = false;
+					Monogatari.assertAsync(statement).then(function () {
+						globals.block = false;
 						if (advance) {
 							next ();
 						}
 					}).catch(function () {
-						block = false;
+						globals.block = false;
 					});
 					break;
 
 				case "object":
-					if (typeof statement.Choice != "undefined") {
-						$_("[data-ui='choices']").html("");
+					if (typeof statement.Choice != 'undefined') {
+						$_("[data-ui='choices']").html('');
 						for (const i in statement.Choice) {
 							const choice = statement.Choice[i];
-							if (typeof choice.Condition != "undefined" && choice.Condition != "") {
+							if (typeof choice.Condition != 'undefined' && choice.Condition != '') {
 
-								assertAsync(statement.Choice[i].Condition).then(function () {
-									if (typeof choice.Class != "undefined") {
+								Monogatari.assertAsync(statement.Choice[i].Condition).then(function () {
+									if (typeof choice.Class != 'undefined') {
 										$_("[data-ui='choices']").append("<button data-do='" + choice.Do + "' class='" + choice.Class + "'>" + choice.Text + "</button>");
 									} else {
 										$_("[data-ui='choices']").append("<button data-do='" + choice.Do + "'>" + choice.Text + "</button>");
 									}
-									block = false;
+									globals.block = false;
 								}).catch(function () {
-									block = false;
+									globals.block = false;
 								});
 							} else {
 								if (typeof choice == "object") {
-									if (typeof choice.Class != "undefined") {
+									if (typeof choice.Class != 'undefined') {
 										$_("[data-ui='choices']").append("<button data-do='" + choice.Do + "' class='" + choice.Class + "'>" + choice.Text + "</button>");
 									} else {
 										$_("[data-ui='choices']").append("<button data-do='" + choice.Do + "'>" + choice.Text + "</button>");
@@ -2447,17 +1387,17 @@ $_ready(() => {
 							}
 							$_("[data-ui='choices']").show ("flex");
 						}
-					} else if (typeof statement.Conditional != "undefined") {
+					} else if (typeof statement.Conditional != 'undefined') {
 						const condition = statement.Conditional;
-						assertAsync(condition.Condition).then(function () {
+						Monogatari.assertAsync(condition.Condition).then(function () {
 							analyseStatement(condition.True, false);
-							block = false;
+							globals.block = false;
 						}).catch(function () {
 							analyseStatement(condition.False, false);
-							block = false;
+							globals.block = false;
 						});
 
-					} else if (typeof statement.Input != "undefined") {
+					} else if (typeof statement.Input != 'undefined') {
 						$_("[data-ui='input'] [data-ui='input-message']").text(statement.Input.Text);
 						$_("[data-ui='input']").addClass("active");
 
@@ -2466,36 +1406,36 @@ $_ready(() => {
 							event.preventDefault ();
 							const inputValue = $_("[data-ui='input'] input").value();
 
-							assertAsync(statement.Input.Validation, [inputValue]).then(function () {
-								assertAsync(statement.Input.Save, [inputValue]).then(function () {
+							Monogatari.assertAsync(statement.Input.Validation, [inputValue]).then(function () {
+								Monogatari.assertAsync(statement.Input.Save, [inputValue]).then(function () {
 									$_("[data-ui='input']").removeClass("active");
-									$_("[data-ui='input'] [data-ui='warning']").text("");
-									$_("[data-ui='input'] input").value("");
+									$_("[data-ui='input'] [data-ui='warning']").text('');
+									$_("[data-ui='input'] input").value('');
 									$_("[data-ui='input'] [data-action='submit']").get(0).removeEventListener("click", inputButtonListener);
 									next ();
-									block = false;
+									globals.block = false;
 								}).catch(function () {
 									$_("[data-ui='input']").removeClass("active");
-									$_("[data-ui='input'] [data-ui='warning']").text("");
-									$_("[data-ui='input'] input").value("");
+									$_("[data-ui='input'] [data-ui='warning']").text('');
+									$_("[data-ui='input'] input").value('');
 									$_("[data-ui='input'] [data-action='submit']").get(0).removeEventListener("click", inputButtonListener);
-									block = false;
+									globals.block = false;
 								});
 							}).catch(function () {
 								$_("[data-ui='input'] [data-ui='warning']").text(statement.Input.Warning);
-								block = false;
+								globals.block = false;
 							});
 						}
 
 						$_("[data-ui='input'] [data-action='submit']").click(inputButtonListener);
-					} else if (typeof statement.Function !== "undefined") {
-						assertAsync(statement.Function.Apply).then(function () {
-							block = false;
+					} else if (typeof statement.Function !== 'undefined') {
+						Monogatari.assertAsync(statement.Function.Apply).then(function () {
+							globals.block = false;
 							if (advance) {
 								next ();
 							}
 						}).catch(function () {
-							block = false;
+							globals.block = false;
 						});
 					}
 					break;

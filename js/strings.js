@@ -14,321 +14,321 @@
 
 'use strict';
 
-/* exported strings */
+/* global Monogatari */
 
-const strings = {
+Monogatari.translation ('English', {
 
-	'English': {
-		'AdvanceHelp': 'To advance through the game, press the space key or click.',
-		'Audio': 'Audio',
-		'AutoPlay': 'Auto',
-		'AutoPlaySpeed': 'Autoplay Speed',
+	'AdvanceHelp': 'To advance through the game, press the space key or click.',
+	'Audio': 'Audio',
+	'AutoPlay': 'Auto',
+	'AutoPlaySpeed': 'Autoplay Speed',
 
-		'Back': 'Back',
-		'BackButton': 'Back.',
+	'Back': 'Back',
+	'BackButton': 'Back.',
 
-		'Cancel': 'Cancel',
-		'Close': 'Close',
-		'Confirm': 'Do you want to quit?',
+	'Cancel': 'Cancel',
+	'Close': 'Close',
+	'Confirm': 'Do you want to quit?',
 
-		'FullScreen': 'Full Screen',
+	'FullScreen': 'Full Screen',
 
-		'Help': 'Help',
-		'Hide': 'Hide',
-		'HideButton': 'Hide Text.',
-
-		'iOSAudioWarning': 'Audio settings are not supported on iOS.',
+	'Help': 'Help',
+	'Hide': 'Hide',
+	'HideButton': 'Hide Text.',
+
+	'iOSAudioWarning': 'Audio settings are not supported on iOS.',
 
-		'Language': 'Language',
-		'Load': 'Load',
-		'LoadAutoSaveSlots': 'Auto Saved Games',
-		'LoadButton': 'Open the Load Screen.',
-		'Loading': 'Loading',
-		'LoadingMessage': 'Wait while the assets are loaded.',
-		'LoadSlots': 'Saved Games',
-		'LocalStorageWarning': 'Local Storage is not available in this browser.',
+	'Language': 'Language',
+	'Load': 'Load',
+	'LoadAutoSaveSlots': 'Auto Saved Games',
+	'LoadButton': 'Open the Load Screen.',
+	'Loading': 'Loading',
+	'LoadingMessage': 'Wait while the assets are loaded.',
+	'LoadSlots': 'Saved Games',
+	'LocalStorageWarning': 'Local Storage is not available in this browser.',
 
-		'Music': 'Music Volume',
+	'Music': 'Music Volume',
 
-		'NoSavedGames': 'No saved games.',
-		'NoAutoSavedGames': 'No automatically saved games.',
+	'NoSavedGames': 'No saved games.',
+	'NoAutoSavedGames': 'No automatically saved games.',
 
-		'OrientationWarning': 'Please rotate your device to play.',
-		'Overwrite': 'Overwrite',
+	'OrientationWarning': 'Please rotate your device to play.',
+	'Overwrite': 'Overwrite',
 
-		'QuickButtons': 'Quick Menu Buttons',
-		'Quit': 'Quit',
-		'QuitButton': 'Quit Game.',
+	'QuickButtons': 'Quick Menu Buttons',
+	'Quit': 'Quit',
+	'QuitButton': 'Quit Game.',
 
-		'Resolution': 'Resolution',
+	'Resolution': 'Resolution',
 
-		'Save': 'Save',
-		'SaveButon': 'Open the Save Screen.',
-		'SaveInSlot': 'Save in slot',
-		'Settings': 'Settings',
-		'SettingsButton': 'Open the Settings Screen.',
-		'Show': 'Show',
-		'SlotDeletion': 'Are you sure you want to delete this slot?',
-		'SlotOverwrite': 'Are you sure you want to overwrite this slot?',
-		'Sound': 'Sound Volume',
-		'Start': 'Start',
-		'Stop': 'Stop',
+	'Save': 'Save',
+	'SaveButon': 'Open the Save Screen.',
+	'SaveInSlot': 'Save in slot',
+	'Settings': 'Settings',
+	'SettingsButton': 'Open the Settings Screen.',
+	'Show': 'Show',
+	'SlotDeletion': 'Are you sure you want to delete this slot?',
+	'SlotOverwrite': 'Are you sure you want to overwrite this slot?',
+	'Sound': 'Sound Volume',
+	'Start': 'Start',
+	'Stop': 'Stop',
 
-		'TextSpeed': 'Text Speed',
+	'TextSpeed': 'Text Speed',
 
-		'Voice': 'Voice Volume',
+	'Voice': 'Voice Volume',
 
-		'Windowed': 'Windowed'
-	},
+	'Windowed': 'Windowed'
+});
 
-	'Español': {
-		'AdvanceHelp': 'Para avanzar en el juego, presiona espacio o haz click.',
-		'Audio': 'Audio',
-		'AutoPlay': 'Auto',
-		'AutoPlaySpeed': 'Velocidad de Juego Automático',
+Monogatari.translation ('Español', {
+	'AdvanceHelp': 'Para avanzar en el juego, presiona espacio o haz click.',
+	'Audio': 'Audio',
+	'AutoPlay': 'Auto',
+	'AutoPlaySpeed': 'Velocidad de Juego Automático',
 
-		'Back': 'Atrás',
-		'BackButton': 'Atrás.',
+	'Back': 'Atrás',
+	'BackButton': 'Atrás.',
 
-		'Cancel': 'Cancelar',
-		'Close': 'Cerrar',
-		'Confirm': '¿Deseas salir?',
+	'Cancel': 'Cancelar',
+	'Close': 'Cerrar',
+	'Confirm': '¿Deseas salir?',
 
-		'FullScreen': 'Pantalla Completa',
+	'FullScreen': 'Pantalla Completa',
 
-		'Help': 'Ayuda',
-		'Hide': 'Ocultar',
-		'HideButton': 'Esconder el Texto.',
-
-		'iOSAudioWarning': 'Las configuraciones de Audio no están disponibles en iOS.',
+	'Help': 'Ayuda',
+	'Hide': 'Ocultar',
+	'HideButton': 'Esconder el Texto.',
 
-		'Language': 'Lenguaje',
-		'Load': 'Cargar',
-		'LoadAutoSaveSlots': 'Juegos Guardados Automaticamente',
-		'LoadButton': 'Abrir la Pantalla de Cargar.',
-		'Loading': 'Cargando',
-		'LoadingMessage': 'Espere mientras se cargan los archivos.',
-		'LoadSlots': 'Juegos Guardados',
-		'LocalStorageWarning': 'El Almacenaje Local no está disponible en este navegador.',
+	'iOSAudioWarning': 'Las configuraciones de Audio no están disponibles en iOS.',
 
-		'Music': 'Volumen de la Música',
+	'Language': 'Lenguaje',
+	'Load': 'Cargar',
+	'LoadAutoSaveSlots': 'Juegos Guardados Automaticamente',
+	'LoadButton': 'Abrir la Pantalla de Cargar.',
+	'Loading': 'Cargando',
+	'LoadingMessage': 'Espere mientras se cargan los archivos.',
+	'LoadSlots': 'Juegos Guardados',
+	'LocalStorageWarning': 'El Almacenaje Local no está disponible en este navegador.',
 
-		'NoSavedGames': 'No hay juegos guardados.',
-		'NoAutoSavedGames': 'No hay juegos guardados automaticamente.',
-
-		'OrientationWarning': 'Por favor rota tu dispositivo para jugar.',
-		'Overwrite': 'Sobreescribir',
+	'Music': 'Volumen de la Música',
 
-		'QuickButtons': 'Botones del Menú Rápido',
-		'Quit': 'Salir',
-		'QuitButton': 'Salir del Juego.',
+	'NoSavedGames': 'No hay juegos guardados.',
+	'NoAutoSavedGames': 'No hay juegos guardados automaticamente.',
 
-		'Resolution': 'Resolución',
+	'OrientationWarning': 'Por favor rota tu dispositivo para jugar.',
+	'Overwrite': 'Sobreescribir',
 
-		'Save': 'Guardar',
-		'SaveButon': 'Abrir la Pantalla de Guardar.',
-		'SaveInSlot': 'Guardar en ranura',
-		'Settings': 'Configuración',
-		'SettingsButton': 'Abrir la Pantalla de Configuración.',
-		'Show': 'Mostrar',
-		'SlotDeletion': '¿Está seguro de querer eliminar este juego?',
-		'SlotOverwrite': '¿Está seguro de querer Sobreescribir este juego?',
-		'Sound': 'Volumen de los Sonidos',
-		'Start': 'Comenzar',
-		'Stop': 'Detener',
-
-		'TextSpeed': 'Velocidad del Texto',
+	'QuickButtons': 'Botones del Menú Rápido',
+	'Quit': 'Salir',
+	'QuitButton': 'Salir del Juego.',
 
-		'Voice': 'Volumen de la Voz',
+	'Resolution': 'Resolución',
 
-		'Windowed': 'Ventana'
-	},
+	'Save': 'Guardar',
+	'SaveButon': 'Abrir la Pantalla de Guardar.',
+	'SaveInSlot': 'Guardar en ranura',
+	'Settings': 'Configuración',
+	'SettingsButton': 'Abrir la Pantalla de Configuración.',
+	'Show': 'Mostrar',
+	'SlotDeletion': '¿Está seguro de querer eliminar este juego?',
+	'SlotOverwrite': '¿Está seguro de querer Sobreescribir este juego?',
+	'Sound': 'Volumen de los Sonidos',
+	'Start': 'Comenzar',
+	'Stop': 'Detener',
+
+	'TextSpeed': 'Velocidad del Texto',
 
-	'Français': {
-		'AdvanceHelp': 'Pour avancer dans le jeu, appuyez sur la touche espace ou cliquez.',
-		'Audio': 'Audio',
-		'AutoPlay': 'Auto',
-		'AutoPlaySpeed': 'Vitesse de lecture automatique',
+	'Voice': 'Volumen de la Voz',
 
-		'Back': 'Retour',
-		'BackButton': 'Retour.',
+	'Windowed': 'Ventana'
+});
 
-		'Cancel': 'Annuler',
-		'Close': 'Fermer',
-		'Confirm': 'Voulez-vous vraiment quitter?',
+Monogatari.translation ('Français', {
+	'AdvanceHelp': 'Pour avancer dans le jeu, appuyez sur la touche espace ou cliquez.',
+	'Audio': 'Audio',
+	'AutoPlay': 'Auto',
+	'AutoPlaySpeed': 'Vitesse de lecture automatique',
 
-		'FullScreen': 'Plein Écran',
+	'Back': 'Retour',
+	'BackButton': 'Retour.',
 
-		'Help': 'Aide',
-		'Hide': 'Cacher',
-		'HideButton': 'Cacher le Texte.',
-
-		'iOSAudioWarning': 'Les paramètres audio ne sont pas pris en charge par iOS.',
-
-		'Language': 'Langue',
-		'Load': 'Charger',
-		'LoadAutoSaveSlots': 'Parties Enregistrées Automatiquement',
-		'LoadButton': 'Ouvrir l\'écran de Chargement.',
-		'Loading': 'Chargement',
-		'LoadingMessage': 'Veuillez patienter pendant que les fichiers sont chargés.',
-		'LoadSlots': 'Parties Sauvegardées',
-		'LocalStorageWarning': 'Le stockage local n\'est pas disponible sur ce navigateur.',
-
-		'Music': 'Volume de la Musique',
-
-		'NoSavedGames': 'Pas de parties sauvegardées.',
-		'NoAutoSavedGames': 'Aucune partie enregistrée automatiquement.',
+	'Cancel': 'Annuler',
+	'Close': 'Fermer',
+	'Confirm': 'Voulez-vous vraiment quitter?',
 
-		'OrientationWarning': 'Please rotate your device to play.',
-		'Overwrite': 'Écraser',
-
-		'QuickButtons': 'Boutons du Menu Rapide',
-		'Quit': 'Quitter',
-		'QuitButton': 'Quitter le Jeu.',
+	'FullScreen': 'Plein Écran',
 
-		'Resolution': 'Résolution',
-
-		'Save': 'Sauvegarder',
-		'SaveButon': 'Ouvrir l\'écran de Sauvegarde.',
-		'SaveInSlot': 'Enregistrer à l\'emplacement',
-		'Settings': 'Préférences',
-		'SettingsButton': 'Ouvrir l\'écran des Préférences.',
-		'Show': 'Monter',
-		'SlotDeletion': 'Êtes-vous sûr de vouloir supprimer cet emplacement ?',
-		'SlotOverwrite': 'Êtes vous sûr de vouloir remplacer cet emplacement ?',
-		'Sound': 'Volume des Sons',
-		'Start': 'Démarrer',
-		'Stop': 'Arrêter',
-
-		'TextSpeed': 'Vitesse du Texte',
+	'Help': 'Aide',
+	'Hide': 'Cacher',
+	'HideButton': 'Cacher le Texte.',
+
+	'iOSAudioWarning': 'Les paramètres audio ne sont pas pris en charge par iOS.',
+
+	'Language': 'Langue',
+	'Load': 'Charger',
+	'LoadAutoSaveSlots': 'Parties Enregistrées Automatiquement',
+	'LoadButton': 'Ouvrir l’écran de Chargement.',
+	'Loading': 'Chargement',
+	'LoadingMessage': 'Veuillez patienter pendant que les fichiers sont chargés.',
+	'LoadSlots': 'Parties Sauvegardées',
+	'LocalStorageWarning': 'Le stockage local n’est pas disponible sur ce navigateur.',
 
-		'Voice': 'Volume de la Voix',
-
-		'Windowed': 'Fenêtré'
-	},
+	'Music': 'Volume de la Musique',
 
-	'日本語': {
-		'AdvanceHelp': 'ゲームを進めるためには、スペースキーを押すかクリックします。',
-		'Audio': 'オーディオ',
-		'AutoPlay': '自動',
-		'AutoPlaySpeed': '自動再生速度',
+	'NoSavedGames': 'Pas de parties sauvegardées.',
+	'NoAutoSavedGames': 'Aucune partie enregistrée automatiquement.',
 
-		'Back': '巻き戻し',
-		'BackButton': '巻き戻し',
+	'OrientationWarning': 'Please rotate your device to play.',
+	'Overwrite': 'Écraser',
 
-		'Cancel': 'キャンセル',
-		'Close': '閉めて',
-		'Confirm': '終了しますか？',
-
-		'FullScreen': '全画面表示',
-
-		'Help': 'ヘルプ',
-		'Hide': '「非表示」',
-		'HideButton': 'テキストを隠します。',
-
-		'iOSAudioWarning': 'iOSではオーディオ設定がサポートされていません。',
-
-		'Language': '言語',
-		'Load': 'ロード',
-		'LoadAutoSaveSlots': '自動的に保存されたゲーム',
-		'LoadButton': 'ロード画面を開きます。',
-		'Loading': '読み込み中',
-		'LoadingMessage': 'ファイルがロードされるのを待ちます。',
-		'LoadSlots': '保存されたゲーム',
-		'LocalStorageWarning': 'このブラウザではローカルストレージは使用できません。',
-
-		'Music': '音楽の音量',
-
-		'NoSavedGames': '保存されたゲームはありません。',
-		'NoAutoSavedGames': '自動的に保存されたゲームはありません。',
-
-		'OrientationWarning': 'Please rotate your device to play.',
-		'Overwrite': '上書き',
-
-		'QuickButtons': 'クイックメニューボタン',
-		'Quit': '終了する',
-		'QuitButton': 'ゲームを終了します。',
-
-		'Resolution': '解像度',
-
-		'Save': 'セーブ',
-		'SaveButon': '保存画面を開きます。',
-		'SaveInSlot': 'スロットにセーブする',
-		'Settings': '環境設定',
-		'SettingsButton': '設定画面を開きます。',
-		'Show': 'ショー',
-		'SlotDeletion': '本当にこのスロットを削除しますか？',
-		'SlotOverwrite': '本当にこのスロットを上書きしますか？',
-		'Sound': '効果音の音量',
-		'Start': 'スタート',
-		'Stop': '停止',
-
-		'TextSpeed': 'テキストスピード',
-
-		'Voice': 'ボイスの音量',
-
-		'Windowed': '窓'
-	},
-	'Nederlands': {
-		'AdvanceHelp': 'Gebruik de spatiebalk of linker muisknop om te spelen.',
-		'Audio': 'Audio',
-		'AutoPlay': 'Auto',
-		'AutoPlaySpeed': 'Autoplay snelheid',
-
-		'Back': 'Terug',
-		'BackButton': 'Terug',
-
-		'Cancel': 'Stop',
-		'Close': 'Sluit',
-		'Confirm': 'Ben je zeker dat je wilt stoppen?',
-
-		'FullScreen': 'Volledig scherm',
-
-		'Help': 'Help',
-		'Hide': 'Verberg',
-		'HideButton': 'Verberg tekst.',
-
-		'iOSAudioWarning': 'Audio instellingen worden niet ondersteund door iOS.',
-
-		'Language': 'Taal',
-		'Load': 'Laad',
-		'LoadAutoSaveSlots': 'Automatisch opgeslagen spellen',
-		'LoadButton': 'Open het laadscherm.',
-		'Loading': 'Laden',
-		'LoadingMessage': 'Wacht tot de onderdelen zijn geladen.',
-		'LoadSlots': 'Opgeslagen spellen',
-		'LocalStorageWarning': 'Locale Opslag is niet mogelijk in deze Browser.',
-
-		'Music': 'Muziek Volume',
-
-		'NoSavedGames': 'Geen opgeslagen spellen.',
-		'NoAutoSavedGames': 'Geen automatsch opgeslagen spellen.',
-
-		'OrientationWarning': 'Please rotate your device to play.',
-		'Overwrite': 'Overschrijven',
-
-		'QuickButtons': 'Snelmenu knoppen',
-		'Quit': 'sluit',
-		'QuitButton': 'Sluit spel.',
-
-		'Resolution': 'Resolutie',
-
-		'Save': 'Opslaan',
-		'SaveButon': 'Open de Save Screen.',
-		'SaveInSlot': 'Sla op in slot',
-		'Settings': 'Instellingen',
-		'SettingsButton': 'Open de instellingen',
-		'Show': 'Tonen',
-		'SlotDeletion': 'Weet u zeker dat u dit slot verwijderen?',
-		'SlotOverwrite': 'Weet u zeker dat u dit slot overschrijven?',
-		'Sound': 'Geluids volume',
-		'Start': 'Start',
-		'Stop': 'Stop',
-
-		'TextSpeed': 'Tekst snelheid',
-
-		'Voice': 'Stem Volume',
-
-		'Windowed': 'Window modus'
-	}
-};
+	'QuickButtons': 'Boutons du Menu Rapide',
+	'Quit': 'Quitter',
+	'QuitButton': 'Quitter le Jeu.',
+
+	'Resolution': 'Résolution',
+
+	'Save': 'Sauvegarder',
+	'SaveButon': 'Ouvrir l’écran de Sauvegarde.',
+	'SaveInSlot': 'Enregistrer à l’emplacement',
+	'Settings': 'Préférences',
+	'SettingsButton': 'Ouvrir l’écran des Préférences.',
+	'Show': 'Monter',
+	'SlotDeletion': 'Êtes-vous sûr de vouloir supprimer cet emplacement ?',
+	'SlotOverwrite': 'Êtes vous sûr de vouloir remplacer cet emplacement ?',
+	'Sound': 'Volume des Sons',
+	'Start': 'Démarrer',
+	'Stop': 'Arrêter',
+
+	'TextSpeed': 'Vitesse du Texte',
+
+	'Voice': 'Volume de la Voix',
+
+	'Windowed': 'Fenêtré'
+});
+
+Monogatari.translation ('日本語', {
+	'AdvanceHelp': 'ゲームを進めるためには、スペースキーを押すかクリックします。',
+	'Audio': 'オーディオ',
+	'AutoPlay': '自動',
+	'AutoPlaySpeed': '自動再生速度',
+
+	'Back': '巻き戻し',
+	'BackButton': '巻き戻し',
+
+	'Cancel': 'キャンセル',
+	'Close': '閉めて',
+	'Confirm': '終了しますか？',
+
+	'FullScreen': '全画面表示',
+
+	'Help': 'ヘルプ',
+	'Hide': '「非表示」',
+	'HideButton': 'テキストを隠します。',
+
+	'iOSAudioWarning': 'iOSではオーディオ設定がサポートされていません。',
+
+	'Language': '言語',
+	'Load': 'ロード',
+	'LoadAutoSaveSlots': '自動的に保存されたゲーム',
+	'LoadButton': 'ロード画面を開きます。',
+	'Loading': '読み込み中',
+	'LoadingMessage': 'ファイルがロードされるのを待ちます。',
+	'LoadSlots': '保存されたゲーム',
+	'LocalStorageWarning': 'このブラウザではローカルストレージは使用できません。',
+
+	'Music': '音楽の音量',
+
+	'NoSavedGames': '保存されたゲームはありません。',
+	'NoAutoSavedGames': '自動的に保存されたゲームはありません。',
+
+	'OrientationWarning': 'Please rotate your device to play.',
+	'Overwrite': '上書き',
+
+	'QuickButtons': 'クイックメニューボタン',
+	'Quit': '終了する',
+	'QuitButton': 'ゲームを終了します。',
+
+	'Resolution': '解像度',
+
+	'Save': 'セーブ',
+	'SaveButon': '保存画面を開きます。',
+	'SaveInSlot': 'スロットにセーブする',
+	'Settings': '環境設定',
+	'SettingsButton': '設定画面を開きます。',
+	'Show': 'ショー',
+	'SlotDeletion': '本当にこのスロットを削除しますか？',
+	'SlotOverwrite': '本当にこのスロットを上書きしますか？',
+	'Sound': '効果音の音量',
+	'Start': 'スタート',
+	'Stop': '停止',
+
+	'TextSpeed': 'テキストスピード',
+
+	'Voice': 'ボイスの音量',
+
+	'Windowed': '窓'
+});
+
+Monogatari.translation ('Nederlands', {
+
+	'AdvanceHelp': 'Gebruik de spatiebalk of linker muisknop om te spelen.',
+	'Audio': 'Audio',
+	'AutoPlay': 'Auto',
+	'AutoPlaySpeed': 'Autoplay snelheid',
+
+	'Back': 'Terug',
+	'BackButton': 'Terug',
+
+	'Cancel': 'Stop',
+	'Close': 'Sluit',
+	'Confirm': 'Ben je zeker dat je wilt stoppen?',
+
+	'FullScreen': 'Volledig scherm',
+
+	'Help': 'Help',
+	'Hide': 'Verberg',
+	'HideButton': 'Verberg tekst.',
+
+	'iOSAudioWarning': 'Audio instellingen worden niet ondersteund door iOS.',
+
+	'Language': 'Taal',
+	'Load': 'Laad',
+	'LoadAutoSaveSlots': 'Automatisch opgeslagen spellen',
+	'LoadButton': 'Open het laadscherm.',
+	'Loading': 'Laden',
+	'LoadingMessage': 'Wacht tot de onderdelen zijn geladen.',
+	'LoadSlots': 'Opgeslagen spellen',
+	'LocalStorageWarning': 'Locale Opslag is niet mogelijk in deze Browser.',
+
+	'Music': 'Muziek Volume',
+
+	'NoSavedGames': 'Geen opgeslagen spellen.',
+	'NoAutoSavedGames': 'Geen automatsch opgeslagen spellen.',
+
+	'OrientationWarning': 'Please rotate your device to play.',
+	'Overwrite': 'Overschrijven',
+
+	'QuickButtons': 'Snelmenu knoppen',
+	'Quit': 'sluit',
+	'QuitButton': 'Sluit spel.',
+
+	'Resolution': 'Resolutie',
+
+	'Save': 'Opslaan',
+	'SaveButon': 'Open de Save Screen.',
+	'SaveInSlot': 'Sla op in slot',
+	'Settings': 'Instellingen',
+	'SettingsButton': 'Open de instellingen',
+	'Show': 'Tonen',
+	'SlotDeletion': 'Weet u zeker dat u dit slot verwijderen?',
+	'SlotOverwrite': 'Weet u zeker dat u dit slot overschrijven?',
+	'Sound': 'Geluids volume',
+	'Start': 'Start',
+	'Stop': 'Stop',
+
+	'TextSpeed': 'Tekst snelheid',
+
+	'Voice': 'Stem Volume',
+
+	'Windowed': 'Window modus'
+});
