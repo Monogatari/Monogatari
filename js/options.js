@@ -7,11 +7,7 @@
  * =======================================
  **/
 
-'use strict';
-/* exported engine */
-/* exported settings */
-
-const engine = {
+Monogatari.settings({
 
 	// Initial Label *
 	'Label': 'Start',
@@ -63,10 +59,10 @@ const engine = {
 	// player rotates its device.
 	// Possible values: any, portrait or landscape.
 	'Orientation': 'any'
-};
+});
 
 // Initial Settings
-const settings = {
+Monogatari.preferences ({
 
 	// Initial Language for Multilanguage Games or for the Default GUI Language.
 	'Language': 'English',
@@ -89,4 +85,4 @@ const settings = {
 	// It is measured in seconds and starts counting after the text is
 	// completely displayed.
 	'AutoPlaySpeed': 5
-};
+});
