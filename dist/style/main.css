@@ -24,11 +24,7 @@ body {
 
 /* Simple Button styles*/
 button {
-	background-image: url('./../img/ui/button.png');
-}
 
-button:hover {
-	background-image: url('./../img/ui/button-hover.png');
 }
 
 /* Simple Button Style on Hover */
@@ -40,17 +36,6 @@ button:hover {
 [data-menu] {
 
 }
-
-[data-component="modal"]::before {
-	content: " ";
-	position: absolute;
-	width: 500px;
-	height: 40px;
-	z-index: -1;
-	background-image: url('./../img/ui/clipboard.png');
-	background-color: transparent;
-}
-
 
 /**
  * ===========================
