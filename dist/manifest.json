@@ -1,0 +1,76 @@
+{
+	"short_name": "Monogatari",
+	"name": "Monogatari Visual Novel",
+	"background_color": "#F7F7F7",
+	"theme_color": "#F7F7F7",
+	"orientation": "landscape",
+	"display": "fullscreen",
+	"start_url": "index.html",
+	"icons": [
+		{
+			"src": "img/icons/icon_48x48.png",
+			"type": "image/png",
+			"sizes": "48x48"
+		},
+		{
+			"src": "img/icons/icon_60x60.png",
+			"type": "image/png",
+			"sizes": "60x60"
+		},
+		{
+			"src": "img/icons/icon_70x70.png",
+			"type": "image/png",
+			"sizes": "70x70"
+		},
+		{
+			"src": "img/icons/icon_76x76.png",
+			"type": "image/png",
+			"sizes": "76x76"
+		},
+		{
+			"src": "img/icons/icon_96x96.png",
+			"type": "image/png",
+			"sizes": "96x96"
+		},
+		{
+			"src": "img/icons/icon_128x128.png",
+			"type": "image/png",
+			"sizes": "128x128"
+		},
+		{
+			"src": "img/icons/icon_150x150.png",
+			"type": "image/png",
+			"sizes": "150x150"
+		},
+		{
+			"src": "img/icons/icon_152x152.png",
+			"type": "image/png",
+			"sizes": "152x152"
+		},
+		{
+			"src": "img/icons/icon_167x167.png",
+			"type": "image/png",
+			"sizes": "167x167"
+		},
+		{
+			"src": "img/icons/icon_180x180.png",
+			"type": "image/png",
+			"sizes": "180x180"
+		},
+		{
+			"src": "img/icons/icon_192x192.png",
+			"type": "image/png",
+			"sizes": "192x192"
+		},
+		{
+			"src": "img/icons/icon_310x310.png",
+			"type": "image/png",
+			"sizes": "310x310"
+		},
+		{
+			"src": "img/icons/icon_512x512.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		}
+	]
+}
