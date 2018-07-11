@@ -1,5 +1,5 @@
-import { Action } from './../Action';
-import { Monogatari } from './../monogatari';
+import { Action } from '../Action';
+import { Monogatari } from '../monogatari';
 
 export class Notify extends Action {
 
@@ -52,7 +52,7 @@ export class Notify extends Action {
 		return Promise.resolve ();
 	}
 
-	apply () {
+	apply (advance) {
 		const notification = new Notification (this.notification.title, this.notification);
 
 		if (typeof this.time !== 'undefined') {
@@ -61,6 +61,9 @@ export class Notify extends Action {
 			}, this.time);
 		}
 
+		if (advance) {
+			Monogatari.next ();
+		}
 		return Promise.resolve ();
 	}
 }

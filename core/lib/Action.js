@@ -8,6 +8,10 @@ class Action {
 		}
 	}
 
+	static reset () {
+
+	}
+
 	static setup () {
 		return Promise.resolve ();
 	}

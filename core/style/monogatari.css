@@ -148,6 +148,12 @@ select {
 	max-height: 80vh;
 }
 
+[data-sprite] {
+	margin: 0 auto;
+	left: 0;
+	right: 0;
+}
+
 /**
  * ===========================
  * Data Notice Styling
@@ -468,6 +474,9 @@ textarea {
 [data-ui="background"] {
 	width: 100%;
 	height: 100%;
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
 }
 
 [data-ui='inner-menu'] {

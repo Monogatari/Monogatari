@@ -1,4 +1,2 @@
 User-agent: *
-Disallow: /img/
-Disallow: /audio/
-Disallow: /video/
+Disallow: /assets

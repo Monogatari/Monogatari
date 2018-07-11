@@ -30,47 +30,47 @@ var files = [
 	// Fonts
 
 	// App Images
-	'img/favicon.ico',
-	'img/icons/icon_48x48.png',
-	'img/icons/icon_60x60.png',
-	'img/icons/icon_70x70.png',
-	'img/icons/icon_76x76.png',
-	'img/icons/icon_96x96.png',
-	'img/icons/icon_128x128.png',
-	'img/icons/icon_150x150.png',
-	'img/icons/icon_152x152.png',
-	'img/icons/icon_167x167.png',
-	'img/icons/icon_180x180.png',
-	'img/icons/icon_192x192.png',
-	'img/icons/icon_310x310.png',
-	'img/icons/icon_512x512.png'
+	'assets/favicon.ico',
+	'assets/icons/icon_48x48.png',
+	'assets/icons/icon_60x60.png',
+	'assets/icons/icon_70x70.png',
+	'assets/icons/icon_76x76.png',
+	'assets/icons/icon_96x96.png',
+	'assets/icons/icon_128x128.png',
+	'assets/icons/icon_150x150.png',
+	'assets/icons/icon_152x152.png',
+	'assets/icons/icon_167x167.png',
+	'assets/icons/icon_180x180.png',
+	'assets/icons/icon_192x192.png',
+	'assets/icons/icon_310x310.png',
+	'assets/icons/icon_512x512.png'
 
 	// Scene Images
-	//'img/scenes/',
+	//'assets/scenes/',
 
 	// Character Images
-	//'img/characters/',
+	//'assets/characters/',
 
 	// Side Images
-	//'img/characters/',
+	//'assets/characters/',
 
 	// UI Images
-	//'img/ui/',
+	//'assets/ui/',
 
 	// Music Audio
-	// 'audio/music/',
+	// 'assets/music/',
 
 	// Voice Audio
-	// 'audio/voice/'
+	// 'assets/voice/'
 
 	// Sound Audio
-	// 'audio/sound/'
+	// 'assets/sound/'
 ];
 
 self.addEventListener('install', function (event) {
 	event.waitUntil(
 		caches.open(`${name}-v${version}`).then(function (cache) {
-			return cache.addAll(files);
+			return cache.addAll (files);
 		})
 	);
 });
@@ -80,7 +80,7 @@ self.addEventListener('activate', function (event) {
 		caches.keys().then(function (keyList) {
 			return Promise.all(keyList.map(function (key) {
 				if (key !== `${name}-v${version}`) {
-					return caches.delete(key);
+					return caches.delete (key);
 				}
 			}));
 		})

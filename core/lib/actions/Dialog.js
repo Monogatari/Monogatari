@@ -1,9 +1,7 @@
-import { Action } from './../Action';
-import { Monogatari } from './../monogatari';
+import { Action } from '../Action';
+import { Monogatari } from '../monogatari';
 import Typed from 'typed.js';
 import { $_ } from '@aegis-framework/artemis';
-
-
 
 export class Dialog extends Action {
 
@@ -46,6 +44,7 @@ export class Dialog extends Action {
 
 	willApply () {
 		$_('[data-character]').removeClass ('focus');
+		this.dialog = this.context.replaceVariables (this.dialog);
 
 		$_('[data-ui="face"]').hide ();
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
@@ -137,7 +136,7 @@ export class Dialog extends Action {
 	}
 
 	revert () {
-		this.apply ();
+		return this.apply ();
 	}
 
 }
