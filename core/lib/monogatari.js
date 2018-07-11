@@ -4,9 +4,212 @@
 /* global notifications */
 /* global messages */
 
-const { $_, $_ready, Space, Platform, Preload } = Artemis;
 
-const Storage = new Space ();
+import { $_, Space, Platform, Preload } from '@aegis-framework/artemis';
+import {particlesJS, pJSDom } from 'particles.js';
+import Typed from 'typed.js';
+
+const HTML = `
+	<!-- Notice messages -->
+	<div data-notice="exit" class="modal">
+		<div class="row row--spaced">
+			<p data-string="Confirm" class="col xs12 m12 l12 xl12">Do you want to quit</p>
+			<div class="col xs12 m12 l12 xl12">
+				<button data-action="quit" data-string="Quit">Quit</button>
+				<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
+			</div>
+		</div>
+	</div>
+
+	<div data-notice="orientation" class="modal">
+		<div class="modal__content">
+			<p data-string="OrientationWarning">Please rotate your device to play.</p>
+		</div>
+	</div>
+
+	<div data-notice="slot-deletion" class="modal">
+		<div class="row spaced">
+			<p data-string="SlotDeletion" class="col xs12 m12 l12 xl12">Are you sure you want to delete this slot?</p>
+			<p class="col xs12 m12 l12 xl12"><small></small></p>
+			<div class="col xs12 m12 l12 xl12">
+				<button data-action="delete-slot" data-string="Delete">Delete</button>
+				<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
+			</div>
+		</div>
+	</div>
+
+	<div data-notice="slot-overwrite" class="modal">
+		<div class="row spaced">
+			<p data-string="SlotOverwrite" class="col xs12 m12 l12 xl12">Are you sure you want to overwrite this slot?</p>
+			<input type="text" name="name" class="margin-1 col xs12 m12 l12 xl12" required>
+			<div class="col xs12 m12 l12 xl12">
+				<button data-action="overwrite-slot" data-string="Delete">Overwrite</button>
+				<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
+			</div>
+		</div>
+	</div>
+
+	<!--Game Screen -->
+	<section id="game" class="unselectable">
+		<div id="particles-js" data-ui="particles"></div>
+		<div id="background" data-ui="background"></div>
+		<div>
+			<audio type="audio/mpeg" data-component="music"></audio>
+			<audio type="audio/mpeg" data-component="voice"></audio>
+			<audio type="audio/mpeg" data-component="sound"></audio>
+			<div class="video-wrapper text--center vertical middle" data-component="video" data-ui="video-player">
+				<video type="video/mp4" data-ui="player" controls="true"></video>
+				<button data-action="close-video" data-string="Close">Close</button>
+			</div>
+
+			<div data-component="modal" data-ui="messages" class="middle">
+				<div data-ui="message-content"></div>
+				<div class="horizontal horizontal--center" data-ui="inner-menu">
+					<button data-action="close" data-close="messages" data-string="Close">Close</button>
+				</div>
+			</div>
+			<div data-component="modal" data-ui="input" class="middle">
+				<p data-ui="input-message" class="block"></p>
+				<input type="text">
+				<small data-ui="warning" class="block"></small>
+				<div>
+					<button data-action="submit">Ok</button>
+				</div>
+			</div>
+		</div>
+
+		<div data-ui="choices" class="vertical text--center middle"></div>
+		<div data-ui="text">
+			<img data-ui="face" alt="">
+			<span data-ui="who"></span>
+			<p data-ui="say"></p>
+		</div>
+		<div data-ui="quick-menu" class="text--right">
+			<span data-action="back"><span class="fas fa-arrow-left"></span> <span data-string="Back">Back</span></span>
+			<span data-action="distraction-free"><span class="fas fa-eye" data-action="distraction-free"></span> <span data-string="Hide" data-action="distraction-free">Hide</span></span>
+			<span data-action="auto-play"><span class="fas fa-play-circle" data-action="auto-play"></span> <span data-string="AutoPlay" data-action="auto-play">Auto</span></span>
+			<span data-action="open-menu" data-open="save"><span class="fas fa-save" data-action="open-menu" data-open="save"></span> <span data-string="Save" data-action="open-menu" data-open="save">Save</span></span>
+			<span data-action="open-menu" data-open="load"><span class="fas fa-undo" data-action="open-menu" data-open="load"></span> <span data-string="Load" data-action="open-menu" data-open="load">Load</span></span>
+			<span data-action="open-menu" data-open="settings"><span class="fas fa-cog" data-action="open-menu" data-open="settings"></span> <span data-string="Settings" data-action="open-menu" data-open="settings">Settings</span></span>
+			<span data-action="end"><span class="fas fa-times-circle" data-action="end"></span> <span data-string="Quit" data-action="end">Quit</span></span>
+		</div>
+	</section>
+
+	<!-- Loading Screen -->
+	<section data-menu="loading" data-background="">
+		<div class="middle">
+			<h2 data-string="Loading">Loading</h2>
+			<progress data-ui="load-progress" value="0" max="100"></progress>
+			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
+		</div>
+	</section>
+
+	<!-- Main Screen -->
+	<section data-menu="main" data-background="">
+		<audio type="audio/mpeg" data-component="ambient"></audio>
+
+		<div class="vertical vertical--right text--right bottom animated bounceIn" data-ui="inner-menu">
+			<button data-action="start" data-string="Start">Start</button>
+			<button data-action="open-menu" data-open="load" data-string="Load">Load</button>
+			<button data-action="open-menu" data-open="settings" data-string="Settings">Settings</button>
+			<button data-action="open-menu" data-open="help" data-string="Help">Help</button>
+		</div>
+	</section>
+
+	<!-- Save Screen -->
+	<section data-menu="save" data-background="">
+		<button class="fas fa-arrow-left top left" data-action="back"></button>
+		<div class="horizontal horizontal--center">
+			<input type="text" placeholder="Save Slot Name" data-input="slotName" required>
+			<button data-string="Save" data-action="save">Save</button>
+		</div>
+		<div data-ui="slots" class="row row--spaced padded"></div>
+	</section>
+
+	<!-- Load Screen -->
+	<section data-menu="load" data-background="">
+		<button class="fas fa-arrow-left top left" data-action="back"></button>
+		<h2 data-string="Load">Load</h2>
+		<div data-ui="saveSlots">
+			<h3 data-string="LoadSlots">Saved Games</h3>
+			<div data-ui="slots" class="row row--spaced padded"></div>
+		</div>
+		<div data-ui="autoSaveSlots">
+			<h3 data-string="LoadAutoSaveSlots">Auto Saved Games</h3>
+			<div data-ui="slots" class="row row--spaced padded"></div>
+		</div>
+	</section>
+
+	<!-- Settings Screen -->
+	<section data-menu="settings" data-background="" class="text--center">
+		<button class="fas fa-arrow-left top left" data-action="back"></button>
+		<h2 data-string="Settings">Settings</h2>
+		<div class="row row--spaced padded text---center">
+			<div class="row__column row__column--12 row__column--phone--12 row__column--phablet--12 row__column--tablet--6 row__column--desktop--6 row__column--desktop-large--6 row__column--retina--6">
+				<div data-settings="audio" class="vertical vertical--center text--center">
+					<h3 data-string="Audio">Audio</h3>
+					<span data-string="Music">Music Volume:</span>
+					<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="music">
+					<span data-string="Sound">Sound Volume:</span>
+					<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="sound">
+					<span data-string="Voice">Voice Volume:</span>
+					<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="voice">
+				</div>
+			</div>
+
+			<div class="row__column row__column--12 row__column--phone--12 row__column--phablet--12 row__column--tablet--6 row__column--desktop--6 row__column--desktop-large--6 row__column--retina--6">
+
+				<div data-settings="text-speed">
+					<h3 data-string="TextSpeed">Text Speed</h3>
+					<input type="range" min="1" max="50" step="1" data-action="set-text-speed">
+				</div>
+
+				<div data-settings="auto-play-speed">
+					<h3 data-string="AutoPlaySpeed">Auto Play Speed</h3>
+					<input type="range" min="0" max="60" step="1" data-action="set-auto-play-speed">
+				</div>
+				<div data-settings="language">
+					<h3 data-string="Language">Language</h3>
+					<div class="horizontal">
+						<select data-action="set-language">
+								<option value="English">English</option>
+								<option value="Español">Español</option>
+								<option value="Français">Français</option>
+								<option value="日本語">日本語</option>
+								<option value="Nederlands">Nederlands</option>
+							</select>
+						<span class="fa fa-unsorted" data-select="set-language"></span>
+					</div>
+
+				</div>
+
+				<div data-settings="resolution" data-platform="electron">
+					<h3 data-string="Resolution">Resolution</h3>
+					<div class="horizontal">
+						<select data-action="set-resolution"></select>
+						<span class="fas fa-sort" data-select="set-resolution"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!--Help Screen -->
+	<section data-menu="help" data-background="">
+		<button class="fas fa-arrow-left top left" data-action="back"></button>
+		<h2 data-string="Help">Help</h2>
+		<div class="text--left padded">
+			<p data-string="AdvanceHelp">To advance through the game, click anywhere on the game screen or press the space key.</p>
+			<h3 data-string="QuickButtons">Quick Menu Buttons</h3>
+			<p><span class="fas fa-arrow-left"></span> <span data-string="BackButton">Back.</span></p>
+			<p><span class="fas fa-eye"></span> <span data-string="HideButton">Hide Text.</span></p>
+			<p><span class="fas fa-save"></span> <span data-string="SaveButon">Open the Save Screen.</span></p>
+			<p><span class="fas fa-undo"></span> <span data-string="LoadButton">Open the Load Screen.</span></p>
+			<p><span class="fas fa-cog"></span> <span data-string="SettingsButton">Open the Settings Screen.</span></p>
+			<p><span class="fas fa-times-circle"></span> <span data-string="QuitButton">Quit Game.</span></p>
+		</div>
+	</section>
+`;
 
 class Monogatari {
 
@@ -120,7 +323,7 @@ class Monogatari {
 	static preference (key, value = null) {
 		if (value !== null) {
 			Monogatari._preferences[key] = value;
-			Storage.update ('Settings', Monogatari._preferences);
+			Monogatari.Storage.update ('Settings', Monogatari._preferences);
 		} else {
 			if (typeof Monogatari._preferences[key] !== 'undefined') {
 				return Monogatari._preferences[key];
@@ -133,7 +336,7 @@ class Monogatari {
 	static preferences (object = null) {
 		if (object !== null) {
 			Monogatari._preferences = Object.assign ({}, Monogatari._preferences, object);
-			Storage.update ('Settings', Monogatari._preferences);
+			Monogatari.Storage.update ('Settings', Monogatari._preferences);
 		} else {
 			return Monogatari._preferences;
 		}
@@ -191,6 +394,22 @@ class Monogatari {
 				apply,
 				revert
 			};
+		}
+	}
+
+	static globals (object = null) {
+		if (object !== null) {
+			Monogatari._globals = Object.assign ({}, Monogatari._globals, object);
+		} else {
+			return Monogatari._globals;
+		}
+	}
+
+	static global (key, value) {
+		if (typeof value !== 'undefined') {
+			Monogatari._globals[key] = value;
+		} else {
+			return Monogatari._globals[key];
 		}
 	}
 
@@ -393,7 +612,7 @@ class Monogatari {
 
 		element.html ('');
 
-		Storage.keys ().then ((keys) => {
+		Monogatari.Storage.keys ().then ((keys) => {
 			const savedData = keys.filter ((key) => {
 				return key.indexOf (Monogatari.setting ('AutoSaveLabel')) === 0;
 			}).sort ((a, b) => {
@@ -412,7 +631,7 @@ class Monogatari {
 			for (let i = 0; i < savedData.length; i++) {
 				const label = savedData[i];
 				if (label.indexOf (Monogatari.setting ('AutoSaveLabel')) === 0) {
-					Storage.get (savedData[i]).then ((slot) => {
+					Monogatari.Storage.get (savedData[i]).then ((slot) => {
 						const id = label.split (Monogatari.setting ('AutoSaveLabel'))[1];
 						if (slot !== null && slot !== '') {
 							Monogatari.addAutoSlot (id, slot);
@@ -439,7 +658,7 @@ class Monogatari {
 
 		$_('[data-menu="save"] [data-input="slotName"]').value (Monogatari.niceDateTime ());
 
-		return Storage.keys ().then ((keys) => {
+		return Monogatari.Storage.keys ().then ((keys) => {
 			const savedData = keys.filter ((key) => {
 				return key.indexOf (Monogatari.setting ('SaveLabel')) === 0;
 			}).sort ((a, b) => {
@@ -458,7 +677,7 @@ class Monogatari {
 			const promises = [];
 			for (let i = 0; i < savedData.length; i++) {
 				const label = savedData[i];
-				promises.push(Storage.get (label).then ((slot) => {
+				promises.push(Monogatari.Storage.get (label).then ((slot) => {
 					const id = label.split (Monogatari.setting ('SaveLabel'))[1];
 					if (slot !== null && slot !== '') {
 						Monogatari.addSlot (id, slot);
@@ -479,7 +698,7 @@ class Monogatari {
 
 	// Get's the highest number currently available as a slot id (Save_{?})
 	static getMaxSlotId () {
-		return Storage.keys ().then ((keys) => {
+		return Monogatari.Storage.keys ().then ((keys) => {
 			let max = 1;
 			for (const saveKey of keys) {
 				if (saveKey.indexOf (Monogatari.setting ('SaveLabel')) === 0) {
@@ -495,7 +714,7 @@ class Monogatari {
 
 	static newSave (name) {
 		// Check if the player is actually playing
-		if (globals.playing) {
+		if (Monogatari.global ('playing')) {
 			document.body.style.cursor = 'wait';
 
 			// Get a list of all the images being shown in screen except the
@@ -506,7 +725,7 @@ class Monogatari {
 			});
 
 			Monogatari.getMaxSlotId ().then ((max) => {
-				Storage.set (Monogatari.setting ('SaveLabel') + (max + 1) , {
+				Monogatari.Storage.set (Monogatari.setting ('SaveLabel') + (max + 1) , {
 					'Name': name,
 					'Date': Monogatari.niceDateTime (),
 					'Engine': Monogatari.settings (),
@@ -522,7 +741,7 @@ class Monogatari {
 	}
 
 	static autoSave (id, slot) {
-		if (globals.playing) {
+		if (Monogatari.global ('playing')) {
 			document.body.style.cursor = 'wait';
 
 			// Get a list of all the images being shown in screen except the
@@ -534,7 +753,7 @@ class Monogatari {
 
 			const name = Monogatari.niceDateTime ();
 
-			Storage.set (slot, {
+			Monogatari.Storage.set (slot, {
 				'Name': name,
 				'Date': name,
 				'Engine': Monogatari.settings (),
@@ -551,7 +770,7 @@ class Monogatari {
 
 	static saveToSlot (id, slot, customName) {
 		// Check if the player is actually playing
-		if (globals.block) {
+		if (Monogatari.global ('block')) {
 			document.body.style.cursor = 'wait';
 
 			// Get a list of all the images being shown in screen except the
@@ -562,7 +781,7 @@ class Monogatari {
 			});
 
 			// Get the name of the Slot if it exists or use the current date.
-			Storage.get (slot).then ((data) => {
+			Monogatari.Storage.get (slot).then ((data) => {
 				let name;
 
 				if (data !== null && data !== '') {
@@ -580,7 +799,7 @@ class Monogatari {
 					name = customName;
 				}
 
-				Storage.set (slot, {
+				Monogatari.Storage.set (slot, {
 					'Name': name,
 					'Date': Monogatari.niceDateTime (),
 					'Engine': Monogatari.settings (),
@@ -598,13 +817,13 @@ class Monogatari {
 
 	static loadFromSlot (slot) {
 		document.body.style.cursor = 'wait';
-		globals.playing = true;
+		Monogatari.global ('playing', true);
 
 		Monogatari.resetGame ();
 
 		$_('section').hide();
 		$_('#game').show();
-		Storage.get (slot).then ((data) => {
+		Monogatari.Storage.get (slot).then ((data) => {
 			Monogatari.settings ({
 				'Label': data.Engine.Label,
 				'Song': data.Engine.Song,
@@ -620,9 +839,9 @@ class Monogatari {
 				'SceneElementsHistory': data.Engine.SceneElementsHistory,
 				'ParticlesHistory': data.Engine.ParticlesHistory
 			});
-			Monogatari.storage (Object.assign({}, JSON.parse(globals.storageStructure), data.Storage));
+			Monogatari.storage (Object.assign({}, JSON.parse(Monogatari.global ('storageStructure')), data.Storage));
 
-			globals.label = globals.game[data.Label];
+			Monogatari.global ('label', Monogatari.global ('game')[data.Label]);
 
 			for (const i in data.Show.split(',')) {
 				if (data.Show.split(',')[i].trim() != '') {
@@ -687,7 +906,7 @@ class Monogatari {
 			}
 
 			$_('#game').show();
-			Monogatari.run(globals.label[Monogatari.setting ('Step')]);
+			Monogatari.run(Monogatari.global ('label')[Monogatari.setting ('Step')]);
 			document.body.style.cursor = 'auto';
 		});
 	}
@@ -723,7 +942,7 @@ class Monogatari {
 
 	// Assert the result of a function
 	static assertAsync (callable, self = null, args = null) {
-		globals.block = true;
+		Monogatari.global ('block', true);
 		return new Promise (function (resolve, reject) {
 			const result = callable.apply(self, args);
 			// Check if the function returned a simple boolean
@@ -768,7 +987,7 @@ class Monogatari {
 				)
 			)
 			&& !$_('[data-component="video"]').isVisible ()
-			&& !globals.block) {
+			&& !Monogatari.global ('block')) {
 			return true;
 		} else {
 			return false;
@@ -899,8 +1118,8 @@ class Monogatari {
 	}
 
 	static whipeText () {
-		if (globals.textObject !== null) {
-			globals.textObject.destroy ();
+		if (Monogatari.global ('textObject') !== null) {
+			Monogatari.global ('textObject').destroy ();
 		}
 		$_('[data-ui="who"]').html ('');
 		$_('[data-ui="say"]').html ('');
@@ -930,18 +1149,18 @@ class Monogatari {
 		Monogatari.silence();
 		Monogatari.hideGameElements();
 
-		clearInterval (globals.autoPlay);
-		globals.autoPlay = null;
+		clearInterval (Monogatari.global ('autoPlay'));
+		Monogatari.global ('autoPlay', null);
 
 		$_('[data-action="auto-play"].fa').removeClass ('fa-stop-circle');
 		$_('[data-action="auto-play"].fa').addClass ('fa-play-circle');
 
 		// Reset Storage
-		Monogatari.storage (JSON.parse(globals.storageStructure));
+		Monogatari.storage (JSON.parse(Monogatari.global ('storageStructure')));
 
 		// Reset Conditions
 		Monogatari.setting ('Label', Monogatari.setting ('startLabel'));
-		globals.label = globals.game[Monogatari.setting ('Label')];
+		Monogatari.global ('label', Monogatari.global ('game')[Monogatari.setting ('Label')]);
 		Monogatari.setting ('Step', 0);
 
 		// Reset History
@@ -961,7 +1180,7 @@ class Monogatari {
 	}
 
 	static endGame () {
-		globals.playing = false;
+		Monogatari.global ('playing', false);
 
 		Monogatari.resetGame ();
 
@@ -973,15 +1192,15 @@ class Monogatari {
 
 	static next () {
 		Monogatari.setting ('Step', Monogatari.setting ('Step') + 1);
-		Monogatari.run (globals.label[Monogatari.setting ('Step')]);
+		Monogatari.run (Monogatari.global ('label')[Monogatari.setting ('Step')]);
 	}
 
 	static displayDialog (dialog, character, animation) {
 
-		// Destroy the Monogatari.previous textObject so the text is rewritten.
+		// Destroy the previous textObject so the text is rewritten.
 		// If not destroyed, the text would be appended instead of replaced.
-		if (globals.textObject !== null) {
-			globals.textObject.destroy ();
+		if (Monogatari.global ('textObject') !== null) {
+			Monogatari.global ('textObject').destroy ();
 		}
 
 		// Remove contents from the dialog area.
@@ -995,33 +1214,33 @@ class Monogatari {
 			// if it is set to false, even if the flag was set to true,
 			// no animation will be shown in the game.
 			if (Monogatari.setting ('TypeAnimation') === true) {
-				globals.typedConfiguration.strings = [dialog];
-				globals.textObject = new Typed ('[data-ui="say"]', globals.typedConfiguration);
+				Monogatari.global ('typedConfiguration').strings = [dialog];
+				Monogatari.global ('textObject', new Typed ('[data-ui="say"]', Monogatari.global ('typedConfiguration')));
 			} else {
 				$_('[data-ui="say"]').html (dialog);
-				if (globals.autoPlay !== null) {
-					globals.autoPlay = setTimeout (() => {
-						if (Monogatari.canProceed () && globals.finishedTyping) {
+				if (Monogatari.global ('autoPlay') !== null) {
+					Monogatari.global ('autoPlay', setTimeout (() => {
+						if (Monogatari.canProceed () && Monogatari.global ('finishedTyping')) {
 							Monogatari.hideCentered ();
 							Monogatari.shutUp ();
 							Monogatari.next ();
 						}
-					}, Monogatari.preference ('AutoPlaySpeed') * 1000);
+					}, Monogatari.preference ('AutoPlaySpeed') * 1000));
 				}
-				globals.finishedTyping = true;
+				Monogatari.global ('finishedTyping', true);
 			}
 		} else {
 			$_('[data-ui="say"]').html (dialog);
-			if (globals.autoPlay !== null) {
-				globals.autoPlay = setTimeout (() => {
-					if (Monogatari.canProceed() && globals.finishedTyping) {
+			if (Monogatari.global ('autoPlay') !== null) {
+				Monogatari.global ('autoPlay', setTimeout (() => {
+					if (Monogatari.canProceed() && Monogatari.global ('finishedTyping')) {
 						Monogatari.hideCentered();
 						Monogatari.shutUp();
 						Monogatari.next ();
 					}
-				}, Monogatari.preference ('AutoPlaySpeed') * 1000);
+				}, Monogatari.preference ('AutoPlaySpeed') * 1000));
 			}
-			globals.finishedTyping = true;
+			Monogatari.global ('finishedTyping', true);
 		}
 	}
 
@@ -1029,17 +1248,17 @@ class Monogatari {
 	static showMainMenu () {
 		if (!Monogatari.setting ('ShowMenu')) {
 			Monogatari.stopAmbient ();
-			globals.playing = true;
+			Monogatari.global ('playing', true);
 			$_('section').hide ();
 			$_('#game').show ();
-			Monogatari.run (globals.label[Monogatari.setting ('Step')]);
+			Monogatari.run (Monogatari.global ('label')[Monogatari.setting ('Step')]);
 		} else {
 			$_('[data-menu="main"]').show ();
 		}
 	}
 
 	// Function to execute the previous statement in the script.
-	static previous () {
+	static revert () {
 
 		Monogatari.hideCentered();
 		Monogatari.shutUp();
@@ -1049,9 +1268,9 @@ class Monogatari {
 			let flag = true;
 			try {
 				while (Monogatari.setting ('Step') > 0 && flag) {
-					if (typeof globals.label[Monogatari.setting ('Step')] == 'string') {
-						if (back.indexOf(globals.label[Monogatari.setting ('Step')].split(' ')[0]) > -1) {
-							const parts = Monogatari.replaceVariables(globals.label[Monogatari.setting ('Step')]).split(' ');
+					if (typeof Monogatari.global ('label')[Monogatari.setting ('Step')] == 'string') {
+						if (back.indexOf(Monogatari.global ('label')[Monogatari.setting ('Step')].split(' ')[0]) > -1) {
+							const parts = Monogatari.replaceVariables(Monogatari.global ('label')[Monogatari.setting ('Step')]).split(' ');
 							switch (parts[0]) {
 								case 'show':
 									if (typeof Monogatari.character (parts[1]) != 'undefined') {
@@ -1205,17 +1424,17 @@ class Monogatari {
 						} else {
 							flag = false;
 						}
-					} else if (typeof globals.label[Monogatari.setting ('Step')] == 'object') {
-						if (typeof globals.label[Monogatari.setting ('Step')].Function !== 'undefined') {
-							Monogatari.assertAsync(globals.label[Monogatari.setting ('Step')].Function.Reverse, Monogatari).finally (() => {
-								globals.block = false;
+					} else if (typeof Monogatari.global ('label')[Monogatari.setting ('Step')] == 'object') {
+						if (typeof Monogatari.global ('label')[Monogatari.setting ('Step')].Function !== 'undefined') {
+							Monogatari.assertAsync(Monogatari.global ('label')[Monogatari.setting ('Step')].Function.Reverse, Monogatari).finally (() => {
+								Monogatari.global ('block', false);
 							});
-						} else if (typeof globals.label[Monogatari.setting ('Step')].$ !== 'undefined') {
-							const fn = Monogatari.fn (globals.label[Monogatari.setting ('Step')].$.name);
+						} else if (typeof Monogatari.global ('label')[Monogatari.setting ('Step')].$ !== 'undefined') {
+							const fn = Monogatari.fn (Monogatari.global ('label')[Monogatari.setting ('Step')].$.name);
 							if (typeof fn  !== 'undefined') {
 								if (typeof fn.apply  !== 'undefined') {
 									Monogatari.assertAsync (fn.revert, Monogatari).finally (() => {
-										globals.block = false;
+										Monogatari.global ('block', false);
 									});
 								}
 							}
@@ -1228,7 +1447,7 @@ class Monogatari {
 						Monogatari.setting ('Step',  Monogatari.setting ('Step') + 1);
 					}
 				}
-				Monogatari.run (globals.label[Monogatari.setting ('Step')]);
+				Monogatari.run (Monogatari.global ('label')[Monogatari.setting ('Step')]);
 			} catch (e) {
 				console.error('An error ocurred while trying to exectute the Monogatari.previous statement.\n' + e);
 			}
@@ -1249,9 +1468,9 @@ class Monogatari {
 					switch (parts[0]) {
 
 						case 'wait':
-							globals.block = true;
+							Monogatari.global ('block', true);
 							setTimeout (() => {
-								globals.block = false;
+								Monogatari.global ('block', false);
 								if (advance) {
 									Monogatari.next ();
 								}
@@ -1440,10 +1659,10 @@ class Monogatari {
 
 						case 'jump':
 							Monogatari.setting ('Step', 0);
-							globals.label = globals.game[parts[1]];
+							Monogatari.global ('label', Monogatari.global ('game')[parts[1]]);
 							Monogatari.setting ('Label', parts[1]);
 							Monogatari.whipeText();
-							Monogatari.run(globals.label[Monogatari.setting ('Step')]);
+							Monogatari.run(Monogatari.global ('label')[Monogatari.setting ('Step')]);
 							break;
 
 						case 'stop':
@@ -1555,8 +1774,8 @@ class Monogatari {
 							$_('#game').append('<div class="middle align-center" data-ui="centered"></div>');
 							if (Monogatari.setting ('TypeAnimation')) {
 								if (Monogatari.setting ('CenteredTypeAnimation')) {
-									globals.typedConfiguration.strings = [statement.replace(parts[0] + ' ', '')];
-									globals.textObject = new Typed ('[data-ui="centered"]', globals.typedConfiguration);
+									Monogatari.global ('typedConfiguration').strings = [statement.replace(parts[0] + ' ', '')];
+									Monogatari.global ('textObject', new Typed ('[data-ui="centered"]', Monogatari.global ('typedConfiguration')));
 								} else {
 									$_('[data-ui="centered"]').html (statement.replace(parts[0] + ' ', ''));
 								}
@@ -1744,12 +1963,12 @@ class Monogatari {
 
 				case 'function':
 					Monogatari.assertAsync(statement, Monogatari).then(function () {
-						globals.block = false;
+						Monogatari.global ('block', false);
 						if (advance) {
 							Monogatari.next ();
 						}
 					}).catch(function () {
-						globals.block = false;
+						Monogatari.global ('block', false);
 					});
 					break;
 
@@ -1766,9 +1985,9 @@ class Monogatari {
 									} else {
 										$_('[data-ui="choices"]').append('<button data-do="' + choice.Do + '">' + choice.Text + '</button>');
 									}
-									globals.block = false;
+									Monogatari.global ('block', false);
 								}).catch(function () {
-									globals.block = false;
+									Monogatari.global ('block', false);
 								});
 							} else {
 								if (typeof choice == 'object') {
@@ -1787,10 +2006,10 @@ class Monogatari {
 						const condition = statement.Conditional;
 						Monogatari.assertAsync(condition.Condition, Monogatari).then(function () {
 							Monogatari.run(condition.True, false);
-							globals.block = false;
+							Monogatari.global ('block', false);
 						}).catch(function () {
 							Monogatari.run(condition.False, false);
-							globals.block = false;
+							Monogatari.global ('block', false);
 						});
 
 					} else if (typeof statement.Input != 'undefined') {
@@ -1809,41 +2028,41 @@ class Monogatari {
 									$_('[data-ui="input"] input').value('');
 									$_('[data-ui="input"] [data-action="submit"]').get(0).removeEventListener('click', inputButtonListener);
 									Monogatari.next ();
-									globals.block = false;
+									Monogatari.global ('block', false);
 								}).catch(function () {
 									$_('[data-ui="input"]').removeClass('active');
 									$_('[data-ui="input"] [data-ui="warning"]').text('');
 									$_('[data-ui="input"] input').value('');
 									$_('[data-ui="input"] [data-action="submit"]').get(0).removeEventListener('click', inputButtonListener);
-									globals.block = false;
+									Monogatari.global ('block', false);
 								});
 							}).catch(function () {
 								$_('[data-ui="input"] [data-ui="warning"]').text(statement.Input.Warning);
-								globals.block = false;
+								Monogatari.global ('block', false);
 							});
 						}
 
 						$_('[data-ui="input"] [data-action="submit"]').click(inputButtonListener);
 					} else if (typeof statement.Function !== 'undefined') {
 						Monogatari.assertAsync(statement.Function.Apply, Monogatari).then(function () {
-							globals.block = false;
+							Monogatari.global ('block', false);
 							if (advance) {
 								Monogatari.next ();
 							}
 						}).catch(function () {
-							globals.block = false;
+							Monogatari.global ('block', false);
 						});
 					} else if (typeof statement.$ !== 'undefined') {
 						const fn = Monogatari.fn (statement.$.name);
 						if (typeof fn  !== 'undefined') {
 							if (typeof fn.apply  !== 'undefined') {
 								Monogatari.assertAsync (fn.apply, Monogatari).then (function () {
-									globals.block = false;
+									Monogatari.global ('block', false);
 									if (advance) {
 										Monogatari.next ();
 									}
 								}).catch(function () {
-									globals.block = false;
+									Monogatari.global ('block', false);
 								});
 							}
 						}
@@ -1860,12 +2079,14 @@ class Monogatari {
 
 	/////////////////
 
-	static setup () {
+	static setup (selector) {
+
+		$_(selector).html (HTML);
 		// Set the initial settings if they don't exist or load them.
-		Storage.get ('Settings').then ((local_settings) => {
+		Monogatari.Storage.get ('Settings').then ((local_settings) => {
 			Monogatari._preferences = Object.assign ({}, Monogatari._preferences, local_settings);
 		}).catch (() => {
-			Storage.set ('Settings', Monogatari._preferences);
+			Monogatari.Storage.set ('Settings', Monogatari._preferences);
 		});
 
 		if (typeof Typed === 'undefined') {
@@ -1878,19 +2099,19 @@ class Monogatari {
 		// Register service worker
 		if (Monogatari.setting ('ServiceWorkers')) {
 			if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
-				navigator.serviceWorker.register ('./../service-worker.js');
+				//navigator.serviceWorker.register ('./../service-worker.js');
 			} else {
 				console.warn ('Service Workers are not available in this browser or have been disabled in the engine configuration. Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/');
 			}
 		}
 
-		globals.storageStructure = JSON.stringify(Monogatari.storage ());
+		Monogatari.global ('storageStructure', JSON.stringify(Monogatari.storage ()));
 	}
 
 	/**
 	 * Every event listener should be binded in this function.
 	 */
-	static bind () {
+	static bind (selector) {
 		// Fix for select labels
 		$_('[data-select]').click (function () {
 			const e = document.createEvent ('MouseEvents');
@@ -1923,9 +2144,9 @@ class Monogatari {
 		// button will return to the game, if its not playing, then it'll return
 		// to the main menu.
 		$_('[data-menu]').on ('click', '[data-action="back"]:not(#game)', (event) => {
-			event.stopPropagation ();
+			//event.stopPropagation ();
 			$_('section').hide ();
-			if (globals.playing) {
+			if (Monogatari.global ('playing')) {
 				$_('#game').show ();
 			} else {
 				$_('[data-menu="main"]').show ();
@@ -1934,8 +2155,8 @@ class Monogatari {
 
 		// Save to slot when a slot is pressed.
 		$_('[data-menu="save"]').on ('click', 'figcaption, img, small', function () {
-			globals.overwriteSlot = $_(this).parent ().data ('save');
-			Storage.get (Monogatari.setting ('SaveLabel') + globals.overwriteSlot).then ((data) => {
+			Monogatari.global ('overwriteSlot', $_(this).parent ().data ('save'));
+			Monogatari.Storage.get (Monogatari.setting ('SaveLabel') + Monogatari.global ('overwriteSlot')).then ((data) => {
 				if (typeof data.Name !== 'undefined') {
 					$_('[data-notice="slot-overwrite"] input').value (data.Name);
 				} else {
@@ -1946,8 +2167,8 @@ class Monogatari {
 		});
 
 		$_('[data-menu="save"], [data-menu="load"]').on ('click', '[data-delete]', function () {
-			globals.deleteSlot = $_(this).data ('delete');
-			Storage.get (Monogatari.setting ('SaveLabel') + globals.deleteSlot).then ((data) => {
+			Monogatari.global ('deleteSlot', $_(this).data ('delete'));
+			Monogatari.Storage.get (Monogatari.setting ('SaveLabel') + Monogatari.global ('deleteSlot')).then ((data) => {
 				if (typeof data.Name !== 'undefined') {
 					$_('[data-notice="slot-deletion"] small').text (data.Name);
 				} else {
@@ -1986,12 +2207,12 @@ class Monogatari {
 					Monogatari.preference ('Volume').Sound = value;
 					break;
 			}
-			Storage.set ('Settings', Monogatari.preferences ());
+			Monogatari.Storage.set ('Settings', Monogatari.preferences ());
 		});
 
 		$_('[data-action="set-text-speed"]').on ('change mouseover', function () {
 			const value =  Monogatari.setting ('maxTextSpeed') - parseInt($_(this).value());
-			globals.typedConfiguration.typeSpeed = value;
+			Monogatari.global ('typedConfiguration').typeSpeed = value;
 			Monogatari.preference ('TextSpeed', value);
 		});
 
@@ -2002,8 +2223,8 @@ class Monogatari {
 
 		// Language select listener
 		$_('[data-action="set-language"]').change (() => {
-			globals.game =  Monogatari.script (Monogatari.preference ('Language'));
-			globals.label = globals.game[Monogatari.setting ('Label')];
+			Monogatari.global ('game', Monogatari.script (Monogatari.preference ('Language')));
+			Monogatari.global ('label', Monogatari.global ('game')[Monogatari.setting ('Label')]);
 		});
 
 		$_('#game [data-ui="quick-menu"], #game [data-ui="quick-menu"] *').click ((event) => {
@@ -2027,16 +2248,16 @@ class Monogatari {
 
 		$_('#game').click(function () {
 			if (Monogatari.canProceed()) {
-				if (!globals.finishedTyping && globals.textObject !== null) {
-					const str = globals.textObject.strings [0];
-					const element = $_(globals.textObject.el).data ('ui');
-					globals.textObject.destroy ();
+				if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
+					const str = Monogatari.global ('textObject').strings [0];
+					const element = $_(Monogatari.global ('textObject').el).data ('ui');
+					Monogatari.global ('textObject').destroy ();
 					if (element == 'centered') {
 						$_('[data-ui="centered"]').html (str);
 					} else {
 						$_('[data-ui="say"]').html (str);
 					}
-					globals.finishedTyping = true;
+					Monogatari.global ('finishedTyping', true);
 				} else {
 					Monogatari.hideCentered ();
 					Monogatari.shutUp();
@@ -2065,10 +2286,10 @@ class Monogatari {
 
 				case 'start':
 					Monogatari.stopAmbient();
-					globals.playing = true;
+					Monogatari.global ('playing', true);
 					$_('section').hide();
 					$_('#game').show();
-					Monogatari.run(globals.label[Monogatari.setting ('Step')]);
+					Monogatari.run (Monogatari.global ('label')[Monogatari.setting ('Step')]);
 					break;
 
 				case 'close':
@@ -2124,42 +2345,42 @@ class Monogatari {
 					if ($_(this).hasClass('fa-play-circle')) {
 						$_(this).removeClass('fa-play-circle');
 						$_(this).addClass('fa-stop-circle');
-						globals.autoPlay = setTimeout (function () {
-							if (Monogatari.canProceed() && globals.finishedTyping) {
+						Monogatari.global ('autoPlay', setTimeout (function () {
+							if (Monogatari.canProceed() && Monogatari.global ('finishedTyping')) {
 								Monogatari.hideCentered();
 								Monogatari.shutUp();
 								Monogatari.next ();
 							}
-						}, Monogatari.preference ('AutoPlaySpeed') * 1000);
+						}, Monogatari.preference ('AutoPlaySpeed') * 1000));
 					} else if ($_(this).hasClass('fa-stop-circle')) {
 						$_(this).removeClass('fa-stop-circle');
 						$_(this).addClass('fa-play-circle');
-						clearTimeout (globals.autoPlay);
-						globals.autoPlay = null;
+						clearTimeout (Monogatari.global ('autoPlay'));
+						Monogatari.global ('autoPlay', null);
 					} else if ($_(this).text () === Monogatari.string ('AutoPlay')) {
 						$_(this).text (Monogatari.string('Stop'));
-						globals.autoPlay = setTimeout(function () {
-							if (Monogatari.canProceed() && globals.finishedTyping) {
+						Monogatari.global ('autoPlay', setTimeout(function () {
+							if (Monogatari.canProceed() && Monogatari.global ('finishedTyping')) {
 								Monogatari.hideCentered();
 								Monogatari.shutUp();
 								Monogatari.next ();
 							}
-						}, Monogatari.preference ('AutoPlaySpeed') * 1000);
+						}, Monogatari.preference ('AutoPlaySpeed') * 1000));
 					} else if ($_(this).text () === Monogatari.string ('Stop')) {
 						$_(this).text (Monogatari.string ('AutoPlay'));
-						clearTimeout (globals.autoPlay);
-						globals.autoPlay = null;
+						clearTimeout (Monogatari.global ('autoPlay'));
+						Monogatari.global ('autoPlay', null);
 					}
 					break;
 
 				case 'jump':
 					Monogatari.stopAmbient();
-					globals.label = globals.game[$_(this).data('jump')];
+					Monogatari.global ('label', Monogatari.global ('game')[$_(this).data('jump')]);
 					Monogatari.setting ('Step', 0);
-					globals.playing = true;
+					Monogatari.global ('playing', true);
 					$_('section').hide();
 					$_('#game').show();
-					Monogatari.run(globals.label[Monogatari.setting ('Step')]);
+					Monogatari.run(Monogatari.global ('label')[Monogatari.setting ('Step')]);
 					break;
 
 				case 'save':
@@ -2170,17 +2391,17 @@ class Monogatari {
 					break;
 
 				case 'delete-slot':
-					Storage.remove (Monogatari.setting ('SaveLabel') + globals.deleteSlot);
-					$_(`[data-load-slot="${globals.deleteSlot}"], [data-save="${globals.deleteSlot}"]`).remove ();
-					globals.deleteSlot = null;
+					Monogatari.Storage.remove (Monogatari.setting ('SaveLabel') + Monogatari.global ('deleteSlot'));
+					$_(`[data-load-slot="${Monogatari.global ('deleteSlot')}"], [data-save="${Monogatari.global ('deleteSlot')}"]`).remove ();
+					Monogatari.global ('deleteSlot', null);
 					$_('[data-notice="slot-deletion"]').removeClass ('modal--active');
 					break;
 
 				case 'overwrite-slot':
 					var customName = $_('[data-notice="slot-overwrite"] input').value ().trim ();
 					if (customName !== '') {
-						Monogatari.saveToSlot (globals.overwriteSlot, Monogatari.setting ('SaveLabel') + globals.overwriteSlot, customName);
-						globals.overwriteSlot = null;
+						Monogatari.saveToSlot (Monogatari.global ('overwriteSlot'), Monogatari.setting ('SaveLabel') + Monogatari.global ('overwriteSlot'), customName);
+						Monogatari.global ('overwriteSlot', null);
 						$_('[data-notice="slot-overwrite"]').removeClass ('modal--active');
 					}
 					break;
@@ -2191,7 +2412,7 @@ class Monogatari {
 		$_('#game [data-action="back"], #game [data-action="back"] *').click(function (event) {
 			event.stopPropagation ();
 			if (Monogatari.canProceed ()) {
-				Monogatari.previous ();
+				Monogatari.revert ();
 			}
 		});
 
@@ -2217,16 +2438,16 @@ class Monogatari {
 					case 32:
 					case 39:
 						if (Monogatari.canProceed()) {
-							if (!globals.finishedTyping && globals.textObject !== null) {
-								const str = globals.textObject.strings [0];
-								const element = $_(globals.textObject.el).data ('ui');
-								globals.textObject.destroy ();
+							if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
+								const str = Monogatari.global ('textObject').strings [0];
+								const element = $_(Monogatari.global ('textObject').el).data ('ui');
+								Monogatari.global ('textObject').destroy ();
 								if (element == 'centered') {
 									$_('[data-ui="centered"]').html (str);
 								} else {
 									$_('[data-ui="say"]').html (str);
 								}
-								globals.finishedTyping = true;
+								Monogatari.global ('finishedTyping', true);
 							} else {
 								Monogatari.hideCentered();
 								Monogatari.shutUp();
@@ -2237,7 +2458,7 @@ class Monogatari {
 
 					// Left Arrow
 					case 37:
-						Monogatari.previous();
+						Monogatari.revert();
 						break;
 
 					// H Key
@@ -2274,26 +2495,26 @@ class Monogatari {
 		});
 	}
 
-	static init () {
+	static init (selector = '#monogatari') {
 
-		Monogatari.setup ();
-		Monogatari.bind ();
+		Monogatari.setup (selector);
+		Monogatari.bind (selector);
 
 		// Set the initial language translations
 		Monogatari.localize ();
 
 		// Set the game language or hide the option if the game is not multilingual
 		if (Monogatari.setting ('MultiLanguage')) {
-			globals.game = Monogatari.script (Monogatari.preference ('Language'));
+			Monogatari.global ('game', Monogatari.script (Monogatari.preference ('Language')));
 			$_('[data-action="set-language"]').value (Monogatari.preference ('Language'));
 			Monogatari.localize ();
 		} else {
-			globals.game = Monogatari.script ();
+			Monogatari.global ('game', Monogatari.script ());
 			$_('[data-settings="language"]').hide ();
 		}
 
 		// Set the label in which the game will start
-		globals.label = globals.game[Monogatari.setting ('Label')];
+		Monogatari.global ('label', Monogatari.global ('game')[Monogatari.setting ('Label')]);
 
 		// Check if the orientation is correct, if it's not, show the warning
 		// message so the player will rotate its device.
@@ -2359,12 +2580,12 @@ class Monogatari {
 
 		if (Monogatari.setting ('AutoSave') != 0 && typeof Monogatari.setting ('AutoSave') === 'number') {
 			setInterval(function () {
-				Monogatari.autoSave (globals.currentAutoSaveSlot, Monogatari.setting ('AutoSaveLabel') + globals.currentAutoSaveSlot);
+				Monogatari.autoSave (Monogatari.global ('currentAutoSaveSlot'), Monogatari.setting ('AutoSaveLabel') + Monogatari.global ('currentAutoSaveSlot'));
 
-				if (globals.currentAutoSaveSlot === Monogatari.setting ('Slots')) {
-					globals.currentAutoSaveSlot = 1;
+				if (Monogatari.global ('currentAutoSaveSlot') === Monogatari.setting ('Slots')) {
+					Monogatari.global ('currentAutoSaveSlot', 1);
 				} else {
-					globals.currentAutoSaveSlot += 1;
+					Monogatari.global ('currentAutoSaveSlot', Monogatari.global ('currentAutoSaveSlot') + 1);
 				}
 				Monogatari.setAutoSlots ();
 
@@ -2425,7 +2646,7 @@ Monogatari._settings = {
 	// Current Statement *.
 	'Step': 0,
 
-	// History for the Monogatari.previous function *.
+	// History for the previous function *.
 	'MusicHistory': [],
 	'SoundHistory': [],
 	'ImageHistory': [],
@@ -2464,7 +2685,7 @@ Monogatari._settings = {
 	'TypeAnimation': true,
 
 	// Enables or disables the typing animation for the narrator.
-	// If the Monogatari.previous property was set to false, the narrator won't shown
+	// If the previous property was set to false, the narrator won't shown
 	// the animation even if this is set to true.
 	'NarratorTypeAnimation': true,
 
@@ -2505,7 +2726,7 @@ Monogatari._preferences = {
 	'AutoPlaySpeed': 5
 };
 
-const globals = {
+Monogatari.globals ({
 	label: '',
 	game: {},
 	textObject: null,
@@ -2524,28 +2745,27 @@ const globals = {
 		showCursor: false,
 		contentType: 'html',
 		preStringTyped: function () {
-			globals.finishedTyping = false;
+			Monogatari.global ('finishedTyping', false);
 		},
 		onStringTyped: function () {
-			if (globals.autoPlay !== null) {
-				globals.autoPlay = setTimeout (function () {
-					if (Monogatari.canProceed() && globals.finishedTyping) {
+			if (Monogatari.global ('autoPlay') !== null) {
+				Monogatari.global ('autoPlay', setTimeout (function () {
+					if (Monogatari.canProceed() && Monogatari.global ('finishedTyping')) {
 						Monogatari.hideCentered();
 						Monogatari.shutUp ();
 						Monogatari.next ();
 					}
-				}, Monogatari.preference ('AutoPlaySpeed') * 1000);
+				}, Monogatari.preference ('AutoPlaySpeed') * 1000));
 			}
 
-			globals.finishedTyping = true;
+			Monogatari.global ('finishedTyping', true);
 		},
 		onDestroy () {
-			globals.finishedTyping = true;
+			Monogatari.global ('finishedTyping', true);
 		}
 	}
-};
-
-
-$_ready(() => {
-	Monogatari.init ();
 });
+
+Monogatari.Storage = new Space ();
+
+export { Monogatari };
