@@ -6,6 +6,10 @@
  * Unless you know what you are doing
  * =======================================
  **/
+
+'use strict';
+/* global Monogatari */
+
 const { Monogatari: monogatari } = Monogatari;
 
 monogatari.settings({

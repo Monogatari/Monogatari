@@ -16,13 +16,15 @@ let messages = {
 };
 
 // Define the notifications used in the game
-let notifications = {
-	'Welcome': {
-		title: 'Welcome',
-		body: 'This is the Monogatari VN Engine',
-		icon: ''
+monogatari.action ('Notify', {
+	notifications: {
+		'Welcome': {
+			title: 'Welcome',
+			body: 'This is the Monogatari VN Engine',
+			icon: ''
+		}
 	}
-};
+});
 
 // Define the Particles JS Configurations used in the game
 let particles = {

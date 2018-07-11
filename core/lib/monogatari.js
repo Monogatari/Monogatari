@@ -5,7 +5,7 @@
 /* global messages */
 
 
-import { $_, Space, Platform, Preload } from '@aegis-framework/artemis';
+import { $_, Space, Platform, Preload, Util } from '@aegis-framework/artemis';
 import {particlesJS, pJSDom } from 'particles.js';
 import Typed from 'typed.js';
 
@@ -96,7 +96,7 @@ const HTML = `
 	</section>
 
 	<!-- Loading Screen -->
-	<section data-menu="loading" data-background="">
+	<section data-menu="loading">
 		<div class="middle">
 			<h2 data-string="Loading">Loading</h2>
 			<progress data-ui="load-progress" value="0" max="100"></progress>
@@ -105,7 +105,7 @@ const HTML = `
 	</section>
 
 	<!-- Main Screen -->
-	<section data-menu="main" data-background="">
+	<section data-menu="main">
 		<audio type="audio/mpeg" data-component="ambient"></audio>
 
 		<div class="vertical vertical--right text--right bottom animated bounceIn" data-ui="inner-menu">
@@ -117,7 +117,7 @@ const HTML = `
 	</section>
 
 	<!-- Save Screen -->
-	<section data-menu="save" data-background="">
+	<section data-menu="save">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<div class="horizontal horizontal--center">
 			<input type="text" placeholder="Save Slot Name" data-input="slotName" required>
@@ -127,7 +127,7 @@ const HTML = `
 	</section>
 
 	<!-- Load Screen -->
-	<section data-menu="load" data-background="">
+	<section data-menu="load">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Load">Load</h2>
 		<div data-ui="saveSlots">
@@ -141,7 +141,7 @@ const HTML = `
 	</section>
 
 	<!-- Settings Screen -->
-	<section data-menu="settings" data-background="" class="text--center">
+	<section data-menu="settings" class="text--center">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Settings">Settings</h2>
 		<div class="row row--spaced padded text---center">
@@ -195,7 +195,7 @@ const HTML = `
 	</section>
 
 	<!--Help Screen -->
-	<section data-menu="help" data-background="">
+	<section data-menu="help">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Help">Help</h2>
 		<div class="text--left padded">
@@ -234,7 +234,11 @@ class Monogatari {
 		Monogatari._components = Monogatari._actions.filter ((c) => !(c instanceof component));
 	}
 
-	static actions (id, settings = null) {
+	static actions () {
+		return Monogatari._actions;
+	}
+
+	static action (id, settings = null) {
 		if (settings !== null) {
 			Monogatari._actions.find ((a) => a.id === id).settings = Object.assign ({}, Monogatari._actions.find ((a) => a.id === id).settings, settings);
 		} else {
@@ -547,12 +551,12 @@ class Monogatari {
 
 	static addSlot (i, data) {
 		const name = data.Name ? data.Name : data.Date;
-		if (typeof Monogatari.assets ('scenes', data.Engine.Scene) !== 'undefined') {
+		if (typeof Monogatari.asset ('scenes', data.Engine.Scene) !== 'undefined') {
 
 			$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (`
 				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'>
 					<button class='fas fa-times' data-delete='${i}'></button>
-					<img src='img/scenes/${Monogatari.assets ('scenes', data.Engine.Scene)}' alt=''>
+					<img src='img/scenes/${Monogatari.asset ('scenes', data.Engine.Scene)}' alt=''>
 					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
 				</figure>
 			`);
@@ -560,7 +564,7 @@ class Monogatari {
 			$_('[data-menu="save"] [data-ui="slots"]').append (`
 				<figure data-save='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3'>
 					<button class='fas fa-times' data-delete='${i}'></button>
-					<img src='img/scenes/${Monogatari.assets ('scenes', data.Engine.Scene)}' alt=''>
+					<img src='img/scenes/${Monogatari.asset ('scenes', data.Engine.Scene)}' alt=''>
 					<figcaption>${Monogatari.string ('Overwrite')} #${i}<small>${name}</small></figcaption>
 				</figure>
 			`);
@@ -585,11 +589,11 @@ class Monogatari {
 	static addAutoSlot (i, data) {
 		const name = data.Name ? data.Name : data.Date;
 
-		if (typeof Monogatari.assets ('scenes', data.Engine.Scene) !== 'undefined') {
+		if (typeof Monogatari.asset ('scenes', data.Engine.Scene) !== 'undefined') {
 			$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (`
 				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'>
 					<button class='fas fa-times' data-delete=${i}></button>
-					<img src='img/scenes/${Monogatari.assets ('scenes', data.Engine.Scene)}' alt=''>
+					<img src='img/scenes/${Monogatari.asset ('scenes', data.Engine.Scene)}' alt=''>
 					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
 				</figure>
 			`);
@@ -732,7 +736,7 @@ class Monogatari {
 					'Show': show,
 					'Label': Monogatari.setting ('Label'),
 					'Storage': Monogatari.storage ()
-				}).then (({key, value}) => {
+				}).then (({ value }) => {
 					Monogatari.addSlot (max + 1, value);
 					document.body.style.cursor = 'auto';
 				});
@@ -851,8 +855,8 @@ class Monogatari {
 
 			$_('[data-ui="background"]').fadeOut(200, function () {
 
-				if (typeof Monogatari.assets ('scenes', data.Engine.Scene) !== 'undefined') {
-					$_('[data-ui="background"]').style('background', 'url(img/scenes/' + Monogatari.assets ('scenes', data.Engine.Scene) + ') center / cover no-repeat');
+				if (typeof Monogatari.asset ('scenes', data.Engine.Scene) !== 'undefined') {
+					$_('[data-ui="background"]').style('background', 'url(img/scenes/' + Monogatari.asset ('scenes', data.Engine.Scene) + ') center / cover no-repeat');
 				} else {
 					$_('[data-ui="background"]').style('background', data.Engine.Scene);
 				}
@@ -870,8 +874,8 @@ class Monogatari {
 						Monogatari.musicPlayer.removeAttribute('loop');
 					}
 
-					if (typeof Monogatari.assets ('music', parts[2]) != 'undefined') {
-						Monogatari.musicPlayer.setAttribute('src', 'audio/music/' + Monogatari.assets ('music', parts[2]));
+					if (typeof Monogatari.asset ('music', parts[2]) != 'undefined') {
+						Monogatari.musicPlayer.setAttribute('src', 'audio/music/' + Monogatari.asset ('music', parts[2]));
 					} else {
 						Monogatari.musicPlayer.setAttribute('src', 'audio/music/' + parts[2]);
 					}
@@ -889,8 +893,8 @@ class Monogatari {
 						Monogatari.soundPlayer.removeAttribute('loop');
 					}
 
-					if (typeof  Monogatari.assets ('sound', parts[2]) != 'undefined') {
-						Monogatari.soundPlayer.setAttribute('src', 'audio/sound/' + Monogatari.assets ('sound', parts[2]));
+					if (typeof  Monogatari.asset ('sound', parts[2]) != 'undefined') {
+						Monogatari.soundPlayer.setAttribute('src', 'audio/sound/' + Monogatari.asset ('sound', parts[2]));
 					} else {
 						Monogatari.soundPlayer.setAttribute('src', 'audio/sound/' + parts[2]);
 					}
@@ -998,8 +1002,8 @@ class Monogatari {
 		if (Monogatari.setting ('MenuMusic') !== '') {
 			Monogatari.ambientPlayer.setAttribute ('loop', '');
 
-			if (typeof Monogatari.assets ('music', Monogatari.setting ('MenuMusic')) !== 'undefined') {
-				Monogatari.ambientPlayer.setAttribute('src', 'audio/music/' + Monogatari.assets ('music', Monogatari.setting ('MenuMusic')));
+			if (typeof Monogatari.asset ('music', Monogatari.setting ('MenuMusic')) !== 'undefined') {
+				Monogatari.ambientPlayer.setAttribute('src', 'audio/music/' + Monogatari.asset ('music', Monogatari.setting ('MenuMusic')));
 			} else {
 				Monogatari.ambientPlayer.setAttribute('src', 'audio/music/' + Monogatari.setting ('MenuMusic'));
 			}
@@ -1039,7 +1043,6 @@ class Monogatari {
 		Monogatari.videoPlayer.setAttribute ('src', '');
 		$_('[data-component="video"]').removeClass ('active');
 	}
-
 
 	static changeWindowResolution (resolution) {
 		if (Platform.electron ()) {
@@ -1101,9 +1104,7 @@ class Monogatari {
 
 				$_('[data-action="set-resolution"]').append(`<option value="fullscreen">${Monogatari.string ('FullScreen')}</option>`);
 
-				if (typeof Monogatari.preference ('Resolution') != 'undefined') {
-					Monogatari.changeWindowResolution (Monogatari.preference ('Resolution'));
-				}
+				Monogatari.changeWindowResolution (Monogatari.preference ('Resolution'));
 				$_('[data-action="set-resolution"]').change(function () {
 					const size = $_(this).value ();
 					Monogatari.changeWindowResolution (size);
@@ -1320,7 +1321,7 @@ class Monogatari {
 										} else if (last_song[3] == 'noloop') {
 											Monogatari.musicPlayer.removeAttribute('loop');
 										}
-										if (typeof  Monogatari.asset ('last_song[2]') !== 'undefined') {
+										if (typeof  Monogatari.asset (last_song[2]) !== 'undefined') {
 											Monogatari.musicPlayer.setAttribute('src', 'audio/music/' + Monogatari.asset ('music', last_song[2]));
 										} else {
 											Monogatari.musicPlayer.setAttribute('src', 'audio/music/' + last_song[2]);
@@ -1366,24 +1367,20 @@ class Monogatari {
 										$_('[data-image]').remove();
 										$_('[data-ui="background"]').removeClass ();
 
-										if (typeof Monogatari.assets ('scenes', Monogatari.setting ('Scene')) !== 'undefined') {
-											$_('[data-ui="background"]').style('background', 'url(img/scenes/' + Monogatari.assets ('scenes', Monogatari.setting ('Scene')) + ') center / cover no-repeat');
+										if (typeof Monogatari.asset ('scenes', Monogatari.setting ('Scene')) !== 'undefined') {
+											$_('[data-ui="background"]').style('background', 'url(img/scenes/' + Monogatari.asset ('scenes', Monogatari.setting ('Scene')) + ') center / cover no-repeat');
 										} else {
 											$_('[data-ui="background"]').style('background', Monogatari.setting ('Scene'));
 										}
 
-										if (typeof  Monogatari.setting ('SceneElementsHistory') !== 'undefined') {
-											if (Monogatari.setting ('SceneElementsHistory').length > 0) {
-												var scene_elements = Monogatari.setting ('SceneElementsHistory').pop ();
+										if (Monogatari.setting ('SceneElementsHistory').length > 0) {
+											var scene_elements = Monogatari.setting ('SceneElementsHistory').pop ();
 
-												if (typeof scene_elements === 'object') {
-													for (const element of scene_elements) {
-														$_('#game').append (element);
-													}
+											if (typeof scene_elements === 'object') {
+												for (const element of scene_elements) {
+													$_('#game').append (element);
 												}
 											}
-										} else {
-											Monogatari.setting ('SceneElementsHistory', []);
 										}
 									}
 
@@ -1402,7 +1399,7 @@ class Monogatari {
 									if (typeof Monogatari.character (parts[1]) != 'undefined' && Monogatari.setting ('CharacterHistory').length > 0) {
 										$_('#game').append(Monogatari.setting ('CharacterHistory').pop());
 
-									} else if (typeof Monogatari.assets ('images', parts[1]) != 'undefined' && Monogatari.setting ('ImageHistory') > 0) {
+									} else if (typeof Monogatari.asset ('images', parts[1]) != 'undefined' && Monogatari.setting ('ImageHistory') > 0) {
 										$_('#game').append(Monogatari.setting ('ImageHistory').pop());
 
 									} else {
@@ -1455,6 +1452,35 @@ class Monogatari {
 	}
 
 	static run (statement, advance) {
+
+		for (const action of Monogatari.actions ()) {
+			let actionStatement = statement;
+			let matches = false;
+
+			if (typeof statement === 'string') {
+				actionStatement = statement.split (' ');
+				matches = action.matchString (actionStatement);
+			} else if (typeof statement === 'object') {
+				matches = action.matchObject (statement);
+			} else if (typeof statement === 'function') {
+				return Util.callAsync (statement, Monogatari);
+			}
+
+			if (matches === true) {
+				const act = new action (actionStatement);
+				act.setContext (Monogatari);
+
+				return act.willApply ().then (() => {
+					return act.apply ().then (() => {
+						return act.didApply ();
+					});
+				});
+			}
+		}
+		//return Promise.reject ();
+		console.log ('No Action could be found.');
+
+
 		if (typeof advance !== 'boolean') {
 			advance = true;
 		}
@@ -1519,7 +1545,7 @@ class Monogatari {
 							} else if (parts[1] == 'voice') {
 
 								if (typeof Monogatari.asset ('voice', parts[2]) !== 'undefined') {
-									Monogatari.voicePlayer.setAttribute('src', 'audio/voice/' + Monogatari.assets ('voice', parts[2]));
+									Monogatari.voicePlayer.setAttribute('src', 'audio/voice/' + Monogatari.asset ('voice', parts[2]));
 								} else {
 									Monogatari.voicePlayer.setAttribute('src', 'audio/voice/' + parts[2]);
 								}
@@ -1531,7 +1557,7 @@ class Monogatari {
 							} else if (parts[1] == 'video') {
 
 								if (typeof Monogatari.asset ('video', parts[2]) !== 'undefined') {
-									Monogatari.videoPlayer.setAttribute('src', 'video/' + Monogatari.assets ('video', parts[2]));
+									Monogatari.videoPlayer.setAttribute('src', 'video/' + Monogatari.asset ('video', parts[2]));
 								} else {
 									Monogatari.videoPlayer.setAttribute('src', 'video/' + parts[2]);
 								}
@@ -1559,8 +1585,8 @@ class Monogatari {
 
 							// scene [scene]
 							//   0      1
-							if (typeof Monogatari.assets ('scenes', parts[1]) != 'undefined') {
-								$_('[data-ui="background"]').style('background', 'url(img/scenes/' + Monogatari.assets ('scenes', parts[1]) + ') center / cover no-repeat');
+							if (typeof Monogatari.asset ('scenes', parts[1]) != 'undefined') {
+								$_('[data-ui="background"]').style('background', 'url(img/scenes/' + Monogatari.asset ('scenes', parts[1]) + ') center / cover no-repeat');
 							} else {
 								$_('[data-ui="background"]').style('background', parts[1]);
 							}
@@ -1639,8 +1665,8 @@ class Monogatari {
 								}
 
 								let src = '';
-								if (typeof Monogatari.assets ('images', parts[1]) != 'undefined') {
-									src = Monogatari.assets ('images', parts[1]);
+								if (typeof Monogatari.asset ('images', parts[1]) != 'undefined') {
+									src = Monogatari.asset ('images', parts[1]);
 								} else {
 									src = parts[1];
 								}
@@ -1706,7 +1732,7 @@ class Monogatari {
 									$_('[data-character="' + parts[1] + '"]').remove();
 								}
 
-							} else if (typeof Monogatari.assets ('images', parts[1]) != 'undefined') {
+							} else if (typeof Monogatari.asset ('images', parts[1]) != 'undefined') {
 								if (typeof parts[3] != 'undefined' && parts[3] != '') {
 									$_('[data-image="' + parts[1] + '"]').addClass(parts[3]);
 									$_('[data-image="' + parts[1] + '"]').data ('visibility', 'invisible');
@@ -1743,9 +1769,9 @@ class Monogatari {
 									parts[3] = 'center';
 									parts[5] = parts[4];
 								}
-								if (typeof Monogatari.assets ('images', parts[2]) !== 'undefined') {
-									$_('#game').append('<img src="img/' + Monogatari.assets ('images', parts[2]) + '" class="animated ' + parts[5] + ' ' + parts[3] + '" data-image="' + parts[2] + '">');
-									Monogatari.setting ('ImageHistory').push('<img src="img/' + Monogatari.assets ('images', parts[2]) + '" class="animated ' + parts[5] + ' ' + parts[3] + '" data-image="' + parts[2] + '">');
+								if (typeof Monogatari.asset ('images', parts[2]) !== 'undefined') {
+									$_('#game').append('<img src="img/' + Monogatari.asset ('images', parts[2]) + '" class="animated ' + parts[5] + ' ' + parts[3] + '" data-image="' + parts[2] + '">');
+									Monogatari.setting ('ImageHistory').push('<img src="img/' + Monogatari.asset ('images', parts[2]) + '" class="animated ' + parts[5] + ' ' + parts[3] + '" data-image="' + parts[2] + '">');
 								} else {
 									$_('#game').append('<img src="img/' + parts[2] + '" class="animated ' + parts[5] + ' ' + parts[3] + '" data-image="' + parts[2] + '">');
 									Monogatari.setting ('ImageHistory').push('<img src="img/' + parts[2] + '" class="animated ' + parts[5] + ' ' + parts[3] + '" data-image="' + parts[2] + '">');
@@ -1839,18 +1865,14 @@ class Monogatari {
 						case 'particles':
 							if (typeof particles == 'object') {
 								if (particles[parts[1]]) {
-									if (typeof particlesJS != 'undefined') {
-										particlesJS(particles[parts[1]]);
-										if (typeof Monogatari.setting ('ParticlesHistory') !== 'object') {
-											Monogatari.setting ('ParticlesHistory', []);
-										}
-										Monogatari.setting ('ParticlesHistory').push (parts[1]);
-										Monogatari.setting ('Particles', parts[1]);
-										if (advance) {
-											Monogatari.next ();
-										}
-									} else {
-										console.error('particlesJS is not loaded, are you sure you added it?');
+									particlesJS(particles[parts[1]]);
+									if (typeof Monogatari.setting ('ParticlesHistory') !== 'object') {
+										Monogatari.setting ('ParticlesHistory', []);
+									}
+									Monogatari.setting ('ParticlesHistory').push (parts[1]);
+									Monogatari.setting ('Particles', parts[1]);
+									if (advance) {
+										Monogatari.next ();
 									}
 								} else {
 									console.error('There is no definition of the "' + parts[1] + '" particle configuration.');
@@ -1947,14 +1969,10 @@ class Monogatari {
 								$_('[data-ui="face"]').hide();
 								document.querySelector('[data-ui="who"]').innerHTML = '';
 
-								if (typeof Monogatari.setting ('NarratorTypeAnimation') !== 'undefined') {
-									if (Monogatari.setting ('NarratorTypeAnimation') === true) {
-										Monogatari.displayDialog (statement, 'narrator', true);
-									} else {
-										Monogatari.displayDialog (statement, 'narrator', false);
-									}
-								} else {
+								if (Monogatari.setting ('NarratorTypeAnimation') === true) {
 									Monogatari.displayDialog (statement, 'narrator', true);
+								} else {
+									Monogatari.displayDialog (statement, 'narrator', false);
 								}
 							}
 							break;
@@ -2016,33 +2034,35 @@ class Monogatari {
 						$_('[data-ui="input"] [data-ui="input-message"]').text(statement.Input.Text);
 						$_('[data-ui="input"]').addClass('active');
 
-						function inputButtonListener (event) {
+						Monogatari.global ('_inputButtonListener', (event) => {
+
 							event.stopPropagation ();
 							event.preventDefault ();
+
 							const inputValue = $_('[data-ui="input"] input').value();
 
-							Monogatari.assertAsync(statement.Input.Validation, Monogatari, [inputValue]).then(function () {
-								Monogatari.assertAsync(statement.Input.Save, Monogatari, [inputValue]).then(function () {
+							Monogatari.assertAsync(statement.Input.Validation, Monogatari, [inputValue]).then (() => {
+								Monogatari.assertAsync(statement.Input.Save, Monogatari, [inputValue]).then (() => {
 									$_('[data-ui="input"]').removeClass('active');
 									$_('[data-ui="input"] [data-ui="warning"]').text('');
 									$_('[data-ui="input"] input').value('');
-									$_('[data-ui="input"] [data-action="submit"]').get(0).removeEventListener('click', inputButtonListener);
+									$_('[data-ui="input"] [data-action="submit"]').get(0).removeEventListener ('click', Monogatari.global ('_inputButtonListener'));
 									Monogatari.next ();
 									Monogatari.global ('block', false);
-								}).catch(function () {
+								}).catch (() => {
 									$_('[data-ui="input"]').removeClass('active');
 									$_('[data-ui="input"] [data-ui="warning"]').text('');
 									$_('[data-ui="input"] input').value('');
-									$_('[data-ui="input"] [data-action="submit"]').get(0).removeEventListener('click', inputButtonListener);
+									$_('[data-ui="input"] [data-action="submit"]').get(0).removeEventListener ('click', Monogatari.global ('_inputButtonListener'));
 									Monogatari.global ('block', false);
 								});
-							}).catch(function () {
+							}).catch (() => {
 								$_('[data-ui="input"] [data-ui="warning"]').text(statement.Input.Warning);
 								Monogatari.global ('block', false);
 							});
-						}
+						});
 
-						$_('[data-ui="input"] [data-action="submit"]').click(inputButtonListener);
+						$_('[data-ui="input"] [data-action="submit"]').click (Monogatari.global ('_inputButtonListener'));
 					} else if (typeof statement.Function !== 'undefined') {
 						Monogatari.assertAsync(statement.Function.Apply, Monogatari).then(function () {
 							Monogatari.global ('block', false);
@@ -2088,10 +2108,6 @@ class Monogatari {
 		}).catch (() => {
 			Monogatari.Storage.set ('Settings', Monogatari._preferences);
 		});
-
-		if (typeof Typed === 'undefined') {
-			console.error ('Typed library not found, dialogs will not be shown.');
-		}
 
 		// Set the startLabel property, which will be used when the game is reset.
 		Monogatari.setting ('startLabel', Monogatari.setting ('Label'));
@@ -2143,7 +2159,7 @@ class Monogatari {
 		// Add event listener for back buttons. If the player is plaing, the back
 		// button will return to the game, if its not playing, then it'll return
 		// to the main menu.
-		$_('[data-menu]').on ('click', '[data-action="back"]:not(#game)', (event) => {
+		$_('[data-menu]').on ('click', '[data-action="back"]:not(#game), [data-action="back"]:not(#game) *', () => {
 			//event.stopPropagation ();
 			$_('section').hide ();
 			if (Monogatari.global ('playing')) {
@@ -2266,7 +2282,7 @@ class Monogatari {
 			}
 		});
 
-		$_('[data-action]').click(function (event) {
+		$_('[data-action], [data-action] *').click(function () {
 
 			switch ($_(this).data('action')) {
 
@@ -2409,7 +2425,7 @@ class Monogatari {
 			return false;
 		});
 
-		$_('#game [data-action="back"], #game [data-action="back"] *').click(function (event) {
+		$_('#game [data-action="back"], #game [data-action="back"] *').click ((event) => {
 			event.stopPropagation ();
 			if (Monogatari.canProceed ()) {
 				Monogatari.revert ();
@@ -2422,22 +2438,25 @@ class Monogatari {
 		 * ==========================
 		 **/
 
-		$_(document).keyup(function (e) {
-			if (e.target.tagName.toLowerCase() != 'input') {
+		$_(document).keyup ((e) => {
+			if (e.target.tagName.toLowerCase () != 'input') {
 				switch (e.which) {
 
 					// Escape Key
 					case 27:
-						if ($_('#game').isVisible()) {
-							$_('#game').hide();
+						if ($_('#game').isVisible ()) {
+							$_('#game').hide ();
 							$_('[data-menu="settings"]').show();
+						} else if ($_('[data-menu="settings"]').isVisible () && Monogatari.global ('playing')) {
+							$_('[data-menu="settings"]').hide ();
+							$_('#game').show ();
 						}
 						break;
 
 					// Spacebar and Right Arrow
 					case 32:
 					case 39:
-						if (Monogatari.canProceed()) {
+						if (Monogatari.canProceed ()) {
 							if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
 								const str = Monogatari.global ('textObject').strings [0];
 								const element = $_(Monogatari.global ('textObject').el).data ('ui');
@@ -2458,20 +2477,20 @@ class Monogatari {
 
 					// Left Arrow
 					case 37:
-						Monogatari.revert();
+						Monogatari.revert ();
 						break;
 
 					// H Key
 					case 72:
 						event.stopPropagation();
-						if ($_('[data-action="distraction-free"]').hasClass('fa-eye')) {
-							$_('[data-action="distraction-free"]').removeClass('fa-eye');
-							$_('[data-action="distraction-free"]').addClass('fa-eye-slash');
-							$_('[data-ui="text"]').hide();
-						} else if ($_('[data-action="distraction-free"]').hasClass('fa-eye-slash')) {
-							$_('[data-action="distraction-free"]').removeClass('fa-eye-slash');
-							$_('[data-action="distraction-free"]').addClass('fa-eye');
-							$_('[data-ui="text"]').show();
+						if ($_('[data-action="distraction-free"]').hasClass ('fa-eye')) {
+							$_('[data-action="distraction-free"]').removeClass ('fa-eye');
+							$_('[data-action="distraction-free"]').addClass ('fa-eye-slash');
+							$_('[data-ui="text"]').hide ();
+						} else if ($_('[data-action="distraction-free"]').hasClass ('fa-eye-slash')) {
+							$_('[data-action="distraction-free"]').removeClass ('fa-eye-slash');
+							$_('[data-action="distraction-free"]').addClass ('fa-eye');
+							$_('[data-ui="text"]').show ();
 						}
 						break;
 
@@ -2500,18 +2519,19 @@ class Monogatari {
 		Monogatari.setup (selector);
 		Monogatari.bind (selector);
 
-		// Set the initial language translations
-		Monogatari.localize ();
+
 
 		// Set the game language or hide the option if the game is not multilingual
 		if (Monogatari.setting ('MultiLanguage')) {
 			Monogatari.global ('game', Monogatari.script (Monogatari.preference ('Language')));
 			$_('[data-action="set-language"]').value (Monogatari.preference ('Language'));
-			Monogatari.localize ();
 		} else {
 			Monogatari.global ('game', Monogatari.script ());
 			$_('[data-settings="language"]').hide ();
 		}
+
+		// Set the initial language translations
+		Monogatari.localize ();
 
 		// Set the label in which the game will start
 		Monogatari.global ('label', Monogatari.global ('game')[Monogatari.setting ('Label')]);

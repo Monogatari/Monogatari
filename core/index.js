@@ -25,8 +25,11 @@ export * from 'typed.js';
  * apart from the core engine.
  */
 import './lib/translations/index.js';
+import './lib/actions/index.js';
 
 /**
  * Export Monogatari Core
  */
+export * from './lib/Action.js';
+export * from './lib/Component.js';
 export * from './lib/monogatari';
