@@ -1,6 +1,3 @@
-/* exported messages */
-/* exported notifications */
-/* exported particles */
 /* global monogatari */
 
 // Define the messages used in the game.

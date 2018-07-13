@@ -1,11 +1,11 @@
 import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
-import { particlesJS } from 'particles.js';
+/* global particlesJS */
 
 export class Stop extends Action {
 
 	static matchString ([ action ]) {
-		return action === 'play';
+		return action === 'stop';
 	}
 
 	constructor ([ action, type ]) {
@@ -25,7 +25,9 @@ export class Stop extends Action {
 	}
 
 	willApply () {
-		this.player.removeAttribute ('loop');
+		if (typeof this.player !== 'undefined') {
+			this.player.removeAttribute ('loop');
+		}
 		return Promise.resolve ();
 	}
 

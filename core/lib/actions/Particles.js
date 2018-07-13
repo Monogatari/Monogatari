@@ -1,7 +1,8 @@
 import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
-import { particlesJS, pJSDom } from 'particles.js';
 import { $_ } from '@aegis-framework/artemis';
+
+/* global particlesJS, pJSDom */
 
 export class Particles extends Action {
 

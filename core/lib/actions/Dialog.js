@@ -5,6 +5,40 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Dialog extends Action {
 
+	static setup () {
+		Monogatari.globals ({
+			textObject: null,
+			finishedTyping: true,
+			typedConfiguration: {
+				strings: [],
+				typeSpeed: Monogatari.preference ('TextSpeed'),
+				fadeOut: true,
+				loop: false,
+				showCursor: false,
+				contentType: 'html',
+				preStringTyped: () => {
+					Monogatari.global ('finishedTyping', false);
+				},
+				onStringTyped: () => {
+					if (Monogatari.global ('autoPlay') !== null) {
+						Monogatari.global ('autoPlay', setTimeout (() => {
+							if (Monogatari.canProceed() && Monogatari.global ('finishedTyping')) {
+								Monogatari.action ('Centered').hide();
+								Monogatari.shutUp ();
+								Monogatari.next ();
+							}
+						}, Monogatari.preference ('AutoPlaySpeed') * 1000));
+					}
+
+					Monogatari.global ('finishedTyping', true);
+				},
+				onDestroy () {
+					Monogatari.global ('finishedTyping', true);
+				}
+			}
+		});
+	}
+
 	static matchString () {
 		return true;
 	}

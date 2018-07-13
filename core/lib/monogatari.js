@@ -1,7 +1,7 @@
 
 /* global require */
 
-import { $_, Space, Platform, Preload, Util } from '@aegis-framework/artemis';
+import { $_, Space, Platform, Preload, Util, FileSystem } from '@aegis-framework/artemis';
 
 const HTML = `
 	<!-- Notice messages -->
@@ -386,9 +386,6 @@ class Monogatari {
 		}
 	}
 
-	///////////////
-
-
 	/**
 	 * Localize every element with a data-string property using the translations
 	 * available. If no translation is found for the current language, the current
@@ -407,6 +404,7 @@ class Monogatari {
 		Monogatari.setSlots ();
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
 	 * Preload game assets
 	 */
@@ -422,25 +420,19 @@ class Monogatari {
 			// Show loading screen
 			$_('[data-menu="loading"]').show ();
 
-			/*for (const category in Object.keys (Monogatari.assets ())) {
-				for (const key in  Monogatari.assets (category)) {
-
+			for (const category of Object.keys (Monogatari.assets ())) {
+				for (const asset of Object.values (Monogatari.assets (category))) {
+					if (FileSystem.isImage (asset)) {
+						promises.push (Preload.image (`assets/${category}/${asset}`).finally (() => {
+							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
+						}));
+					} else {
+						promises.push (Preload.file (`assets/${category}/${asset}`).finally (() => {
+							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
+						}));
+					}
+					assetCount += 1;
 				}
-			}*/
-
-			// Start by loading the image assets
-			for (const key in Monogatari.assets ('scenes')) {
-				promises.push (Preload.image ('assets/scenes/' + Monogatari.asset ('scenes', key)).finally (() => {
-					$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
-				}));
-				assetCount += 1;
-			}
-
-			for (const key in Monogatari.assets ('images')) {
-				promises.push (Preload.image ('assets/' + Monogatari.asset ('images', key)).finally (() => {
-					$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
-				}));
-				assetCount += 1;
 			}
 
 			for (const character in Monogatari.characters ()) {
@@ -476,28 +468,6 @@ class Monogatari {
 					}));
 					assetCount += 1;
 				}
-			}
-
-			// Load the audio assets
-			for (const key in Monogatari.assets ('music')) {
-				promises.push (Preload.file ('audio/music/' + Monogatari.asset ('music', key)).finally (() => {
-					$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
-				}));
-				assetCount += 1;
-			}
-
-			for (const key in Monogatari.assets ('voice')) {
-				promises.push (Preload.file ('audio/voice/' + Monogatari.asset ('voice', key)).finally (() => {
-					$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
-				}));
-				assetCount += 1;
-			}
-
-			for (const key in Monogatari.assets ('sound')) {
-				promises.push (Preload.file ('audio/sound/' + Monogatari.asset ('sound', key)).finally (() => {
-					$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
-				}));
-				assetCount += 1;
 			}
 
 			$_('[data-ui="load-progress"]').attribute ('max', assetCount);
@@ -1045,9 +1015,11 @@ class Monogatari {
 	}
 
 	static resetGame () {
+
 		for (const action of Monogatari.actions ()) {
 			action.reset ();
 		}
+
 		Monogatari.hideGameElements();
 
 		clearInterval (Monogatari.global ('autoPlay'));
@@ -1097,7 +1069,28 @@ class Monogatari {
 			$_('[data-menu="main"]').show ();
 		}
 	}
-	/////////////////
+
+	static continue () {
+		if (Monogatari.canProceed ()) {
+			if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
+				const str = Monogatari.global ('textObject').strings [0];
+				const element = $_(Monogatari.global ('textObject').el).data ('ui');
+				Monogatari.global ('textObject').destroy ();
+				if (element == 'centered') {
+					$_('[data-ui="centered"]').html (str);
+				} else {
+					$_('[data-ui="say"]').html (str);
+				}
+				Monogatari.global ('finishedTyping', true);
+			} else {
+				Monogatari.action ('Centered').hide();
+				Monogatari.shutUp();
+				Monogatari.next ();
+			}
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Function to execute the previous statement in the script.
 	static revert () {
@@ -1345,24 +1338,8 @@ class Monogatari {
 			}
 		});
 
-		$_('#game').click(function () {
-			if (Monogatari.canProceed()) {
-				if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
-					const str = Monogatari.global ('textObject').strings [0];
-					const element = $_(Monogatari.global ('textObject').el).data ('ui');
-					Monogatari.global ('textObject').destroy ();
-					if (element == 'centered') {
-						$_('[data-ui="centered"]').html (str);
-					} else {
-						$_('[data-ui="say"]').html (str);
-					}
-					Monogatari.global ('finishedTyping', true);
-				} else {
-					Monogatari.action ('Centered').hide ();
-					Monogatari.shutUp();
-					Monogatari.next ();
-				}
-			}
+		$_('#game').click (function () {
+			Monogatari.continue ();
 		});
 
 		$_('[data-action], [data-action] *').click(function () {
@@ -1513,23 +1490,7 @@ class Monogatari {
 					// Spacebar and Right Arrow
 					case 32:
 					case 39:
-						if (Monogatari.canProceed ()) {
-							if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
-								const str = Monogatari.global ('textObject').strings [0];
-								const element = $_(Monogatari.global ('textObject').el).data ('ui');
-								Monogatari.global ('textObject').destroy ();
-								if (element == 'centered') {
-									$_('[data-ui="centered"]').html (str);
-								} else {
-									$_('[data-ui="say"]').html (str);
-								}
-								Monogatari.global ('finishedTyping', true);
-							} else {
-								Monogatari.action ('Centered').hide();
-								Monogatari.shutUp();
-								Monogatari.next ();
-							}
-						}
+						Monogatari.continue ();
 						break;
 
 					// Left Arrow
@@ -1813,41 +1774,12 @@ Monogatari._preferences = {
 Monogatari.globals ({
 	label: '',
 	game: {},
-	textObject: null,
 	autoPlay: null,
 	deleteSlot: null,
 	overwriteSlot: null,
 	block: false,
 	playing: false,
-	finishedTyping: true,
-	currentAutoSaveSlot: 1,
-	typedConfiguration: {
-		strings: [],
-		typeSpeed: Monogatari.preference ('TextSpeed'),
-		fadeOut: true,
-		loop: false,
-		showCursor: false,
-		contentType: 'html',
-		preStringTyped: function () {
-			Monogatari.global ('finishedTyping', false);
-		},
-		onStringTyped: function () {
-			if (Monogatari.global ('autoPlay') !== null) {
-				Monogatari.global ('autoPlay', setTimeout (function () {
-					if (Monogatari.canProceed() && Monogatari.global ('finishedTyping')) {
-						Monogatari.action ('Centered').hide();
-						Monogatari.shutUp ();
-						Monogatari.next ();
-					}
-				}, Monogatari.preference ('AutoPlaySpeed') * 1000));
-			}
-
-			Monogatari.global ('finishedTyping', true);
-		},
-		onDestroy () {
-			Monogatari.global ('finishedTyping', true);
-		}
-	}
+	currentAutoSaveSlot: 1
 });
 
 Monogatari.Storage = new Space ();

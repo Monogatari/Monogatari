@@ -13,9 +13,9 @@ export class Conditional extends Action {
 	}
 
 	apply () {
-		Monogatari.assertAsync(this.statement.Condition, Monogatari).then(function () {
+		Monogatari.assertAsync (this.statement.Condition, Monogatari).then (() => {
 			Monogatari.run (this.statement.True, false);
-		}).catch(function () {
+		}).catch (() => {
 			Monogatari.run (this.statement.False, false);
 		}).finally (() => {
 			Monogatari.global ('block', false);

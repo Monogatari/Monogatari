@@ -17,7 +17,7 @@ import './../node_modules/@fortawesome/fontawesome-free/js/all.js';
  * for certain functions and may be helpful for the developers.
  */
 export * from '@aegis-framework/artemis';
-export * from 'particles.js';
+import 'particles.js';
 export * from 'typed.js';
 
 /**

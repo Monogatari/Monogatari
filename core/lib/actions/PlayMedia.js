@@ -64,7 +64,7 @@ export class Play extends Action {
 	}
 
 	apply (advance) {
-		if ('loop' in this.props) {
+		if (this.props.indexOf ('loop') > -1) {
 			this.player.setAttribute ('loop', '');
 		}
 

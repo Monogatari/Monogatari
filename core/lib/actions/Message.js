@@ -36,8 +36,8 @@ export class Message extends Action {
 
 		$_('[data-ui="message-content"]').html (`
 			<h3>${this.message.Title}</h3>
-			<p><${this.message.Subtitle}/p>
-			<p><${this.message.Message}/p>
+			<p>${this.message.Subtitle}</p>
+			<p>${this.message.Message}</p>
 		`);
 		$_('[data-ui="messages"]').addClass ('active');
 		return Promise.resolve ();

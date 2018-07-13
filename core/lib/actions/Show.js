@@ -59,7 +59,7 @@ export class Show extends Action {
 				directory += '/';
 			}
 
-			const object = `<img src="assets/characters/${directory}${this.mage}" class="animated ${this.classes.join (' ')}" data-character="${this.asset}" data-sprite="${this.sprite}">`;
+			const object = `<img src="assets/characters/${directory}${this.image}" class="animated ${this.classes.join (' ')}" data-character="${this.asset}" data-sprite="${this.sprite}">`;
 
 			if ($_(`[data-character="${this.asset}"]`).isVisible ()) {
 				$_(`[data-character="${this.asset}"]`).removeClass ();

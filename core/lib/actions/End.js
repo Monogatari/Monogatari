@@ -19,11 +19,11 @@ export class End extends Action {
 	}
 
 	static bind () {
-		$_('[data-action="end"]').click (function () {
+		$_('[data-action="end"]').click (() => {
 			$_('[data-notice="exit"]').addClass ('modal--active');
 		});
 
-		$_('[data-action="quit"]').click (function () {
+		$_('[data-action="quit"]').click (() => {
 			$_('[data-notice="exit"]').removeClass ('modal--active');
 			Monogatari.run ('end');
 		});

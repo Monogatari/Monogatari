@@ -17,7 +17,8 @@
     "start": "parcel serve index.html --open --no-cache",
     "build": "parcel build ./src/index.html",
     "build:js": "parcel build ./core/index.js --global Monogatari --out-file monogatari.js --out-dir dist/js --no-cache",
-    "build:css": "parcel build ./core/index.css --out-file monogatari.css --out-dir dist/style --no-cache --no-source-maps"
+	"build:css": "parcel build ./core/index.css --out-file monogatari.css --out-dir dist/style --no-cache --no-source-maps",
+	"eslint": "eslint ./core/index.js"
   },
   "devDependencies": {
     "@babel/polyfill": "^7.0.0-beta.52",
@@ -29,7 +30,7 @@
     "stylelint-config-standard": "^16.0.0"
   },
   "dependencies": {
-    "@aegis-framework/artemis": "^0.3.0",
+    "@aegis-framework/artemis": "^0.3.1",
     "@aegis-framework/kayros.css": "^0.4.2",
     "@fortawesome/fontawesome-free": "^5.1.0",
     "animate.css": "^3.6.1",
