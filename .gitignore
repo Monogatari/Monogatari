@@ -13,6 +13,5 @@ build
 release
 package-lock.json
 .cache
-yarn.lock
 *.log
 .vscode
