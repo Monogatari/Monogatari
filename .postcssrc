@@ -1,0 +1,11 @@
+{
+  "plugins": {
+    "autoprefixer": {
+      "grid": true,
+	  "flexbox": true
+  	},
+	"precss": true,
+	"postcss-calc": true,
+	"stylelint": true
+  }
+}
