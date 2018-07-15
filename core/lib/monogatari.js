@@ -2,6 +2,7 @@
 /* global require */
 
 import { $_, Space, Platform, Preload, Util, FileSystem } from '@aegis-framework/artemis';
+import { FancyError } from './FancyError';
 
 const HTML = `
 	<!-- Notice messages -->
@@ -182,9 +183,53 @@ const HTML = `
 
 class Monogatari {
 
+	static width () {
+		return getComputedStyle($_(Monogatari.selector).get (0)).width.replace ('px', '');
+	}
+
+	static height () {
+		return getComputedStyle($_(Monogatari.selector).get (0)).height.replace ('px', '');
+	}
 
 	static string (key) {
-		return Monogatari._translations[Monogatari.preference ('Language')][key];
+		if (typeof Monogatari._translations[Monogatari.preference ('Language')] !== 'undefined') {
+			if (typeof Monogatari._translations[Monogatari.preference ('Language')][key] !== 'undefined') {
+
+			} else {
+				return Monogatari._translations[Monogatari.preference ('Language')][key];
+			}
+		} else {
+			FancyError.show (
+				'Language could not be found',
+				`Monogatari attempted to translate the UI using the current language set in the preferences but no translations could be found
+				for it.`,
+				{
+					'Problematic Language': Monogatari.preference ('Language'),
+					'You may have meant one of these': Object.keys (Monogatari._translations),
+					'Help': {
+						'_': 'Please check if you have defined correctly the translations for this language, translations are defined as follows:',
+						'_1': `
+							<pre>
+								<code class='language-javascript'>
+								Monogatari.translation ("YourLanguage", {
+									"SomeString": "Your Translation"
+								});
+								</code>
+							</pre>
+						`,
+						'_2': 'You may also want to check if the value of your language selector is right:',
+						'_3': `
+							<pre>
+								<code class='language-markup'>
+								${$_('[data-action="set-language"]').value ()}
+								</code>
+							</pre>
+						`,
+						'Documentation': '<a href="https://monogatari.io/documentation/configuration/internationalization/" target="_blank">Internationalization</a>'
+					}
+				}
+			);
+		}
 	}
 
 	static registerAction (action) {
@@ -392,6 +437,7 @@ class Monogatari {
 	 * text of the element will be kept.
 	 */
 	static localize () {
+
 		$_('[data-string]').each ((element) => {
 			const string_translation = Monogatari.string ($_(element).data ('string'));
 
@@ -1537,6 +1583,8 @@ class Monogatari {
 	}
 
 	static init (selector = '#monogatari') {
+		Monogatari.selector = selector;
+		FancyError.init ();
 
 		Monogatari.setup (selector);
 		Monogatari.bind (selector);

@@ -154,6 +154,49 @@ select {
 	right: 0;
 }
 
+
+[data-error] {
+	.modal__content {
+		height: 90%;
+		width: 90%;
+	}
+
+	h2 {
+		text-align: center;
+		font-size: 2rem;
+	}
+
+	h3 {
+		font-size: 1.5rem;
+	}
+
+	button {
+		position: absolute;
+		bottom: 0;
+		margin: 0.5rem auto;
+		left: 0;
+		right: 0;
+	}
+
+	a {
+		color: #00bcd4;
+	}
+
+	.separator--material {
+		margin: 1rem 0;
+	}
+
+	.error-section {
+		padding-left: 1rem;
+	}
+}
+
+[data-canvas] {
+	&.character {
+		@extend #game [data-character];
+	}
+}
+
 /**
  * ===========================
  * Data Notice Styling

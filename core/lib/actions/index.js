@@ -1,3 +1,4 @@
+export * from './Canvas';
 export * from './Centered';
 export * from './Choice';
 export * from './Clear';

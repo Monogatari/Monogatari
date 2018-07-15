@@ -32,4 +32,5 @@ import './lib/actions/index.js';
  */
 export * from './lib/Action.js';
 export * from './lib/Component.js';
+export * from './lib/FancyError.js';
 export * from './lib/monogatari';
