@@ -8,8 +8,20 @@ class Action {
 		}
 	}
 
-	static reset () {
+	static onStart () {
+		return Promise.resolve ();
+	}
 
+	static onLoad () {
+		return Promise.resolve ();
+	}
+
+	static onSave () {
+		return Promise.resolve ();
+	}
+
+	static reset () {
+		return Promise.resolve ();
 	}
 
 	static setup () {
@@ -42,6 +54,10 @@ class Action {
 
 	setContext (context) {
 		this.context = context;
+	}
+
+	_setStatement (statement) {
+		this._statement = statement;
 	}
 
 	willApply () {

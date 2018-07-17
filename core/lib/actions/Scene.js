@@ -43,7 +43,7 @@ export class Scene extends Action {
 		return Promise.resolve ();
 	}
 
-	apply (advance) {
+	apply () {
 
 		$_('[data-ui="background"]').style (this.property, this.value);
 
@@ -56,10 +56,11 @@ export class Scene extends Action {
 
 		Monogatari.whipeText ();
 
-		if (advance) {
-			Monogatari.next ();
-		}
 		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve (true);
 	}
 
 	willRevert () {
@@ -86,6 +87,10 @@ export class Scene extends Action {
 		}
 		Monogatari.whipeText();
 		return Promise.resolve ();
+	}
+
+	didRevert () {
+		return Promise.resolve (true);
 	}
 }
 

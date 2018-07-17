@@ -34,12 +34,7 @@ export class Show extends Action {
 
 	}
 
-	willApply () {
-
-		return Promise.resolve ();
-	}
-
-	apply (advance) {
+	apply () {
 
 		// show [character] [expression] at [position] with [animation] [infinite]
 		//   0      1             2       3     4        5       6         7
@@ -89,10 +84,11 @@ export class Show extends Action {
 			$_('#game').append (object);
 			Monogatari.setting ('ImageHistory').push (object);
 		}
-		if (advance) {
-			Monogatari.next ();
-		}
 		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve (true);
 	}
 
 	willRevert () {
@@ -125,6 +121,10 @@ export class Show extends Action {
 			Monogatari.setting ('ImageHistory').pop ();
 		}
 		return Promise.resolve ();
+	}
+
+	didRevert () {
+		return Promise.resolve (true);
 	}
 }
 

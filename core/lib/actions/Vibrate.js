@@ -29,14 +29,18 @@ export class Vibrate extends Action {
 		return Promise.reject ();
 	}
 
-	apply (advance) {
+	apply () {
 		navigator.vibrate (0);
 		navigator.vibrate (this.time);
-
-		if (advance) {
-			Monogatari.next ();
-		}
 		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve (true);
+	}
+
+	didRevert () {
+		return Promise.resolve (true);
 	}
 }
 

@@ -10,18 +10,24 @@ export class ReversibleFunction extends Action {
 	constructor ({ Function: fn }) {
 		super ();
 		this.statement = fn;
+		this.shouldContinue = true;
 	}
 
-	apply (advance) {
-		Monogatari.assertAsync (this.statement.Apply, Monogatari).then (() => {
-			Monogatari.global ('block', false);
-			if (advance) {
-				Monogatari.next ();
-			}
-		}).catch (() => {
-			Monogatari.global ('block', false);
+	apply () {
+		return new Promise ((resolve) => {
+			Monogatari.assertAsync (this.statement.Apply, Monogatari).then (() => {
+				Monogatari.global ('block', false);
+				resolve ();
+			}).catch (() => {
+				Monogatari.global ('block', false);
+				this.shouldContinue = false;
+				resolve ();
+			});
 		});
-		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve (this.shouldContinue);
 	}
 
 	revert () {

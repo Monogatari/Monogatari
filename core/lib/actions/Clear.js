@@ -11,12 +11,13 @@ export class Clear extends Action {
 		super ();
 	}
 
-	apply (advance) {
+	apply () {
 		Monogatari.whipeText();
-		if (advance) {
-			Monogatari.next ();
-		}
 		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve (true);
 	}
 
 	willRevert () {

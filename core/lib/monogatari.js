@@ -183,6 +183,22 @@ const HTML = `
 
 class Monogatari {
 
+	static onStart () {
+		const promises = [];
+		for (const action of Monogatari.actions ()) {
+			promises.push (action.onStart ());
+		}
+		return Promise.all (promises);
+	}
+
+	static onLoad () {
+		const promises = [];
+		for (const action of Monogatari.actions ()) {
+			promises.push (action.onLoad ());
+		}
+		return Promise.all (promises);
+	}
+
 	static width () {
 		return getComputedStyle($_(Monogatari.selector).get (0)).width.replace ('px', '');
 	}
@@ -229,6 +245,25 @@ class Monogatari {
 					}
 				}
 			);
+		}
+	}
+
+	static history (key) {
+		if (typeof Monogatari._history[key] === 'undefined') {
+			Monogatari._history[key] = [];
+		}
+		return Monogatari._history[key];
+	}
+
+	static state (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				return Monogatari._state[object];
+			} else {
+				Monogatari._state = Object.assign ({}, Monogatari._state, object);
+			}
+		} else {
+			return Monogatari._state;
 		}
 	}
 
@@ -370,7 +405,11 @@ class Monogatari {
 
 	static storage (object = null) {
 		if (object !== null) {
-			Monogatari._storage = Object.assign ({}, Monogatari._storage, object);
+			if (typeof object === 'string') {
+				return Monogatari._storage[object];
+			} else {
+				Monogatari._storage = Object.assign ({}, Monogatari._storage, object);
+			}
 		} else {
 			return Monogatari._storage;
 		}
@@ -838,6 +877,12 @@ class Monogatari {
 
 			Monogatari.global ('label', Monogatari.global ('game')[data.Label]);
 
+			// TODO: Use Promise.all to wait untill all actions finished
+			const promises = [];
+			for (const action of Monogatari.actions ()) {
+				promises.push (action.onLoad ());
+			}
+
 			for (const i in data.Show.split(',')) {
 				if (data.Show.split(',')[i].trim() != '') {
 					$_('#game').append(data.Show.split(',')[i]);
@@ -1144,39 +1189,40 @@ class Monogatari {
 		Monogatari.action ('Centered').hide ();
 		Monogatari.shutUp ();
 
-
 		if (Monogatari.setting ('Step') >= 1) {
 
-			let flag = true;
-			while (Monogatari.setting ('Step') > 0 && flag) {
-				for (const action of Monogatari.actions ()) {
-					let actionStatement = Monogatari.global ('label')[Monogatari.setting ('Step') - 1];
-					let matches = false;
+			for (const action of Monogatari.actions ()) {
+				let actionStatement = Monogatari.global ('label')[Monogatari.setting ('Step') - 1];
+				let matches = false;
 
-					if (typeof actionStatement === 'string') {
-						actionStatement = actionStatement.split (' ');
-						matches = action.matchString (actionStatement);
-					} else if (typeof actionStatement === 'object') {
-						matches = action.matchObject (actionStatement);
-					}
+				if (typeof actionStatement === 'string') {
+					actionStatement = actionStatement.split (' ');
+					matches = action.matchString (actionStatement);
+				} else if (typeof actionStatement === 'object') {
+					matches = action.matchObject (actionStatement);
+				}
 
-					if (matches === true) {
-						const act = new action (actionStatement);
-						act.setContext (Monogatari);
+				if (matches === true) {
+					const act = new action (actionStatement);
 
-						return act.willRevert ().then (() => {
-							return act.revert ().then (() => {
-								return act.didRevert (). then (() => {
-									Monogatari.setting ('Step', Monogatari.setting ('Step') - 1);
-								});
+					act.setContext (Monogatari);
+
+					return act.willRevert ().then (() => {
+						return act.revert ().then (() => {
+							return act.didRevert (). then ((shouldContinue) => {
+								Monogatari.setting ('Step', Monogatari.setting ('Step') - 1);
+								if (shouldContinue === true) {
+									return Monogatari.revert ();
+								}
 							});
-						}).catch (() => {
-							flag = false;
 						});
-					}
+					}).catch (() => {
+						Monogatari.setting ('Step', Monogatari.setting ('Step') + 1);
+					});
 				}
 			}
 		}
+		return Promise.reject ();
 	}
 
 	static run (statement, advance) {
@@ -1199,18 +1245,23 @@ class Monogatari {
 				return Util.callAsync (actionStatement, Monogatari).finally (() => {
 					Monogatari.global ('block', false);
 					if (advance) {
-						Monogatari.next ();
+						return Monogatari.next ();
 					}
 				});
 			}
 
 			if (matches === true) {
 				const act = new action (actionStatement);
+				act._setStatement (statement);
 				act.setContext (Monogatari);
 
 				return act.willApply ().then (() => {
 					return act.apply (advance).then (() => {
-						return act.didApply ();
+						return act.didApply ().then ((shouldContinue) => {
+							if (shouldContinue === true && advance === true) {
+								Monogatari.next ();
+							}
+						});
 					});
 				});
 			}
@@ -1698,6 +1749,17 @@ Monogatari._translations = {};
 Monogatari._script = {};
 Monogatari._characters = {};
 Monogatari._storage = {};
+
+Monogatari._state = {};
+
+Monogatari._history = {
+	music: [],
+	sound: [],
+	image: [],
+	character: [],
+	scene: [],
+	label: []
+};
 
 Monogatari._globals = {
 

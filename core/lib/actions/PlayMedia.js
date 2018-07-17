@@ -63,7 +63,7 @@ export class Play extends Action {
 		return Promise.resolve ();
 	}
 
-	apply (advance) {
+	apply () {
 		if (this.props.indexOf ('loop') > -1) {
 			this.player.setAttribute ('loop', '');
 		}
@@ -85,12 +85,11 @@ export class Play extends Action {
 		}
 
 		this.player.play ();
-
-		if (advance === true) {
-			Monogatari.next ();
-		}
-
 		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve (true);
 	}
 
 	revert () {
@@ -105,6 +104,10 @@ export class Play extends Action {
 			Monogatari.setting ('Sound', '');
 		}
 		return Promise.resolve ();
+	}
+
+	didRevert () {
+		return Promise.resolve (true);
 	}
 }
 

@@ -31,7 +31,7 @@ export class Stop extends Action {
 		return Promise.resolve ();
 	}
 
-	apply (advance) {
+	apply () {
 		if (this.type === 'particles') {
 			Monogatari.action ('Particles').stop ();
 		} else {
@@ -46,12 +46,11 @@ export class Stop extends Action {
 				Monogatari.setting ('Sound', '');
 			}
 		}
-
-		if (advance) {
-			Monogatari.next ();
-		}
-
 		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve (true);
 	}
 
 	willRevert () {
@@ -98,6 +97,10 @@ export class Stop extends Action {
 			this.player.play ();
 		}
 		return Promise.resolve ();
+	}
+
+	didRevert () {
+		return Promise.resolve (true);
 	}
 }
 

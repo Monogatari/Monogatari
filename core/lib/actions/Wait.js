@@ -12,17 +12,21 @@ export class Wait extends Action {
 		this.time = parseInt (time);
 	}
 
-	apply (advance) {
+	apply () {
 		Monogatari.global ('block', true);
 		setTimeout (() => {
 			Monogatari.global ('block', false);
-			if (advance === true) {
-				Monogatari.next ();
-			}
-
 		}, this.time);
 
 		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve (true);
+	}
+
+	didRevert () {
+		return Promise.resolve (true);
 	}
 }
 

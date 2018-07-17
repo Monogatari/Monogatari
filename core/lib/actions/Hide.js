@@ -27,8 +27,7 @@ export class Hide extends Action {
 	}
 
 
-	apply (advance) {
-
+	apply () {
 		if (this.classes.length > 0) {
 			for (const newClass of this.classes) {
 				this.element.addClass (newClass);
@@ -37,12 +36,11 @@ export class Hide extends Action {
 		} else {
 			this.element.remove ();
 		}
-
-		if (advance) {
-			Monogatari.next ();
-		}
-
 		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve (true);
 	}
 
 	willRevert () {
@@ -59,6 +57,10 @@ export class Hide extends Action {
 	revert () {
 		$_('#game').append (Monogatari.setting (this.history).pop ());
 		return Promise.resolve ();
+	}
+
+	didRevert () {
+		return Promise.resolve (true);
 	}
 }
 

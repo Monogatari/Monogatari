@@ -6,6 +6,10 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Particles extends Action {
 
+	static setup () {
+		Monogatari.history ('particles');
+	}
+
 	static matchString ([ action ]) {
 		return action === 'particles';
 	}
@@ -48,22 +52,24 @@ export class Particles extends Action {
 		}
 	}
 
-	apply (advance) {
+	apply () {
 		particlesJS (this.particles);
-
 		Monogatari.setting ('ParticlesHistory').push (this.name);
 		Monogatari.setting ('Particles', this.name);
-
-		if (advance) {
-			Monogatari.next ();
-		}
-
 		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve (true);
 	}
 
 	revert () {
 		Particles.stop ();
 		return Promise.resolve ();
+	}
+
+	didRevert () {
+		return Promise.resolve (true);
 	}
 }
 

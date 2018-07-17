@@ -52,7 +52,7 @@ export class Notify extends Action {
 		return Promise.resolve ();
 	}
 
-	apply (advance) {
+	apply () {
 		const notification = new Notification (this.notification.title, this.notification);
 
 		if (typeof this.time !== 'undefined') {
@@ -60,11 +60,11 @@ export class Notify extends Action {
 				notification.close ();
 			}, this.time);
 		}
-
-		if (advance) {
-			Monogatari.next ();
-		}
 		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve (true);
 	}
 }
 

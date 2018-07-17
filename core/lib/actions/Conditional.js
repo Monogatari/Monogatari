@@ -22,6 +22,10 @@ export class Conditional extends Action {
 		});
 		return Promise.resolve ();
 	}
+
+	willRevert () {
+		return Promise.reject ();
+	}
 }
 
 Conditional.id = 'Conditional';

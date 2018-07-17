@@ -23,19 +23,22 @@ export class Pause extends Action {
 		}
 	}
 
-	apply (advance) {
+	apply () {
 		this.player.pause ();
-
-		if (advance) {
-			Monogatari.next ();
-		}
-
 		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve (true);
 	}
 
 	revert () {
 		this.player.play ();
 		return Promise.resolve ();
+	}
+
+	didRevert () {
+		return Promise.resolve (true);
 	}
 }
 

@@ -4,14 +4,26 @@ import { $_, Util } from '@aegis-framework/artemis';
 
 export class Canvas extends Action {
 
-	static setup () {
+	static onLoad () {
+		if (Monogatari.state ('canvas').length > 0) {
+			for (const canvas of Monogatari.state ('canvas')) {
+				Monogatari.run (canvas, false);
+			}
+		}
+		return Promise.resolve ();
+	}
 
+	static setup () {
+		Monogatari.history ('canvas');
+		Monogatari.state ({
+			canvas: []
+		});
+		return Promise.resolve ();
 	}
 
 	static matchString ([ action ]) {
 		return action === 'canvas';
 	}
-
 
 	/**
 	 * Creates an instance of a Canvas Action.
@@ -21,7 +33,7 @@ export class Canvas extends Action {
 	 * @param {string} [parameters.mode='displayable'] - Mode in which the canvas element will be shown (displayable, background, full-screen, immersive)
 	 * @param {string} parameters.mode
 	 */
-	constructor ([ action, mode = 'displayable', name ]) {
+	constructor ([ , mode = 'displayable', name ]) {
 		super ();
 		this.mode = mode;
 		this.name = name;
@@ -31,10 +43,11 @@ export class Canvas extends Action {
 		}
 	}
 
-	apply () {
-		if (this.mode === 'background') {
+	showCanvas (mode) {
+		// TODO: Find a way to remove the resize listeners once the canvas is stopped
+		if (mode === 'background') {
 			$_('[data-ui="background"]').append (`
-				<canvas data-canvas="${this.name}" class='${this.mode}'></canvas>
+				<canvas data-canvas="${this.name}" class='${mode}'></canvas>
 			`);
 
 			$_(`[data-canvas="${this.name}"]`).get (0).width = Monogatari.width ();
@@ -46,9 +59,9 @@ export class Canvas extends Action {
 				});
 			});
 			return Util.callAsync (this.object.start, Monogatari, $_(`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
-		} else if (this.mode === 'immersive') {
+		} else if (mode === 'immersive') {
 			$_('#game').prepend (`
-				<canvas data-canvas="${this.name}" class='${this.mode}'></canvas>
+				<canvas data-canvas="${this.name}" class='${mode}'></canvas>
 			`);
 
 			$_(`[data-canvas="${this.name}"]`).get (0).width = Monogatari.width ();
@@ -60,22 +73,89 @@ export class Canvas extends Action {
 				});
 			});
 			return Util.callAsync (this.object.start, Monogatari, $_(`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
-		} else if (this.mode === 'displayable' || this.mode === 'character') {
+		} else if (mode === 'displayable') {
 			$_('#game').append (`
-				<canvas data-canvas="${this.name}" class='${this.mode}'></canvas>
+				<canvas data-canvas="${this.name}" class='${mode}'></canvas>
 			`);
 			return Util.callAsync (this.object.start, Monogatari, $_(`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
-		} else if (this.mode === 'stop') {
+		} else if (mode === 'character') {
+			$_('#game').append (`
+				<canvas data-canvas="${this.name}" class='${mode}' data-character='${this.name}'></canvas>
+			`);
+			return Util.callAsync (this.object.start, Monogatari, $_(`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+		}
+	}
+
+	apply () {
+		if (this.mode === 'stop') {
+			return Util.callAsync (this.object.stop, Monogatari).then (() => {
+				$_(`[data-canvas="${this.name}"]`).remove ();
+			});
+		} else {
+			return this.showCanvas (this.mode);
+		}
+	}
+
+	didApply () {
+		const state = Monogatari.state ('canvas');
+		if (this.mode === 'stop') {
+			const canvas = state.find ((element) => {
+				const [ , , name] = element.split (' ');
+				return name === this.name;
+			});
+			Monogatari.history ('canvas').push (canvas);
+			Monogatari.state ({
+				canvas: state.filter ((element) => element !== canvas)
+			});
+		} else {
+			Monogatari.state ({
+				canvas: [this._statement, ...state]
+			});
+		}
+		return Promise.resolve (true);
+	}
+
+	revert () {
+		// If the statement was a stop one, we need to show the canvas it stoped
+		// again. If not, then we have to stop the canvas that was shown.
+		if (this.mode === 'stop') {
+			this.last = Monogatari.history ('canvas').find ((element) => {
+				const [ , , name] = element.split (' ');
+				return name === this.name;
+			});
+			if (typeof this.last !== 'undefined') {
+				const [, mode, ] = this.last.split (' ');
+				return this.showCanvas (mode);
+			}
+		} else {
 			return Util.callAsync (this.object.stop, Monogatari).then (() => {
 				$_(`[data-canvas="${this.name}"]`).remove ();
 			});
 		}
+		return Promise.reject ();
 	}
 
-	revert () {
-		return this.apply ();
-	}
+	didRevert () {
+		const state = Monogatari.state ('canvas');
+		if (this.mode === 'stop') {
 
+			if (typeof this.last !== 'undefined') {
+				Monogatari.state ({
+					canvas: [this.last, ...state]
+				});
+			}
+		} else {
+			const canvas = state.find ((element) => {
+				const [, , name] = element.split (' ');
+				return name === this.name;
+			});
+			Monogatari.history ('canvas').push (canvas);
+			Monogatari.state ({
+				canvas: state.filter ((element) => element !== canvas)
+			});
+		}
+		return Promise.resolve (true);
+	}
 }
 
 Canvas.id = 'Canvas';
