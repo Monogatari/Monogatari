@@ -1,5 +1,6 @@
 import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
+import { FancyError } from '../FancyError';
 
 export class Vibrate extends Action {
 
@@ -13,12 +14,38 @@ export class Vibrate extends Action {
 		// First check if vibration is available available
 		if (navigator) {
 			if (navigator.vibrate) {
-				this.time = time;
+				this.time = [];
+				for (const i in time) {
+					if (!isNaN (time[i])) {
+						this.time[i] = parseInt (time[i]);
+					} else {
+						FancyError.show (
+							'The specified time was not an integer',
+							'Monogatari attempted to transform the given time into an integer value but failed.',
+							{
+								'Specified time': time[i],
+								'Label': Monogatari.state ('label'),
+								'Step': Monogatari.state ('step'),
+								'Help': {
+									'_': 'Check if the value you provided is actually an integer (whole number). Remember the value used must be given in milliseconds and must not be mixed with characters other than numbers.',
+									'_1': 'For example, the following statement would make the device vibrate for 5 seconds:',
+									'_3':`
+										<pre><code class='language-javascript'>"vibrate 5000"</code></pre>
+									`,
+									'_4': 'If you wanted to make the device vibrate on a pattern, this is a correct syntax:',
+									'_5':`
+										<pre><code class='language-javascript'>"vibrate 5000 100 4000 200 3000"</code></pre>
+									`
+								}
+							}
+						);
+					}
+				}
 			} else {
-				console.error ('Vibration is not supported in this platform.');
+				console.warn ('Vibration is not supported in this platform.');
 			}
 		} else {
-			console.error ('Vibration is not supported in this platform.');
+			console.warn ('Vibration is not supported in this platform.');
 		}
 	}
 

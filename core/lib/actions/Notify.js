@@ -1,5 +1,6 @@
 import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
+import { FancyError } from '../FancyError';
 
 export class Notify extends Action {
 
@@ -18,13 +19,63 @@ export class Notify extends Action {
 				this.notification = Notify.settings.notifications[name];
 
 				if (typeof time !== 'undefined') {
-					this.time = parseInt (time);
+					if (!isNaN (time)) {
+						this.time = parseInt (time);
+					} else {
+						FancyError.show (
+							'The specified time was not an integer',
+							'Monogatari attempted to transform the given time into an integer value but failed.',
+							{
+								'Specified time': time,
+								'Label': Monogatari.state ('label'),
+								'Step': Monogatari.state ('step'),
+								'Help': {
+									'_': 'Check if the value you provided is actually an integer (whole number). Remember the value used must be given in milliseconds and must not be mixed with characters other than numbers.',
+									'_1': 'For example, the following statement would make a notification go away after 5 seconds:',
+									'_3':`
+										<pre><code class='language-javascript'>"notify Welcome 5000"</code></pre>
+									`
+								}
+							}
+						);
+					}
 				}
 			} else {
-				console.error (`The Notification ${name} could not be shown because it doesn't exist in the notifications object.`);
+				FancyError.show (
+					`The notification "${name}" was not found`,
+					`Monogatari attempted to retrieve a notification named "${name}" but it didn't exist in the notifications object.`,
+					{
+						'Notification': name,
+						'You may have meant': Object.keys (Notify.settings.notifications),
+						'Label': Monogatari.state ('label'),
+						'Step': Monogatari.state ('step'),
+						'Help': {
+							'_': 'Check the notification\'s name is correct and that you have defined it previously. A Notification is defined as follows:',
+							'_1':`
+								<pre>
+									<code class='language-javascript'>
+										monogatari.action ('Notify', {
+											notifications: {
+												'Welcome': {
+													title: 'Welcome!',
+													body: 'This is the Monogatari VN Engine',
+													icon: ''
+												}
+											}
+										});
+									</code>
+								</pre>
+							`,
+							'_2': 'Notice the notification defined uses a name or an id, in this case it was set to "Welcome" and to show it, you must use that exact name:',
+							'_3':`
+								<pre><code class='language-javascript'>"notify Welcome"</code></pre>
+							`
+						}
+					}
+				);
 			}
 		} else {
-			console.error ('Notifications are not supported in this platform.');
+			console.warn ('Notifications are not supported in this platform.');
 		}
 	}
 
@@ -37,8 +88,10 @@ export class Notify extends Action {
 				} else if (Notification.permission !== 'denied') {
 					Notification.requestPermission((permission) => {
 						// If the user accepts, let's create a notification
-
 						if (permission === 'granted') {
+							resolve ();
+						} else {
+							console.warn ('User denied notifications permission, none will be shown.');
 							resolve ();
 						}
 					});
@@ -64,6 +117,11 @@ export class Notify extends Action {
 	}
 
 	didApply () {
+		// Advance the game instead of waiting for another click
+		return Promise.resolve (true);
+	}
+
+	didRevert () {
 		return Promise.resolve (true);
 	}
 }
