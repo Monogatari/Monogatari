@@ -4,6 +4,35 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Show extends Action {
 
+	static setup () {
+		Monogatari.history ('particle');
+		Monogatari.history ('show');
+		Monogatari.state ({
+			particles: '',
+			show: []
+		});
+		return Promise.resolve ();
+	}
+
+	static reset () {
+		$_('#game [data-character]').remove ();
+		$_('#game [data-image]').remove ();
+		return Promise.resolve ();
+	}
+
+	static onLoad () {
+		const { particles, show } = Monogatari.state ();
+		if (particles !== '') {
+			Monogatari.run (particles, false);
+		}
+
+		for (const item of show) {
+			Monogatari.run (item, false);
+		}
+
+		return Promise.resolve ();
+	}
+
 	static matchString ([ action ]) {
 		return action === 'show';
 	}
@@ -11,7 +40,9 @@ export class Show extends Action {
 	constructor ([ action, asset, ...props ]) {
 		super ();
 		this.asset = asset;
-
+		Monogatari.state ({
+			show: [this._statement, ...Monogatari.state ('show')]
+		});
 
 		if (typeof Monogatari.character (asset) !== 'undefined') {
 			this.type = 'character';

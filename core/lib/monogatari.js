@@ -210,9 +210,32 @@ class Monogatari {
 	static string (key) {
 		if (typeof Monogatari._translations[Monogatari.preference ('Language')] !== 'undefined') {
 			if (typeof Monogatari._translations[Monogatari.preference ('Language')][key] !== 'undefined') {
-
-			} else {
 				return Monogatari._translations[Monogatari.preference ('Language')][key];
+			} else {
+				FancyError.show (
+					`Translation for string "${key}" could not be found`,
+					'Monogatari attempted to find a translation for the current language set in the preferences but there was none.',
+					{
+						'String Not Found': key,
+						'Language': Monogatari.preference ('Language'),
+						'Found in these elements': $_(`[data-string="${key}"]`).collection,
+						'You may have meant one of these': Object.keys (Monogatari._translations[Monogatari.preference ('Language')]),
+						'Help': {
+							'_': 'Please check that this string has been correctly defined in your translations. A translation is defined as follows:',
+							'_1': `
+								<pre>
+									<code class='language-javascript'>
+									Monogatari.translation ("YourLanguage", {
+										"SomeString": "Your Translation"
+									});
+									</code>
+								</pre>
+							`,
+							'_2': 'You may also want to check if the [data-string] property of the HTML elements above is correct or if they have a typo.',
+							'Documentation': '<a href="https://monogatari.io/documentation/configuration/internationalization/" target="_blank">Internationalization</a>'
+						}
+					}
+				);
 			}
 		} else {
 			FancyError.show (
@@ -248,11 +271,15 @@ class Monogatari {
 		}
 	}
 
-	static history (key) {
-		if (typeof Monogatari._history[key] === 'undefined') {
-			Monogatari._history[key] = [];
+	static history (key = null) {
+		if (key !== null) {
+			if (typeof Monogatari._history[key] === 'undefined') {
+				Monogatari._history[key] = [];
+			}
+			return Monogatari._history[key];
+		} else {
+			return Monogatari._history;
 		}
-		return Monogatari._history[key];
 	}
 
 	static state (object = null) {
@@ -419,27 +446,37 @@ class Monogatari {
 		if (typeof object === 'object' && object !== null) {
 			Monogatari._script = Object.assign ({}, Monogatari._script, object);
 		} else if (typeof object === 'string') {
-			return Monogatari._script[object];
+			if (Monogatari.setting ('MultiLanguage') === true) {
+				return Monogatari._script[Monogatari.preference ('Language')][object];
+			} else {
+				return Monogatari._script[object];
+			}
 		} else {
-			return Monogatari._script;
+			if (Monogatari.setting ('MultiLanguage') === true) {
+				return Monogatari._script[Monogatari.preference ('Language')];
+			} else {
+				return Monogatari._script;
+			}
 		}
 	}
 
-	static label (key, language = null, value = null) {
+	static label (key = null, language = null, value = null) {
 		if (typeof language === 'string' && value !== null) {
 			if (typeof Monogatari._script[language] !== 'object') {
 				Monogatari._script[language] = {};
 			}
 			Monogatari._script[language][key] = value;
-		} else if (typeof language === 'object' && value === null) {
+		} else if (typeof language === 'object' && language !== null && value === null) {
 			if (typeof Monogatari._script[key] !== 'object') {
 				Monogatari._script[key] = [];
 			}
 			Monogatari._script[key] = language;
 		} else if (typeof language === 'string' && value === null) {
 			return Monogatari._script[language][key];
-		} else {
+		} else if (key !== null) {
 			return Monogatari._script[key];
+		} else {
+			return Monogatari.script (Monogatari.state ('label'));
 		}
 	}
 
@@ -481,7 +518,7 @@ class Monogatari {
 			const string_translation = Monogatari.string ($_(element).data ('string'));
 
 			// Check if the translation actually exists and is not empty before
-			//replacing the text.
+			// replacing the text.
 			if (typeof string_translation !== 'undefined' && string_translation !== '') {
 				$_(element).text (string_translation);
 			}
@@ -581,7 +618,8 @@ class Monogatari {
 
 	static addSlot (i, data) {
 		const name = data.Name ? data.Name : data.Date;
-		if (typeof Monogatari.asset ('scenes', data.Engine.Scene) !== 'undefined') {
+
+		if (typeof Monogatari.asset ('scenes', ) !== 'undefined') {
 
 			$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (`
 				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'>
@@ -751,21 +789,11 @@ class Monogatari {
 		if (Monogatari.global ('playing')) {
 			document.body.style.cursor = 'wait';
 
-			// Get a list of all the images being shown in screen except the
-			// face images so they can be shown next time the slot is loaded
-			let show = '';
-			$_('#game img:not([data-ui="face"]):not([data-visibility="invisible"])').each ((element) => {
-				show += element.outerHTML.replace(/"/g, '\'') + ',';
-			});
-
 			Monogatari.getMaxSlotId ().then ((max) => {
 				Monogatari.Storage.set (Monogatari.setting ('SaveLabel') + (max + 1) , {
 					'Name': name,
 					'Date': Monogatari.niceDateTime (),
-					'Engine': Monogatari.settings (),
-					'Show': show,
-					'Label': Monogatari.setting ('Label'),
-					'Storage': Monogatari.storage ()
+					game: Monogatari.object ()
 				}).then (({ value }) => {
 					Monogatari.addSlot (max + 1, value);
 					document.body.style.cursor = 'auto';
@@ -778,22 +806,12 @@ class Monogatari {
 		if (Monogatari.global ('playing')) {
 			document.body.style.cursor = 'wait';
 
-			// Get a list of all the images being shown in screen except the
-			// face images so they can be shown next time the slot is loaded
-			let show = '';
-			$_('#game img:not([data-ui="face"]):not([data-visibility="invisible"])').each ((element) => {
-				show += element.outerHTML.replace(/"/g, '\'') + ',';
-			});
-
 			const name = Monogatari.niceDateTime ();
 
 			Monogatari.Storage.set (slot, {
 				'Name': name,
-				'Date': name,
-				'Engine': Monogatari.settings (),
-				'Show': show,
-				'Label': Monogatari.setting ('Label'),
-				'Storage': Monogatari.storage ()
+				'Date': Monogatari.niceDateTime (),
+				game: Monogatari.object ()
 			}).then (() => {
 				$_(`[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (name);
 				$_(`[data-menu='save'] [data-ui='autoSaveSlots'] [data-ui='slots'] [data-save='${id}'] small`).text (name);
@@ -807,26 +825,12 @@ class Monogatari {
 		if (Monogatari.global ('block')) {
 			document.body.style.cursor = 'wait';
 
-			// Get a list of all the images being shown in screen except the
-			// face images so they can be shown next time the slot is loaded
-			let show = '';
-			$_('#game img:not([data-ui="face"]):not([data-visibility="invisible"])').each ((element) => {
-				show += element.outerHTML.replace(/"/g, '\'') + ',';
-			});
-
 			// Get the name of the Slot if it exists or use the current date.
 			Monogatari.Storage.get (slot).then ((data) => {
-				let name;
+				let name = Monogatari.niceDateTime ();
 
-				if (data !== null && data !== '') {
-					data = JSON.parse (data);
-					if (data.Name !== null && data.Name !== '' && typeof data.Name !== 'undefined') {
-						name = data.Name;
-					} else {
-						name = Monogatari.niceDateTime ();
-					}
-				} else {
-					name = Monogatari.niceDateTime ();
+				if (data.Name !== null && data.Name !== '' && typeof data.Name !== 'undefined') {
+					name = data.Name;
 				}
 
 				if (typeof customName !== 'undefined') {
@@ -836,10 +840,7 @@ class Monogatari {
 				Monogatari.Storage.set (slot, {
 					'Name': name,
 					'Date': Monogatari.niceDateTime (),
-					'Engine': Monogatari.settings (),
-					'Show': show,
-					'Label': Monogatari.setting ('Label'),
-					'Storage': Monogatari.storage ()
+					game: Monogatari.object ()
 				}).then (() => {
 					$_(`[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (name);
 					$_(`[data-menu='save'] [data-ui='slots'] [data-save='${id}'] small`).text (name);
@@ -853,68 +854,27 @@ class Monogatari {
 		document.body.style.cursor = 'wait';
 		Monogatari.global ('playing', true);
 
-		Monogatari.resetGame ();
-
-		$_('section').hide();
-		$_('#game').show();
-		Monogatari.Storage.get (slot).then ((data) => {
-			Monogatari.settings ({
-				'Label': data.Engine.Label,
-				'Song': data.Engine.Song,
-				'Sound': data.Engine.Sound,
-				'Scene': data.Engine.Scene,
-				'Particles': data.Engine.Particles,
-				'Step': data.Engine.Step,
-				'MusicHistory': data.Engine.MusicHistory,
-				'SoundHistory': data.Engine.SoundHistory,
-				'ImageHistory': data.Engine.ImageHistory,
-				'CharacterHistory': data.Engine.CharacterHistory,
-				'SceneHistory': data.Engine.SceneHistory,
-				'SceneElementsHistory': data.Engine.SceneElementsHistory,
-				'ParticlesHistory': data.Engine.ParticlesHistory
-			});
-			Monogatari.storage (Object.assign({}, JSON.parse(Monogatari.global ('storageStructure')), data.Storage));
-
-			Monogatari.global ('label', Monogatari.global ('game')[data.Label]);
-
-			// TODO: Use Promise.all to wait untill all actions finished
-			const promises = [];
-			for (const action of Monogatari.actions ()) {
-				promises.push (action.onLoad ());
-			}
-
-			for (const i in data.Show.split(',')) {
-				if (data.Show.split(',')[i].trim() != '') {
-					$_('#game').append(data.Show.split(',')[i]);
-				}
-			}
-
-			$_('[data-ui="background"]').fadeOut(200, function () {
-
-				if (typeof Monogatari.asset ('scenes', data.Engine.Scene) !== 'undefined') {
-					$_('[data-ui="background"]').style('background', 'url(assets/scenes/' + Monogatari.asset ('scenes', data.Engine.Scene) + ') center / cover no-repeat');
-				} else {
-					$_('[data-ui="background"]').style('background', data.Engine.Scene);
-				}
-
-				$_('[data-ui="background"]').fadeIn(200);
-			});
-
-			if (Monogatari.setting ('Song') !== '') {
-				Monogatari.run (Monogatari.setting ('Song'), false);
-			}
-
-			if (Monogatari.setting ('Sound') != '') {
-				Monogatari.run (Monogatari.setting ('Sound'), false);
-			}
-
-			if (Monogatari.setting ('Particles') !== '' && typeof Monogatari.setting ('Particles') === 'string') {
-				Monogatari.run (Monogatari.setting ('Particles'), false);
-			}
-
+		Monogatari.resetGame ().then (() => {
+			$_('section').hide();
 			$_('#game').show();
-			Monogatari.run(Monogatari.global ('label')[Monogatari.setting ('Step')]);
-			document.body.style.cursor = 'auto';
+			Monogatari.Storage.get (slot).then ((data) => {
+				// TODO: Add compatibility for old save slots
+				const { state, history, storage } = data.game;
+				Monogatari.state (state);
+				Monogatari.history (history);
+				Monogatari.storage (storage);
+
+				const promises = [];
+				for (const action of Monogatari.actions ()) {
+					promises.push (action.onLoad ());
+				}
+
+				Promise.all (promises).then (() => {
+					$_('#game').show ();
+					Monogatari.run(Monogatari.label ()[Monogatari.state ('step')]);
+					document.body.style.cursor = 'auto';
+				});
+			});
 		});
 	}
 
@@ -957,23 +917,22 @@ class Monogatari {
 		});
 	}
 
+	// TODO: Make check in each action instead of globally.
 	static canProceed () {
-		if (!$_('[data-ui="choices"]').isVisible ()
-			&& $_('#game').isVisible ()
-			&& !$_('[data-component="modal"]').isVisible ()
-			&& (
-				$_('[data-ui="text"]').isVisible ()
-				|| (
-					!$_('[data-ui="text"]').isVisible ()
-					&& $_('[data-ui="centered"]').isVisible ()
-				)
-			)
-			&& !$_('[data-component="video"]').isVisible ()
-			&& !Monogatari.global ('block')) {
-			return true;
-		} else {
-			return false;
+		const promises = [];
+		for (const action of Monogatari.actions ()) {
+			promises.push (action.canProceed ());
 		}
+
+		if ($_('#game').isVisible ()
+			&& !$_('[data-component="modal"]').isVisible ()
+			&& !Monogatari.global ('distraction-free')
+			&& !Monogatari.global ('block')) {
+			promises.push (Promise.resolve ());
+		} else {
+			promises.push (Promise.reject ());
+		}
+		return Promise.all (promises);
 	}
 
 	static playAmbient () {
@@ -1078,44 +1037,14 @@ class Monogatari {
 		}
 	}
 
-	static whipeText () {
-		if (Monogatari.global ('textObject') !== null) {
-			Monogatari.global ('textObject').destroy ();
-		}
-		$_('[data-ui="who"]').html ('');
-		$_('[data-ui="say"]').html ('');
-	}
-
-	static hideGameElements () {
-		// Hide in-game elements
-		$_('[data-ui="choices"]').hide ();
-		$_('[data-ui="choices"]').html ('');
-
-		$_('[data-component="modal"]').removeClass ('modal--active');
-		$_('[data-ui="messages"]').removeClass ('modal--active');
-		$_('[data-component="video"]').removeClass ('modal--active');
-
-		$_('[data-ui="centered"]').remove ();
-		$_('#game [data-character]').remove ();
-		$_('#game [data-image]').remove ();
-
-		$_('[data-ui="input"] [data-ui="warning"]').text ('');
-
-		$_('[data-ui="background"]').style ('background', 'initial');
-		Monogatari.whipeText ();
-	}
-
 	static resetGame () {
 
-		for (const action of Monogatari.actions ()) {
-			action.reset ();
-		}
+		$_('[data-component="modal"]').removeClass ('modal--active');
 
-		Monogatari.hideGameElements();
 
-		clearInterval (Monogatari.global ('autoPlay'));
-		Monogatari.global ('autoPlay', null);
+		clearInterval (Monogatari.global ('_AutoPlayTimer'));
 
+		// TODO: Fix classes to use new Font Awesome classes
 		$_('[data-action="auto-play"].fa').removeClass ('fa-stop-circle');
 		$_('[data-action="auto-play"].fa').addClass ('fa-play-circle');
 
@@ -1123,29 +1052,28 @@ class Monogatari {
 		Monogatari.storage (JSON.parse(Monogatari.global ('storageStructure')));
 
 		// Reset Conditions
-		Monogatari.setting ('Label', Monogatari.setting ('startLabel'));
-		Monogatari.global ('label', Monogatari.global ('game')[Monogatari.setting ('Label')]);
-		Monogatari.setting ('Step', 0);
+		Monogatari.state ({
+			step: 0,
+			label: Monogatari.setting ('Label')
+		});
 
 		// Reset History
-		Monogatari.setting ('MusicHistory', []);
-		Monogatari.setting ('SoundHistory', []);
-		Monogatari.setting ('ImageHistory', []);
-		Monogatari.setting ('CharacterHistory', []);
-		Monogatari.setting ('SceneHistory', []);
-		Monogatari.setting ('SceneElementsHistory', []);
-		Monogatari.setting ('ParticlesHistory', []);
+		for (const history in Object.keys (Monogatari._history)) {
+			Monogatari._history[history] = [];
+		}
 
-		// Reset other States
-		Monogatari.setting ('Sound', '');
-		Monogatari.setting ('Song', '');
-		Monogatari.setting ('Particles', '');
-		Monogatari.setting ('Scene', '');
+		const promises = [];
+		for (const action of Monogatari.actions ()) {
+			promises.push (action.reset ());
+		}
+		return Promise.all (promises);
 	}
 
 	static next () {
-		Monogatari.setting ('Step', Monogatari.setting ('Step') + 1);
-		Monogatari.run (Monogatari.global ('label')[Monogatari.setting ('Step')]);
+		Monogatari.state ({
+			step: Monogatari.state ('step') + 1
+		});
+		Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
 	}
 
 	// Start game automatically withouth going trough the main menu
@@ -1155,14 +1083,14 @@ class Monogatari {
 			Monogatari.global ('playing', true);
 			$_('section').hide ();
 			$_('#game').show ();
-			Monogatari.run (Monogatari.global ('label')[Monogatari.setting ('Step')]);
+			Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
 		} else {
 			$_('[data-menu="main"]').show ();
 		}
 	}
 
 	static continue () {
-		if (Monogatari.canProceed ()) {
+		Monogatari.canProceed ().then (() => {
 			if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
 				const str = Monogatari.global ('textObject').strings [0];
 				const element = $_(Monogatari.global ('textObject').el).data ('ui');
@@ -1178,10 +1106,52 @@ class Monogatari {
 				Monogatari.shutUp();
 				Monogatari.next ();
 			}
+		}).catch (() => {
+			// An action waiting for user interaction or something else
+			// is blocking the game.
+		});
+	}
+
+	static autoPlay (enable) {
+		if (enable === true) {
+			const interval = Monogatari.preference ('AutoPlaySpeed') * 1000;
+			let expected = Date.now () + interval;
+
+			Monogatari.global ('_AutoPlayTimer', () => {
+				const now = Date.now () - expected; // the drift (positive for overshooting)
+				if (now > interval) {
+					// something really bad happened. Maybe the browser (tab) was inactive?
+					// possibly special handling to avoid futile "catch up" run
+				}
+				Monogatari.canProceed ().then (() => {
+					Monogatari.action ('Centered').hide();
+					Monogatari.shutUp();
+					Monogatari.next ();
+					expected += interval;
+					setTimeout (Monogatari.global ('_AutoPlayTimer'), Math.max (0, interval - now)); // take into account drift
+				}).catch (() => {
+					// An action waiting for user interaction or something else
+					// is blocking the game.
+				});
+			});
+			setTimeout (Monogatari.global ('_AutoPlayTimer'), interval);
+		} else {
+			clearTimeout (Monogatari.global ('_AutoPlayTimer'));
 		}
+
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
+
+
+	static object () {
+		return {
+			history: Monogatari.history (),
+			state: Monogatari.state (),
+			storage: Monogatari.storage ()
+		};
+	}
 
 	// Function to execute the previous statement in the script.
 	static revert () {
@@ -1189,10 +1159,10 @@ class Monogatari {
 		Monogatari.action ('Centered').hide ();
 		Monogatari.shutUp ();
 
-		if (Monogatari.setting ('Step') >= 1) {
+		if (Monogatari.state ('step') >= 1) {
 
 			for (const action of Monogatari.actions ()) {
-				let actionStatement = Monogatari.global ('label')[Monogatari.setting ('Step') - 1];
+				let actionStatement = Monogatari.label ()[Monogatari.state ('step') - 1];
 				let matches = false;
 
 				if (typeof actionStatement === 'string') {
@@ -1210,14 +1180,18 @@ class Monogatari {
 					return act.willRevert ().then (() => {
 						return act.revert ().then (() => {
 							return act.didRevert (). then ((shouldContinue) => {
-								Monogatari.setting ('Step', Monogatari.setting ('Step') - 1);
+								Monogatari.state ({
+									step: Monogatari.state ('step') - 1
+								});
 								if (shouldContinue === true) {
 									return Monogatari.revert ();
 								}
 							});
 						});
 					}).catch (() => {
-						Monogatari.setting ('Step', Monogatari.setting ('Step') + 1);
+						Monogatari.state ({
+							step: Monogatari.state ('step') + 1
+						});
 					});
 				}
 			}
@@ -1271,15 +1245,13 @@ class Monogatari {
 	static setup (selector) {
 
 		$_(selector).html (HTML);
+
 		// Set the initial settings if they don't exist or load them.
 		Monogatari.Storage.get ('Settings').then ((local_settings) => {
 			Monogatari._preferences = Object.assign ({}, Monogatari._preferences, local_settings);
 		}).catch (() => {
 			Monogatari.Storage.set ('Settings', Monogatari._preferences);
 		});
-
-		// Set the startLabel property, which will be used when the game is reset.
-		Monogatari.setting ('startLabel', Monogatari.setting ('Label'));
 
 		// Register service worker
 		if (Monogatari.setting ('ServiceWorkers')) {
@@ -1292,9 +1264,11 @@ class Monogatari {
 
 		Monogatari.global ('storageStructure', JSON.stringify(Monogatari.storage ()));
 
+		const promises = [];
 		for (const action of Monogatari.actions ()) {
-			action.setup (selector);
+			promises.push (action.setup (selector));
 		}
+		return Promise.all (promises);
 	}
 
 	/**
@@ -1311,7 +1285,7 @@ class Monogatari {
 		// Bind Language select so that every time a language is selected, the
 		// ui and game get correctly localized.
 		$_('[data-action="set-language"]').change (function () {
-			Monogatari.setting ('Language', $_(this).value ());
+			Monogatari.preference ('Language', $_(this).value ());
 			Monogatari.localize ();
 		});
 
@@ -1368,71 +1342,9 @@ class Monogatari {
 			});
 		});
 
-		Monogatari.ambientPlayer = document.querySelector ('[data-component="ambient"]');
-		Monogatari.musicPlayer = document.querySelector ('[data-component="music"]');
-		Monogatari.soundPlayer = document.querySelector ('[data-component="sound"]');
-		Monogatari.videoPlayer = document.querySelector ('[data-ui="player"]');
-		Monogatari.voicePlayer = document.querySelector ('[data-component="voice"]');
-
-		// Volume bars listeners
-		$_('[data-action="set-volume"]').on ('change mouseover', function () {
-			const v = document.querySelector (`[data-component='${$_(this).data('target')}']`);
-			const value = $_(this).value();
-
-			switch ($_(this).data('target')) {
-				case 'music':
-					Monogatari.ambientPlayer.volume = value;
-					v.volume = value;
-					Monogatari.preference ('Volume').Music = value;
-					break;
-
-				case 'voice':
-					v.volume = value;
-					Monogatari.preference ('Volume').Voice = value;
-					break;
-
-				case 'sound':
-					v.volume = value;
-					Monogatari.preference ('Volume').Sound = value;
-					break;
-			}
-			Monogatari.Storage.set ('Settings', Monogatari.preferences ());
-		});
-
-		$_('[data-action="set-text-speed"]').on ('change mouseover', function () {
-			const value =  Monogatari.setting ('maxTextSpeed') - parseInt($_(this).value());
-			Monogatari.global ('typedConfiguration').typeSpeed = value;
-			Monogatari.preference ('TextSpeed', value);
-		});
-
-		$_('[data-action="set-auto-play-speed"]').on ('change mouseover', function () {
-			const value = Monogatari.setting ('maxAutoPlaySpeed') - parseInt($_(this).value());
-			Monogatari.preference ('AutoPlaySpeed', value);
-		});
-
-		// Language select listener
-		$_('[data-action="set-language"]').change (() => {
-			Monogatari.global ('game', Monogatari.script (Monogatari.preference ('Language')));
-			Monogatari.global ('label', Monogatari.global ('game')[Monogatari.setting ('Label')]);
-		});
-
 		$_('#game [data-ui="quick-menu"], #game [data-ui="quick-menu"] *').click ((event) => {
 			// Clicked Child
 			event.stopPropagation ();
-		});
-
-		$_('body').on('click', '[data-do]', function () {
-			Monogatari.action ('Centered').hide ();
-			Monogatari.shutUp ();
-			if ($_(this).data('do') != 'null' && $_(this).data('do') != '') {
-				try {
-					$_('[data-ui="choices"]').hide ();
-					$_('[data-ui="choices"]').html ('');
-					Monogatari.run ($_(this).data ('do'), false);
-				} catch (e) {
-					console.error('An error ocurred while trying to execute the choice\'s action.\n' + e);
-				}
-			}
 		});
 
 		$_('#game').click (function () {
@@ -1449,7 +1361,6 @@ class Monogatari {
 					if ($_(this).data('open') == 'save') {
 						$_('[data-menu="save"] [data-input="slotName"]').value (Monogatari.niceDateTime ());
 					}
-
 					$_('[data-menu="' + $_(this).data('open') + '"]').show();
 
 					break;
@@ -1457,9 +1368,12 @@ class Monogatari {
 				case 'start':
 					Monogatari.stopAmbient();
 					Monogatari.global ('playing', true);
-					$_('section').hide();
-					$_('#game').show();
-					Monogatari.run (Monogatari.global ('label')[Monogatari.setting ('Step')]);
+
+					Monogatari.onStart ().then (() => {
+						$_('section').hide();
+						$_('#game').show();
+						Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+					});
 					break;
 
 				case 'close':
@@ -1477,56 +1391,28 @@ class Monogatari {
 						$_(this).parent ().find ('[data-string]').text (Monogatari.string ('Show'));
 						$_('[data-ui="quick-menu"]').addClass ('transparent');
 						$_('[data-ui="text"]').hide();
+						Monogatari.global ('distraction-free', true);
 					} else if ($_(this).hasClass('fa-eye-slash')) {
 						$_(this).removeClass('fa-eye-slash');
 						$_(this).addClass('fa-eye');
 						$_(this).parent ().find ('[data-string]').text (Monogatari.string ('Hide'));
 						$_('[data-ui="quick-menu"]').removeClass ('transparent');
 						$_('[data-ui="text"]').show();
+						Monogatari.global ('distraction-free', false);
 					} else if ($_(this).text () === Monogatari.string ('Show')) {
 						$_(this).text (Monogatari.string('Hide'));
 						$_(this).parent ().find ('.fas').removeClass ('fa-eye-slash');
 						$_(this).parent ().find ('.fas').addClass ('fa-eye');
 						$_('[data-ui="quick-menu"]').removeClass ('transparent');
 						$_('[data-ui="text"]').show ();
+						Monogatari.global ('distraction-free', false);
 					} else if ($_(this).text () === Monogatari.string ('Hide')) {
 						$_(this).text (Monogatari.string ('Show'));
 						$_(this).parent ().find ('.fas').removeClass ('fa-eye');
 						$_(this).parent ().find ('.fas').addClass ('fa-eye-slash');
 						$_('[data-ui="quick-menu"]').addClass ('transparent');
 						$_('[data-ui="text"]').hide ();
-					}
-					break;
-
-				case 'auto-play':
-					if ($_(this).hasClass('fa-play-circle')) {
-						$_(this).removeClass('fa-play-circle');
-						$_(this).addClass('fa-stop-circle');
-						Monogatari.global ('autoPlay', setTimeout (function () {
-							if (Monogatari.canProceed() && Monogatari.global ('finishedTyping')) {
-								Monogatari.action ('Centered').hide();
-								Monogatari.shutUp();
-								Monogatari.next ();
-							}
-						}, Monogatari.preference ('AutoPlaySpeed') * 1000));
-					} else if ($_(this).hasClass('fa-stop-circle')) {
-						$_(this).removeClass('fa-stop-circle');
-						$_(this).addClass('fa-play-circle');
-						clearTimeout (Monogatari.global ('autoPlay'));
-						Monogatari.global ('autoPlay', null);
-					} else if ($_(this).text () === Monogatari.string ('AutoPlay')) {
-						$_(this).text (Monogatari.string('Stop'));
-						Monogatari.global ('autoPlay', setTimeout(function () {
-							if (Monogatari.canProceed() && Monogatari.global ('finishedTyping')) {
-								Monogatari.action ('Centered').hide();
-								Monogatari.shutUp();
-								Monogatari.next ();
-							}
-						}, Monogatari.preference ('AutoPlaySpeed') * 1000));
-					} else if ($_(this).text () === Monogatari.string ('Stop')) {
-						$_(this).text (Monogatari.string ('AutoPlay'));
-						clearTimeout (Monogatari.global ('autoPlay'));
-						Monogatari.global ('autoPlay', null);
+						Monogatari.global ('distraction-free', true);
 					}
 					break;
 
@@ -1558,16 +1444,36 @@ class Monogatari {
 
 		$_('#game [data-action="back"], #game [data-action="back"] *').click ((event) => {
 			event.stopPropagation ();
-			if (Monogatari.canProceed ()) {
+			Monogatari.canProceed ().then (() => {
 				Monogatari.revert ();
-			}
+			}).catch (() => {
+				// An action waiting for user interaction or something else
+				// is blocking the game.
+			});
 		});
 
-		/**
-		 * ==========================
-		 * In-Game Event Handlers
-		 * ==========================
-		 **/
+		$_('[data-action="set-auto-play-speed"]').on ('change mouseover', function () {
+			const value = Monogatari.setting ('maxAutoPlaySpeed') - parseInt($_(this).value());
+			Monogatari.preference ('AutoPlaySpeed', value);
+		});
+
+		$_('[data-action="auto-play"], [data-action="auto-play"] *').click(function () {
+			if ($_(this).hasClass('fa-play-circle')) {
+				$_(this).removeClass('fa-play-circle');
+				$_(this).addClass('fa-stop-circle');
+				Monogatari.autoPlay (true);
+			} else if ($_(this).hasClass('fa-stop-circle')) {
+				$_(this).removeClass('fa-stop-circle');
+				$_(this).addClass('fa-play-circle');
+				Monogatari.autoPlay (false);
+			} else if ($_(this).text () === Monogatari.string ('AutoPlay')) {
+				$_(this).text (Monogatari.string('Stop'));
+				Monogatari.autoPlay (true);
+			} else if ($_(this).text () === Monogatari.string ('Stop')) {
+				$_(this).text (Monogatari.string ('AutoPlay'));
+				Monogatari.autoPlay (false);
+			}
+		});
 
 		$_(document).keyup ((e) => {
 			if (e.target.tagName.toLowerCase () != 'input') {
@@ -1602,10 +1508,12 @@ class Monogatari {
 							$_('[data-action="distraction-free"]').removeClass ('fa-eye');
 							$_('[data-action="distraction-free"]').addClass ('fa-eye-slash');
 							$_('[data-ui="text"]').hide ();
+							Monogatari.global ('distraction-free', true);
 						} else if ($_('[data-action="distraction-free"]').hasClass ('fa-eye-slash')) {
 							$_('[data-action="distraction-free"]').removeClass ('fa-eye-slash');
 							$_('[data-action="distraction-free"]').addClass ('fa-eye');
 							$_('[data-ui="text"]').show ();
+							Monogatari.global ('distraction-free', false);
 						}
 						break;
 
@@ -1628,119 +1536,104 @@ class Monogatari {
 			Monogatari.loadFromSlot (Monogatari.setting ('AutoSaveLabel') + $_(this).parent().data('loadSlot'));
 		});
 
+		const promises = [];
 		for (const action of Monogatari.actions ()) {
-			action.bind (selector);
+			promises.push (action.bind (selector));
 		}
+		return Promise.all (promises);
 	}
 
 	static init (selector = '#monogatari') {
 		Monogatari.selector = selector;
 		FancyError.init ();
 
-		Monogatari.setup (selector);
-		Monogatari.bind (selector);
-
-		// Set the game language or hide the option if the game is not multilingual
-		if (Monogatari.setting ('MultiLanguage')) {
-			Monogatari.global ('game', Monogatari.script (Monogatari.preference ('Language')));
-			$_('[data-action="set-language"]').value (Monogatari.preference ('Language'));
-		} else {
-			Monogatari.global ('game', Monogatari.script ());
-			$_('[data-settings="language"]').hide ();
-		}
-
-		// Set the initial language translations
-		Monogatari.localize ();
-
-		// Set the label in which the game will start
-		Monogatari.global ('label', Monogatari.global ('game')[Monogatari.setting ('Label')]);
-
-		// Check if the orientation is correct, if it's not, show the warning
-		// message so the player will rotate its device.
-		if (Platform.mobile () && Platform.orientation () !== Monogatari.setting ('Orientation')) {
-			$_('[data-notice="orientation"]').addClass ('modal--active');
-		}
-
-		// Set all the dynamic backgrounds of the data-background property
-		$_('[data-background]').each ((element) => {
-			const background = $_(element).data ('background');
-			if (background.indexOf ('.') > -1) {
-				$_(element).style ('background', `url('${background}') center / cover no-repeat`);
-			} else {
-				$_(element).style ('background', background);
-			}
-		});
-
-		// Disable audio settings in iOS since they are not supported
-		if (Platform.mobile ('iOS')) {
-			// iOS handles the volume using the system volume, therefore there is now way to
-			// handle each of the sound sources individually and as such, this is disabled.
-			$_('[data-settings="audio"]').html (`<p>${Monogatari.string ('iOSAudioWarning')}</p>`);
-		}
-
-		// Disable the load and save slots in case Local Storage is not supported.
-		if (!window.localStorage) {
-			$_('[data-ui="slots"]').html (`<p>${Monogatari.string ('LocalStorageWarning')}</p>`);
-		}
-
-		Monogatari.electronSetup ();
-
-		// Remove the Text Speed setting if the type animation was disabled
-		if (Monogatari.setting ('TypeAnimation') === false) {
-			$_('[data-settings="text-speed"]').hide ();
-		}
-
-		Monogatari.setting ('maxTextSpeed', parseInt ($_('[data-action="set-text-speed"]').property ('max')));
-		Monogatari.setting ('maxAutoPlaySpeed', parseInt ($_('[data-action="set-auto-play-speed"]').property ('max')));
-
-		// Set the volume of all the media components
-		Monogatari.musicPlayer.volume = Monogatari.preference ('Volume').Music;
-		Monogatari.ambientPlayer.volume = Monogatari.preference ('Volume').Music;
-		Monogatari.voicePlayer.volume = Monogatari.preference ('Volume').Voice;
-		Monogatari.soundPlayer.volume = Monogatari.preference ('Volume').Sound;
-		document.querySelector ('[data-target="music"]').value = Monogatari.preference ('Volume').Music;
-		document.querySelector ('[data-target="voice"]').value = Monogatari.preference ('Volume').Voice;
-		document.querySelector ('[data-target="sound"]').value = Monogatari.preference ('Volume').Sound;
-
-		document.querySelector('[data-action="set-text-speed"]').value = Monogatari.preference ('TextSpeed');
-		document.querySelector('[data-action="set-auto-play-speed"]').value = Monogatari.preference ('AutoPlaySpeed');
-
-		Monogatari.preload ().then(() => {
-			$_('[data-menu="loading"]').fadeOut (400, () => {
-				$_('[data-menu="loading"]').hide ();
-			});
-		}).catch ((e) => {
-			console.error (e);
-		}).finally (() => {
-			Monogatari.showMainMenu ();
-		});
-
-		Monogatari.setSlots();
-
-		if (Monogatari.setting ('AutoSave') != 0 && typeof Monogatari.setting ('AutoSave') === 'number') {
-			setInterval(function () {
-				Monogatari.autoSave (Monogatari.global ('currentAutoSaveSlot'), Monogatari.setting ('AutoSaveLabel') + Monogatari.global ('currentAutoSaveSlot'));
-
-				if (Monogatari.global ('currentAutoSaveSlot') === Monogatari.setting ('Slots')) {
-					Monogatari.global ('currentAutoSaveSlot', 1);
+		Monogatari.setup (selector).then (() => {
+			Monogatari.bind (selector).then (() => {
+				// Set the game language or hide the option if the game is not multilingual
+				if (Monogatari.setting ('MultiLanguage')) {
+					$_('[data-action="set-language"]').value (Monogatari.preference ('Language'));
 				} else {
-					Monogatari.global ('currentAutoSaveSlot', Monogatari.global ('currentAutoSaveSlot') + 1);
+					$_('[data-settings="language"]').hide ();
 				}
-				Monogatari.setAutoSlots ();
 
-			}, Monogatari.setting ('AutoSave') * 60000);
-		} else {
-			$_('[data-menu="load"] [data-ui="autoSaveSlots"]').hide ();
-		}
+				// Set the initial language translations
+				Monogatari.localize ();
 
-		// Play the main menu song
-		Monogatari.playAmbient();
+				// Set the label in which the game will start
+				Monogatari.state ({
+					label: Monogatari.setting ('Label')
+				});
 
-		for (const action of Monogatari.actions ()) {
-			action.init (selector);
-		}
+				// Check if the orientation is correct, if it's not, show the warning
+				// message so the player will rotate its device.
+				if (Platform.mobile () && Platform.orientation () !== Monogatari.setting ('Orientation')) {
+					$_('[data-notice="orientation"]').addClass ('modal--active');
+				}
+
+				// Set all the dynamic backgrounds of the data-background property
+				$_('[data-background]').each ((element) => {
+					const background = $_(element).data ('background');
+					if (background.indexOf ('.') > -1) {
+						$_(element).style ('background', `url('${background}') center / cover no-repeat`);
+					} else {
+						$_(element).style ('background', background);
+					}
+				});
+
+				// Disable audio settings in iOS since they are not supported
+				if (Platform.mobile ('iOS')) {
+					// iOS handles the volume using the system volume, therefore there is now way to
+					// handle each of the sound sources individually and as such, this is disabled.
+					$_('[data-settings="audio"]').html (`<p>${Monogatari.string ('iOSAudioWarning')}</p>`);
+				}
+
+				// Disable the load and save slots in case Local Storage is not supported.
+				if (!window.localStorage) {
+					$_('[data-ui="slots"]').html (`<p>${Monogatari.string ('LocalStorageWarning')}</p>`);
+				}
+
+				Monogatari.electronSetup ();
+
+				Monogatari.preload ().then(() => {
+					$_('[data-menu="loading"]').fadeOut (400, () => {
+						$_('[data-menu="loading"]').hide ();
+					});
+				}).catch ((e) => {
+					console.error (e);
+				}).finally (() => {
+					Monogatari.showMainMenu ();
+				});
+
+				Monogatari.setSlots();
+
+				if (Monogatari.setting ('AutoSave') != 0 && typeof Monogatari.setting ('AutoSave') === 'number') {
+					setInterval(function () {
+						Monogatari.autoSave (Monogatari.global ('currentAutoSaveSlot'), Monogatari.setting ('AutoSaveLabel') + Monogatari.global ('currentAutoSaveSlot'));
+
+						if (Monogatari.global ('currentAutoSaveSlot') === Monogatari.setting ('Slots')) {
+							Monogatari.global ('currentAutoSaveSlot', 1);
+						} else {
+							Monogatari.global ('currentAutoSaveSlot', Monogatari.global ('currentAutoSaveSlot') + 1);
+						}
+						Monogatari.setAutoSlots ();
+
+					}, Monogatari.setting ('AutoSave') * 60000);
+				} else {
+					$_('[data-menu="load"] [data-ui="autoSaveSlots"]').hide ();
+				}
+
+				Monogatari.setting ('maxAutoPlaySpeed', parseInt ($_('[data-action="set-auto-play-speed"]').property ('max')));
+				document.querySelector('[data-action="set-auto-play-speed"]').value = Monogatari.preference ('AutoPlaySpeed');
+
+				for (const action of Monogatari.actions ()) {
+					action.init (selector);
+				}
+
+				// Play the main menu song
+				Monogatari.playAmbient();
+			});
+		});
 	}
-
 }
 
 Monogatari._actions = [];
@@ -1750,11 +1643,12 @@ Monogatari._script = {};
 Monogatari._characters = {};
 Monogatari._storage = {};
 
-Monogatari._state = {};
+Monogatari._state = {
+	step: 0,
+	label: 'Start'
+};
 
 Monogatari._history = {
-	music: [],
-	sound: [],
 	image: [],
 	character: [],
 	scene: [],
@@ -1791,24 +1685,6 @@ Monogatari._settings = {
 
 	// Number of AutoSave Slots
 	'Slots': 10,
-
-	// Current Media *
-	'Song': '',
-	'Sound': '',
-	'Scene': '',
-	'Particles': '',
-
-	// Current Statement *.
-	'Step': 0,
-
-	// History for the previous function *.
-	'MusicHistory': [],
-	'SoundHistory': [],
-	'ImageHistory': [],
-	'CharacterHistory': [],
-	'SceneHistory': [],
-	'SceneElementsHistory': [],
-	'ParticlesHistory': [],
 
 	// Change to true for a MultiLanguage Game.
 	'MultiLanguage': false,
@@ -1882,9 +1758,8 @@ Monogatari._preferences = {
 };
 
 Monogatari.globals ({
-	label: '',
-	game: {},
 	autoPlay: null,
+	'distraction-free': false,
 	deleteSlot: null,
 	overwriteSlot: null,
 	block: false,

@@ -8,6 +8,17 @@ class Action {
 		}
 	}
 
+	static canProceed () {
+		return Promise.resolve ();
+	}
+
+
+	/**
+	 * @static onStart - This function acts as an event listener for when the game
+	 * starts.
+	 *
+	 * @return {Promise}
+	 */
 	static onStart () {
 		return Promise.resolve ();
 	}

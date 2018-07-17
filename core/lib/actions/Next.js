@@ -11,7 +11,6 @@ export class Next extends Action {
 		super ();
 	}
 
-
 	apply () {
 		Monogatari.next ();
 		return Promise.resolve ();

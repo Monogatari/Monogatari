@@ -22,6 +22,11 @@ export class InputModal extends Action {
 		return Promise.resolve ();
 	}
 
+	static reset () {
+		$_('[data-ui="input"] [data-ui="warning"]').text ('');
+		return Promise.resolve ();
+	}
+
 	constructor ({ Input }) {
 		super ();
 		this.statement = Input;

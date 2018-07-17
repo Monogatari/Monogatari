@@ -157,7 +157,7 @@ select {
 
 [data-error] {
 	.modal__content {
-		height: 90%;
+		height: auto;
 		width: 90%;
 	}
 
@@ -171,11 +171,8 @@ select {
 	}
 
 	button {
-		position: absolute;
-		bottom: 0;
 		margin: 0.5rem auto;
-		left: 0;
-		right: 0;
+		display: block;
 	}
 
 	a {

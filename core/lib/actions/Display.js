@@ -4,6 +4,11 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Display extends Action {
 
+	static setup () {
+		Monogatari.history ('image');
+		return Promise.resolve ();
+	}
+
 	static matchString ([ action ]) {
 		return action === 'display';
 	}
@@ -30,9 +35,8 @@ export class Display extends Action {
 
 	apply () {
 		const object = `<img src="assets/images/${this.image}" class="animated ${this.classes.join (' ')}" data-image="${this.asset}">`;
-
 		$_('#game').append (object);
-		Monogatari.setting ('ImageHistory').push (object);
+		Monogatari.history ('image').push (object);
 		return Promise.resolve ();
 	}
 

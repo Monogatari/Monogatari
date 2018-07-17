@@ -16,6 +16,7 @@ export class End extends Action {
 				</div>
 			</div>
 		`);
+		return Promise.resolve ();
 	}
 
 	static bind () {
@@ -27,6 +28,7 @@ export class End extends Action {
 			$_('[data-notice="exit"]').removeClass ('modal--active');
 			Monogatari.run ('end');
 		});
+		return Promise.resolve ();
 	}
 
 	static matchString ([ action ]) {

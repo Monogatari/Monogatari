@@ -26,7 +26,6 @@ export class Hide extends Action {
 
 	}
 
-
 	apply () {
 		if (this.classes.length > 0) {
 			for (const newClass of this.classes) {
@@ -36,6 +35,12 @@ export class Hide extends Action {
 		} else {
 			this.element.remove ();
 		}
+		const show = Monogatari.state ('show').filter ((item) => {
+			const [ , asset, ] = item;
+			return asset !== this.asset;
+		});
+
+		Monogatari.state ({ show });
 		return Promise.resolve ();
 	}
 

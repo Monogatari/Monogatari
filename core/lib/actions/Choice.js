@@ -4,6 +4,36 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Choice extends Action {
 
+	static canProceed () {
+		if ($_('[data-ui="choices"]').isVisible ()) {
+			return Promise.reject ();
+		}
+		return Promise.resolve ();
+	}
+
+	static bind () {
+		$_('body').on('click', '[data-do]', function () {
+			Monogatari.action ('Centered').hide ();
+			Monogatari.shutUp ();
+			if ($_(this).data('do') != 'null' && $_(this).data('do') != '') {
+				try {
+					$_('[data-ui="choices"]').hide ();
+					$_('[data-ui="choices"]').html ('');
+					Monogatari.run ($_(this).data ('do'), false);
+				} catch (e) {
+					console.error('An error ocurred while trying to execute the choice\'s action.\n' + e);
+				}
+			}
+		});
+		return Promise.resolve ();
+	}
+
+	static reset () {
+		$_('[data-ui="choices"]').hide ();
+		$_('[data-ui="choices"]').html ('');
+		return Promise.resolve ();
+	}
+
 	static matchObject (statement) {
 		return typeof statement.Choice !== 'undefined';
 	}

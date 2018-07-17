@@ -21,6 +21,16 @@ export class Canvas extends Action {
 		return Promise.resolve ();
 	}
 
+	static reset () {
+		Monogatari.history ({
+			canvas: []
+		});
+		Monogatari.state ({
+			canvas: []
+		});
+		return Promise.resolve ();
+	}
+
 	static matchString ([ action ]) {
 		return action === 'canvas';
 	}

@@ -36,14 +36,17 @@ export class Stop extends Action {
 			Monogatari.action ('Particles').stop ();
 		} else {
 			this.player.pause ();
-			this.player.removeAttribute ('loop');
 			this.player.setAttribute ('src', '');
 			this.player.currentTime = 0;
 
 			if (this.type === 'music') {
-				Monogatari.setting ('Song', '');
+				Monogatari.state ({
+					music: ''
+				});
 			} else if (this.type === 'sound') {
-				Monogatari.setting ('Sound', '');
+				Monogatari.state ({
+					sound: ''
+				});
 			}
 		}
 		return Promise.resolve ();
@@ -60,22 +63,22 @@ export class Stop extends Action {
 
 	revert () {
 		if (this.type === 'particles') {
-			if (Monogatari.setting ('ParticlesHistory').length > 0) {
-				const last_particles = Monogatari.setting ('ParticlesHistory').pop ();
-				if (typeof Monogatari.action ('Particles').settings.particles[last_particles] !== 'undefined') {
-					particlesJS (Monogatari.action ('Particles').settings.particles[last_particles]);
-					Monogatari.setting ('Particles', last_particles);
-				}
+			if (Monogatari.history ('particles').length > 0) {
+				return Monogatari.run (Monogatari.history ('particles').pop (), false);
 			}
 		} else {
 
 			let last;
 			if (this.type === 'music') {
-				Monogatari.setting ('Song', '');
-				last = Monogatari.setting ('MusicHistory').pop ().split (' ');
+				Monogatari.state ({
+					music: ''
+				});
+				last = Monogatari.history ('music').pop ().split (' ');
 			} else if (this.type === 'sound') {
-				Monogatari.setting ('Sound', '');
-				last = Monogatari.setting ('SoundHistory').pop ().split (' ');
+				Monogatari.state ({
+					sound: ''
+				});
+				last = Monogatari.history ('sound').pop ().split (' ');
 			}
 
 			if ('loop' in this.props) {
@@ -89,9 +92,13 @@ export class Stop extends Action {
 			}
 
 			if (this.type == 'music') {
-				Monogatari.setting ('Song', last.join (' '));
+				Monogatari.state ({
+					music: last.join (' ')
+				});
 			} else if (this.type == 'sound') {
-				Monogatari.setting ('Sound', last.join (' '));
+				Monogatari.state ({
+					sound: last.join (' ')
+				});
 			}
 
 			this.player.play ();

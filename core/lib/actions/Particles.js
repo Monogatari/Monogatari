@@ -8,6 +8,17 @@ export class Particles extends Action {
 
 	static setup () {
 		Monogatari.history ('particles');
+		Monogatari.state ({
+			particles: ''
+		});
+		return Promise.resolve ();
+	}
+
+	static reset () {
+		Monogatari.state ({
+			particles: ''
+		});
+		return Promise.resolve ();
 	}
 
 	static matchString ([ action ]) {
@@ -54,8 +65,10 @@ export class Particles extends Action {
 
 	apply () {
 		particlesJS (this.particles);
-		Monogatari.setting ('ParticlesHistory').push (this.name);
-		Monogatari.setting ('Particles', this.name);
+		Monogatari.history ('particles').push (this._statement);
+		Monogatari.state ({
+			particles: this._statement
+		});
 		return Promise.resolve ();
 	}
 

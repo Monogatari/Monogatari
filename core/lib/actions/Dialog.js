@@ -5,6 +5,10 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Dialog extends Action {
 
+	static canProceed () {
+		return Promise.resolve (Monogatari.global ('finishedTyping'));
+	}
+
 	static setup () {
 		Monogatari.globals ({
 			textObject: null,
@@ -20,16 +24,6 @@ export class Dialog extends Action {
 					Monogatari.global ('finishedTyping', false);
 				},
 				onStringTyped: () => {
-					if (Monogatari.global ('autoPlay') !== null) {
-						Monogatari.global ('autoPlay', setTimeout (() => {
-							if (Monogatari.canProceed() && Monogatari.global ('finishedTyping')) {
-								Monogatari.action ('Centered').hide();
-								Monogatari.shutUp ();
-								Monogatari.next ();
-							}
-						}, Monogatari.preference ('AutoPlaySpeed') * 1000));
-					}
-
 					Monogatari.global ('finishedTyping', true);
 				},
 				onDestroy () {
@@ -37,6 +31,39 @@ export class Dialog extends Action {
 				}
 			}
 		});
+		return Promise.resolve ();
+	}
+
+	static bind () {
+		$_('[data-action="set-text-speed"]').on ('change mouseover', function () {
+			const value =  Monogatari.setting ('maxTextSpeed') - parseInt($_(this).value());
+			Monogatari.global ('typedConfiguration').typeSpeed = value;
+			Monogatari.preference ('TextSpeed', value);
+		});
+		return Promise.resolve ();
+	}
+
+	static init () {
+		// Remove the Text Speed setting if the type animation was disabled
+		if (Monogatari.setting ('TypeAnimation') === false) {
+			$_('[data-settings="text-speed"]').hide ();
+		}
+
+		Monogatari.setting ('maxTextSpeed', parseInt ($_('[data-action="set-text-speed"]').property ('max')));
+
+
+		document.querySelector('[data-action="set-text-speed"]').value = Monogatari.preference ('TextSpeed');
+
+		return Promise.resolve ();
+	}
+
+	static reset () {
+		if (Monogatari.global ('textObject') !== null) {
+			Monogatari.global ('textObject').destroy ();
+		}
+		$_('[data-ui="who"]').html ('');
+		$_('[data-ui="say"]').html ('');
+		return Promise.resolve ();
 	}
 
 	static matchString () {
@@ -137,7 +164,7 @@ export class Dialog extends Action {
 	}
 
 	narratorDialog () {
-		return this.displayDialog (this.dialog, 'narrator', Monogatari.settings ('NarratorTypeAnimation'));
+		return this.displayDialog (this.dialog, 'narrator', Monogatari.setting ('NarratorTypeAnimation'));
 	}
 
 	characterDialog () {

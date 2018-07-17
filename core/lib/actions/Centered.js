@@ -9,6 +9,11 @@ export class Centered extends Action {
 		return action === 'centered';
 	}
 
+	static reset () {
+		$_('[data-ui="centered"]').remove ();
+		return Promise.resolve ();
+	}
+
 	static hide () {
 		$_('[data-ui="centered"]').remove ();
 		$_('[data-ui="text"]').show ();

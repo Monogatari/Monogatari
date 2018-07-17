@@ -13,6 +13,12 @@ export class Message extends Action {
 				</div>
 			</div>
 		`);
+		return Promise.resolve ();
+	}
+
+	static reset () {
+		$_('[data-ui="messages"]').removeClass ('modal--active');
+		return Promise.resolve ();
 	}
 
 	static matchString ([ action, type ]) {

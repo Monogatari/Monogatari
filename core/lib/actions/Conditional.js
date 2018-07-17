@@ -14,15 +14,17 @@ export class Conditional extends Action {
 
 	apply () {
 		Monogatari.assertAsync (this.statement.Condition, Monogatari).then (() => {
+			Monogatari.global ('block', false);
 			Monogatari.run (this.statement.True, false);
 		}).catch (() => {
-			Monogatari.run (this.statement.False, false);
-		}).finally (() => {
 			Monogatari.global ('block', false);
+			Monogatari.run (this.statement.False, false);
 		});
 		return Promise.resolve ();
 	}
 
+	// TODO: Conditionals are not reversible right now because there's no way to
+	// tell what they actually did in all cases.
 	willRevert () {
 		return Promise.reject ();
 	}

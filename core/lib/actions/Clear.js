@@ -12,7 +12,7 @@ export class Clear extends Action {
 	}
 
 	apply () {
-		Monogatari.whipeText();
+		Monogatari.action ('Dialog').reset ();
 		return Promise.resolve ();
 	}
 

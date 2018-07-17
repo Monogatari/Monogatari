@@ -4,6 +4,31 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Scene extends Action {
 
+	static setup () {
+		Monogatari.history ('scene');
+		Monogatari.history ('sceneElemets');
+		Monogatari.state ({
+			scene: ''
+		});
+		return Promise.resolve ();
+	}
+
+	static onLoad () {
+		const { scene } = Monogatari.state ();
+		if (scene !== '') {
+			Monogatari.run (scene, false);
+		}
+		return Promise.resolve ();
+	}
+
+	static reset () {
+		$_('[data-ui="background"]').style ('background', 'initial');
+		Monogatari.state ({
+			scene: ''
+		});
+		return Promise.resolve ();
+	}
+
 	static matchString ([ action ]) {
 		return action === 'scene';
 	}
@@ -26,7 +51,6 @@ export class Scene extends Action {
 		} else {
 			this.classes = [];
 		}
-
 	}
 
 	willApply () {
@@ -35,7 +59,7 @@ export class Scene extends Action {
 			scene_elements.push (element.outerHTML);
 		});
 
-		Monogatari.setting ('SceneElementsHistory').push (scene_elements);
+		Monogatari.history ('sceneElements').push (scene_elements);
 
 		$_('[data-character]').remove ();
 		$_('[data-image]').remove ();
@@ -51,10 +75,12 @@ export class Scene extends Action {
 			$_('[data-ui="background"]').addClass (newClass);
 		}
 
-		Monogatari.setting ('Scene', this.scene);
-		Monogatari.setting ('SceneHistory').push (this.scene);
+		Monogatari.state ({
+			scene: this._statement
+		});
+		Monogatari.history ('scene').push (this._statement);
 
-		Monogatari.whipeText ();
+		Monogatari.action ('Dialog').reset ();
 
 		return Promise.resolve ();
 	}
@@ -71,13 +97,15 @@ export class Scene extends Action {
 	}
 
 	revert () {
-		Monogatari.setting ('SceneHistory').pop ();
-		Monogatari.setting ('Scene', Monogatari.setting ('SceneHistory').slice(-1)[0]);
+		Monogatari.history ('scene').pop ();
+		Monogatari.state ({
+			scene: Monogatari.history ('scene').slice(-1)[0]
+		});
 
-		$_('[data-ui="background"]').style (this.property, this.value.replace (this.scene, Monogatari.setting ('Scene')));
+		$_('[data-ui="background"]').style (this.property, this.value.replace (this.scene, Monogatari.state ('scene')));
 
 		if (Monogatari.setting ('SceneElementsHistory').length > 0) {
-			const scene_elements = Monogatari.setting ('SceneElementsHistory').pop ();
+			const scene_elements = Monogatari.history  ('sceneElements').pop ();
 
 			if (typeof scene_elements === 'object') {
 				for (const element of scene_elements) {
@@ -85,7 +113,7 @@ export class Scene extends Action {
 				}
 			}
 		}
-		Monogatari.whipeText();
+		Monogatari.action ('Dialog').reset ();
 		return Promise.resolve ();
 	}
 

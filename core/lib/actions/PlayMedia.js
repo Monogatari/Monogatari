@@ -4,6 +4,90 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Play extends Action {
 
+	static canProceed () {
+		if ($_('[data-component="video"]').isVisible ()) {
+			return Promise.reject ();
+		}
+		return Promise.resolve ();
+	}
+
+	static setup () {
+		Monogatari.history ('music');
+		Monogatari.history ('sound');
+		Monogatari.state ({
+			music: '',
+			sound: ''
+		});
+		return Promise.resolve ();
+	}
+
+	static init () {
+		// Set the volume of all the media components
+		Monogatari.musicPlayer.volume = Monogatari.preference ('Volume').Music;
+		Monogatari.ambientPlayer.volume = Monogatari.preference ('Volume').Music;
+		Monogatari.voicePlayer.volume = Monogatari.preference ('Volume').Voice;
+		Monogatari.soundPlayer.volume = Monogatari.preference ('Volume').Sound;
+
+		document.querySelector ('[data-target="music"]').value = Monogatari.preference ('Volume').Music;
+		document.querySelector ('[data-target="voice"]').value = Monogatari.preference ('Volume').Voice;
+		document.querySelector ('[data-target="sound"]').value = Monogatari.preference ('Volume').Sound;
+		return Promise.resolve ();
+	}
+
+	static bind (selector) {
+		Monogatari.ambientPlayer = document.querySelector ('[data-component="ambient"]');
+		Monogatari.musicPlayer = document.querySelector ('[data-component="music"]');
+		Monogatari.soundPlayer = document.querySelector ('[data-component="sound"]');
+		Monogatari.videoPlayer = document.querySelector ('[data-ui="player"]');
+		Monogatari.voicePlayer = document.querySelector ('[data-component="voice"]');
+
+		// Volume bars listeners
+		$_('[data-action="set-volume"]').on ('change mouseover', function () {
+			const v = document.querySelector (`[data-component='${$_(this).data('target')}']`);
+			const value = $_(this).value();
+
+			switch ($_(this).data('target')) {
+				case 'music':
+					Monogatari.ambientPlayer.volume = value;
+					v.volume = value;
+					Monogatari.preference ('Volume').Music = value;
+					break;
+
+				case 'voice':
+					v.volume = value;
+					Monogatari.preference ('Volume').Voice = value;
+					break;
+
+				case 'sound':
+					v.volume = value;
+					Monogatari.preference ('Volume').Sound = value;
+					break;
+			}
+			Monogatari.Storage.set ('Settings', Monogatari.preferences ());
+		});
+
+		$_('[data-action="close-video"]').click (() => {
+			Play.stopVideo ();
+		});
+		Monogatari.state ({
+			music: '',
+			sound: ''
+		});
+		return Promise.resolve ();
+	}
+
+	static onLoad () {
+		const { music, sound } = Monogatari.state ();
+		if (music !== '') {
+			Monogatari.run (music, false);
+		}
+
+		if (sound !== '') {
+			Monogatari.run (sound, false);
+		}
+		return Promise.resolve ();
+	}
+
 	static reset () {
 		Play.stopVideo ();
 		$_('audio').each ((element) => {
@@ -13,13 +97,8 @@ export class Play extends Action {
 				element.src = '';
 			}
 		});
+		$_('[data-component="video"]').removeClass ('modal--active');
 		return Promise.resolve ();
-	}
-
-	static bind () {
-		$_('[data-action="close-video"]').click (() => {
-			Play.stopVideo ();
-		});
 	}
 
 	static matchString ([ action ]) {
@@ -33,11 +112,8 @@ export class Play extends Action {
 		$_('[data-component="video"]').removeClass ('active');
 	}
 
-	constructor (statement) {
+	constructor ([ action, type, media, ...props ]) {
 		super ();
-		const [ action, type, media, ...props ] = statement;
-
-		this.statement = statement;
 		this.type = type;
 		this.props = props;
 
@@ -74,12 +150,20 @@ export class Play extends Action {
 
 			Monogatari.setting ('Song', this.statement.join (' '));
 			Monogatari.setting ('MusicHistory').push (Monogatari.setting ('Song'));
-		} else if (this.type == 'sound') {
 
+			Monogatari.history ('music').push (this._statement);
+			Monogatari.state ({
+				music: this._statement
+			});
+		} else if (this.type == 'sound') {
 
 			Monogatari.setting ('Sound', this.statement.join (' '));
 			Monogatari.setting ('SoundHistory').push (Monogatari.setting ('Sound'));
 
+			Monogatari.history ('sound').push (this._statement);
+			Monogatari.state ({
+				sound: this._statement
+			});
 		} else if (this.type == 'video') {
 			$_('[data-component="video"]').addClass ('active');
 		}
