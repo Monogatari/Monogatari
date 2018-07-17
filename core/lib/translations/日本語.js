@@ -23,6 +23,8 @@ Monogatari.translation ('日本語', {
 	'Close': '閉めて',
 	'Confirm': '終了しますか？',
 
+	'Delete': 'Delete',
+
 	'FullScreen': '全画面表示',
 
 	'Help': 'ヘルプ',

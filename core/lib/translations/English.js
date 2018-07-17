@@ -24,6 +24,8 @@ Monogatari.translation ('English', {
 	'Close': 'Close',
 	'Confirm': 'Do you want to quit?',
 
+	'Delete': 'Delete',
+
 	'FullScreen': 'Full Screen',
 
 	'Help': 'Help',

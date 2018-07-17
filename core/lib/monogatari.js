@@ -28,7 +28,7 @@ const HTML = `
 			<p data-string="SlotOverwrite" class="col xs12 m12 l12 xl12">Are you sure you want to overwrite this slot?</p>
 			<input type="text" name="name" class="margin-1 col xs12 m12 l12 xl12" required>
 			<div class="col xs12 m12 l12 xl12">
-				<button data-action="overwrite-slot" data-string="Delete">Overwrite</button>
+				<button data-action="overwrite-slot" data-string="Overwrite">Overwrite</button>
 				<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
 			</div>
 		</div>

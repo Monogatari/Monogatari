@@ -24,6 +24,8 @@ Monogatari.translation ('Nederlands', {
 	'Close': 'Sluit',
 	'Confirm': 'Ben je zeker dat je wilt stoppen?',
 
+	'Delete': 'Delete',
+
 	'FullScreen': 'Volledig scherm',
 
 	'Help': 'Help',
