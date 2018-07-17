@@ -16,9 +16,9 @@
   "scripts": {
     "start": "parcel serve index.html --open --no-cache",
     "build": "parcel build ./src/index.html",
-    "build:js": "parcel build ./core/index.js --global Monogatari --out-file monogatari.js --out-dir dist/js --no-cache",
-    "build:css": "parcel build ./core/index.css --out-file monogatari.css --out-dir dist/style --no-cache --no-source-maps",
-    "eslint": "eslint ./core/index.js"
+    "build:js": "parcel build ./core/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine --no-cache",
+    "build:css": "parcel build ./core/index.css --out-file monogatari.css --out-dir dist/engine --no-cache --no-source-maps",
+    "eslint": "eslint ./core/index.js ./core/actions/* ./core/translations/*"
   },
   "devDependencies": {
     "@babel/polyfill": "^7.0.0-beta.52",
@@ -39,7 +39,6 @@
     "@fortawesome/fontawesome-free": "^5.1.0",
     "animate.css": "^3.6.1",
     "electron": "^2.0.4",
-    "jquery": "^3.3.1",
     "particles.js": "^2.0.0",
     "typed.js": "^2.0.8"
   }
