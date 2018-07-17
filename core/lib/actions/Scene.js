@@ -6,7 +6,7 @@ export class Scene extends Action {
 
 	static setup () {
 		Monogatari.history ('scene');
-		Monogatari.history ('sceneElemets');
+		Monogatari.history ('sceneElements');
 		Monogatari.state ({
 			scene: ''
 		});
@@ -104,7 +104,7 @@ export class Scene extends Action {
 
 		$_('[data-ui="background"]').style (this.property, this.value.replace (this.scene, Monogatari.state ('scene')));
 
-		if (Monogatari.setting ('SceneElementsHistory').length > 0) {
+		if (Monogatari.history ('sceneElements').length > 0) {
 			const scene_elements = Monogatari.history  ('sceneElements').pop ();
 
 			if (typeof scene_elements === 'object') {

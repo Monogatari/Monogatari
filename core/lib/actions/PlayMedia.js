@@ -147,19 +147,11 @@ export class Play extends Action {
 		this.player.setAttribute ('src', `assets/${this.type}/${this.media}`);
 
 		if (this.type == 'music') {
-
-			Monogatari.setting ('Song', this.statement.join (' '));
-			Monogatari.setting ('MusicHistory').push (Monogatari.setting ('Song'));
-
 			Monogatari.history ('music').push (this._statement);
 			Monogatari.state ({
 				music: this._statement
 			});
 		} else if (this.type == 'sound') {
-
-			Monogatari.setting ('Sound', this.statement.join (' '));
-			Monogatari.setting ('SoundHistory').push (Monogatari.setting ('Sound'));
-
 			Monogatari.history ('sound').push (this._statement);
 			Monogatari.state ({
 				sound: this._statement

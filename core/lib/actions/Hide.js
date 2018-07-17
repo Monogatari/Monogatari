@@ -49,10 +49,10 @@ export class Hide extends Action {
 	}
 
 	willRevert () {
-		if (typeof Monogatari.character (this.asset) !== 'undefined' && Monogatari.setting ('CharacterHistory').length > 0) {
-			this.history = 'CharacterHistory';
-		} else if (typeof Monogatari.asset ('images', this.asset) !== 'undefined' && Monogatari.setting ('ImageHistory').length > 0) {
-			this.history = 'ImageHistory';
+		if (typeof Monogatari.character (this.asset) !== 'undefined' && Monogatari.history ('character').length > 0) {
+			this.history = 'character';
+		} else if (typeof Monogatari.asset ('images', this.asset) !== 'undefined' && Monogatari.history ('image').length > 0) {
+			this.history = 'image';
 		} else {
 			return Promise.reject ();
 		}
@@ -60,7 +60,7 @@ export class Hide extends Action {
 	}
 
 	revert () {
-		$_('#game').append (Monogatari.setting (this.history).pop ());
+		$_('#game').append (Monogatari.history (this.history).pop ());
 		return Promise.resolve ();
 	}
 

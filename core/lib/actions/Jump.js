@@ -11,7 +11,7 @@ export class Jump extends Action {
 
 	static bind () {
 		$_('[data-action="jump"]').click (function () {
-			Monogatari.run (`jump ${$_(this).data('jump')}`);
+			Monogatari.run (`jump ${$_(this).data('jump')}`, false);
 		});
 		return Promise.resolve ();
 	}
@@ -45,6 +45,7 @@ export class Jump extends Action {
 		return Promise.resolve ();
 	}
 
+	// Jump is right now not reversible due to complications with the logic for it
 	willRevert () {
 		return Promise.reject ();
 	}

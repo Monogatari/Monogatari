@@ -6,10 +6,12 @@ export class Show extends Action {
 
 	static setup () {
 		Monogatari.history ('particle');
-		Monogatari.history ('show');
+		Monogatari.history ('image');
+		Monogatari.history ('character');
 		Monogatari.state ({
 			particles: '',
-			show: []
+			images: [],
+			characters: []
 		});
 		return Promise.resolve ();
 	}
@@ -99,7 +101,7 @@ export class Show extends Action {
 				$_('#game').append (object);
 			}
 
-			Monogatari.setting ('CharacterHistory').push(object);
+			Monogatari.history ('character').push(object);
 
 		} else {
 			// show [image] at [position] with [animation]
@@ -113,7 +115,7 @@ export class Show extends Action {
 
 			const object = `<img src="assets/images/${this.image}" class="animated ${this.classes.join (' ')}" data-image="${this.asset}" data-sprite="${this.sprite}">`;
 			$_('#game').append (object);
-			Monogatari.setting ('ImageHistory').push (object);
+			Monogatari.history ('image').push (object);
 		}
 		return Promise.resolve ();
 	}
@@ -130,11 +132,11 @@ export class Show extends Action {
 	revert () {
 		if (this.type === 'character') {
 			$_(`[data-character="${this.asset}"]`).remove();
-			if (Monogatari.setting ('CharacterHistory').length > 1) {
-				Monogatari.setting ('CharacterHistory').pop ();
+			if (Monogatari.history ('character').length > 1) {
+				Monogatari.history ('character').pop ();
 			}
 
-			const last_character = Monogatari.setting ('CharacterHistory').slice(-1)[0];
+			const last_character = Monogatari.history ('character').slice(-1)[0];
 			if (typeof last_character != 'undefined') {
 				if (last_character.indexOf (`data-character="${this.asset}"`) > -1) {
 					$_('#game').append (last_character);
@@ -149,7 +151,7 @@ export class Show extends Action {
 			} else {
 				$_(`[data-image="${this.asset}"]`).remove ();
 			}
-			Monogatari.setting ('ImageHistory').pop ();
+			Monogatari.history ('image').pop ();
 		}
 		return Promise.resolve ();
 	}
