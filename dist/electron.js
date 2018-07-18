@@ -20,7 +20,7 @@ let win;
 
 function createWindow () {
 	// Create the browser window.
-	win = new BrowserWindow({
+	win = new BrowserWindow ({
 
 		// Title that will be shown in the window (Your game's title)
 		title: '',
@@ -85,7 +85,7 @@ app.on ('activate', () => {
 	// On OS X it's common to re-create a window in the app when the
 	// dock icon is clicked and there are no other windows open.
 	if (win === null) {
-		createWindow();
+		createWindow ();
 	}
 });
 

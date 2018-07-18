@@ -106,7 +106,7 @@ export class FancyError {
 				for (const item of props[key]) {
 					html += `<code class='language-markup'>${item.outerHTML.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')}</code>`;
 				}
-				html += `</pre></p>`;
+				html += '</pre></p>';
 			}
 		}
 		html += '</div>';
@@ -127,7 +127,7 @@ export class FancyError {
 							for (const item of props[key][property]) {
 								html += `<code class='language-markup'>${item.outerHTML.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')}</code>`;
 							}
-							html += `</pre></p>`;
+							html += '</pre></p>';
 						}
 					}
 				}

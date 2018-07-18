@@ -105,7 +105,7 @@ export class Dialog extends Action {
 
 	willApply () {
 		$_('[data-character]').removeClass ('focus');
-		this.dialog = this.context.replaceVariables (this.dialog);
+		this.dialog = Monogatari.replaceVariables (this.dialog);
 
 		$_('[data-ui="face"]').hide ();
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
@@ -169,7 +169,7 @@ export class Dialog extends Action {
 
 	characterDialog () {
 		if (typeof this.character.Name !== 'undefined') {
-			$_('[data-ui="who"]').html (this.context.replaceVariables (this.character.Name));
+			$_('[data-ui="who"]').html (Monogatari.replaceVariables (this.character.Name));
 		}
 
 		$_('[data-character="' + this.id + '"]').addClass ('focus');

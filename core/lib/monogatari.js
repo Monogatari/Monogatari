@@ -302,14 +302,6 @@ class Monogatari {
 		Monogatari._actions = Monogatari._actions.filter ((a) => !(a instanceof action));
 	}
 
-	static registerComponent (component) {
-		Monogatari._components.push (component);
-	}
-
-	static unregisterComponent (component) {
-		Monogatari._components = Monogatari._actions.filter ((c) => !(c instanceof component));
-	}
-
 	static actions () {
 		return Monogatari._actions;
 	}
@@ -319,6 +311,26 @@ class Monogatari {
 			Monogatari._actions.find ((a) => a.id === id).settings = Object.assign ({}, Monogatari._actions.find ((a) => a.id === id).settings, settings);
 		} else {
 			return Monogatari._actions.find ((a) => a.id === id);
+		}
+	}
+
+	static registerComponent (component) {
+		Monogatari._components.push (component);
+	}
+
+	static unregisterComponent (component) {
+		Monogatari._components = Monogatari._actions.filter ((c) => !(c instanceof component));
+	}
+
+	static components () {
+		return Monogatari._components;
+	}
+
+	static component (id, configuration = null) {
+		if (configuration !== null) {
+			Monogatari._components.find ((a) => a.id === id).configuration (configuration);
+		} else {
+			return Monogatari._components.find ((a) => a.id === id);
 		}
 	}
 
@@ -537,7 +549,7 @@ class Monogatari {
 		// Check if asset preloading is enabled. Preloading will not be done in
 		// electron or cordova since the assets are expected to be available
 		// locally.
-		if (Monogatari.setting ('Preload') && !Platform.electron () && !Platform.cordova ()) {
+		if (Monogatari.setting ('Preload') && !Platform.electron () && !Platform.cordova () && location.protocol.indexOf ('file') < 0) {
 
 			// Show loading screen
 			$_('[data-menu="loading"]').show ();
@@ -1265,6 +1277,11 @@ class Monogatari {
 		Monogatari.global ('storageStructure', JSON.stringify(Monogatari.storage ()));
 
 		const promises = [];
+
+		for (const component of Monogatari.components ()) {
+			promises.push (component.setup (selector));
+		}
+
 		for (const action of Monogatari.actions ()) {
 			promises.push (action.setup (selector));
 		}
@@ -1537,6 +1554,11 @@ class Monogatari {
 		});
 
 		const promises = [];
+
+		for (const component of Monogatari.components ()) {
+			promises.push (component.bind (selector));
+		}
+
 		for (const action of Monogatari.actions ()) {
 			promises.push (action.bind (selector));
 		}
@@ -1624,6 +1646,10 @@ class Monogatari {
 
 				Monogatari.setting ('maxAutoPlaySpeed', parseInt ($_('[data-action="set-auto-play-speed"]').property ('max')));
 				document.querySelector('[data-action="set-auto-play-speed"]').value = Monogatari.preference ('AutoPlaySpeed');
+
+				for (const component of Monogatari.components ()) {
+					component.init (selector);
+				}
 
 				for (const action of Monogatari.actions ()) {
 					action.init (selector);

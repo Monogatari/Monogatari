@@ -558,10 +558,6 @@ textarea {
 	background-size: cover;
 }
 
-[data-menu] button {
-	margin: 2vmin;
-}
-
 [data-menu] [data-action="back"] {
 	position: absolute;
 	border-radius: 100%;

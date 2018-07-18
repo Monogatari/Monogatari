@@ -25,6 +25,7 @@ export * from 'typed.js';
  * apart from the core engine.
  */
 import './lib/translations/index.js';
+import './lib/components/index.js';
 import './lib/actions/index.js';
 
 /**

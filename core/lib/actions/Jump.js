@@ -1,6 +1,7 @@
 import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
 import { $_ } from '@aegis-framework/artemis';
+import { FancyError } from '../FancyError';
 
 export class Jump extends Action {
 
@@ -31,6 +32,21 @@ export class Jump extends Action {
 			$_('section').hide ();
 			$_('#game').show ();
 			return Promise.resolve ();
+		} else {
+			FancyError.show (
+				`The label "${this.label}" does not exist`,
+				`Monogatari attempted to jump to the label named "${this.label}" but it wasn't found on the script.`,
+				{
+					'Missing Label': this.label,
+					'You may have meant one of these': Object.keys (Monogatari.script ()),
+					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
+					'Label': Monogatari.state ('label'),
+					'Step': Monogatari.state ('step'),
+					'Help': {
+						'_': 'Check if the label in your jump statement is correct and that you have also defined it correctly.'
+					}
+				}
+			);
 		}
 		return Promise.reject ();
 	}

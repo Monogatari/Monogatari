@@ -27,6 +27,7 @@ export class Notify extends Action {
 							'Monogatari attempted to transform the given time into an integer value but failed.',
 							{
 								'Specified time': time,
+								'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
 								'Label': Monogatari.state ('label'),
 								'Step': Monogatari.state ('step'),
 								'Help': {

@@ -1,5 +1,6 @@
-/* global monogatari */
+/* global Monogatari, monogatari */
 
+const { $_ } = Monogatari;
 // Define the messages used in the game.
 monogatari.action ('Message', {
 	messages: {
@@ -78,7 +79,7 @@ monogatari.script ({
 			'Input': {
 				'Text': 'What is your name?',
 				'Validation': function (input) {
-					return input.trim().length > 0;
+					return input.trim ().length > 0;
 				},
 				'Save': function (input) {
 					this.storage ({

@@ -1,17 +1,28 @@
+# System Files
 .DS_Store
-*.zip
 *~
 ._*
 .thumbs
 .Thumbs
+
+# Package File
+*.zip
+*.rar
+
+# IDE/Text Editor Generated
+.vscode
 .buildconfig
-package-lock.json
+
+# Package Managers
 node_modules
+package-lock.json
+
+# Build systems
+.cache
+
+# Other
 cache
 src
 build
 release
-package-lock.json
-.cache
 *.log
-.vscode

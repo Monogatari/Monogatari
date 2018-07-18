@@ -32,7 +32,6 @@ export class Display extends Action {
 		}
 	}
 
-
 	apply () {
 		const object = `<img src="assets/images/${this.image}" class="animated ${this.classes.join (' ')}" data-image="${this.asset}">`;
 		$_('#game').append (object);
