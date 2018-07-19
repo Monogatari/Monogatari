@@ -48,9 +48,6 @@ export class Show extends Action {
 		this.asset = asset;
 
 		if (typeof Monogatari.character (asset) !== 'undefined') {
-			Monogatari.state ({
-				characters: [this._statement, ...Monogatari.state ('characters')]
-			});
 			this.type = 'character';
 			// show [character] [expression] at [position] with [animation] [infinite]
 			const [sprite, ...classes] = props.join (' ').replace(' at ', ' ').replace (' with ', ' ').trim ().split (' ');
@@ -60,9 +57,7 @@ export class Show extends Action {
 			this.character = Monogatari.character (asset);
 			this.image = this.character.Images[this.sprite];
 		} else {
-			Monogatari.state ({
-				images: [this._statement, ...Monogatari.state ('images')]
-			});
+
 			this.type = 'image';
 			if (typeof Monogatari.asset ('images', asset) !== 'undefined') {
 				this.image = Monogatari.asset ('images', asset);
@@ -84,6 +79,7 @@ export class Show extends Action {
 		//   0      1             2
 
 		if (this.type === 'character') {
+
 			let directory = this.character.Directory;
 
 			if (typeof directory == 'undefined') {
@@ -101,12 +97,16 @@ export class Show extends Action {
 					$_(`${Monogatari.selector} [data-character="${this.asset}"]`).addClass (newClass);
 				}
 				$_(`${Monogatari.selector} [data-character="${this.asset}"]`).data ('sprite', this.sprite);
+
 			} else {
 				$_(`${Monogatari.selector} [data-character="${this.asset}"]`).remove ();
 				$_(`${Monogatari.selector} #game`).append (object);
 			}
 
 			Monogatari.history ('character').push (object);
+			Monogatari.state ({
+				characters: [this._statement, ...Monogatari.state ('characters')].filter ((item) => item !== null)
+			});
 
 		} else {
 			// show [image] at [position] with [animation]
@@ -121,6 +121,9 @@ export class Show extends Action {
 			const object = `<img src="assets/images/${this.image}" class="animated ${this.classes.join (' ')}" data-image="${this.asset}" data-sprite="${this.sprite}">`;
 			$_(`${Monogatari.selector} #game`).append (object);
 			Monogatari.history ('image').push (object);
+			Monogatari.state ({
+				images: [this._statement, ...Monogatari.state ('images')]
+			});
 		}
 		return Promise.resolve ();
 	}

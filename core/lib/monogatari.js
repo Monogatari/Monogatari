@@ -631,6 +631,9 @@ class Monogatari {
 	static addSlot (i, data) {
 		const name = data.name ? data.name : data.date;
 
+		$_('[data-menu="load"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
+		$_('[data-menu="save"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
+
 		if (typeof Monogatari.asset ('scenes', data.image) !== 'undefined') {
 
 			$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (`
@@ -668,6 +671,8 @@ class Monogatari {
 
 	static addAutoSlot (i, data) {
 		const name = data.name ? data.name : data.date;
+
+		$_('[data-menu="load"] [data-ui="slots"] [data-string="NoAutoSavedGames"]').remove ();
 
 		if (typeof Monogatari.asset ('scenes', data.image ) !== 'undefined') {
 			$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (`
@@ -726,7 +731,7 @@ class Monogatari {
 
 			// Check if there are no Auto Saved games.
 			if (element.html ().trim () === '') {
-				element.html (`<p>${Monogatari.string ('NoAutoSavedGames')}</p>`);
+				element.html (`<p data-string="NoAutoSavedGames">${Monogatari.string ('NoAutoSavedGames')}</p>`);
 			}
 		});
 	}
@@ -773,7 +778,8 @@ class Monogatari {
 
 				// Check if there are no Saved games.
 				if ($_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').html ().trim() === '') {
-					$_('[data-menu="save"] [data-ui="slots"]').html (`<p>${Monogatari.string ('NoSavedGames')}</p>`);
+					$_('[data-menu="save"] [data-ui="slots"]').html (`<p data-string="NoSavedGames">${Monogatari.string ('NoSavedGames')}</p>`);
+					$_('[data-menu="load"] [data-ui="slots"]').html (`<p data-string="NoSavedGames">${Monogatari.string ('NoSavedGames')}</p>`);
 				}
 				Monogatari.setAutoSlots ();
 			});
@@ -1230,6 +1236,10 @@ class Monogatari {
 	}
 
 	static run (statement, advance) {
+
+		if (statement === null) {
+			return Promise.reject ();
+		}
 
 		if (typeof advance !== 'boolean') {
 			advance = true;
