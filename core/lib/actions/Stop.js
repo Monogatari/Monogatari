@@ -57,14 +57,17 @@ export class Stop extends Action {
 	}
 
 	willRevert () {
-		this.player.removeAttribute ('loop');
+		if (typeof this.player !== 'undefined') {
+			this.player.removeAttribute ('loop');
+		}
 		return Promise.resolve ();
 	}
 
 	revert () {
 		if (this.type === 'particles') {
 			if (Monogatari.history ('particles').length > 0) {
-				return Monogatari.run (Monogatari.history ('particles').pop (), false);
+				const last = Monogatari.history ('particles').pop ();
+				return Monogatari.run (last, false);
 			}
 		} else {
 

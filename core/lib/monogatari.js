@@ -271,12 +271,16 @@ class Monogatari {
 		}
 	}
 
-	static history (key = null) {
-		if (key !== null) {
-			if (typeof Monogatari._history[key] === 'undefined') {
-				Monogatari._history[key] = [];
+	static history (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				if (typeof Monogatari._history[object] === 'undefined') {
+					Monogatari._history[object] = [];
+				}
+				return Monogatari._history[object];
+			} else {
+				Monogatari._history = Object.assign ({}, Monogatari._history, object);
 			}
-			return Monogatari._history[key];
 		} else {
 			return Monogatari._history;
 		}
@@ -637,7 +641,7 @@ class Monogatari {
 		if (typeof Monogatari.asset ('scenes', data.image) !== 'undefined') {
 
 			$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (`
-				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'>
+				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
 					<button class='fas fa-times' data-delete='${i}'></button>
 					<img src='assets/scenes/${Monogatari.asset ('scenes', data.image)}' alt=''>
 					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
@@ -645,7 +649,7 @@ class Monogatari {
 			`);
 
 			$_('[data-menu="save"] [data-ui="slots"]').append (`
-				<figure data-save='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3'>
+				<figure data-save='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2'>
 					<button class='fas fa-times' data-delete='${i}'></button>
 					<img src='assets/scenes/${Monogatari.asset ('scenes', data.image)}' alt=''>
 					<figcaption>${Monogatari.string ('Overwrite')} #${i}<small>${name}</small></figcaption>
@@ -654,14 +658,14 @@ class Monogatari {
 
 		} else {
 			$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (`
-				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'>
+				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
 					<button class='fas fa-times' data-delete=${i}></button>
 					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
 				</figure>
 			`);
 
 			$_('[data-menu="save"] [data-ui="slots"]').append (`
-				<figure data-save='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3'>
+				<figure data-save='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2'>
 					<button class='fas fa-times' data-delete=${i}></button>
 					<figcaption>${Monogatari.string ('Overwrite')} #${i}<small>${name}</small></figcaption>
 				</figure>
@@ -676,7 +680,7 @@ class Monogatari {
 
 		if (typeof Monogatari.asset ('scenes', data.image ) !== 'undefined') {
 			$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (`
-				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'>
+				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
 					<button class='fas fa-times' data-delete=${i}></button>
 					<img src='assets/scenes/${Monogatari.asset ('scenes', data.image)}' alt=''>
 					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
@@ -684,7 +688,7 @@ class Monogatari {
 			`);
 		} else {
 			$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (`
-				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'>
+				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
 					<button class='fas fa-times' data-delete=${i}></button>
 					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
 				</figure>
@@ -1093,8 +1097,10 @@ class Monogatari {
 			label: Monogatari.setting ('Label')
 		});
 
+		Monogatari.global ('block', false);
+
 		// Reset History
-		for (const history in Object.keys (Monogatari._history)) {
+		for (const history of Object.keys (Monogatari._history)) {
 			Monogatari._history[history] = [];
 		}
 
@@ -1224,13 +1230,17 @@ class Monogatari {
 								}
 							});
 						});
-					}).catch (() => {
-						Monogatari.state ({
-							step: Monogatari.state ('step') + 1
-						});
+					}).catch ((e) => {
+						if (typeof e === 'object' || typeof e === 'string') {
+							console.error (e);
+						}
+
+						return Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
 					});
 				}
 			}
+		} else {
+			return Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
 		}
 		return Promise.reject ();
 	}

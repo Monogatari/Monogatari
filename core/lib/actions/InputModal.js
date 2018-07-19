@@ -24,6 +24,7 @@ export class InputModal extends Action {
 
 	static reset () {
 		$_(`${Monogatari.selector} [data-ui="input"] [data-ui="warning"]`).text ('');
+		$_(`${Monogatari.selector} [data-ui="input"]`).removeClass('active');
 		return Promise.resolve ();
 	}
 
@@ -68,6 +69,10 @@ export class InputModal extends Action {
 		$_(`${Monogatari.selector} [data-ui="input"]`).submit (Monogatari.global ('_inputListener'));
 		$_(`${Monogatari.selector} [data-ui="input"]`).addClass ('active');
 		return Promise.resolve ();
+	}
+
+	willRevert () {
+		return Promise.reject ();
 	}
 }
 

@@ -7,6 +7,7 @@ export class Jump extends Action {
 
 	static setup () {
 		Monogatari.history ('label');
+		Monogatari.history ('jump');
 		return Promise.resolve ();
 	}
 
@@ -52,6 +53,11 @@ export class Jump extends Action {
 	}
 
 	apply () {
+		Monogatari.history ('jump').push ({
+			from: Monogatari.state ('label'),
+			to: this.label,
+			step: Monogatari.state ('step')
+		});
 		Monogatari.state ({
 			step: 0,
 			label: this.label
@@ -59,12 +65,26 @@ export class Jump extends Action {
 		Monogatari.action ('Dialog').reset ();
 		Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
 		Monogatari.history ('label').push (this.label);
+
 		return Promise.resolve ();
 	}
 
 	// Jump is right now not reversible due to complications with the logic for it
 	willRevert () {
 		return Promise.reject ();
+	}
+
+	revert () {
+		Monogatari.history ('label').pop ();
+		const last = Monogatari.history ('jump').pop ();
+		if (typeof last !== 'undefined') {
+			Monogatari.state ({
+				step: last.step,
+				label: last.from
+			});
+			Monogatari.action ('Dialog').reset ();
+		}
+		return Promise.resolve ();
 	}
 }
 

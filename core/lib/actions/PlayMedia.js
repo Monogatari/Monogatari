@@ -80,10 +80,16 @@ export class Play extends Action {
 		const { music, sound } = Monogatari.state ();
 		if (music !== '') {
 			Monogatari.run (music, false);
+			// TODO: Find a way to prevent the histories from filling up on loading
+			// So there's no need for this pop.
+			Monogatari.history ('music').pop ();
 		}
 
 		if (sound !== '') {
 			Monogatari.run (sound, false);
+			// TODO: Find a way to prevent the histories from filling up on loading
+			// So there's no need for this pop.
+			Monogatari.history ('sound').pop ();
 		}
 		return Promise.resolve ();
 	}
@@ -175,10 +181,12 @@ export class Play extends Action {
 		this.player.currentTime = 0;
 
 		if (this.type === 'music') {
+			Monogatari.history ('music').pop ();
 			Monogatari.state ({
 				music: ''
 			});
 		} else if (this.type === 'sound') {
+			Monogatari.history ('sound').pop ();
 			Monogatari.state ({
 				sound: ''
 			});

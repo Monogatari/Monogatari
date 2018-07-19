@@ -30,10 +30,16 @@ export class Show extends Action {
 
 		for (const item of images) {
 			Monogatari.run (item, false);
+			// TODO: Find a way to prevent the histories from filling up on loading
+			// So there's no need for this pop.
+			Monogatari.history ('image').pop ();
 		}
 
 		for (const item of characters) {
 			Monogatari.run (item, false);
+			// TODO: Find a way to prevent the histories from filling up on loading
+			// So there's no need for this pop.
+			Monogatari.history ('character').pop ();
 		}
 
 		return Promise.resolve ();
@@ -135,9 +141,7 @@ export class Show extends Action {
 	revert () {
 		if (this.type === 'character') {
 			$_(`${Monogatari.selector} [data-character="${this.asset}"]`).remove();
-			if (Monogatari.history ('character').length > 1) {
-				Monogatari.history ('character').pop ();
-			}
+			Monogatari.history ('character').pop ();
 
 			const last_character = Monogatari.history ('character').slice(-1)[0];
 			if (typeof last_character != 'undefined') {

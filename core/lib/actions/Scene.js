@@ -17,6 +17,9 @@ export class Scene extends Action {
 		const { scene } = Monogatari.state ();
 		if (scene !== '') {
 			Monogatari.run (scene, false);
+			// TODO: Find a way to prevent the histories from filling up on loading
+			// So there's no need for this pop.
+			Monogatari.history ('scene').pop ();
 		}
 		return Promise.resolve ();
 	}
@@ -69,7 +72,8 @@ export class Scene extends Action {
 	}
 
 	apply () {
-
+		$_(`${Monogatari.selector} [data-ui="background"]`).style ('background-image', 'initial');
+		$_(`${Monogatari.selector} [data-ui="background"]`).style ('background-color', 'initial');
 		$_(`${Monogatari.selector} [data-ui="background"]`).style (this.property, this.value);
 
 		for (const newClass of this.classes) {
@@ -99,22 +103,34 @@ export class Scene extends Action {
 
 	revert () {
 		Monogatari.history ('scene').pop ();
-		Monogatari.state ({
-			scene: Monogatari.history ('scene').slice(-1)[0]
-		});
 
-		$_(`${Monogatari.selector} [data-ui="background"]`).style (this.property, this.value.replace (this.scene, Monogatari.state ('scene')));
+		if (Monogatari.history ('scene').length > 0) {
+			const last = Monogatari.history ('scene').slice(-1)[0];
+			this.constructor (last.split (' '));
 
-		if (Monogatari.history ('sceneElements').length > 0) {
-			const scene_elements = Monogatari.history  ('sceneElements').pop ();
+			$_(`${Monogatari.selector} [data-ui="background"]`).style ('background-image', 'initial');
+			$_(`${Monogatari.selector} [data-ui="background"]`).style ('background-color', 'initial');
+			$_(`${Monogatari.selector} [data-ui="background"]`).style (this.property, this.value);
 
-			if (typeof scene_elements === 'object') {
-				for (const element of scene_elements) {
-					$_(`${Monogatari.selector} #game`).append (element);
+			for (const newClass of this.classes) {
+				$_(`${Monogatari.selector} [data-ui="background"]`).addClass (newClass);
+			}
+
+			Monogatari.state ({
+				scene: last
+			});
+
+			if (Monogatari.history ('sceneElements').length > 0) {
+				const scene_elements = Monogatari.history  ('sceneElements').pop ();
+
+				if (typeof scene_elements === 'object') {
+					for (const element of scene_elements) {
+						$_(`${Monogatari.selector} #game`).append (element);
+					}
 				}
 			}
+			Monogatari.action ('Dialog').reset ();
 		}
-		Monogatari.action ('Dialog').reset ();
 		return Promise.resolve ();
 	}
 

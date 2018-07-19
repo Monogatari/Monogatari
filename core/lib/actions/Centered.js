@@ -36,6 +36,11 @@ export class Centered extends Action {
 		}
 		return Promise.resolve ();
 	}
+
+	revert () {
+		this.apply ();
+		return Promise.resolve ();
+	}
 }
 
 Centered.id = 'Centered';
