@@ -74,6 +74,7 @@ monogatari.characters ({
 monogatari.script ({
 	// The game starts here.
 	'Start': [
+		'scene #f7f6f6 with fadeIn',
 		'notify Welcome',
 		{
 			'Input': {

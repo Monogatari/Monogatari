@@ -120,7 +120,7 @@ export class ImageGallery extends Component {
 		// due to the images being generated automatically, we can't simply
 		// attach the listerner to them so we attach it to their parent (the
 		// gallery) and then check if the click was actually on an image.
-		$_('[data-ui="gallery"]').on ('click', (element) => {
+		$_(`${selector} [data-ui="gallery"]`).on ('click', (element) => {
 			if (element.target.matches ('[data-image]')) {
 				ImageGallery.showImage (element.target.dataset.image);
 			}
@@ -128,38 +128,45 @@ export class ImageGallery extends Component {
 
 		// This listener will make it so that any click on the image viewer
 		// closes it
-		$_('[data-ui="image-viewer"]').click (() => {
-			$_('[data-menu="gallery"] [data-ui="image-viewer"]').removeClass ('active');
-			$_('[data-menu="gallery"] [data-ui="image-viewer"] figure').style ('background-image', '');
+		$_(`${selector} [data-ui="image-viewer"]`).click (() => {
+			$_(`${selector} [data-menu="gallery"] [data-ui="image-viewer"]`).removeClass ('active');
+			$_(`${selector} [data-menu="gallery"] [data-ui="image-viewer"] figure`).style ('background-image', '');
 		});
 		return Promise.resolve ();
 	}
 
-	static init () {
+	static init (selector) {
 		// Let's check if the storage has the list of unlocked images, if it
 		// doesn't exist then let's create an empty one.
-		Monogatari.Storage.get ('gallery').then ((data) => {
-			ImageGallery.state ({
-				unlocked: data
-			});
-		}).catch (() => {
+		if (Object.keys (ImageGallery.configuration ('images')).length > 0) {
+			Monogatari.Storage.get ('gallery').then ((data) => {
+				ImageGallery.state ({
+					unlocked: data
+				});
+			}).catch (() => {
 
-		});
+			});
+		} else {
+			// Hide Gallery if there are no images defined.
+			$_(`${selector} [data-menu="gallery"]`).remove ();
+			$_(`${selector} [data-open="gallery"]`).remove ();
+		}
+
 		return Promise.resolve ();
 	}
 
 	// A simple function to show an image, this will activate the image viewer
 	// and set the image as a background for it.
 	static showImage (image) {
-		$_('[data-menu="gallery"] [data-ui="image-viewer"] figure').style ('background-image', `url('./img/gallery/${this.images[image]}')`);
-		$_('[data-menu="gallery"] [data-ui="image-viewer"]').addClass ('active');
+		$_(`${Monogatari.selector} [data-menu="gallery"] [data-ui="image-viewer"] figure`).style ('background-image', `url('./img/gallery/${this.images[image]}')`);
+		$_(`${Monogatari.selector} [data-menu="gallery"] [data-ui="image-viewer"]`).addClass ('active');
 	}
 
 	// The render image will build all the image elements we need in the gallery
 	static render () {
 		// Clear the gallery images so we can rebuild them every time the gallery
 		// gets opened
-		$_('[data-menu="gallery"] [data-ui="gallery"]').html ('');
+		$_(`${Monogatari.selector} [data-menu="gallery"] [data-ui="gallery"]`).html ('');
 		// Create an image element for evert image declared in the constructor
 		return Object.keys (ImageGallery.state ('unlocked')).map ((image) => {
 			// Check if the image has been unlocked or not, if it hasn't then a

@@ -56,50 +56,50 @@ export class Canvas extends Action {
 	showCanvas (mode) {
 		// TODO: Find a way to remove the resize listeners once the canvas is stopped
 		if (mode === 'background') {
-			$_('[data-ui="background"]').append (`
+			$_(`${Monogatari.selector} [data-ui="background"]`).append (`
 				<canvas data-canvas="${this.name}" class='${mode}'></canvas>
 			`);
 
-			$_(`[data-canvas="${this.name}"]`).get (0).width = Monogatari.width ();
-			$_(`[data-canvas="${this.name}"]`).get (0).height = Monogatari.height ();
+			$_(`${Monogatari.selector} [data-canvas="${this.name}"]`).get (0).width = Monogatari.width ();
+			$_(`${Monogatari.selector} [data-canvas="${this.name}"]`).get (0).height = Monogatari.height ();
 			window.addEventListener ('resize', () => {
-				$_(`[data-canvas="${this.name}"].background`).each ((canvas) => {
+				$_(`${Monogatari.selector} [data-canvas="${this.name}"].background`).each ((canvas) => {
 					canvas.width = Monogatari.width ();
 					canvas.height = Monogatari.height ();
 				});
 			});
-			return Util.callAsync (this.object.start, Monogatari, $_(`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+			return Util.callAsync (this.object.start, Monogatari, $_(`${Monogatari.selector} [data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'immersive') {
-			$_('#game').prepend (`
+			$_(`${Monogatari.selector} #game`).prepend (`
 				<canvas data-canvas="${this.name}" class='${mode}'></canvas>
 			`);
 
-			$_(`[data-canvas="${this.name}"]`).get (0).width = Monogatari.width ();
-			$_(`[data-canvas="${this.name}"]`).get (0).height = Monogatari.height ();
+			$_(`${Monogatari.selector} [data-canvas="${this.name}"]`).get (0).width = Monogatari.width ();
+			$_(`${Monogatari.selector} [data-canvas="${this.name}"]`).get (0).height = Monogatari.height ();
 			window.addEventListener ('resize', () => {
-				$_(`[data-canvas="${this.name}"].background`).each ((canvas) => {
+				$_(`${Monogatari.selector} [data-canvas="${this.name}"].background`).each ((canvas) => {
 					canvas.width = Monogatari.width ();
 					canvas.height = Monogatari.height ();
 				});
 			});
-			return Util.callAsync (this.object.start, Monogatari, $_(`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+			return Util.callAsync (this.object.start, Monogatari, $_(`${Monogatari.selector} [data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'displayable') {
-			$_('#game').append (`
+			$_(`${Monogatari.selector} #game`).append (`
 				<canvas data-canvas="${this.name}" class='${mode}'></canvas>
 			`);
-			return Util.callAsync (this.object.start, Monogatari, $_(`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+			return Util.callAsync (this.object.start, Monogatari, $_(`${Monogatari.selector} [data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'character') {
-			$_('#game').append (`
+			$_(`${Monogatari.selector} #game`).append (`
 				<canvas data-canvas="${this.name}" class='${mode}' data-character='${this.name}'></canvas>
 			`);
-			return Util.callAsync (this.object.start, Monogatari, $_(`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+			return Util.callAsync (this.object.start, Monogatari, $_(`${Monogatari.selector} [data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		}
 	}
 
 	apply () {
 		if (this.mode === 'stop') {
 			return Util.callAsync (this.object.stop, Monogatari).then (() => {
-				$_(`[data-canvas="${this.name}"]`).remove ();
+				$_(`${Monogatari.selector} [data-canvas="${this.name}"]`).remove ();
 			});
 		} else {
 			return this.showCanvas (this.mode);
@@ -139,7 +139,7 @@ export class Canvas extends Action {
 			}
 		} else {
 			return Util.callAsync (this.object.stop, Monogatari).then (() => {
-				$_(`[data-canvas="${this.name}"]`).remove ();
+				$_(`${Monogatari.selector} [data-canvas="${this.name}"]`).remove ();
 			});
 		}
 		return Promise.reject ();

@@ -22,7 +22,7 @@ export class Scene extends Action {
 	}
 
 	static reset () {
-		$_('[data-ui="background"]').style ('background', 'initial');
+		$_(`${Monogatari.selector} [data-ui="background"]`).style ('background', 'initial');
 		Monogatari.state ({
 			scene: ''
 		});
@@ -55,24 +55,24 @@ export class Scene extends Action {
 
 	willApply () {
 		const scene_elements = [];
-		$_('#game img:not([data-ui="face"]):not([data-visibility="invisible"])').each ((element) => {
+		$_(`${Monogatari.selector} #game img:not([data-ui="face"]):not([data-visibility="invisible"])`).each ((element) => {
 			scene_elements.push (element.outerHTML);
 		});
 
 		Monogatari.history ('sceneElements').push (scene_elements);
 
-		$_('[data-character]').remove ();
-		$_('[data-image]').remove ();
-		$_('[data-ui="background"]').removeClass ();
+		$_(`${Monogatari.selector} [data-character]`).remove ();
+		$_(`${Monogatari.selector} [data-image]`).remove ();
+		$_(`${Monogatari.selector} [data-ui="background"]`).removeClass ();
 		return Promise.resolve ();
 	}
 
 	apply () {
 
-		$_('[data-ui="background"]').style (this.property, this.value);
+		$_(`${Monogatari.selector} [data-ui="background"]`).style (this.property, this.value);
 
 		for (const newClass of this.classes) {
-			$_('[data-ui="background"]').addClass (newClass);
+			$_(`${Monogatari.selector} [data-ui="background"]`).addClass (newClass);
 		}
 
 		Monogatari.state ({
@@ -90,9 +90,9 @@ export class Scene extends Action {
 	}
 
 	willRevert () {
-		$_('[data-character]').remove ();
-		$_('[data-image]').remove ();
-		$_('[data-ui="background"]').removeClass ();
+		$_(`${Monogatari.selector} [data-character]`).remove ();
+		$_(`${Monogatari.selector} [data-image]`).remove ();
+		$_(`${Monogatari.selector} [data-ui="background"]`).removeClass ();
 		return Promise.resolve ();
 	}
 
@@ -102,14 +102,14 @@ export class Scene extends Action {
 			scene: Monogatari.history ('scene').slice(-1)[0]
 		});
 
-		$_('[data-ui="background"]').style (this.property, this.value.replace (this.scene, Monogatari.state ('scene')));
+		$_(`${Monogatari.selector} [data-ui="background"]`).style (this.property, this.value.replace (this.scene, Monogatari.state ('scene')));
 
 		if (Monogatari.history ('sceneElements').length > 0) {
 			const scene_elements = Monogatari.history  ('sceneElements').pop ();
 
 			if (typeof scene_elements === 'object') {
 				for (const element of scene_elements) {
-					$_('#game').append (element);
+					$_(`${Monogatari.selector} #game`).append (element);
 				}
 			}
 		}

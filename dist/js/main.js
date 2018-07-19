@@ -11,5 +11,5 @@
 const { $_ready, FancyError } = Monogatari;
 
 $_ready (() => {
-	monogatari.init ();
+	monogatari.init ('#monogatari');
 });

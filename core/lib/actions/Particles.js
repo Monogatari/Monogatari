@@ -42,7 +42,7 @@ export class Particles extends Action {
 		}
 
 		Monogatari.setting ('Particles', '');
-		$_('#particles-js').html ('');
+		$_(`${Monogatari.selector} #particles-js`).html ('');
 	}
 
 	constructor ([ action, name ]) {

@@ -5,20 +5,20 @@ import { $_ } from '@aegis-framework/artemis';
 export class Choice extends Action {
 
 	static canProceed () {
-		if ($_('[data-ui="choices"]').isVisible ()) {
+		if ($_(`${Monogatari.selector} [data-ui="choices"]`).isVisible ()) {
 			return Promise.reject ();
 		}
 		return Promise.resolve ();
 	}
 
-	static bind () {
-		$_('body').on('click', '[data-do]', function () {
+	static bind (selector) {
+		$_(`${selector} body`).on('click', '[data-do]', function () {
 			Monogatari.action ('Centered').hide ();
 			Monogatari.shutUp ();
 			if ($_(this).data('do') != 'null' && $_(this).data('do') != '') {
 				try {
-					$_('[data-ui="choices"]').hide ();
-					$_('[data-ui="choices"]').html ('');
+					$_(`${selector} [data-ui="choices"]`).hide ();
+					$_(`${selector} [data-ui="choices"]`).html ('');
 					Monogatari.run ($_(this).data ('do'), false);
 				} catch (e) {
 					console.error('An error ocurred while trying to execute the choice\'s action.\n' + e);
@@ -29,8 +29,8 @@ export class Choice extends Action {
 	}
 
 	static reset () {
-		$_('[data-ui="choices"]').hide ();
-		$_('[data-ui="choices"]').html ('');
+		$_(`${Monogatari.selector} [data-ui="choices"]`).hide ();
+		$_(`${Monogatari.selector} [data-ui="choices"]`).html ('');
 		return Promise.resolve ();
 	}
 
@@ -44,7 +44,7 @@ export class Choice extends Action {
 	}
 
 	willApply () {
-		$_('[data-ui="choices"]').html ('');
+		$_(`${Monogatari.selector} [data-ui="choices"]`).html ('');
 		return Promise.resolve ();
 	}
 
@@ -57,9 +57,9 @@ export class Choice extends Action {
 
 				Monogatari.assertAsync (this.statement[i].Condition, Monogatari).then (() => {
 					if (typeof choice.Class !== 'undefined') {
-						$_('[data-ui="choices"]').append (`<button data-do="${choice.Do}" class="${choice.Class}">${choice.Text}</button>`);
+						$_(`${Monogatari.selector} [data-ui="choices"]`).append (`<button data-do="${choice.Do}" class="${choice.Class}">${choice.Text}</button>`);
 					} else {
-						$_('[data-ui="choices"]').append (`<button data-do="${choice.Do}">${choice.Text}</button>`);
+						$_(`${Monogatari.selector} [data-ui="choices"]`).append (`<button data-do="${choice.Do}">${choice.Text}</button>`);
 					}
 				}).finally (() => {
 					Monogatari.global ('block', false);
@@ -67,15 +67,15 @@ export class Choice extends Action {
 			} else {
 				if (typeof choice == 'object') {
 					if (typeof choice.Class != 'undefined') {
-						$_('[data-ui="choices"]').append (`<button data-do="${choice.Do}" class="${choice.Class}">${choice.Text}</button>`);
+						$_(`${Monogatari.selector} [data-ui="choices"]`).append (`<button data-do="${choice.Do}" class="${choice.Class}">${choice.Text}</button>`);
 					} else {
-						$_('[data-ui="choices"]').append (`<button data-do="${choice.Do}">${choice.Text}</button>`);
+						$_(`${Monogatari.selector} [data-ui="choices"]`).append (`<button data-do="${choice.Do}">${choice.Text}</button>`);
 					}
 				} else if (typeof choice == 'string') {
 					Monogatari.run (choice, false);
 				}
 			}
-			$_('[data-ui="choices"]').show ('flex');
+			$_(`${Monogatari.selector} [data-ui="choices"]`).show ('flex');
 		}
 		return Promise.resolve ();
 	}

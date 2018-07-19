@@ -929,7 +929,6 @@ class Monogatari {
 		});
 	}
 
-	// TODO: Make check in each action instead of globally.
 	static canProceed () {
 		const promises = [];
 		for (const action of Monogatari.actions ()) {
@@ -938,6 +937,22 @@ class Monogatari {
 
 		if ($_('#game').isVisible ()
 			&& !$_('[data-component="modal"]').isVisible ()
+			&& !Monogatari.global ('distraction-free')
+			&& !Monogatari.global ('block')) {
+			promises.push (Promise.resolve ());
+		} else {
+			promises.push (Promise.reject ());
+		}
+		return Promise.all (promises);
+	}
+
+	static canRevert () {
+		const promises = [];
+		for (const action of Monogatari.actions ()) {
+			promises.push (action.canRevert ());
+		}
+
+		if ($_('#game').isVisible ()
 			&& !Monogatari.global ('distraction-free')
 			&& !Monogatari.global ('block')) {
 			promises.push (Promise.resolve ());
@@ -1461,8 +1476,12 @@ class Monogatari {
 
 		$_('#game [data-action="back"], #game [data-action="back"] *').click ((event) => {
 			event.stopPropagation ();
-			Monogatari.canProceed ().then (() => {
-				Monogatari.revert ();
+			Monogatari.canRevert ().then (() => {
+				Monogatari.revert ().catch (() => {
+					// The game could not be reverted, either because an
+					// action prevented it or because there are no statements
+					// left to revert to.
+				});
 			}).catch (() => {
 				// An action waiting for user interaction or something else
 				// is blocking the game.
@@ -1515,7 +1534,11 @@ class Monogatari {
 
 					// Left Arrow
 					case 37:
-						Monogatari.revert ();
+						Monogatari.revert ().catch (() => {
+							// The game could not be reverted, either because an
+							// action prevented it or because there are no statements
+							// left to revert to.
+						});
 						break;
 
 					// H Key

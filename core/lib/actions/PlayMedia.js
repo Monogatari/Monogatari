@@ -5,7 +5,7 @@ import { $_ } from '@aegis-framework/artemis';
 export class Play extends Action {
 
 	static canProceed () {
-		if ($_('[data-component="video"]').isVisible ()) {
+		if ($_(`${Monogatari.selector} [data-component="video"]`).isVisible ()) {
 			return Promise.reject ();
 		}
 		return Promise.resolve ();
@@ -42,7 +42,7 @@ export class Play extends Action {
 		Monogatari.voicePlayer = document.querySelector ('[data-component="voice"]');
 
 		// Volume bars listeners
-		$_('[data-action="set-volume"]').on ('change mouseover', function () {
+		$_(`${selector} [data-action="set-volume"]`).on ('change mouseover', function () {
 			const v = document.querySelector (`[data-component='${$_(this).data('target')}']`);
 			const value = $_(this).value();
 
@@ -66,7 +66,7 @@ export class Play extends Action {
 			Monogatari.Storage.set ('Settings', Monogatari.preferences ());
 		});
 
-		$_('[data-action="close-video"]').click (() => {
+		$_(`${selector} [data-action="close-video"]`).click (() => {
 			Play.stopVideo ();
 		});
 		Monogatari.state ({
@@ -90,14 +90,14 @@ export class Play extends Action {
 
 	static reset () {
 		Play.stopVideo ();
-		$_('audio').each ((element) => {
+		$_(`${Monogatari.selector} audio`).each ((element) => {
 			if (!element.paused && typeof element.src !== 'undefined' && element.src !== '') {
 				element.pause();
 				element.currentTime = 0;
 				element.src = '';
 			}
 		});
-		$_('[data-component="video"]').removeClass ('modal--active');
+		$_(`${Monogatari.selector} [data-component="video"]`).removeClass ('modal--active');
 		return Promise.resolve ();
 	}
 
@@ -109,7 +109,7 @@ export class Play extends Action {
 		Monogatari.videoPlayer.pause ();
 		Monogatari.videoPlayer.currentTime = 0;
 		Monogatari.videoPlayer.setAttribute ('src', '');
-		$_('[data-component="video"]').removeClass ('active');
+		$_(`${Monogatari.selector} [data-component="video"]`).removeClass ('active');
 	}
 
 	constructor ([ action, type, media, ...props ]) {
@@ -157,7 +157,7 @@ export class Play extends Action {
 				sound: this._statement
 			});
 		} else if (this.type == 'video') {
-			$_('[data-component="video"]').addClass ('active');
+			$_(`${Monogatari.selector} [data-component="video"]`).addClass ('active');
 		}
 
 		this.player.play ();

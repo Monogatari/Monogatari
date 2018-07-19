@@ -10,13 +10,13 @@ export class Centered extends Action {
 	}
 
 	static reset () {
-		$_('[data-ui="centered"]').remove ();
+		$_(`${Monogatari.selector} [data-ui="centered"]`).remove ();
 		return Promise.resolve ();
 	}
 
 	static hide () {
-		$_('[data-ui="centered"]').remove ();
-		$_('[data-ui="text"]').show ();
+		$_(`${Monogatari.selector} [data-ui="centered"]`).remove ();
+		$_(`${Monogatari.selector} [data-ui="text"]`).show ();
 	}
 
 	constructor ([ action, ...dialog ]) {
@@ -26,13 +26,13 @@ export class Centered extends Action {
 	}
 
 	apply () {
-		$_('[data-ui="text"]').hide ();
-		$_('#game').append ('<div class="middle align-center" data-ui="centered"></div>');
+		$_(`${Monogatari.selector} [data-ui="text"]`).hide ();
+		$_(`${Monogatari.selector} #game`).append ('<div class="middle align-center" data-ui="centered"></div>');
 		if (this.animate) {
 			Monogatari.global ('typedConfiguration').strings = [this.dialog];
-			Monogatari.global ('textObject', new Typed ('[data-ui="centered"]', Monogatari.global ('typedConfiguration')));
+			Monogatari.global ('textObject', new Typed (`${Monogatari.selector} [data-ui="centered"]`, Monogatari.global ('typedConfiguration')));
 		} else {
-			$_('[data-ui="centered"]').html (this.dialog);
+			$_(`${Monogatari.selector} [data-ui="centered"]`).html (this.dialog);
 		}
 		return Promise.resolve ();
 	}

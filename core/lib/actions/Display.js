@@ -34,13 +34,13 @@ export class Display extends Action {
 
 	apply () {
 		const object = `<img src="assets/images/${this.image}" class="animated ${this.classes.join (' ')}" data-image="${this.asset}">`;
-		$_('#game').append (object);
+		$_(`${Monogatari.selector} #game`).append (object);
 		Monogatari.history ('image').push (object);
 		return Promise.resolve ();
 	}
 
 	revert () {
-		$_(`[data-image="${this.asset}"]`).remove ();
+		$_(`${Monogatari.selector} [data-image="${this.asset}"]`).remove ();
 		return Promise.resolve ();
 	}
 }

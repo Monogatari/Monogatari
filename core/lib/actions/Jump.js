@@ -10,8 +10,8 @@ export class Jump extends Action {
 		return Promise.resolve ();
 	}
 
-	static bind () {
-		$_('[data-action="jump"]').click (function () {
+	static bind (selector) {
+		$_(`${selector} [data-action="jump"]`).click (function () {
 			Monogatari.run (`jump ${$_(this).data('jump')}`, false);
 		});
 		return Promise.resolve ();
@@ -29,8 +29,8 @@ export class Jump extends Action {
 	willApply () {
 		if (typeof Monogatari.script (this.label) !== 'undefined') {
 			Monogatari.stopAmbient ();
-			$_('section').hide ();
-			$_('#game').show ();
+			$_(`${Monogatari.selector} section`).hide ();
+			$_(`${Monogatari.selector} #game`).show ();
 			return Promise.resolve ();
 		} else {
 			FancyError.show (

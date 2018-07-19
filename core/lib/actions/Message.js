@@ -4,8 +4,8 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Message extends Action {
 
-	static setup () {
-		$_('#game #components').append (`
+	static setup (selector) {
+		$_(`${selector} #game #components`).append (`
 			<div data-component="modal" data-ui="messages" class="middle">
 				<div data-ui="message-content"></div>
 				<div class="horizontal horizontal--center" data-ui="inner-menu">
@@ -17,7 +17,7 @@ export class Message extends Action {
 	}
 
 	static reset () {
-		$_('[data-ui="messages"]').removeClass ('modal--active');
+		$_(`${Monogatari.selector} [data-ui="messages"]`).removeClass ('modal--active');
 		return Promise.resolve ();
 	}
 
@@ -39,20 +39,23 @@ export class Message extends Action {
 	}
 
 	apply () {
-
-		$_('[data-ui="message-content"]').html (`
+		$_(`${Monogatari.selector} [data-ui="message-content"]`).html (`
 			<h3>${this.message.Title}</h3>
 			<p>${this.message.Subtitle}</p>
 			<p>${this.message.Message}</p>
 		`);
-		$_('[data-ui="messages"]').addClass ('active');
+		$_(`${Monogatari.selector} [data-ui="messages"]`).addClass ('active');
 		return Promise.resolve ();
 	}
 
 	revert () {
-		$_('[data-ui="message-content"]').html ('');
-		$_('[data-ui="messages"]').removeClass ('active');
+		$_(`${Monogatari.selector} [data-ui="message-content"]`).html ('');
+		$_(`${Monogatari.selector} [data-ui="messages"]`).removeClass ('active');
 		return Promise.resolve ();
+	}
+
+	didRevert () {
+		return Promise.resolve (true);
 	}
 }
 

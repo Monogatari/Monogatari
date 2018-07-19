@@ -19,13 +19,13 @@ export class End extends Action {
 		return Promise.resolve ();
 	}
 
-	static bind () {
-		$_('[data-action="end"]').click (() => {
-			$_('[data-notice="exit"]').addClass ('modal--active');
+	static bind (selector) {
+		$_(`${selector} [data-action="end"]`).click (() => {
+			$_(`${Monogatari.selector} [data-notice="exit"]`).addClass ('modal--active');
 		});
 
-		$_('[data-action="quit"]').click (() => {
-			$_('[data-notice="exit"]').removeClass ('modal--active');
+		$_(`${selector} [data-action="quit"]`).click (() => {
+			$_(`${selector} [data-notice="exit"]`).removeClass ('modal--active');
 			Monogatari.run ('end');
 		});
 		return Promise.resolve ();
@@ -40,7 +40,7 @@ export class End extends Action {
 	}
 
 	willApply () {
-		$_('section').hide ();
+		$_(`${Monogatari.selector} section`).hide ();
 		return Promise.resolve ();
 	}
 
@@ -50,7 +50,7 @@ export class End extends Action {
 
 		// Show main menu
 		Monogatari.playAmbient ();
-		$_('[data-menu="main"]').show ();
+		$_(`${Monogatari.selector} [data-menu="main"]`).show ();
 		return Promise.resolve ();
 	}
 

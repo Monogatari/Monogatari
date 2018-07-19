@@ -12,6 +12,9 @@ class Action {
 		return Promise.resolve ();
 	}
 
+	static canRevert () {
+		return Promise.resolve ();
+	}
 
 	/**
 	 * @static onStart - This function acts as an event listener for when the game

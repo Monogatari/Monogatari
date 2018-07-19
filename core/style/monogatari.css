@@ -243,7 +243,7 @@ select {
 	-ms-transition: all 0.5s;
 	transition: all 0.5s;
 	overflow-y: auto;
-	padding: 2vmin;
+	padding: 2rem;
 	color: rgba(66, 66, 66, 0.9);
 }
 
@@ -305,7 +305,7 @@ select {
 
 [data-ui="messages"] div {
 	width: auto;
-	padding: 1vmin;
+	padding: 1rem;
 }
 
 [data-ui="message-content"] {
@@ -315,7 +315,7 @@ select {
 
 [data-ui="input"] div {
 	width: auto;
-	padding: 1vmin;
+	padding: 1rem;
 }
 
 [data-ui="input"] small {
@@ -328,7 +328,7 @@ select {
 
 [data-ui="input"] input,
 textarea {
-	padding: 1vmin;
+	padding: 1rem;
 	background-color: #eee;
 	min-width: 50%;
 }
@@ -390,7 +390,7 @@ textarea {
 [data-ui="text"] p {
 	display: block;
 	width: 100%;
-	padding: 1vmin;
+	padding: 1rem;
 	margin: 0;
 }
 
@@ -402,7 +402,7 @@ textarea {
 [data-ui="who"] {
 	display: block;
 	width: 100%;
-	padding: 1vmin;
+	padding: 1rem;
 	margin: 0;
 }
 
@@ -461,7 +461,7 @@ textarea {
 }
 
 [data-ui="slots"] figure {
-	width: 20vmax;
+	width: 20rem;
 	height: auto;
 	background-color: rgba(0, 0, 0, 0.5);
 	border-radius: 3px;
@@ -489,7 +489,7 @@ textarea {
 }
 
 [data-ui="slots"] figcaption {
-	padding: 1vmax;
+	padding: 1rem;
 }
 
 [data-ui="slots"] figcaption small {
@@ -541,7 +541,7 @@ textarea {
 
 [data-menu='settings'] input,
 [data-menu='settings'] select {
-	margin: 2vmax;
+	margin: 2rem;
 	background-color: transparent;
 }
 
@@ -611,7 +611,7 @@ input[type=range].light::-ms-fill-upper {
 
 input[type=range] {
 	width: 60%;
-	height: 2vmin;
+	height: 2rem;
 }
 
 /**

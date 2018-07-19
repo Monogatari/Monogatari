@@ -13,9 +13,9 @@ export class Hide extends Action {
 		this.asset = asset;
 
 		if (typeof Monogatari.character (this.asset) !== 'undefined') {
-			this.element = $_(`[data-character="${this.asset}"]`);
+			this.element = $_(`${Monogatari.selector} [data-character="${this.asset}"]`);
 		} else {
-			this.element = $_(`[data-image="${this.asset}"]`);
+			this.element = $_(`${Monogatari.selector} [data-image="${this.asset}"]`);
 		}
 
 		if (typeof classes !== 'undefined') {
@@ -60,7 +60,7 @@ export class Hide extends Action {
 	}
 
 	revert () {
-		$_('#game').append (Monogatari.history (this.history).pop ());
+		$_(`${Monogatari.selector} #game`).append (Monogatari.history (this.history).pop ());
 		return Promise.resolve ();
 	}
 

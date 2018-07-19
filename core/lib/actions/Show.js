@@ -17,8 +17,8 @@ export class Show extends Action {
 	}
 
 	static reset () {
-		$_('#game [data-character]').remove ();
-		$_('#game [data-image]').remove ();
+		$_(`${Monogatari.selector} #game [data-character]`).remove ();
+		$_(`${Monogatari.selector} #game [data-image]`).remove ();
 		return Promise.resolve ();
 	}
 
@@ -89,16 +89,16 @@ export class Show extends Action {
 
 			const object = `<img src="assets/characters/${directory}${this.image}" class="animated ${this.classes.join (' ')}" data-character="${this.asset}" data-sprite="${this.sprite}">`;
 
-			if ($_(`[data-character="${this.asset}"]`).isVisible ()) {
-				$_(`[data-character="${this.asset}"]`).removeClass ();
-				$_(`[data-character="${this.asset}"]`).attribute ('src', `assets/characters/${directory}${this.image}`);
+			if ($_(`${Monogatari.selector} [data-character="${this.asset}"]`).isVisible ()) {
+				$_(`${Monogatari.selector} [data-character="${this.asset}"]`).removeClass ();
+				$_(`${Monogatari.selector} [data-character="${this.asset}"]`).attribute ('src', `assets/characters/${directory}${this.image}`);
 				for (const newClass in this.classes) {
-					$_(`[data-character="${this.asset}"]`).addClass (newClass);
+					$_(`${Monogatari.selector} [data-character="${this.asset}"]`).addClass (newClass);
 				}
-				$_(`[data-character="${this.asset}"]`).data ('sprite', this.sprite);
+				$_(`${Monogatari.selector} [data-character="${this.asset}"]`).data ('sprite', this.sprite);
 			} else {
-				$_(`[data-character="${this.asset}"]`).remove ();
-				$_('#game').append (object);
+				$_(`${Monogatari.selector} [data-character="${this.asset}"]`).remove ();
+				$_(`${Monogatari.selector} #game`).append (object);
 			}
 
 			Monogatari.history ('character').push(object);
@@ -114,7 +114,7 @@ export class Show extends Action {
 			//   0      1
 
 			const object = `<img src="assets/images/${this.image}" class="animated ${this.classes.join (' ')}" data-image="${this.asset}" data-sprite="${this.sprite}">`;
-			$_('#game').append (object);
+			$_(`${Monogatari.selector} #game`).append (object);
 			Monogatari.history ('image').push (object);
 		}
 		return Promise.resolve ();
@@ -131,7 +131,7 @@ export class Show extends Action {
 
 	revert () {
 		if (this.type === 'character') {
-			$_(`[data-character="${this.asset}"]`).remove();
+			$_(`${Monogatari.selector} [data-character="${this.asset}"]`).remove();
 			if (Monogatari.history ('character').length > 1) {
 				Monogatari.history ('character').pop ();
 			}
@@ -139,17 +139,17 @@ export class Show extends Action {
 			const last_character = Monogatari.history ('character').slice(-1)[0];
 			if (typeof last_character != 'undefined') {
 				if (last_character.indexOf (`data-character="${this.asset}"`) > -1) {
-					$_('#game').append (last_character);
+					$_(`${Monogatari.selector} #game`).append (last_character);
 				}
 			}
 		} else {
 			if (this.classes.length > 0) {
 				for (const newClass of this.classes) {
-					$_(`[data-image="${this.asset}"]`).addClass(newClass);
+					$_(`${Monogatari.selector} [data-image="${this.asset}"]`).addClass(newClass);
 				}
 
 			} else {
-				$_(`[data-image="${this.asset}"]`).remove ();
+				$_(`${Monogatari.selector} [data-image="${this.asset}"]`).remove ();
 			}
 			Monogatari.history ('image').pop ();
 		}

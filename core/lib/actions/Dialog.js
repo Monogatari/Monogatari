@@ -34,8 +34,8 @@ export class Dialog extends Action {
 		return Promise.resolve ();
 	}
 
-	static bind () {
-		$_('[data-action="set-text-speed"]').on ('change mouseover', function () {
+	static bind (selector) {
+		$_(`${selector} [data-action="set-text-speed"]`).on ('change mouseover', function () {
 			const value =  Monogatari.setting ('maxTextSpeed') - parseInt($_(this).value());
 			Monogatari.global ('typedConfiguration').typeSpeed = value;
 			Monogatari.preference ('TextSpeed', value);
@@ -43,13 +43,13 @@ export class Dialog extends Action {
 		return Promise.resolve ();
 	}
 
-	static init () {
+	static init (selector) {
 		// Remove the Text Speed setting if the type animation was disabled
 		if (Monogatari.setting ('TypeAnimation') === false) {
-			$_('[data-settings="text-speed"]').hide ();
+			$_(`${selector} [data-settings="text-speed"]`).hide ();
 		}
 
-		Monogatari.setting ('maxTextSpeed', parseInt ($_('[data-action="set-text-speed"]').property ('max')));
+		Monogatari.setting ('maxTextSpeed', parseInt ($_(`${selector} [data-action="set-text-speed"]`).property ('max')));
 
 
 		document.querySelector('[data-action="set-text-speed"]').value = Monogatari.preference ('TextSpeed');
@@ -61,8 +61,8 @@ export class Dialog extends Action {
 		if (Monogatari.global ('textObject') !== null) {
 			Monogatari.global ('textObject').destroy ();
 		}
-		$_('[data-ui="who"]').html ('');
-		$_('[data-ui="say"]').html ('');
+		$_(`${Monogatari.selector} [data-ui="who"]`).html ('');
+		$_(`${Monogatari.selector} [data-ui="say"]`).html ('');
 		return Promise.resolve ();
 	}
 
@@ -104,10 +104,10 @@ export class Dialog extends Action {
 	}
 
 	willApply () {
-		$_('[data-character]').removeClass ('focus');
+		$_(`${Monogatari.selector} [data-character]`).removeClass ('focus');
 		this.dialog = Monogatari.replaceVariables (this.dialog);
 
-		$_('[data-ui="face"]').hide ();
+		$_(`${Monogatari.selector} [data-ui="face"]`).hide ();
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
 		return Promise.resolve ();
 	}
@@ -121,8 +121,8 @@ export class Dialog extends Action {
 		}
 
 		// Remove contents from the dialog area.
-		$_('[data-ui="say"]').html ('');
-		$_('[data-ui="say"]').data ('speaking', character);
+		$_(`${Monogatari.selector} [data-ui="say"]`).html ('');
+		$_(`${Monogatari.selector} [data-ui="say"]`).data ('speaking', character);
 
 		// Check if the typing animation flag is set to true in order to show it
 		if (animation === true) {
@@ -134,7 +134,7 @@ export class Dialog extends Action {
 				Monogatari.global ('typedConfiguration').strings = [dialog];
 				Monogatari.global ('textObject', new Typed ('[data-ui="say"]', Monogatari.global ('typedConfiguration')));
 			} else {
-				$_('[data-ui="say"]').html (dialog);
+				$_(`${Monogatari.selector} [data-ui="say"]`).html (dialog);
 				if (Monogatari.global ('autoPlay') !== null) {
 					Monogatari.global ('autoPlay', setTimeout (() => {
 						if (Monogatari.canProceed () && Monogatari.global ('finishedTyping')) {
@@ -147,7 +147,7 @@ export class Dialog extends Action {
 				Monogatari.global ('finishedTyping', true);
 			}
 		} else {
-			$_('[data-ui="say"]').html (dialog);
+			$_(`${Monogatari.selector} [data-ui="say"]`).html (dialog);
 			if (Monogatari.global ('autoPlay') !== null) {
 				Monogatari.global ('autoPlay', setTimeout (() => {
 					if (Monogatari.canProceed() && Monogatari.global ('finishedTyping')) {
@@ -169,15 +169,15 @@ export class Dialog extends Action {
 
 	characterDialog () {
 		if (typeof this.character.Name !== 'undefined') {
-			$_('[data-ui="who"]').html (Monogatari.replaceVariables (this.character.Name));
+			$_(`${Monogatari.selector} [data-ui="who"]`).html (Monogatari.replaceVariables (this.character.Name));
 		}
 
-		$_('[data-character="' + this.id + '"]').addClass ('focus');
-		$_('[data-ui="who"]').style ('color', this.character.Color);
+		$_(`${Monogatari.selector} [data-character="${this.id}"]`).addClass ('focus');
+		$_(`${Monogatari.selector} [data-ui="who"]`).style ('color', this.character.Color);
 
 		if (typeof this.image !== 'undefined') {
-			$_('[data-ui="face"]').attribute ('src', 'img/characters/' + this.image);
-			$_('[data-ui="face"]').show ();
+			$_(`${Monogatari.selector} [data-ui="face"]`).attribute ('src', 'img/characters/' + this.image);
+			$_(`${Monogatari.selector} [data-ui="face"]`).show ();
 		}
 
 		// Check if the character object defines if the type animation should be used.
