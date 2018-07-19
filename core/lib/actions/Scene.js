@@ -22,7 +22,8 @@ export class Scene extends Action {
 	}
 
 	static reset () {
-		$_(`${Monogatari.selector} [data-ui="background"]`).style ('background', 'initial');
+		$_(`${Monogatari.selector} [data-ui="background"]`).style ('background-image', 'initial');
+		$_(`${Monogatari.selector} [data-ui="background"]`).style ('background-color', 'initial');
 		Monogatari.state ({
 			scene: ''
 		});

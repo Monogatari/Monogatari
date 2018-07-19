@@ -13,10 +13,10 @@ const HTML = `
 	</div>
 
 	<div data-notice="slot-deletion" class="modal">
-		<div class="row spaced">
-			<p data-string="SlotDeletion" class="col xs12 m12 l12 xl12">Are you sure you want to delete this slot?</p>
-			<p class="col xs12 m12 l12 xl12"><small></small></p>
-			<div class="col xs12 m12 l12 xl12">
+		<div class="modal__content">
+			<p data-string="SlotDeletion">Are you sure you want to delete this slot?</p>
+			<p><small></small></p>
+			<div>
 				<button data-action="delete-slot" data-string="Delete">Delete</button>
 				<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
 			</div>
@@ -24,10 +24,10 @@ const HTML = `
 	</div>
 
 	<div data-notice="slot-overwrite" class="modal">
-		<div class="row spaced">
-			<p data-string="SlotOverwrite" class="col xs12 m12 l12 xl12">Are you sure you want to overwrite this slot?</p>
-			<input type="text" name="name" class="margin-1 col xs12 m12 l12 xl12" required>
-			<div class="col xs12 m12 l12 xl12">
+		<div class="modal__content">
+			<p data-string="SlotOverwrite"">Are you sure you want to overwrite this slot?</p>
+			<input type="text" name="name" class="margin" required>
+			<div>
 				<button data-action="overwrite-slot" data-string="Overwrite">Overwrite</button>
 				<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
 			</div>
@@ -535,7 +535,7 @@ class Monogatari {
 				$_(element).text (string_translation);
 			}
 		});
-		Monogatari.setSlots ();
+		//Monogatari.setSlots ();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -629,14 +629,14 @@ class Monogatari {
 	}
 
 	static addSlot (i, data) {
-		const name = data.Name ? data.Name : data.Date;
+		const name = data.name ? data.name : data.date;
 
-		if (typeof Monogatari.asset ('scenes', ) !== 'undefined') {
+		if (typeof Monogatari.asset ('scenes', data.image) !== 'undefined') {
 
 			$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (`
 				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'>
 					<button class='fas fa-times' data-delete='${i}'></button>
-					<img src='assets/scenes/${Monogatari.asset ('scenes', data.Engine.Scene)}' alt=''>
+					<img src='assets/scenes/${Monogatari.asset ('scenes', data.image)}' alt=''>
 					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
 				</figure>
 			`);
@@ -644,7 +644,7 @@ class Monogatari {
 			$_('[data-menu="save"] [data-ui="slots"]').append (`
 				<figure data-save='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3'>
 					<button class='fas fa-times' data-delete='${i}'></button>
-					<img src='assets/scenes/${Monogatari.asset ('scenes', data.Engine.Scene)}' alt=''>
+					<img src='assets/scenes/${Monogatari.asset ('scenes', data.image)}' alt=''>
 					<figcaption>${Monogatari.string ('Overwrite')} #${i}<small>${name}</small></figcaption>
 				</figure>
 			`);
@@ -667,13 +667,13 @@ class Monogatari {
 	}
 
 	static addAutoSlot (i, data) {
-		const name = data.Name ? data.Name : data.Date;
+		const name = data.name ? data.name : data.date;
 
-		if (typeof Monogatari.asset ('scenes', data.state.scene ) !== 'undefined') {
+		if (typeof Monogatari.asset ('scenes', data.image ) !== 'undefined') {
 			$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (`
 				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'>
 					<button class='fas fa-times' data-delete=${i}></button>
-					<img src='assets/scenes/${Monogatari.asset ('scenes', data.Engine.Scene)}' alt=''>
+					<img src='assets/scenes/${Monogatari.asset ('scenes', data.image)}' alt=''>
 					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
 				</figure>
 			`);
@@ -803,8 +803,9 @@ class Monogatari {
 
 			Monogatari.getMaxSlotId ().then ((max) => {
 				Monogatari.Storage.set (Monogatari.setting ('SaveLabel') + (max + 1) , {
-					'Name': name,
-					'Date': Monogatari.niceDateTime (),
+					name,
+					date: Monogatari.niceDateTime (),
+					image: Monogatari.state ('scene').split (' ')[1],
 					game: Monogatari.object ()
 				}).then (({ value }) => {
 					Monogatari.addSlot (max + 1, value);
@@ -821,8 +822,9 @@ class Monogatari {
 			const name = Monogatari.niceDateTime ();
 
 			Monogatari.Storage.set (slot, {
-				'Name': name,
-				'Date': Monogatari.niceDateTime (),
+				name,
+				date: Monogatari.niceDateTime (),
+				image: Monogatari.state ('scene').split (' ')[1],
 				game: Monogatari.object ()
 			}).then (() => {
 				$_(`[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (name);
@@ -850,8 +852,9 @@ class Monogatari {
 				}
 
 				Monogatari.Storage.set (slot, {
-					'Name': name,
-					'Date': Monogatari.niceDateTime (),
+					name,
+					date: Monogatari.niceDateTime (),
+					image: Monogatari.state ('scene').split (' ')[1],
 					game: Monogatari.object ()
 				}).then (() => {
 					$_(`[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (name);

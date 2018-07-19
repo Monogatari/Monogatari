@@ -23,12 +23,16 @@ export class Show extends Action {
 	}
 
 	static onLoad () {
-		const { particles, show } = Monogatari.state ();
+		const { particles, characters, images } = Monogatari.state ();
 		if (particles !== '') {
 			Monogatari.run (particles, false);
 		}
 
-		for (const item of show) {
+		for (const item of images) {
+			Monogatari.run (item, false);
+		}
+
+		for (const item of characters) {
 			Monogatari.run (item, false);
 		}
 
