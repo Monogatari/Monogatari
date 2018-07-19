@@ -42,21 +42,23 @@ export class Show extends Action {
 	constructor ([ action, asset, ...props ]) {
 		super ();
 		this.asset = asset;
-		Monogatari.state ({
-			show: [this._statement, ...Monogatari.state ('show')]
-		});
 
 		if (typeof Monogatari.character (asset) !== 'undefined') {
+			Monogatari.state ({
+				characters: [this._statement, ...Monogatari.state ('characters')]
+			});
 			this.type = 'character';
-
 			// show [character] [expression] at [position] with [animation] [infinite]
 			const [sprite, ...classes] = props.join (' ').replace(' at ', ' ').replace (' with ', ' ').trim ().split (' ');
 
 			this.sprite = sprite;
-			this.classes = classes;
+			this.classes = ['animated', ...classes];
 			this.character = Monogatari.character (asset);
 			this.image = this.character.Images[this.sprite];
 		} else {
+			Monogatari.state ({
+				images: [this._statement, ...Monogatari.state ('images')]
+			});
 			this.type = 'image';
 			if (typeof Monogatari.asset ('images', asset) !== 'undefined') {
 				this.image = Monogatari.asset ('images', asset);
@@ -64,7 +66,6 @@ export class Show extends Action {
 				this.image = asset;
 			}
 		}
-
 	}
 
 	apply () {
@@ -92,7 +93,7 @@ export class Show extends Action {
 			if ($_(`${Monogatari.selector} [data-character="${this.asset}"]`).isVisible ()) {
 				$_(`${Monogatari.selector} [data-character="${this.asset}"]`).removeClass ();
 				$_(`${Monogatari.selector} [data-character="${this.asset}"]`).attribute ('src', `assets/characters/${directory}${this.image}`);
-				for (const newClass in this.classes) {
+				for (const newClass of this.classes) {
 					$_(`${Monogatari.selector} [data-character="${this.asset}"]`).addClass (newClass);
 				}
 				$_(`${Monogatari.selector} [data-character="${this.asset}"]`).data ('sprite', this.sprite);
@@ -101,7 +102,7 @@ export class Show extends Action {
 				$_(`${Monogatari.selector} #game`).append (object);
 			}
 
-			Monogatari.history ('character').push(object);
+			Monogatari.history ('character').push (object);
 
 		} else {
 			// show [image] at [position] with [animation]
@@ -122,11 +123,6 @@ export class Show extends Action {
 
 	didApply () {
 		return Promise.resolve (true);
-	}
-
-	willRevert () {
-
-		return Promise.resolve ();
 	}
 
 	revert () {

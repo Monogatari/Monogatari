@@ -56,7 +56,7 @@ export class InputModal extends Action {
 				}).finally (() => {
 					$_(`${Monogatari.selector} [data-ui="input"] [data-ui="warning"]`).text ('');
 					$_(`${Monogatari.selector} [data-ui="input"] input`).value ('');
-					$_(`${Monogatari.selector} [data-ui="input"] [data-action="submit"]`).get (0).removeEventListener ('submit', Monogatari.global ('_inputListener'));
+					$_(`${Monogatari.selector} [data-ui="input"]`).get (0).removeEventListener ('submit', Monogatari.global ('_inputListener'));
 					Monogatari.global ('block', false);
 				});
 			}).catch (() => {

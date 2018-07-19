@@ -41,7 +41,9 @@ export class Particles extends Action {
 			console.error ('An error ocurred while trying to stop particle system.');
 		}
 
-		Monogatari.setting ('Particles', '');
+		Monogatari.state ({
+			particles: ''
+		});
 		$_(`${Monogatari.selector} #particles-js`).html ('');
 	}
 

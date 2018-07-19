@@ -12,17 +12,13 @@ export class Choice extends Action {
 	}
 
 	static bind (selector) {
-		$_(`${selector} body`).on('click', '[data-do]', function () {
+		$_(`${selector}`).on('click', '[data-do]', function () {
 			Monogatari.action ('Centered').hide ();
 			Monogatari.shutUp ();
 			if ($_(this).data('do') != 'null' && $_(this).data('do') != '') {
-				try {
-					$_(`${selector} [data-ui="choices"]`).hide ();
-					$_(`${selector} [data-ui="choices"]`).html ('');
-					Monogatari.run ($_(this).data ('do'), false);
-				} catch (e) {
-					console.error('An error ocurred while trying to execute the choice\'s action.\n' + e);
-				}
+				$_(`${selector} [data-ui="choices"]`).hide ();
+				$_(`${selector} [data-ui="choices"]`).html ('');
+				Monogatari.run ($_(this).data ('do'), false);
 			}
 		});
 		return Promise.resolve ();
@@ -61,6 +57,8 @@ export class Choice extends Action {
 					} else {
 						$_(`${Monogatari.selector} [data-ui="choices"]`).append (`<button data-do="${choice.Do}">${choice.Text}</button>`);
 					}
+				}).catch (() => {
+					// The condition wasn't met
 				}).finally (() => {
 					Monogatari.global ('block', false);
 				});

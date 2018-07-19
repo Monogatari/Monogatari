@@ -140,7 +140,7 @@ const HTML = `
 				</div>
 				<div data-settings="language">
 					<h3 data-string="Language">Language</h3>
-					<div class="horizontal">
+					<div class="horizontal horizontal--center">
 						<select data-action="set-language">
 								<option value="English">English</option>
 								<option value="Español">Español</option>
@@ -148,7 +148,7 @@ const HTML = `
 								<option value="日本語">日本語</option>
 								<option value="Nederlands">Nederlands</option>
 							</select>
-						<span class="fa fa-unsorted" data-select="set-language"></span>
+						<span class="fas fa-sort" data-select="set-language"></span>
 					</div>
 
 				</div>
@@ -669,7 +669,7 @@ class Monogatari {
 	static addAutoSlot (i, data) {
 		const name = data.Name ? data.Name : data.Date;
 
-		if (typeof Monogatari.asset ('scenes', data.Engine.Scene) !== 'undefined') {
+		if (typeof Monogatari.asset ('scenes', data.state.scene ) !== 'undefined') {
 			$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (`
 				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--3 animated flipInX'>
 					<button class='fas fa-times' data-delete=${i}></button>

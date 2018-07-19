@@ -21,29 +21,29 @@ export class Play extends Action {
 		return Promise.resolve ();
 	}
 
-	static init () {
+	static init (selector) {
 		// Set the volume of all the media components
 		Monogatari.musicPlayer.volume = Monogatari.preference ('Volume').Music;
 		Monogatari.ambientPlayer.volume = Monogatari.preference ('Volume').Music;
 		Monogatari.voicePlayer.volume = Monogatari.preference ('Volume').Voice;
 		Monogatari.soundPlayer.volume = Monogatari.preference ('Volume').Sound;
 
-		document.querySelector ('[data-target="music"]').value = Monogatari.preference ('Volume').Music;
-		document.querySelector ('[data-target="voice"]').value = Monogatari.preference ('Volume').Voice;
-		document.querySelector ('[data-target="sound"]').value = Monogatari.preference ('Volume').Sound;
+		document.querySelector (`${selector} [data-target="music"]`).value = Monogatari.preference ('Volume').Music;
+		document.querySelector (`${selector} [data-target="voice"]`).value = Monogatari.preference ('Volume').Voice;
+		document.querySelector (`${selector} [data-target="sound"]`).value = Monogatari.preference ('Volume').Sound;
 		return Promise.resolve ();
 	}
 
 	static bind (selector) {
-		Monogatari.ambientPlayer = document.querySelector ('[data-component="ambient"]');
-		Monogatari.musicPlayer = document.querySelector ('[data-component="music"]');
-		Monogatari.soundPlayer = document.querySelector ('[data-component="sound"]');
-		Monogatari.videoPlayer = document.querySelector ('[data-ui="player"]');
-		Monogatari.voicePlayer = document.querySelector ('[data-component="voice"]');
+		Monogatari.ambientPlayer = document.querySelector (`${selector} [data-component="ambient"]`);
+		Monogatari.musicPlayer = document.querySelector (`${selector} [data-component="music"]`);
+		Monogatari.soundPlayer = document.querySelector (`${selector} [data-component="sound"]`);
+		Monogatari.videoPlayer = document.querySelector (`${selector} [data-ui="player"]`);
+		Monogatari.voicePlayer = document.querySelector (`${selector} [data-component="voice"]`);
 
 		// Volume bars listeners
 		$_(`${selector} [data-action="set-volume"]`).on ('change mouseover', function () {
-			const v = document.querySelector (`[data-component='${$_(this).data('target')}']`);
+			const v = document.querySelector (`${Monogatari.selector} [data-component='${$_(this).data('target')}']`);
 			const value = $_(this).value();
 
 			switch ($_(this).data('target')) {
@@ -175,9 +175,13 @@ export class Play extends Action {
 		this.player.currentTime = 0;
 
 		if (this.type === 'music') {
-			Monogatari.setting ('Song', '');
+			Monogatari.state ({
+				music: ''
+			});
 		} else if (this.type === 'sound') {
-			Monogatari.setting ('Sound', '');
+			Monogatari.state ({
+				sound: ''
+			});
 		}
 		return Promise.resolve ();
 	}

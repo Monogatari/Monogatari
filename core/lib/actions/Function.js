@@ -31,13 +31,20 @@ export class ReversibleFunction extends Action {
 	}
 
 	revert () {
-		Monogatari.assertAsync (this.statement.Reverse, Monogatari).finally (() => {
-			Monogatari.global ('block', false);
-			if ((Monogatari.setting ('Step') - 1) >= 0) {
-				Monogatari.setting ('Step', Monogatari.setting ('Step') - 1);
-			}
+		return new Promise ((resolve) => {
+			Monogatari.assertAsync (this.statement.Reverse, Monogatari).then (() => {
+				Monogatari.global ('block', false);
+				resolve ();
+			}).catch (() => {
+				Monogatari.global ('block', false);
+				this.shouldContinue = false;
+				resolve ();
+			});
 		});
-		return Promise.resolve ();
+	}
+
+	didRevert () {
+		return Promise.resolve (this.shouldContinue);
 	}
 }
 

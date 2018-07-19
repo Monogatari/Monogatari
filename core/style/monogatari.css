@@ -88,6 +88,10 @@ select {
 	color: inherit;
 }
 
+.horizontal {
+	align-items: center;
+}
+
 /**
  * ===========================
  * Support Classes
@@ -328,7 +332,6 @@ select {
 
 [data-ui="input"] input,
 textarea {
-	padding: 1rem;
 	background-color: #eee;
 	min-width: 50%;
 }
@@ -537,6 +540,12 @@ textarea {
 	overflow-x: hidden;
 	width: 100vw;
 	display: none;
+	background-repeat: no-repeat;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	background-position: center;
 }
 
 [data-menu='settings'] input,
@@ -548,14 +557,6 @@ textarea {
 [data-menu='save'] input {
 	background-color: #fff;
 	border: 1px solid #666;
-}
-
-[data-menu="main"] {
-	background-repeat: no-repeat;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
 }
 
 [data-menu] [data-action="back"] {
@@ -705,7 +706,6 @@ input[type=range] {
 	button {
 		width: 10rem;
 		height: 3.5rem;
-		padding: 1rem;
 	}
 
 	.modal > * {

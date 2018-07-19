@@ -11,7 +11,7 @@ export class Jump extends Action {
 	}
 
 	static bind (selector) {
-		$_(`${selector} [data-action="jump"]`).click (function () {
+		$_(`${selector}`).on ('click', '[data-action="jump"]', function () {
 			Monogatari.run (`jump ${$_(this).data('jump')}`, false);
 		});
 		return Promise.resolve ();
@@ -58,6 +58,7 @@ export class Jump extends Action {
 		});
 		Monogatari.action ('Dialog').reset ();
 		Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+		Monogatari.history ('label').push (this.label);
 		return Promise.resolve ();
 	}
 
