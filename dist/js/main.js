@@ -8,7 +8,7 @@
 /* global Monogatari */
 /* global monogatari */
 
-const { $_ready, FancyError } = Monogatari;
+const { $_ready } = Monogatari;
 
 $_ready (() => {
 	monogatari.init ('#monogatari');

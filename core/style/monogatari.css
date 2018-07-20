@@ -340,6 +340,7 @@ textarea {
 	width: 3.5rem;
 	height: 2rem;
 	font-size: 1rem;
+	padding: 0;
 }
 
 [data-ui="player"] {

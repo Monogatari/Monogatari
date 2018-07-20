@@ -12,28 +12,6 @@ const HTML = `
 		</div>
 	</div>
 
-	<div data-notice="slot-deletion" class="modal">
-		<div class="modal__content">
-			<p data-string="SlotDeletion">Are you sure you want to delete this slot?</p>
-			<p><small></small></p>
-			<div>
-				<button data-action="delete-slot" data-string="Delete">Delete</button>
-				<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
-			</div>
-		</div>
-	</div>
-
-	<div data-notice="slot-overwrite" class="modal">
-		<div class="modal__content">
-			<p data-string="SlotOverwrite"">Are you sure you want to overwrite this slot?</p>
-			<input type="text" name="name" class="margin" required>
-			<div>
-				<button data-action="overwrite-slot" data-string="Overwrite">Overwrite</button>
-				<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
-			</div>
-		</div>
-	</div>
-
 	<!--Game Screen -->
 	<section id="game" class="unselectable">
 		<div id="particles-js" data-ui="particles"></div>
@@ -83,100 +61,6 @@ const HTML = `
 			<button data-action="open-menu" data-open="load" data-string="Load">Load</button>
 			<button data-action="open-menu" data-open="settings" data-string="Settings">Settings</button>
 			<button data-action="open-menu" data-open="help" data-string="Help">Help</button>
-		</div>
-	</section>
-
-	<!-- Save Screen -->
-	<section data-menu="save">
-		<button class="fas fa-arrow-left top left" data-action="back"></button>
-		<div class="horizontal horizontal--center">
-			<input type="text" placeholder="Save Slot Name" data-input="slotName" required>
-			<button data-string="Save" data-action="save">Save</button>
-		</div>
-		<div data-ui="slots" class="row row--spaced padded"></div>
-	</section>
-
-	<!-- Load Screen -->
-	<section data-menu="load">
-		<button class="fas fa-arrow-left top left" data-action="back"></button>
-		<h2 data-string="Load">Load</h2>
-		<div data-ui="saveSlots">
-			<h3 data-string="LoadSlots">Saved Games</h3>
-			<div data-ui="slots" class="row row--spaced padded"></div>
-		</div>
-		<div data-ui="autoSaveSlots">
-			<h3 data-string="LoadAutoSaveSlots">Auto Saved Games</h3>
-			<div data-ui="slots" class="row row--spaced padded"></div>
-		</div>
-	</section>
-
-	<!-- Settings Screen -->
-	<section data-menu="settings" class="text--center">
-		<button class="fas fa-arrow-left top left" data-action="back"></button>
-		<h2 data-string="Settings">Settings</h2>
-		<div class="row row--spaced padded text---center">
-			<div class="row__column row__column--12 row__column--phone--12 row__column--phablet--12 row__column--tablet--6 row__column--desktop--6 row__column--desktop-large--6 row__column--retina--6">
-				<div data-settings="audio" class="vertical vertical--center text--center">
-					<h3 data-string="Audio">Audio</h3>
-					<span data-string="Music">Music Volume:</span>
-					<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="music">
-					<span data-string="Sound">Sound Volume:</span>
-					<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="sound">
-					<span data-string="Voice">Voice Volume:</span>
-					<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="voice">
-				</div>
-			</div>
-
-			<div class="row__column row__column--12 row__column--phone--12 row__column--phablet--12 row__column--tablet--6 row__column--desktop--6 row__column--desktop-large--6 row__column--retina--6">
-
-				<div data-settings="text-speed">
-					<h3 data-string="TextSpeed">Text Speed</h3>
-					<input type="range" min="1" max="50" step="1" data-action="set-text-speed">
-				</div>
-
-				<div data-settings="auto-play-speed">
-					<h3 data-string="AutoPlaySpeed">Auto Play Speed</h3>
-					<input type="range" min="0" max="60" step="1" data-action="set-auto-play-speed">
-				</div>
-				<div data-settings="language">
-					<h3 data-string="Language">Language</h3>
-					<div class="horizontal horizontal--center">
-						<select data-action="set-language">
-								<option value="English">English</option>
-								<option value="Español">Español</option>
-								<option value="Français">Français</option>
-								<option value="日本語">日本語</option>
-								<option value="Nederlands">Nederlands</option>
-							</select>
-						<span class="fas fa-sort" data-select="set-language"></span>
-					</div>
-
-				</div>
-
-				<div data-settings="resolution" data-platform="electron">
-					<h3 data-string="Resolution">Resolution</h3>
-					<div class="horizontal">
-						<select data-action="set-resolution"></select>
-						<span class="fas fa-sort" data-select="set-resolution"></span>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!--Help Screen -->
-	<section data-menu="help">
-		<button class="fas fa-arrow-left top left" data-action="back"></button>
-		<h2 data-string="Help">Help</h2>
-		<div class="text--left padded">
-			<p data-string="AdvanceHelp">To advance through the game, click anywhere on the game screen or press the space key.</p>
-			<h3 data-string="QuickButtons">Quick Menu Buttons</h3>
-			<p><span class="fas fa-arrow-left"></span> <span data-string="BackButton">Back.</span></p>
-			<p><span class="fas fa-eye"></span> <span data-string="HideButton">Hide Text.</span></p>
-			<p><span class="fas fa-save"></span> <span data-string="SaveButon">Open the Save Screen.</span></p>
-			<p><span class="fas fa-undo"></span> <span data-string="LoadButton">Open the Load Screen.</span></p>
-			<p><span class="fas fa-cog"></span> <span data-string="SettingsButton">Open the Settings Screen.</span></p>
-			<p><span class="fas fa-times-circle"></span> <span data-string="QuitButton">Quit Game.</span></p>
 		</div>
 	</section>
 `;
@@ -530,7 +414,7 @@ class Monogatari {
 	 */
 	static localize () {
 
-		$_('[data-string]').each ((element) => {
+		$_(`${Monogatari.selector} [data-string]`).each ((element) => {
 			const string_translation = Monogatari.string ($_(element).data ('string'));
 
 			// Check if the translation actually exists and is not empty before
@@ -539,10 +423,8 @@ class Monogatari {
 				$_(element).text (string_translation);
 			}
 		});
-		//Monogatari.setSlots ();
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
 	 * Preload game assets
 	 */
@@ -615,6 +497,7 @@ class Monogatari {
 		}
 	}
 
+
 	static replaceVariables (statement) {
 		const matches = statement.match (/{{\S+}}/g);
 		if (matches !== null) {
@@ -632,6 +515,7 @@ class Monogatari {
 		return statement;
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	static addSlot (i, data) {
 		const name = data.name ? data.name : data.date;
 
@@ -696,107 +580,14 @@ class Monogatari {
 		}
 	}
 
-	static setAutoSlots () {
-		if (!window.localStorage) {
-			return false;
-		}
-
-		const element = $_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]');
-
-		element.html ('');
-
-		Monogatari.Storage.keys ().then ((keys) => {
-			const savedData = keys.filter ((key) => {
-				return key.indexOf (Monogatari.setting ('AutoSaveLabel')) === 0;
-			}).sort ((a, b) => {
-				const aNumber = parseInt (a.split (Monogatari.setting ('AutoSaveLabel'))[1]);
-				const bNumber = parseInt (b.split (Monogatari.setting ('AutoSaveLabel'))[1]);
-
-				if (aNumber > bNumber) {
-					return 1;
-				} else if (aNumber < bNumber) {
-					return -1;
-				} else {
-					return 0;
-				}
-			});
-
-			for (let i = 0; i < savedData.length; i++) {
-				const label = savedData[i];
-				if (label.indexOf (Monogatari.setting ('AutoSaveLabel')) === 0) {
-					Monogatari.Storage.get (savedData[i]).then ((slot) => {
-						const id = label.split (Monogatari.setting ('AutoSaveLabel'))[1];
-						if (slot !== null && slot !== '') {
-							Monogatari.addAutoSlot (id, slot);
-						}
-					});
-				}
-			}
-
-			// Check if there are no Auto Saved games.
-			if (element.html ().trim () === '') {
-				element.html (`<p data-string="NoAutoSavedGames">${Monogatari.string ('NoAutoSavedGames')}</p>`);
-			}
-		});
-	}
-
-	// Create all save and load slots
-	static setSlots () {
-		if (!window.localStorage) {
-			return false;
-		}
-
-		$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').html ('');
-		$_('[data-menu="save"] [data-ui="slots"]').html ('');
-
-		$_('[data-menu="save"] [data-input="slotName"]').value (Monogatari.niceDateTime ());
-
-		return Monogatari.Storage.keys ().then ((keys) => {
-			const savedData = keys.filter ((key) => {
-				return key.indexOf (Monogatari.setting ('SaveLabel')) === 0;
-			}).sort ((a, b) => {
-				const aNumber = parseInt (a.split (Monogatari.setting ('SaveLabel'))[1]);
-				const bNumber = parseInt (b.split (Monogatari.setting ('SaveLabel'))[1]);
-
-				if (aNumber > bNumber) {
-					return 1;
-				} else if (aNumber < bNumber) {
-					return -1;
-				} else {
-					return 0;
-				}
-			});
-
-			const promises = [];
-			for (let i = 0; i < savedData.length; i++) {
-				const label = savedData[i];
-				promises.push(Monogatari.Storage.get (label).then ((slot) => {
-					const id = label.split (Monogatari.setting ('SaveLabel'))[1];
-					if (slot !== null && slot !== '') {
-						Monogatari.addSlot (id, slot);
-					}
-				}));
-			}
-
-			return Promise.all (promises).then (() => {
-
-				// Check if there are no Saved games.
-				if ($_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').html ().trim() === '') {
-					$_('[data-menu="save"] [data-ui="slots"]').html (`<p data-string="NoSavedGames">${Monogatari.string ('NoSavedGames')}</p>`);
-					$_('[data-menu="load"] [data-ui="slots"]').html (`<p data-string="NoSavedGames">${Monogatari.string ('NoSavedGames')}</p>`);
-				}
-				Monogatari.setAutoSlots ();
-			});
-		});
-	}
 
 	// Get's the highest number currently available as a slot id (Save_{?})
-	static getMaxSlotId () {
+	static getMaxSlotId (prefix = 'SaveLabel') {
 		return Monogatari.Storage.keys ().then ((keys) => {
 			let max = 1;
 			for (const saveKey of keys) {
-				if (saveKey.indexOf (Monogatari.setting ('SaveLabel')) === 0) {
-					const number = parseInt(saveKey.split (Monogatari.setting ('SaveLabel'))[1]);
+				if (saveKey.indexOf (Monogatari.setting (prefix)) === 0) {
+					const number = parseInt(saveKey.split (Monogatari.setting (prefix) + '_')[1]);
 					if (number > max) {
 						max = number;
 					}
@@ -806,70 +597,25 @@ class Monogatari {
 		});
 	}
 
-	static newSave (name) {
+	static saveTo (prefix = 'SaveLabel', id = null, name = null) {
 		// Check if the player is actually playing
 		if (Monogatari.global ('playing')) {
-			document.body.style.cursor = 'wait';
+			const date = Monogatari.niceDateTime ();
 
-			Monogatari.getMaxSlotId ().then ((max) => {
-				Monogatari.Storage.set (Monogatari.setting ('SaveLabel') + (max + 1) , {
-					name,
-					date: Monogatari.niceDateTime (),
-					image: Monogatari.state ('scene').split (' ')[1],
-					game: Monogatari.object ()
-				}).then (({ value }) => {
-					Monogatari.addSlot (max + 1, value);
-					document.body.style.cursor = 'auto';
-				});
-			});
-		}
-	}
+			if (name === null || name.trim () === '') {
+				name = date;
+			}
+			return Monogatari.getMaxSlotId (prefix).then ((max) => {
 
-	static autoSave (id, slot) {
-		if (Monogatari.global ('playing')) {
-			document.body.style.cursor = 'wait';
-
-			const name = Monogatari.niceDateTime ();
-
-			Monogatari.Storage.set (slot, {
-				name,
-				date: Monogatari.niceDateTime (),
-				image: Monogatari.state ('scene').split (' ')[1],
-				game: Monogatari.object ()
-			}).then (() => {
-				$_(`[data-menu='load'] [data-ui='autoSaveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (name);
-				$_(`[data-menu='save'] [data-ui='autoSaveSlots'] [data-ui='slots'] [data-save='${id}'] small`).text (name);
-				document.body.style.cursor = 'auto';
-			});
-		}
-	}
-
-	static saveToSlot (id, slot, customName) {
-		// Check if the player is actually playing
-		if (Monogatari.global ('block')) {
-			document.body.style.cursor = 'wait';
-
-			// Get the name of the Slot if it exists or use the current date.
-			Monogatari.Storage.get (slot).then ((data) => {
-				let name = Monogatari.niceDateTime ();
-
-				if (data.Name !== null && data.Name !== '' && typeof data.Name !== 'undefined') {
-					name = data.Name;
+				if (id === null) {
+					id = max + 1;
 				}
 
-				if (typeof customName !== 'undefined') {
-					name = customName;
-				}
-
-				Monogatari.Storage.set (slot, {
+				return Monogatari.Storage.set (`${Monogatari.setting (prefix)}_${id}`, {
 					name,
-					date: Monogatari.niceDateTime (),
+					date,
 					image: Monogatari.state ('scene').split (' ')[1],
 					game: Monogatari.object ()
-				}).then (() => {
-					$_(`[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (name);
-					$_(`[data-menu='save'] [data-ui='slots'] [data-save='${id}'] small`).text (name);
-					document.body.style.cursor = 'auto';
 				});
 			});
 		}
@@ -1154,6 +900,9 @@ class Monogatari {
 		});
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
+
 	static autoPlay (enable) {
 		if (enable === true) {
 			const interval = Monogatari.preference ('AutoPlaySpeed') * 1000;
@@ -1182,10 +931,6 @@ class Monogatari {
 		}
 
 	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//
-
 
 	static object () {
 		return {
@@ -1306,7 +1051,9 @@ class Monogatari {
 		// Register service worker
 		if (Monogatari.setting ('ServiceWorkers')) {
 			if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
-				//navigator.serviceWorker.register ('./../service-worker.js');
+				// TODO: There's a place in hell for this quick fix, the splitting
+				// of the sw file is just preventing parcel from tryng to bundle it.
+				navigator.serviceWorker.register ('./../service-worker' + '.js');
 			} else {
 				console.warn ('Service Workers are not available in this browser or have been disabled in the engine configuration. Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/');
 			}
@@ -1369,32 +1116,6 @@ class Monogatari {
 			} else {
 				$_('[data-menu="main"]').show ();
 			}
-		});
-
-		// Save to slot when a slot is pressed.
-		$_('[data-menu="save"]').on ('click', 'figcaption, img, small', function () {
-			Monogatari.global ('overwriteSlot', $_(this).parent ().data ('save'));
-			Monogatari.Storage.get (Monogatari.setting ('SaveLabel') + Monogatari.global ('overwriteSlot')).then ((data) => {
-				if (typeof data.Name !== 'undefined') {
-					$_('[data-notice="slot-overwrite"] input').value (data.Name);
-				} else {
-					$_('[data-notice="slot-overwrite"] input').value (data.Date);
-				}
-				$_('[data-notice="slot-overwrite"]').addClass ('modal--active');
-			});
-		});
-
-		$_('[data-menu="save"], [data-menu="load"]').on ('click', '[data-delete]', function () {
-			Monogatari.global ('deleteSlot', $_(this).data ('delete'));
-			Monogatari.Storage.get (Monogatari.setting ('SaveLabel') + Monogatari.global ('deleteSlot')).then ((data) => {
-				if (typeof data.Name !== 'undefined') {
-					$_('[data-notice="slot-deletion"] small').text (data.Name);
-				} else {
-					$_('[data-notice="slot-deletion"] small').text (data.Date);
-				}
-
-				$_('[data-notice="slot-deletion"]').addClass ('modal--active');
-			});
 		});
 
 		$_('#game [data-ui="quick-menu"], #game [data-ui="quick-menu"] *').click ((event) => {
@@ -1468,29 +1189,6 @@ class Monogatari {
 						$_('[data-ui="quick-menu"]').addClass ('transparent');
 						$_('[data-ui="text"]').hide ();
 						Monogatari.global ('distraction-free', true);
-					}
-					break;
-
-				case 'save':
-					var slotName = $_('[data-menu="save"] [data-input="slotName"]').value ().trim ();
-					if (slotName !== '') {
-						Monogatari.newSave (slotName);
-					}
-					break;
-
-				case 'delete-slot':
-					Monogatari.Storage.remove (Monogatari.setting ('SaveLabel') + Monogatari.global ('deleteSlot'));
-					$_(`[data-load-slot="${Monogatari.global ('deleteSlot')}"], [data-save="${Monogatari.global ('deleteSlot')}"]`).remove ();
-					Monogatari.global ('deleteSlot', null);
-					$_('[data-notice="slot-deletion"]').removeClass ('modal--active');
-					break;
-
-				case 'overwrite-slot':
-					var customName = $_('[data-notice="slot-overwrite"] input').value ().trim ();
-					if (customName !== '') {
-						Monogatari.saveToSlot (Monogatari.global ('overwriteSlot'), Monogatari.setting ('SaveLabel') + Monogatari.global ('overwriteSlot'), customName);
-						Monogatari.global ('overwriteSlot', null);
-						$_('[data-notice="slot-overwrite"]').removeClass ('modal--active');
 					}
 					break;
 			}
@@ -1589,16 +1287,6 @@ class Monogatari {
 			e.preventDefault();
 		});
 
-		// Load a saved game slot when it is pressed
-		$_('[data-menu="load"] [data-ui="saveSlots"]').on ('click', 'figcaption, img', function () {
-			Monogatari.loadFromSlot (Monogatari.setting ('SaveLabel') + $_(this).parent().data('loadSlot'));
-		});
-
-		// Load an autosaved game slot when it is pressed
-		$_('[data-menu="load"] [data-ui="autoSaveSlots"]').on ('click', 'figcaption, img', function () {
-			Monogatari.loadFromSlot (Monogatari.setting ('AutoSaveLabel') + $_(this).parent().data('loadSlot'));
-		});
-
 		const promises = [];
 
 		for (const component of Monogatari.components ()) {
@@ -1655,11 +1343,6 @@ class Monogatari {
 					$_('[data-settings="audio"]').html (`<p>${Monogatari.string ('iOSAudioWarning')}</p>`);
 				}
 
-				// Disable the load and save slots in case Local Storage is not supported.
-				if (!window.localStorage) {
-					$_('[data-ui="slots"]').html (`<p>${Monogatari.string ('LocalStorageWarning')}</p>`);
-				}
-
 				Monogatari.electronSetup ();
 
 				Monogatari.preload ().then(() => {
@@ -1671,24 +1354,6 @@ class Monogatari {
 				}).finally (() => {
 					Monogatari.showMainMenu ();
 				});
-
-				Monogatari.setSlots();
-
-				if (Monogatari.setting ('AutoSave') != 0 && typeof Monogatari.setting ('AutoSave') === 'number') {
-					setInterval(function () {
-						Monogatari.autoSave (Monogatari.global ('currentAutoSaveSlot'), Monogatari.setting ('AutoSaveLabel') + Monogatari.global ('currentAutoSaveSlot'));
-
-						if (Monogatari.global ('currentAutoSaveSlot') === Monogatari.setting ('Slots')) {
-							Monogatari.global ('currentAutoSaveSlot', 1);
-						} else {
-							Monogatari.global ('currentAutoSaveSlot', Monogatari.global ('currentAutoSaveSlot') + 1);
-						}
-						Monogatari.setAutoSlots ();
-
-					}, Monogatari.setting ('AutoSave') * 60000);
-				} else {
-					$_('[data-menu="load"] [data-ui="autoSaveSlots"]').hide ();
-				}
 
 				Monogatari.setting ('maxAutoPlaySpeed', parseInt ($_('[data-action="set-auto-play-speed"]').property ('max')));
 				document.querySelector('[data-action="set-auto-play-speed"]').value = Monogatari.preference ('AutoPlaySpeed');
@@ -1765,8 +1430,8 @@ Monogatari._settings = {
 	'MenuMusic': '',
 
 	// Prefix for the Save Slots in Local Storage.
-	'SaveLabel': 'Save_',
-	'AutoSaveLabel': 'AutoSave_',
+	'SaveLabel': 'Save',
+	'AutoSaveLabel': 'AutoSave',
 
 	// Turn main menu on/off; Default: true *
 	'ShowMenu': true,
