@@ -1,6 +1,5 @@
-/* global Monogatari, monogatari */
+/* global monogatari */
 
-const { $_ } = Monogatari;
 // Define the messages used in the game.
 monogatari.action ('Message', {
 	messages: {
