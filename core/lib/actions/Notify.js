@@ -8,6 +8,18 @@ export class Notify extends Action {
 		return action === 'notify';
 	}
 
+	static notifications (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				return Notify.settings.notifications[object];
+			} else {
+				Notify.settings.notifications = Object.assign ({}, Notify.settings.notifications, object);
+			}
+		} else {
+			return Notify.settings.notifications;
+		}
+	}
+
 	constructor ([ action, name, time ]) {
 		super ();
 

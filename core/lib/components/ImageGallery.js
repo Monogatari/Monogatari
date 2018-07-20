@@ -178,6 +178,18 @@ export class ImageGallery extends Component {
 			}
 		}).join ('');
 	}
+
+	static images (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				return ImageGallery._configuration.images[object];
+			} else {
+				ImageGallery._configuration.images = Object.assign ({}, ImageGallery._configuration.images, object);
+			}
+		} else {
+			return ImageGallery._configuration.images;
+		}
+	}
 }
 
 ImageGallery.id = 'Gallery';

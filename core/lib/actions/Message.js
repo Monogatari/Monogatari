@@ -25,6 +25,18 @@ export class Message extends Action {
 		return action === 'display' && type === 'message';
 	}
 
+	static messages (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				return Message.settings.messages[object];
+			} else {
+				Message.settings.messages = Object.assign ({}, Message.settings.messages, object);
+			}
+		} else {
+			return Message.settings.messages;
+		}
+	}
+
 	constructor ([ action, type, asset ]) {
 		super ();
 		this.type = type;

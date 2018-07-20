@@ -58,6 +58,18 @@ export class Particles extends Action {
 		$_(`${Monogatari.selector} #particles-js`).html ('');
 	}
 
+	static particles (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				return Particles.settings.particles[object];
+			} else {
+				Particles.settings.particles = Object.assign ({}, Particles.settings.particles, object);
+			}
+		} else {
+			return Particles.settings.particles;
+		}
+	}
+
 	constructor ([ action, name ]) {
 		super ();
 		if (typeof Particles.settings.particles[name] !== 'undefined') {

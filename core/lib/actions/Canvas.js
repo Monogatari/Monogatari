@@ -35,6 +35,18 @@ export class Canvas extends Action {
 		return action === 'canvas';
 	}
 
+	static objects (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				return Canvas.settings.objects[object];
+			} else {
+				Canvas.settings.objects = Object.assign ({}, Canvas.settings.objects, object);
+			}
+		} else {
+			return Canvas.settings.objects;
+		}
+	}
+
 	/**
 	 * Creates an instance of a Canvas Action.
 	 *
