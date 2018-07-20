@@ -4,6 +4,18 @@ import { FancyError } from '../FancyError';
 
 export class Notify extends Action {
 
+	static configuration (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				return Notify._configuration[object];
+			} else {
+				Notify._configuration = Object.assign ({}, Notify._configuration, object);
+			}
+		} else {
+			return Notify._configuration;
+		}
+	}
+
 	static matchString ([ action ]) {
 		return action === 'notify';
 	}
@@ -11,12 +23,12 @@ export class Notify extends Action {
 	static notifications (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return Notify.settings.notifications[object];
+				return Notify._configuration.notifications[object];
 			} else {
-				Notify.settings.notifications = Object.assign ({}, Notify.settings.notifications, object);
+				Notify._configuration.notifications = Object.assign ({}, Notify._configuration.notifications, object);
 			}
 		} else {
-			return Notify.settings.notifications;
+			return Notify._configuration.notifications;
 		}
 	}
 
@@ -27,8 +39,8 @@ export class Notify extends Action {
 		if ('Notification' in window) {
 
 			// Finally check if the given notification exists in the object
-			if (typeof Notify.settings.notifications[name] !== 'undefined') {
-				this.notification = Notify.settings.notifications[name];
+			if (typeof Notify.notifications (name) !== 'undefined') {
+				this.notification = Notify.notifications (name);
 
 				if (typeof time !== 'undefined') {
 					if (!isNaN (time)) {
@@ -59,7 +71,7 @@ export class Notify extends Action {
 					`Monogatari attempted to retrieve a notification named "${name}" but it didn't exist in the notifications object.`,
 					{
 						'Notification': name,
-						'You may have meant': Object.keys (Notify.settings.notifications),
+						'You may have meant': Object.keys (Notify.notifications ()),
 						'Label': Monogatari.state ('label'),
 						'Step': Monogatari.state ('step'),
 						'Help': {
@@ -140,7 +152,7 @@ export class Notify extends Action {
 }
 
 Notify.id = 'Notify';
-Notify.settings = {
+Notify._configuration = {
 	notifications: {}
 };
 

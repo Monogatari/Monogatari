@@ -82,7 +82,7 @@ export class ImageGallery extends Component {
 
 	// We'll modify the state of the gallery through this function, which will
 	// also save things up to the storage.
-	static onUpdate () {
+	static onStateUpdate () {
 		Monogatari.Storage.set ('gallery', ImageGallery.state ());
 		return Promise.resolve ();
 	}

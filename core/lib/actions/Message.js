@@ -4,6 +4,18 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Message extends Action {
 
+	static configuration (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				return Message._configuration[object];
+			} else {
+				Message._configuration = Object.assign ({}, Message._configuration, object);
+			}
+		} else {
+			return Message._configuration;
+		}
+	}
+
 	static setup (selector) {
 		$_(`${selector} #game #components`).append (`
 			<div data-component="modal" data-ui="messages" class="middle">
@@ -28,19 +40,19 @@ export class Message extends Action {
 	static messages (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return Message.settings.messages[object];
+				return Message._configuration.messages[object];
 			} else {
-				Message.settings.messages = Object.assign ({}, Message.settings.messages, object);
+				Message._configuration.messages = Object.assign ({}, Message._configuration.messages, object);
 			}
 		} else {
-			return Message.settings.messages;
+			return Message._configuration.messages;
 		}
 	}
 
 	constructor ([ action, type, asset ]) {
 		super ();
 		this.type = type;
-		this.message = Message.settings.messages[asset];
+		this.message = Message.messages (asset);
 	}
 
 	willApply () {
@@ -72,7 +84,7 @@ export class Message extends Action {
 }
 
 Message.id = 'Message';
-Message.settings = {
+Message._configuration = {
 	messages: {}
 };
 

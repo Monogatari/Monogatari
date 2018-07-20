@@ -4,6 +4,18 @@ import { $_, Util } from '@aegis-framework/artemis';
 
 export class Canvas extends Action {
 
+	static configuration (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				return Canvas._configuration[object];
+			} else {
+				Canvas._configuration = Object.assign ({}, Canvas._configuration, object);
+			}
+		} else {
+			return Canvas._configuration;
+		}
+	}
+
 	static onLoad () {
 		if (Monogatari.state ('canvas').length > 0) {
 			for (const canvas of Monogatari.state ('canvas')) {
@@ -38,17 +50,17 @@ export class Canvas extends Action {
 	static objects (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return Canvas.settings.objects[object];
+				return Canvas._configuration.objects[object];
 			} else {
-				Canvas.settings.objects = Object.assign ({}, Canvas.settings.objects, object);
+				Canvas._configuration.objects = Object.assign ({}, Canvas._configuration.objects, object);
 			}
 		} else {
-			return Canvas.settings.objects;
+			return Canvas._configuration.objects;
 		}
 	}
 
 	/**
-	 * Creates an instance of a Canvas Action.
+	 * Creates an instance of a Canvas Action
 	 *
 	 * @param {string[]} parameters - List of parameters received from the script statement.
 	 * @param {string} parameters.action - In this case, action will always be 'canvas'
@@ -60,8 +72,8 @@ export class Canvas extends Action {
 		this.mode = mode;
 		this.name = name;
 
-		if (typeof Canvas.settings.objects[name] !== 'undefined') {
-			this.object = Canvas.settings.objects[name];
+		if (typeof Canvas._configuration.objects[name] !== 'undefined') {
+			this.object = Canvas._configuration.objects[name];
 		}
 	}
 
@@ -181,7 +193,7 @@ export class Canvas extends Action {
 }
 
 Canvas.id = 'Canvas';
-Canvas.settings = {
+Canvas._configuration = {
 	objects: {
 
 	}

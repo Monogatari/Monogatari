@@ -73,8 +73,4 @@ export class Vibrate extends Action {
 }
 
 Vibrate.id = 'Vibrate';
-Vibrate.settings = {
-	notifications: {}
-};
-
 Monogatari.registerAction (Vibrate);

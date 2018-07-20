@@ -6,6 +6,18 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Particles extends Action {
 
+	static configuration (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				return Particles._configuration[object];
+			} else {
+				Particles._configuration = Object.assign ({}, Particles._configuration, object);
+			}
+		} else {
+			return Particles._configuration;
+		}
+	}
+
 	static setup () {
 		Monogatari.history ('particles');
 		Monogatari.state ({
@@ -61,19 +73,19 @@ export class Particles extends Action {
 	static particles (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return Particles.settings.particles[object];
+				return Particles._configuration.particles[object];
 			} else {
-				Particles.settings.particles = Object.assign ({}, Particles.settings.particles, object);
+				Particles._configuration.particles = Object.assign ({}, Particles._configuration.particles, object);
 			}
 		} else {
-			return Particles.settings.particles;
+			return Particles._configuration.particles;
 		}
 	}
 
 	constructor ([ action, name ]) {
 		super ();
-		if (typeof Particles.settings.particles[name] !== 'undefined') {
-			this.particles = Particles.settings.particles[name];
+		if (typeof Particles.particles (name) !== 'undefined') {
+			this.particles = Particles.particles (name);
 			this.name = name;
 		} else {
 			console.error (`The Particles ${name} could not be shown because it doesn't exist in the particles object.`);
@@ -113,7 +125,7 @@ export class Particles extends Action {
 }
 
 Particles.id = 'Particles';
-Particles.settings = {
+Particles._configuration = {
 	particles: {}
 };
 
