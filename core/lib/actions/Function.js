@@ -1,5 +1,6 @@
 import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
+import { Util } from '@aegis-framework/artemis';
 
 export class ReversibleFunction extends Action {
 
@@ -14,15 +15,11 @@ export class ReversibleFunction extends Action {
 	}
 
 	apply () {
-		return new Promise ((resolve) => {
-			Monogatari.assertAsync (this.statement.Apply, Monogatari).then (() => {
-				Monogatari.global ('block', false);
-				resolve ();
-			}).catch (() => {
-				Monogatari.global ('block', false);
+		return Util.callAsync (this.statement.Apply, Monogatari).then ((returnValue) => {
+			Monogatari.global ('block', false);
+			if (returnValue !== true) {
 				this.shouldContinue = false;
-				resolve ();
-			});
+			}
 		});
 	}
 
@@ -31,15 +28,11 @@ export class ReversibleFunction extends Action {
 	}
 
 	revert () {
-		return new Promise ((resolve) => {
-			Monogatari.assertAsync (this.statement.Reverse, Monogatari).then (() => {
-				Monogatari.global ('block', false);
-				resolve ();
-			}).catch (() => {
-				Monogatari.global ('block', false);
+		return Util.callAsync (this.statement.Reverse, Monogatari).then ((returnValue) => {
+			Monogatari.global ('block', false);
+			if (returnValue !== true) {
 				this.shouldContinue = false;
-				resolve ();
-			});
+			}
 		});
 	}
 
