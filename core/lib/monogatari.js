@@ -4,69 +4,17 @@
 import { $_, Space, Platform, Preload, Util, FileSystem } from '@aegis-framework/artemis';
 import { FancyError } from './FancyError';
 
-const HTML = `
-	<!-- Notice messages -->
-	<div data-notice="orientation" class="modal">
-		<div class="modal__content">
-			<p data-string="OrientationWarning">Please rotate your device to play.</p>
-		</div>
-	</div>
-
-	<!--Game Screen -->
-	<section id="game" class="unselectable">
-		<div id="particles-js" data-ui="particles"></div>
-		<div id="background" data-ui="background"></div>
-		<div id='components'>
-			<audio type="audio/mpeg" data-component="music"></audio>
-			<audio type="audio/mpeg" data-component="voice"></audio>
-			<audio type="audio/mpeg" data-component="sound"></audio>
-			<div class="video-wrapper text--center vertical middle" data-component="video" data-ui="video-player">
-				<video type="video/mp4" data-ui="player" controls="true"></video>
-				<button data-action="close-video" data-string="Close">Close</button>
-			</div>
-		</div>
-
-		<div data-ui="choices" class="vertical text--center middle"></div>
-		<div data-ui="text">
-			<img data-ui="face" alt="">
-			<span data-ui="who"></span>
-			<p data-ui="say"></p>
-		</div>
-		<div data-ui="quick-menu" class="text--right">
-			<span data-action="back"><span class="fas fa-arrow-left"></span> <span data-string="Back">Back</span></span>
-			<span data-action="distraction-free"><span class="fas fa-eye" data-action="distraction-free"></span> <span data-string="Hide" data-action="distraction-free">Hide</span></span>
-			<span data-action="auto-play"><span class="fas fa-play-circle" data-action="auto-play"></span> <span data-string="AutoPlay" data-action="auto-play">Auto</span></span>
-			<span data-action="open-menu" data-open="save"><span class="fas fa-save" data-action="open-menu" data-open="save"></span> <span data-string="Save" data-action="open-menu" data-open="save">Save</span></span>
-			<span data-action="open-menu" data-open="load"><span class="fas fa-undo" data-action="open-menu" data-open="load"></span> <span data-string="Load" data-action="open-menu" data-open="load">Load</span></span>
-			<span data-action="open-menu" data-open="settings"><span class="fas fa-cog" data-action="open-menu" data-open="settings"></span> <span data-string="Settings" data-action="open-menu" data-open="settings">Settings</span></span>
-			<span data-action="end"><span class="fas fa-times-circle" data-action="end"></span> <span data-string="Quit" data-action="end">Quit</span></span>
-		</div>
-	</section>
-
-	<!-- Loading Screen -->
-	<section data-menu="loading">
-		<div class="middle">
-			<h2 data-string="Loading">Loading</h2>
-			<progress data-ui="load-progress" value="0" max="100"></progress>
-			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
-		</div>
-	</section>
-
-	<!-- Main Screen -->
-	<section data-menu="main">
-		<audio type="audio/mpeg" data-component="ambient"></audio>
-
-		<div class="vertical vertical--right text--right bottom animated bounceIn" data-ui="inner-menu">
-			<button data-action="start" data-string="Start">Start</button>
-			<button data-action="open-menu" data-open="load" data-string="Load">Load</button>
-			<button data-action="open-menu" data-open="settings" data-string="Settings">Settings</button>
-			<button data-action="open-menu" data-open="help" data-string="Help">Help</button>
-		</div>
-	</section>
-`;
-
 class Monogatari {
 
+
+	/**
+	 * @static onStart - This is the main onStart function, it acts as an event
+	 * listerner when the game is started. This function will call its action
+	 * counterparts.
+	 *
+	 * @return {Promise} - The promise is resolved if all action's onStart function
+	 * was resolved and is rejected if any were rejected.
+	 */
 	static onStart () {
 		const promises = [];
 		for (const action of Monogatari.actions ()) {
@@ -75,6 +23,15 @@ class Monogatari {
 		return Promise.all (promises);
 	}
 
+	/**
+	 * @static onLoad - This is the main onStart function, it acts as an event
+	 * listerner when a game is loaded. This function will call its action
+	 * counterparts so that each action is able to run any operations needed
+	 * when a game is loaded such as restoring their state.
+	 *
+	 * @return {Promise} - The promise is resolved is all action's onLoad function
+	 * was resolved and is rejected if any were rejected.
+	 */
 	static onLoad () {
 		const promises = [];
 		for (const action of Monogatari.actions ()) {
@@ -83,14 +40,35 @@ class Monogatari {
 		return Promise.all (promises);
 	}
 
+	/**
+	 * @static width - Determines the real width of the Monogatari element, pretty
+	 * useful when dealing with canvas or other things that require specific measurements.
+	 *
+	 * @return {number} - Computed Width of the element
+	 */
 	static width () {
-		return getComputedStyle($_(Monogatari.selector).get (0)).width.replace ('px', '');
+		return  parseInt (getComputedStyle($_(Monogatari.selector).get (0)).width.replace ('px', ''));
 	}
 
+	/**
+	 * @static height - Determines the real height of the Monogatari element, pretty
+	 * useful when dealing with canvas or other things that require specific measurements.
+	 *
+	 * @return {number} - Computed Width of the element
+	 */
 	static height () {
 		return getComputedStyle($_(Monogatari.selector).get (0)).height.replace ('px', '');
 	}
 
+	/**
+	 * @static string - Gets the translation of a string. This is of course limited
+	 * to the translations defined for eeach language and string using the translation
+	 * function.
+	 *
+	 * @param  {string} key - The key of the string whose translation is needed
+	 * @return {string} - String translation in the current language given the
+	 * user's preferences.
+	 */
 	static string (key) {
 		if (typeof Monogatari._translations[Monogatari.preference ('Language')] !== 'undefined') {
 			if (typeof Monogatari._translations[Monogatari.preference ('Language')][key] !== 'undefined') {
@@ -155,6 +133,19 @@ class Monogatari {
 		}
 	}
 
+	/**
+	 * @static history - Simple function to access, create and modify history
+	 * objects. Each history is a simple arrray.
+	 *
+	 * @param  {Object|string} [object = null] - Object with which current
+	 * history object will be updated with (i.e. Object.assign) or a string to access
+	 * a specific history. If a string is given and that history does not exists,
+	 * this method will create it for us.
+	 *
+	 * @return {type} - If the parameter passed was a string, this function will
+	 * return the history associated with that name. If no argument was passed,
+	 * it will return the whole history object containing all histories.
+	 */
 	static history (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
@@ -170,6 +161,17 @@ class Monogatari {
 		}
 	}
 
+	/**
+	 * @static state - Simple function to access, create and state variables.
+	 *
+	 * @param  {Object|string} [object = null] - Object with which current
+	 * state object will be updated with (i.e. Object.assign) or a string to access
+	 * a specific state variable.
+	 *
+	 * @return {type} - If the parameter passed was a string, this function will
+	 * return the variable associated with that name. If no argument was passed,
+	 * it will return the whole state object containing all variables.
+	 */
 	static state (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
@@ -182,46 +184,101 @@ class Monogatari {
 		}
 	}
 
+	/**
+	 * @static registerAction - Register an Action to the actions list. All actions
+	 * should be registered before calling the init () method so their Mounting
+	 * cycle is done correctly.
+	 *
+	 * @param  {Action} action - Action to register. Remember each action must
+	 * have an unique ID.
+	 */
 	static registerAction (action) {
 		Monogatari._actions.push (action);
 	}
 
+	/**
+	 * @static unregisterAction - Removes an action from the actions list. Any
+	 * action you want to remove should be removed before calling the init ()
+	 * method so that their Mounting cycle is not executed.
+	 *
+	 * @param  {string} action - ID of the Action to unregister. Remember each action must
+	 * have an unique ID.
+	 */
 	static unregisterAction (action) {
 		Monogatari._actions = Monogatari._actions.filter ((a) => !(a instanceof action));
 	}
 
+	/**
+	 * @static actions - Returns the list of registered Actions.
+	 *
+	 * @return {Action[]} - List of registered Actions
+	 */
 	static actions () {
 		return Monogatari._actions;
 	}
 
-	static action (id, settings = null) {
-		if (settings !== null) {
-			Monogatari._actions.find ((a) => a.id === id).settings = Object.assign ({}, Monogatari._actions.find ((a) => a.id === id).settings, settings);
-		} else {
-			return Monogatari._actions.find ((a) => a.id === id);
-		}
+	/**
+	 * @static action - Access to an specific action class
+	 *
+	 * @param  {string} id - ID of the action you want to access to.
+	 * @return {Action} - Returns the action that matches the given ID
+	 */
+	static action (id) {
+		return Monogatari._actions.find ((a) => a.id === id);
 	}
 
+	/**
+	 * @static registerComponent - Register a Component to the components list.
+	 * All components should be registered before calling the init () method so
+	 * their Mounting cycle is done correctly.
+	 *
+	 * @param  {Component} component - Component to register. Remember each
+	 * component must have an unique ID.
+	 */
 	static registerComponent (component) {
 		Monogatari._components.push (component);
 	}
 
+	/**
+	 * @static unregisterComponent - Removes a component from the components list.
+	 * Any component you want to remove should be removed before calling the
+	 * init () method so that their Mounting cycle is not executed.
+	 *
+	 * @param  {string} component - ID of the Component to unregister. Remember
+	 * each component must have an unique ID.
+	 */
 	static unregisterComponent (component) {
 		Monogatari._components = Monogatari._actions.filter ((c) => !(c instanceof component));
 	}
 
+	/**
+	 * @static components - Returns the list of registered Components.
+	 *
+	 * @return {Component[]} - List of registered Components
+	 */
 	static components () {
 		return Monogatari._components;
 	}
 
-	static component (id, configuration = null) {
-		if (configuration !== null) {
-			Monogatari._components.find ((a) => a.id === id).configuration (configuration);
-		} else {
-			return Monogatari._components.find ((a) => a.id === id);
-		}
+	/**
+	 * @static component - Access to an specific component class
+	 *
+	 * @param  {string} id - ID of the component you want to access to.
+	 * @return {Component} - Returns the component that matches the given ID
+	 */
+	static component (id) {
+		return Monogatari._components.find ((a) => a._id === id);
 	}
 
+	/**
+	 * @static assets - Simple function to modify and access the assets object,
+	 * all declared assets such as audio, videos and images should be registered
+	 * in these objects.
+	 *
+	 * @param  {string} [type = null] - Assets
+	 * @param  {Object} [object = null] description
+	 * @return {Object} - If the
+	 */
 	static assets (type = null, object = null) {
 		if (type !== null && object !== null) {
 			if (typeof Monogatari._assets[type] !== 'undefined') {
@@ -1039,7 +1096,7 @@ class Monogatari {
 
 	static setup (selector) {
 
-		$_(selector).html (HTML);
+		$_(selector).html (Monogatari._html);
 
 		// Set the initial settings if they don't exist or load them.
 		Monogatari.Storage.get ('Settings').then ((local_settings) => {
@@ -1505,5 +1562,66 @@ Monogatari.globals ({
 });
 
 Monogatari.Storage = new Space ();
+
+Monogatari._html = `
+	<!-- Notice messages -->
+	<div data-notice="orientation" class="modal">
+		<div class="modal__content">
+			<p data-string="OrientationWarning">Please rotate your device to play.</p>
+		</div>
+	</div>
+
+	<!--Game Screen -->
+	<section id="game" class="unselectable">
+		<div id="particles-js" data-ui="particles"></div>
+		<div id="background" data-ui="background"></div>
+		<div id='components'>
+			<audio type="audio/mpeg" data-component="music"></audio>
+			<audio type="audio/mpeg" data-component="voice"></audio>
+			<audio type="audio/mpeg" data-component="sound"></audio>
+			<div class="video-wrapper text--center vertical middle" data-component="video" data-ui="video-player">
+				<video type="video/mp4" data-ui="player" controls="true"></video>
+				<button data-action="close-video" data-string="Close">Close</button>
+			</div>
+		</div>
+
+		<div data-ui="choices" class="vertical text--center middle"></div>
+		<div data-ui="text">
+			<img data-ui="face" alt="">
+			<span data-ui="who"></span>
+			<p data-ui="say"></p>
+		</div>
+		<div data-ui="quick-menu" class="text--right">
+			<span data-action="back"><span class="fas fa-arrow-left"></span> <span data-string="Back">Back</span></span>
+			<span data-action="distraction-free"><span class="fas fa-eye" data-action="distraction-free"></span> <span data-string="Hide" data-action="distraction-free">Hide</span></span>
+			<span data-action="auto-play"><span class="fas fa-play-circle" data-action="auto-play"></span> <span data-string="AutoPlay" data-action="auto-play">Auto</span></span>
+			<span data-action="open-menu" data-open="save"><span class="fas fa-save" data-action="open-menu" data-open="save"></span> <span data-string="Save" data-action="open-menu" data-open="save">Save</span></span>
+			<span data-action="open-menu" data-open="load"><span class="fas fa-undo" data-action="open-menu" data-open="load"></span> <span data-string="Load" data-action="open-menu" data-open="load">Load</span></span>
+			<span data-action="open-menu" data-open="settings"><span class="fas fa-cog" data-action="open-menu" data-open="settings"></span> <span data-string="Settings" data-action="open-menu" data-open="settings">Settings</span></span>
+			<span data-action="end"><span class="fas fa-times-circle" data-action="end"></span> <span data-string="Quit" data-action="end">Quit</span></span>
+		</div>
+	</section>
+
+	<!-- Loading Screen -->
+	<section data-menu="loading">
+		<div class="middle">
+			<h2 data-string="Loading">Loading</h2>
+			<progress data-ui="load-progress" value="0" max="100"></progress>
+			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
+		</div>
+	</section>
+
+	<!-- Main Screen -->
+	<section data-menu="main">
+		<audio type="audio/mpeg" data-component="ambient"></audio>
+
+		<div class="vertical vertical--right text--right bottom animated bounceIn" data-ui="inner-menu">
+			<button data-action="start" data-string="Start">Start</button>
+			<button data-action="open-menu" data-open="load" data-string="Load">Load</button>
+			<button data-action="open-menu" data-open="settings" data-string="Settings">Settings</button>
+			<button data-action="open-menu" data-open="help" data-string="Help">Help</button>
+		</div>
+	</section>
+`;
 
 export { Monogatari };

@@ -192,7 +192,7 @@ export class ImageGallery extends Component {
 	}
 }
 
-ImageGallery.id = 'Gallery';
+ImageGallery._id = 'Gallery';
 ImageGallery._configuration = {
 	directory: 'gallery',
 	images: {}
