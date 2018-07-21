@@ -326,6 +326,18 @@ class Monogatari {
 		}
 	}
 
+	static translations (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				return Monogatari._translations[object];
+			} else {
+				Monogatari._translations = Object.assign ({}, Monogatari._translations, object);
+			}
+		} else {
+			return Monogatari._translations;
+		}
+	}
+
 	static translation (language, strings) {
 		if (typeof Monogatari._translations[language] !== 'undefined') {
 			Monogatari._translations[language] = Object.assign ({}, Monogatari._translations[language], strings);
@@ -551,14 +563,30 @@ class Monogatari {
 		}
 	}
 
+	static translate (statement) {
+		const matches = statement.match (/_\(\S+\)/g);
+		if (matches !== null) {
+			for (const match of matches) {
+				const path = match.replace ('_(', '').replace (')', '').split ('.');
+				let data = Monogatari.translations (Monogatari.preference ('Language'))[path[0]];
+
+				for (let j = 1; j < path.length; j++) {
+					data = data[path[j]];
+				}
+				statement = statement.replace (match, data);
+			}
+		}
+		return statement;
+	}
 
 	static replaceVariables (statement) {
+		statement = Monogatari.translate (statement);
 		const matches = statement.match (/{{\S+}}/g);
 		if (matches !== null) {
 			for (const match of matches) {
 				const path = match.replace ('{{', '').replace ('}}', '').split ('.');
 
-				let data = Monogatari.storage ()[path[0]];
+				let data = Monogatari.storage (path[0]);
 
 				for (let j = 1; j < path.length; j++) {
 					data = data[path[j]];

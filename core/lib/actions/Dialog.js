@@ -105,8 +105,6 @@ export class Dialog extends Action {
 
 	willApply () {
 		$_(`${Monogatari.selector} [data-character]`).removeClass ('focus');
-		this.dialog = Monogatari.replaceVariables (this.dialog);
-
 		$_(`${Monogatari.selector} [data-ui="face"]`).hide ();
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
 		return Promise.resolve ();
