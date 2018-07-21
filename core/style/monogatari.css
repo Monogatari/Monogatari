@@ -152,13 +152,6 @@ select {
 	max-height: 80vh;
 }
 
-[data-sprite] {
-	margin: 0 auto;
-	left: 0;
-	right: 0;
-}
-
-
 [data-error] {
 	.modal__content {
 		height: auto;
