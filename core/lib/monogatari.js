@@ -1,6 +1,3 @@
-
-/* global require */
-
 import { $_, Space, Platform, Preload, Util, FileSystem } from '@aegis-framework/artemis';
 import { FancyError } from './FancyError';
 
@@ -806,79 +803,8 @@ class Monogatari {
 		}
 	}
 
-	static changeWindowResolution (resolution) {
-		if (Platform.electron ()) {
-			const remote = require ('electron').remote;
-			const win = remote.getCurrentWindow ();
-			const {width, height} = remote.screen.getPrimaryDisplay ().workAreaSize;
-			if (resolution) {
-				win.setResizable (true);
 
-				if (resolution == 'fullscreen' && !win.isFullScreen () && win.isFullScreenable ()) {
-					win.setFullScreen(true);
-					Monogatari.preference ('Resolution', resolution);
-				} else if (resolution.indexOf ('x') > -1) {
-					win.setFullScreen (false);
-					const size = resolution.split ('x');
-					const chosenWidth = parseInt (size[0]);
-					const chosenHeight = parseInt (size[1]);
 
-					if (chosenWidth <= width && chosenHeight <= height) {
-						win.setSize(chosenWidth, chosenHeight, true);
-						Monogatari.preference ('Resolution', resolution);
-					}
-				}
-				win.setResizable (false);
-			}
-		}
-	}
-
-	static electronSetup () {
-		// Set the electron quit handler.
-		if (Platform.electron ()) {
-			const remote = require ('electron').remote;
-			const win = remote.getCurrentWindow ();
-
-			$_('[data-action="set-resolution"]').value (Monogatari.preference ('Resolution'));
-
-			window.addEventListener ('beforeunload', (event) => {
-				event.preventDefault ();
-				$_('[data-notice="exit"]').addClass ('modal--active');
-			});
-
-			if (!win.isResizable ()) {
-				const aspectRatio = Monogatari.setting ('AspectRatio').split (':');
-				const aspectRatioWidth = parseInt (aspectRatio[0]);
-				const aspectRatioHeight = parseInt (aspectRatio[1]);
-				win.setResizable (true);
-				const minSize = win.getMinimumSize ();
-				const {width, height} = remote.screen.getPrimaryDisplay ().workAreaSize;
-				win.setResizable (false);
-
-				for (let i = 0; i < 488; i+=8) {
-					const calculatedWidth = aspectRatioWidth * i;
-					const calculatedHeight = aspectRatioHeight * i;
-
-					if (calculatedWidth >= minSize[0] && calculatedHeight >= minSize[1] && calculatedWidth <= width && calculatedHeight <= height) {
-						$_('[data-action="set-resolution"]').append(`<option value="${calculatedWidth}x${calculatedHeight}">${Monogatari.string ('Windowed')} ${calculatedWidth}x${calculatedHeight}</option>`);
-					}
-				}
-
-				$_('[data-action="set-resolution"]').append(`<option value="fullscreen">${Monogatari.string ('FullScreen')}</option>`);
-
-				Monogatari.changeWindowResolution (Monogatari.preference ('Resolution'));
-				$_('[data-action="set-resolution"]').change(function () {
-					const size = $_(this).value ();
-					Monogatari.changeWindowResolution (size);
-				});
-			} else {
-				$_('[data-settings="resolution"]').hide ();
-			}
-
-		} else {
-			$_('[data-platform="electron"]').hide ();
-		}
-	}
 
 	static resetGame () {
 
@@ -1134,19 +1060,6 @@ class Monogatari {
 	 * Every event listener should be binded in this function.
 	 */
 	static bind (selector) {
-		// Fix for select labels
-		$_('[data-select]').click (function () {
-			const e = document.createEvent ('MouseEvents');
-			e.initMouseEvent ('mousedown');
-			$_(`[data-action='${$_(this).data ('select')}']`).get (0). dispatchEvent (e);
-		});
-
-		// Bind Language select so that every time a language is selected, the
-		// ui and game get correctly localized.
-		$_('[data-action="set-language"]').change (function () {
-			Monogatari.preference ('Language', $_(this).value ());
-			Monogatari.localize ();
-		});
 
 		// Add the orientation checker in case that a specific orientation was
 		// defined.
@@ -1266,11 +1179,6 @@ class Monogatari {
 			});
 		});
 
-		$_('[data-action="set-auto-play-speed"]').on ('change mouseover', function () {
-			const value = Monogatari.setting ('maxAutoPlaySpeed') - parseInt($_(this).value());
-			Monogatari.preference ('AutoPlaySpeed', value);
-		});
-
 		$_('[data-action="auto-play"], [data-action="auto-play"] *').click(function () {
 			if ($_(this).hasClass('fa-play-circle')) {
 				$_(this).removeClass('fa-play-circle');
@@ -1362,12 +1270,6 @@ class Monogatari {
 
 		Monogatari.setup (selector).then (() => {
 			Monogatari.bind (selector).then (() => {
-				// Set the game language or hide the option if the game is not multilingual
-				if (Monogatari.setting ('MultiLanguage')) {
-					$_('[data-action="set-language"]').value (Monogatari.preference ('Language'));
-				} else {
-					$_('[data-settings="language"]').hide ();
-				}
 
 				// Set the initial language translations
 				Monogatari.localize ();
@@ -1393,15 +1295,6 @@ class Monogatari {
 					}
 				});
 
-				// Disable audio settings in iOS since they are not supported
-				if (Platform.mobile ('iOS')) {
-					// iOS handles the volume using the system volume, therefore there is now way to
-					// handle each of the sound sources individually and as such, this is disabled.
-					$_('[data-settings="audio"]').html (`<p>${Monogatari.string ('iOSAudioWarning')}</p>`);
-				}
-
-				Monogatari.electronSetup ();
-
 				Monogatari.preload ().then(() => {
 					$_('[data-menu="loading"]').fadeOut (400, () => {
 						$_('[data-menu="loading"]').hide ();
@@ -1411,9 +1304,6 @@ class Monogatari {
 				}).finally (() => {
 					Monogatari.showMainMenu ();
 				});
-
-				Monogatari.setting ('maxAutoPlaySpeed', parseInt ($_('[data-action="set-auto-play-speed"]').property ('max')));
-				document.querySelector('[data-action="set-auto-play-speed"]').value = Monogatari.preference ('AutoPlaySpeed');
 
 				for (const component of Monogatari.components ()) {
 					component.init (selector);
