@@ -1,5 +1,6 @@
 import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
+import { Util } from '@aegis-framework/artemis';
 
 export class Conditional extends Action {
 
@@ -13,18 +14,25 @@ export class Conditional extends Action {
 	}
 
 	apply () {
-		Monogatari.assertAsync (this.statement.Condition, Monogatari).then (() => {
+		return Util.callAsync (this.statement.Condition, Monogatari).then ((returnValue) => {
 			Monogatari.global ('block', false);
-			Monogatari.run (this.statement.True, false);
-		}).catch (() => {
-			Monogatari.global ('block', false);
-			Monogatari.run (this.statement.False, false);
+			if (typeof returnValue === 'boolean') {
+				if (returnValue === true) {
+					Monogatari.run (this.statement.True, false);
+				} else {
+					Monogatari.run (this.statement.False, false);
+				}
+			} else if (typeof returnValue === 'string') {
+				Monogatari.run (this.statement[returnValue], false);
+			} else {
+				Monogatari.run (this.statement.False, false);
+			}
 		});
-		return Promise.resolve ();
 	}
 
 	// TODO: Conditionals are not reversible right now because there's no way to
-	// tell what they actually did in all cases.
+	// tell what they actually did in all cases. And there's also no history on
+	// what function was applied.
 	willRevert () {
 		return Promise.reject ();
 	}
