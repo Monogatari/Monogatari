@@ -1,6 +1,5 @@
 import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
-/* global particlesJS */
 
 export class Stop extends Action {
 
@@ -65,8 +64,8 @@ export class Stop extends Action {
 
 	revert () {
 		if (this.type === 'particles') {
-			if (Monogatari.history ('particles').length > 0) {
-				const last = Monogatari.history ('particles').pop ();
+			if (Monogatari.history ('particle').length > 0) {
+				const last = Monogatari.history ('particle').pop ();
 				return Monogatari.run (last, false);
 			}
 		} else {

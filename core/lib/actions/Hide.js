@@ -14,8 +14,10 @@ export class Hide extends Action {
 
 		if (typeof Monogatari.character (this.asset) !== 'undefined') {
 			this.element = $_(`${Monogatari.selector} [data-character="${this.asset}"]`);
+			this.state = 'characters';
 		} else {
 			this.element = $_(`${Monogatari.selector} [data-image="${this.asset}"]`);
+			this.state = 'images';
 		}
 
 		if (typeof classes !== 'undefined') {
@@ -23,10 +25,12 @@ export class Hide extends Action {
 		} else {
 			this.classes = [];
 		}
-
+		this.classes = this.classes.filter ((c) => (c !== 'at' && c !== 'with'));
 	}
 
 	apply () {
+		this.element.removeClass ();
+		this.element.addClass ('animated');
 		if (this.classes.length > 0) {
 			for (const newClass of this.classes) {
 				this.element.addClass (newClass);
@@ -35,12 +39,17 @@ export class Hide extends Action {
 		} else {
 			this.element.remove ();
 		}
-		const show = Monogatari.state ('show').filter ((item) => {
+		const show = Monogatari.state (this.state).filter ((item) => {
 			const [ , asset, ] = item;
 			return asset !== this.asset;
 		});
 
-		Monogatari.state ({ show });
+		if (this.state == 'characters') {
+			Monogatari.state ({ characters: show });
+		} else if (this.state == 'images') {
+			Monogatari.state ({ images: show });
+		}
+
 		return Promise.resolve ();
 	}
 

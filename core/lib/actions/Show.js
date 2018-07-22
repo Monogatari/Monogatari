@@ -56,20 +56,21 @@ export class Show extends Action {
 		if (typeof Monogatari.character (asset) !== 'undefined') {
 			this.type = 'character';
 			// show [character] [expression] at [position] with [animation] [infinite]
-			const [sprite, ...classes] = props.join (' ').replace(' at ', ' ').replace (' with ', ' ').trim ().split (' ');
+			const [sprite, ...classes] = (' ' + props.join (' ')).replace(' at ', ' ').replace (' with ', ' ').trim ().split (' ');
 
 			this.sprite = sprite;
 			this.classes = ['animated', ...classes];
 			this.character = Monogatari.character (asset);
 			this.image = this.character.Images[this.sprite];
 		} else {
-
 			this.type = 'image';
+			this.classes = (' ' + props.join (' ')).replace(' at ', ' ').replace (' with ', ' ').trim ().split (' ');
 			if (typeof Monogatari.asset ('images', asset) !== 'undefined') {
 				this.image = Monogatari.asset ('images', asset);
 			} else {
 				this.image = asset;
 			}
+			this.sprite = this.image;
 		}
 	}
 

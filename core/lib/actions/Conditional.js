@@ -14,19 +14,22 @@ export class Conditional extends Action {
 	}
 
 	apply () {
-		return Util.callAsync (this.statement.Condition, Monogatari).then ((returnValue) => {
-			Monogatari.global ('block', false);
-			if (typeof returnValue === 'boolean') {
+		return new Promise ((resolve) => {
+			Util.callAsync (this.statement.Condition, Monogatari).then ((returnValue) => {
+				Monogatari.global ('block', false);
 				if (returnValue === true) {
 					Monogatari.run (this.statement.True, false);
+				} else if (typeof returnValue === 'string') {
+					Monogatari.run (this.statement[returnValue], false);
 				} else {
 					Monogatari.run (this.statement.False, false);
 				}
-			} else if (typeof returnValue === 'string') {
-				Monogatari.run (this.statement[returnValue], false);
-			} else {
+			}).catch (() => {
+				Monogatari.global ('block', false);
 				Monogatari.run (this.statement.False, false);
-			}
+			}).finally (() => {
+				resolve ();
+			});
 		});
 	}
 

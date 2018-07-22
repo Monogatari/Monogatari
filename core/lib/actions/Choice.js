@@ -29,7 +29,11 @@ export class Choice extends Action {
 							Util.callAsync (Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].onChosen, Monogatari).then (() => {
 								Monogatari.run ($_(this).data ('do'), false);
 							});
+						} else {
+							Monogatari.run ($_(this).data ('do'), false);
 						}
+					} else {
+						Monogatari.run ($_(this).data ('do'), false);
 					}
 				} else {
 					Monogatari.run ($_(this).data ('do'), false);
@@ -62,7 +66,6 @@ export class Choice extends Action {
 	}
 
 	apply () {
-
 		Monogatari.global ('_CurrentChoice', this.statement);
 		for (const i in this.statement) {
 			const choice = this.statement[i];

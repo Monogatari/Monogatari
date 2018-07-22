@@ -19,7 +19,7 @@ export class Particles extends Action {
 	}
 
 	static setup () {
-		Monogatari.history ('particles');
+		Monogatari.history ('particle');
 		Monogatari.state ({
 			particles: ''
 		});
@@ -39,7 +39,7 @@ export class Particles extends Action {
 			Monogatari.run (particles, false);
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
-			Monogatari.history ('particles').pop ();
+			Monogatari.history ('particle').pop ();
 		}
 		return Promise.resolve ();
 	}
@@ -102,7 +102,7 @@ export class Particles extends Action {
 
 	apply () {
 		particlesJS (this.particles);
-		Monogatari.history ('particles').push (this._statement);
+		Monogatari.history ('particle').push (this._statement);
 		Monogatari.state ({
 			particles: this._statement
 		});
@@ -115,7 +115,7 @@ export class Particles extends Action {
 
 	revert () {
 		Particles.stop ();
-		Monogatari.history ('particles').pop ();
+		Monogatari.history ('particle').pop ();
 		return Promise.resolve ();
 	}
 
