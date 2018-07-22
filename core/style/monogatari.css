@@ -152,6 +152,22 @@ select {
 	max-height: 80vh;
 }
 
+[data-sprite] {
+	margin: 0 auto;
+	left: 0;
+	right: 0;
+
+	&.right {
+		left: initial;
+		right: 0;
+	}
+
+	&.left {
+		left: 0;
+		right: initial;
+	}
+}
+
 [data-error] {
 	.modal__content {
 		height: auto;
@@ -568,6 +584,10 @@ textarea {
 [data-menu="load"] h3,
 [data-menu="save"] h3 {
 	margin: 2rem auto;
+}
+
+[data-menu="loading"] div {
+	width: 90%;
 }
 
 /**
