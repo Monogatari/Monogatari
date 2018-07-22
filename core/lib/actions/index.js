@@ -3,16 +3,12 @@ export * from './Centered';
 export * from './Choice';
 export * from './Clear';
 export * from './Conditional';
-
-// Message and display use the same statement so this order is required.
-export * from './Message';
-export * from './Display';
-
 export * from './End';
 export * from './Function';
 export * from './Hide';
 export * from './InputModal';
 export * from './Jump';
+export * from './Message';
 export * from './Next';
 export * from './Notify';
 export * from './Particles';
