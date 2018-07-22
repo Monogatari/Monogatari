@@ -15,6 +15,10 @@ export class Next extends Action {
 		Monogatari.next ();
 		return Promise.resolve ();
 	}
+
+	didRevert () {
+		return Promise.resolve (true);
+	}
 }
 
 Next.id = 'Next';

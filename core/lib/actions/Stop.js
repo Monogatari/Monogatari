@@ -75,22 +75,24 @@ export class Stop extends Action {
 				Monogatari.state ({
 					music: ''
 				});
-				last = Monogatari.history ('music').pop ().split (' ');
+				last = Monogatari.history ('music')[Monogatari.history ('music').length - 1].split (' ');
 			} else if (this.type === 'sound') {
 				Monogatari.state ({
 					sound: ''
 				});
-				last = Monogatari.history ('sound').pop ().split (' ');
+				last = Monogatari.history ('sound')[Monogatari.history ('sound').length - 1].split (' ');
 			}
 
-			if ('loop' in this.props) {
+			const [ , , media, ...props ] = last;
+
+			if (props.indexOf ('loop') > -1) {
 				this.player.setAttribute ('loop', '');
 			}
 
-			if (typeof  Monogatari.asset (this.type, last[2]) !== 'undefined') {
-				Monogatari.musicPlayer.setAttribute('src', `assets/${this.type}/${Monogatari.asset (this.type, last[2])}`);
+			if (typeof  Monogatari.asset (this.type, media) !== 'undefined') {
+				this.player.setAttribute('src', `assets/${this.type}/${Monogatari.asset (this.type, media)}`);
 			} else {
-				Monogatari.musicPlayer.setAttribute('src', `assets/${this.type}/` + last[2]);
+				this.player.setAttribute('src', `assets/${this.type}/${media}`);
 			}
 
 			if (this.type == 'music') {

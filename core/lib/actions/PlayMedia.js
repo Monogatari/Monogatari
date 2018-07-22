@@ -8,6 +8,15 @@ export class Play extends Action {
 		if ($_(`${Monogatari.selector} [data-component="video"]`).isVisible ()) {
 			return Promise.reject ();
 		}
+		Play.shutUp ();
+		return Promise.resolve ();
+	}
+
+	static canRevert () {
+		if ($_(`${Monogatari.selector} [data-component="video"]`).isVisible ()) {
+			Play.stopVideo ();
+		}
+		Play.shutUp ();
 		return Promise.resolve ();
 	}
 
@@ -118,6 +127,14 @@ export class Play extends Action {
 		$_(`${Monogatari.selector} [data-component="video"]`).removeClass ('active');
 	}
 
+	// Stop the voice player
+	static shutUp () {
+		if (!Monogatari.voicePlayer.paused && typeof Monogatari.voicePlayer.src !== 'undefined' && Monogatari.voicePlayer.src != '') {
+			Monogatari.voicePlayer.pause ();
+			Monogatari.voicePlayer.currentTime = 0;
+		}
+	}
+
 	constructor ([ action, type, media, ...props ]) {
 		super ();
 		this.type = type;
@@ -171,7 +188,10 @@ export class Play extends Action {
 	}
 
 	didApply () {
-		return Promise.resolve (true);
+		if (this.type !== 'video') {
+			return Promise.resolve (true);
+		}
+		return Promise.resolve ();
 	}
 
 	revert () {

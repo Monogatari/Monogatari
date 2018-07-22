@@ -5,6 +5,36 @@ import Typed from 'typed.js';
 
 export class Centered extends Action {
 
+	static canProceed () {
+		if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
+			const str = Monogatari.global ('textObject').strings [0];
+			const element = $_(Monogatari.global ('textObject').el).data ('ui');
+
+			if (element == 'centered') {
+				Monogatari.global ('textObject').destroy ();
+				$_('[data-ui="centered"]').html (str);
+				Monogatari.global ('finishedTyping', true);
+			}
+
+			return Promise.reject ();
+		} else if (Monogatari.global ('finishedTyping') && $_(`${Monogatari.selector} [data-ui="centered"]`).isVisible ()) {
+			$_(`${Monogatari.selector} [data-ui="centered"]`).remove ();
+		}
+		$_(`${Monogatari.selector} [data-ui="text"]`).show ();
+		return Promise.resolve (Monogatari.global ('finishedTyping'));
+	}
+
+	static canRevert () {
+		if ($_(`${Monogatari.selector} [data-ui="centered"]`).isVisible ()) {
+			$_(`${Monogatari.selector} [data-ui="centered"]`).remove ();
+			Monogatari.global ('finishedTyping', true);
+			Monogatari.global ('textObject').destroy ();
+			Monogatari.global ('_CurrentChoice', null);
+			$_(`${Monogatari.selector} [data-ui="text"]`).show ();
+		}
+		return Promise.resolve ();
+	}
+
 	static matchString ([ action ]) {
 		return action === 'centered';
 	}

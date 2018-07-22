@@ -16,10 +16,17 @@ export class Choice extends Action {
 		return Promise.resolve ();
 	}
 
+	static canRevert () {
+		if ($_(`${Monogatari.selector} [data-ui="choices"]`).isVisible ()) {
+			$_(`${Monogatari.selector} [data-ui="choices"]`).hide ();
+			$_(`${Monogatari.selector} [data-ui="choices"]`).html ('');
+			Monogatari.global ('_CurrentChoice', null);
+		}
+		return Promise.resolve ();
+	}
+
 	static bind (selector) {
 		$_(`${selector}`).on('click', '[data-do]', function () {
-			Monogatari.action ('Centered').hide ();
-			Monogatari.shutUp ();
 			if ($_(this).data('do') != 'null' && $_(this).data('do') != '') {
 				$_(`${selector} [data-ui="choices"]`).hide ();
 				$_(`${selector} [data-ui="choices"]`).html ('');

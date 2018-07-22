@@ -29,7 +29,23 @@ export class Message extends Action {
 	}
 
 	static reset () {
-		$_(`${Monogatari.selector} [data-ui="messages"]`).removeClass ('modal--active');
+		$_(`${Monogatari.selector} [data-ui="messages"]`).removeClass ('active');
+		return Promise.resolve ();
+	}
+
+	static canProceed () {
+		if ($_(`${Monogatari.selector} [data-ui="messages"]`).isVisible ()) {
+			return Promise.reject ();
+		}
+		return Promise.resolve ();
+	}
+
+	static canRevert () {
+		if ($_(`${Monogatari.selector} [data-ui="messages"]`).isVisible ()) {
+			$_(`${Monogatari.selector} [data-ui="messages"]`).removeClass ('active');
+			$_(`${Monogatari.selector} [data-ui="message-content"]`).html ('');
+			Monogatari.global ('block', false);
+		}
 		return Promise.resolve ();
 	}
 

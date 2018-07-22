@@ -28,6 +28,24 @@ export class InputModal extends Action {
 		return Promise.resolve ();
 	}
 
+	static canProceed () {
+		if ($_(`${Monogatari.selector} [data-ui="input"]`).isVisible ()) {
+			return Promise.reject ();
+		}
+		return Promise.resolve ();
+	}
+
+	static canRevert () {
+		if ($_(`${Monogatari.selector} [data-ui="input"]`).isVisible ()) {
+			$_(`${Monogatari.selector} [data-ui="input"]`).removeClass ('active');
+			$_(`${Monogatari.selector} [data-ui="input"] [data-ui="warning"]`).text ('');
+			$_(`${Monogatari.selector} [data-ui="input"] input`).value ('');
+			$_(`${Monogatari.selector} [data-ui="input"]`).get (0).removeEventListener ('submit', Monogatari.global ('_inputListener'));
+			Monogatari.global ('block', false);
+		}
+		return Promise.resolve ();
+	}
+
 	constructor ({ Input }) {
 		super ();
 		this.statement = Input;

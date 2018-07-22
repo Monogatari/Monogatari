@@ -823,17 +823,6 @@ class Monogatari {
 		}
 	}
 
-	// Stop the voice player
-	static shutUp () {
-		if (!Monogatari.voicePlayer.paused && typeof Monogatari.voicePlayer.src !== 'undefined' && Monogatari.voicePlayer.src != '') {
-			Monogatari.voicePlayer.pause ();
-			Monogatari.voicePlayer.currentTime = 0;
-		}
-	}
-
-
-
-
 	static resetGame () {
 
 		$_('[data-component="modal"]').removeClass ('modal--active');
@@ -888,29 +877,6 @@ class Monogatari {
 		}
 	}
 
-	static continue () {
-		Monogatari.canProceed ().then (() => {
-			if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
-				const str = Monogatari.global ('textObject').strings [0];
-				const element = $_(Monogatari.global ('textObject').el).data ('ui');
-				Monogatari.global ('textObject').destroy ();
-				if (element == 'centered') {
-					$_('[data-ui="centered"]').html (str);
-				} else {
-					$_('[data-ui="say"]').html (str);
-				}
-				Monogatari.global ('finishedTyping', true);
-			} else {
-				Monogatari.action ('Centered').hide();
-				Monogatari.shutUp();
-				Monogatari.next ();
-			}
-		}).catch (() => {
-			// An action waiting for user interaction or something else
-			// is blocking the game.
-		});
-	}
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 
@@ -926,8 +892,6 @@ class Monogatari {
 					// possibly special handling to avoid futile "catch up" run
 				}
 				Monogatari.canProceed ().then (() => {
-					Monogatari.action ('Centered').hide();
-					Monogatari.shutUp();
 					Monogatari.next ();
 					expected += interval;
 					setTimeout (Monogatari.global ('_AutoPlayTimer'), Math.max (0, interval - now)); // take into account drift
@@ -953,9 +917,6 @@ class Monogatari {
 
 	// Function to execute the previous statement in the script.
 	static revert () {
-
-		Monogatari.action ('Centered').hide ();
-		Monogatari.shutUp ();
 
 		if (Monogatari.state ('step') >= 1) {
 
@@ -1122,7 +1083,12 @@ class Monogatari {
 		});
 
 		$_('#game').click (function () {
-			Monogatari.continue ();
+			Monogatari.canProceed ().then (() => {
+				Monogatari.next ();
+			}).catch (() => {
+				// An action waiting for user interaction or something else
+				// is blocking the game.
+			});
 		});
 
 		$_('[data-action], [data-action] *').click(function () {
@@ -1243,7 +1209,12 @@ class Monogatari {
 					// Spacebar and Right Arrow
 					case 32:
 					case 39:
-						Monogatari.continue ();
+						Monogatari.canProceed ().then (() => {
+							Monogatari.next ();
+						}).catch (() => {
+							// An action waiting for user interaction or something else
+							// is blocking the game.
+						});
 						break;
 
 					// Left Arrow

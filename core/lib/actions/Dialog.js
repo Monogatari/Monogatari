@@ -6,6 +6,18 @@ import { $_ } from '@aegis-framework/artemis';
 export class Dialog extends Action {
 
 	static canProceed () {
+		if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
+			const str = Monogatari.global ('textObject').strings [0];
+			const element = $_(Monogatari.global ('textObject').el).data ('ui');
+
+			if (element !== 'centered') {
+				Monogatari.global ('textObject').destroy ();
+				$_('[data-ui="say"]').html (str);
+				Monogatari.global ('finishedTyping', true);
+			}
+
+			return Promise.reject ();
+		}
 		return Promise.resolve (Monogatari.global ('finishedTyping'));
 	}
 
@@ -136,8 +148,6 @@ export class Dialog extends Action {
 				if (Monogatari.global ('autoPlay') !== null) {
 					Monogatari.global ('autoPlay', setTimeout (() => {
 						if (Monogatari.canProceed () && Monogatari.global ('finishedTyping')) {
-							Monogatari.hideCentered ();
-							Monogatari.shutUp ();
 							Monogatari.next ();
 						}
 					}, Monogatari.preference ('AutoPlaySpeed') * 1000));
@@ -149,8 +159,6 @@ export class Dialog extends Action {
 			if (Monogatari.global ('autoPlay') !== null) {
 				Monogatari.global ('autoPlay', setTimeout (() => {
 					if (Monogatari.canProceed() && Monogatari.global ('finishedTyping')) {
-						Monogatari.hideCentered();
-						Monogatari.shutUp();
 						Monogatari.next ();
 					}
 				}, Monogatari.preference ('AutoPlaySpeed') * 1000));
