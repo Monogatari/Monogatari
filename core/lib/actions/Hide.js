@@ -39,8 +39,9 @@ export class Hide extends Action {
 		} else {
 			this.element.remove ();
 		}
+
 		const show = Monogatari.state (this.state).filter ((item) => {
-			const [ , asset, ] = item;
+			const [ , asset, ] = item.split (' ');
 			return asset !== this.asset;
 		});
 
