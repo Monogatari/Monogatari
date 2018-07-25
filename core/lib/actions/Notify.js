@@ -16,8 +16,8 @@ export class Notify extends Action {
 		}
 	}
 
-	static matchString ([ action ]) {
-		return action === 'notify';
+	static matchString ([ show, type ]) {
+		return show === 'show' && type === 'notification';
 	}
 
 	static notifications (object = null) {
@@ -32,7 +32,7 @@ export class Notify extends Action {
 		}
 	}
 
-	constructor ([ action, name, time ]) {
+	constructor ([ show, type, name, time ]) {
 		super ();
 
 		// First check if HTML5 notifications are available
@@ -151,7 +151,7 @@ export class Notify extends Action {
 	}
 }
 
-Notify.id = 'Notify';
+Notify.id = 'Notification';
 Notify._configuration = {
 	notifications: {}
 };

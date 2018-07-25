@@ -49,8 +49,8 @@ export class Message extends Action {
 		return Promise.resolve ();
 	}
 
-	static matchString ([ action, type ]) {
-		return action === 'display' && type === 'message';
+	static matchString ([ show, type ]) {
+		return show === 'show' && type === 'message';
 	}
 
 	static messages (object = null) {
@@ -65,10 +65,9 @@ export class Message extends Action {
 		}
 	}
 
-	constructor ([ action, type, asset ]) {
+	constructor ([ show, type, message ]) {
 		super ();
-		this.type = type;
-		this.message = Message.messages (asset);
+		this.message = Message.messages (message);
 	}
 
 	willApply () {

@@ -2,22 +2,20 @@ import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
-export class Hide extends Action {
+export class HideCharacter extends Action {
 
-	static matchString ([ action ]) {
-		return action === 'hide';
+	static matchString ([ hide, type ]) {
+		return hide === 'hide' && type === 'character';
 	}
 
-	constructor ([ action, asset, ...classes ]) {
+	constructor ([ hide, type, asset, ...classes ]) {
 		super ();
 		this.asset = asset;
 
 		if (typeof Monogatari.character (this.asset) !== 'undefined') {
 			this.element = $_(`${Monogatari.selector} [data-character="${this.asset}"]`);
-			this.state = 'characters';
 		} else {
-			this.element = $_(`${Monogatari.selector} [data-image="${this.asset}"]`);
-			this.state = 'images';
+			// TODO: Add FancyError for when the character does not exist
 		}
 
 		if (typeof classes !== 'undefined') {
@@ -40,16 +38,12 @@ export class Hide extends Action {
 			this.element.remove ();
 		}
 
-		const show = Monogatari.state (this.state).filter ((item) => {
+		const show = Monogatari.state ('characters').filter ((item) => {
 			const [ , asset, ] = item.split (' ');
 			return asset !== this.asset;
 		});
 
-		if (this.state == 'characters') {
-			Monogatari.state ({ characters: show });
-		} else if (this.state == 'images') {
-			Monogatari.state ({ images: show });
-		}
+		Monogatari.state ({ characters: show });
 
 		return Promise.resolve ();
 	}
@@ -59,18 +53,14 @@ export class Hide extends Action {
 	}
 
 	willRevert () {
-		if (typeof Monogatari.character (this.asset) !== 'undefined' && Monogatari.history ('character').length > 0) {
-			this.history = 'character';
-		} else if (typeof Monogatari.asset ('images', this.asset) !== 'undefined' && Monogatari.history ('image').length > 0) {
-			this.history = 'image';
-		} else {
+		if (Monogatari.history ('character').length <= 0) {
 			return Promise.reject ();
 		}
 		return Promise.resolve ();
 	}
 
 	revert () {
-		$_(`${Monogatari.selector} #game`).append (Monogatari.history (this.history).pop ());
+		$_(`${Monogatari.selector} #game`).append (Monogatari.history ('character').pop ());
 		return Promise.resolve ();
 	}
 
@@ -79,6 +69,6 @@ export class Hide extends Action {
 	}
 }
 
-Hide.id = 'Hide';
+HideCharacter.id = 'Hide::Character';
 
-Monogatari.registerAction (Hide);
+Monogatari.registerAction (HideCharacter);

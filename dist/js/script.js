@@ -13,7 +13,7 @@ monogatari.action ('Message').messages ({
 });
 
 // Define the notifications used in the game
-monogatari.action ('Notify').notifications ({
+monogatari.action ('Notification').notifications ({
 	'Welcome': {
 		title: 'Welcome',
 		body: 'This is the Monogatari VN Engine',
@@ -67,8 +67,8 @@ monogatari.characters ({
 monogatari.script ({
 	// The game starts here.
 	'Start': [
-		'scene #f7f6f6 with fadeIn',
-		'notify Welcome',
+		'show scene #f7f6f6 with fadeIn',
+		'show notification Welcome',
 		{
 			'Input': {
 				'Text': 'What is your name?',
@@ -116,7 +116,7 @@ monogatari.script ({
 
 		'h You can do it now.',
 
-		'display message Help',
+		'show message Help',
 
 		'h Go ahead and create an amazing Game!',
 		'h I can’t wait to see what story you’ll tell!',

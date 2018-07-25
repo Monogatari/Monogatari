@@ -33,11 +33,11 @@ export class Scene extends Action {
 		return Promise.resolve ();
 	}
 
-	static matchString ([ action ]) {
-		return action === 'scene';
+	static matchString ([ show, type ]) {
+		return show === 'show' && type === 'scene';
 	}
 
-	constructor ([ action, scene, separator, ...classes ]) {
+	constructor ([ show, type, scene, separator, ...classes ]) {
 		super ();
 		this.scene = scene;
 		this.property = 'background-image';

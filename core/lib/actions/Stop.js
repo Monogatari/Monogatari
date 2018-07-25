@@ -24,29 +24,23 @@ export class Stop extends Action {
 	}
 
 	willApply () {
-		if (typeof this.player !== 'undefined') {
-			this.player.removeAttribute ('loop');
-		}
+		this.player.removeAttribute ('loop');
 		return Promise.resolve ();
 	}
 
 	apply () {
-		if (this.type === 'particles') {
-			Monogatari.action ('Particles').stop ();
-		} else {
-			this.player.pause ();
-			this.player.setAttribute ('src', '');
-			this.player.currentTime = 0;
+		this.player.pause ();
+		this.player.setAttribute ('src', '');
+		this.player.currentTime = 0;
 
-			if (this.type === 'music') {
-				Monogatari.state ({
-					music: ''
-				});
-			} else if (this.type === 'sound') {
-				Monogatari.state ({
-					sound: ''
-				});
-			}
+		if (this.type === 'music') {
+			Monogatari.state ({
+				music: ''
+			});
+		} else if (this.type === 'sound') {
+			Monogatari.state ({
+				sound: ''
+			});
 		}
 		return Promise.resolve ();
 	}
@@ -56,57 +50,47 @@ export class Stop extends Action {
 	}
 
 	willRevert () {
-		if (typeof this.player !== 'undefined') {
-			this.player.removeAttribute ('loop');
-		}
+		this.player.removeAttribute ('loop');
 		return Promise.resolve ();
 	}
 
 	revert () {
-		if (this.type === 'particles') {
-			if (Monogatari.history ('particle').length > 0) {
-				const last = Monogatari.history ('particle').pop ();
-				return Monogatari.run (last, false);
-			}
-		} else {
-
-			let last;
-			if (this.type === 'music') {
-				Monogatari.state ({
-					music: ''
-				});
-				last = Monogatari.history ('music')[Monogatari.history ('music').length - 1].split (' ');
-			} else if (this.type === 'sound') {
-				Monogatari.state ({
-					sound: ''
-				});
-				last = Monogatari.history ('sound')[Monogatari.history ('sound').length - 1].split (' ');
-			}
-
-			const [ , , media, ...props ] = last;
-
-			if (props.indexOf ('loop') > -1) {
-				this.player.setAttribute ('loop', '');
-			}
-
-			if (typeof  Monogatari.asset (this.type, media) !== 'undefined') {
-				this.player.setAttribute('src', `assets/${this.type}/${Monogatari.asset (this.type, media)}`);
-			} else {
-				this.player.setAttribute('src', `assets/${this.type}/${media}`);
-			}
-
-			if (this.type == 'music') {
-				Monogatari.state ({
-					music: last.join (' ')
-				});
-			} else if (this.type == 'sound') {
-				Monogatari.state ({
-					sound: last.join (' ')
-				});
-			}
-
-			this.player.play ();
+		let last;
+		if (this.type === 'music') {
+			Monogatari.state ({
+				music: ''
+			});
+			last = Monogatari.history ('music')[Monogatari.history ('music').length - 1].split (' ');
+		} else if (this.type === 'sound') {
+			Monogatari.state ({
+				sound: ''
+			});
+			last = Monogatari.history ('sound')[Monogatari.history ('sound').length - 1].split (' ');
 		}
+
+		const [ , , media, ...props ] = last;
+
+		if (props.indexOf ('loop') > -1) {
+			this.player.setAttribute ('loop', '');
+		}
+
+		if (typeof  Monogatari.asset (this.type, media) !== 'undefined') {
+			this.player.setAttribute('src', `assets/${this.type}/${Monogatari.asset (this.type, media)}`);
+		} else {
+			this.player.setAttribute('src', `assets/${this.type}/${media}`);
+		}
+
+		if (this.type == 'music') {
+			Monogatari.state ({
+				music: last.join (' ')
+			});
+		} else if (this.type == 'sound') {
+			Monogatari.state ({
+				sound: last.join (' ')
+			});
+		}
+
+		this.player.play ();
 		return Promise.resolve ();
 	}
 
