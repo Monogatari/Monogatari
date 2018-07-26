@@ -13,7 +13,6 @@ export * from './HideParticles';
 export * from './InputModal';
 export * from './Jump';
 export * from './Message';
-export * from './Next';
 export * from './Notify';
 export * from './Particles';
 export * from './Pause';
