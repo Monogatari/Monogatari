@@ -1068,7 +1068,7 @@ class Monogatari {
 		// button will return to the game, if its not playing, then it'll return
 		// to the main menu.
 		$_('[data-menu]').on ('click', '[data-action="back"]:not(#game), [data-action="back"]:not(#game) *', () => {
-			//event.stopPropagation ();
+			event.stopPropagation ();
 			$_('section').hide ();
 			if (Monogatari.global ('playing')) {
 				$_('#game').show ();
@@ -1077,21 +1077,8 @@ class Monogatari {
 			}
 		});
 
-		$_('#game [data-ui="quick-menu"], #game [data-ui="quick-menu"] *').click ((event) => {
-			// Clicked Child
+		$_('[data-action], [data-action] *').click (function (event) {
 			event.stopPropagation ();
-		});
-
-		$_('#game').click (function () {
-			Monogatari.canProceed ().then (() => {
-				Monogatari.next ();
-			}).catch (() => {
-				// An action waiting for user interaction or something else
-				// is blocking the game.
-			});
-		});
-
-		$_('[data-action], [data-action] *').click(function () {
 
 			switch ($_(this).data('action')) {
 
@@ -1157,6 +1144,15 @@ class Monogatari {
 					break;
 			}
 			return false;
+		});
+
+		$_('#game').click (function () {
+			Monogatari.canProceed ().then (() => {
+				Monogatari.next ();
+			}).catch (() => {
+				// An action waiting for user interaction or something else
+				// is blocking the game.
+			});
 		});
 
 		$_('#game [data-action="back"], #game [data-action="back"] *').click ((event) => {
@@ -1480,15 +1476,7 @@ Monogatari._html = `
 			<span data-ui="who"></span>
 			<p data-ui="say"></p>
 		</div>
-		<div data-ui="quick-menu" class="text--right">
-			<span data-action="back"><span class="fas fa-arrow-left"></span> <span data-string="Back">Back</span></span>
-			<span data-action="distraction-free"><span class="fas fa-eye" data-action="distraction-free"></span> <span data-string="Hide" data-action="distraction-free">Hide</span></span>
-			<span data-action="auto-play"><span class="fas fa-play-circle" data-action="auto-play"></span> <span data-string="AutoPlay" data-action="auto-play">Auto</span></span>
-			<span data-action="open-menu" data-open="save"><span class="fas fa-save" data-action="open-menu" data-open="save"></span> <span data-string="Save" data-action="open-menu" data-open="save">Save</span></span>
-			<span data-action="open-menu" data-open="load"><span class="fas fa-undo" data-action="open-menu" data-open="load"></span> <span data-string="Load" data-action="open-menu" data-open="load">Load</span></span>
-			<span data-action="open-menu" data-open="settings"><span class="fas fa-cog" data-action="open-menu" data-open="settings"></span> <span data-string="Settings" data-action="open-menu" data-open="settings">Settings</span></span>
-			<span data-action="end"><span class="fas fa-times-circle" data-action="end"></span> <span data-string="Quit" data-action="end">Quit</span></span>
-		</div>
+		<div data-ui="quick-menu" class="text--right"></div>
 	</section>
 
 	<!-- Loading Screen -->

@@ -442,33 +442,34 @@ textarea {
 	background-color: transparent;
 }
 
-[data-ui="quick-menu"] span {
+[data-ui="quick-menu"] button {
 	display: inline-block;
 	width: auto;
 	font-size: 1rem;
-	margin: 0.25rem;
+	margin: 0 0.25rem;
+	background: transparent;
 }
 
-[data-ui="quick-menu"] > span > [data-string] {
+[data-ui="quick-menu"] > button > [data-string] {
 	display: none;
 }
 
-[data-ui="quick-menu"] > span > .fas {
+[data-ui="quick-menu"] > button > .fas {
 	display: inline-block;
 	font-size: 1.5rem;
 }
 
-[data-ui="quick-menu"] span:hover {
+[data-ui="quick-menu"] button:hover {
 	color: rgba(125, 125, 125, 0.5);
 	cursor: pointer;
 }
 
-[data-ui="quick-menu"].transparent span:hover {
+[data-ui="quick-menu"].transparent button:hover {
 	color: rgba(0, 0, 0, 0.5);
 	cursor: pointer;
 }
 
-[data-ui="quick-menu"].dark span:hover {
+[data-ui="quick-menu"].dark button:hover {
 	color: rgb(0, 0, 0);
 	cursor: pointer;
 }
@@ -675,9 +676,6 @@ input[type=range] {
 		width: 70%;
 	}
 
-	[data-ui="quick-menu"] span {
-		margin: 0.25rem;
-	}
 
 	[data-ui="quick-menu"] {
 		bottom: 0;
@@ -686,7 +684,7 @@ input[type=range] {
 		color: rgba(255, 255, 255, 0.5);
 	}
 
-	[data-ui="quick-menu"] span:hover {
+	[data-ui="quick-menu"] button:hover {
 		color: rgba(255, 255, 255, 0.8);
 	}
 
@@ -694,11 +692,11 @@ input[type=range] {
 		color: rgba(0, 0, 0, 0.5);
 	}
 
-	[data-ui="quick-menu"] > span > [data-string] {
+	[data-ui="quick-menu"] > button > [data-string] {
 		display: inline-block;
 	}
 
-	[data-ui="quick-menu"] > span > .fas {
+	[data-ui="quick-menu"] > button > .fas {
 		display: none;
 	}
 
