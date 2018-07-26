@@ -861,7 +861,9 @@ class Monogatari {
 		Monogatari.state ({
 			step: Monogatari.state ('step') + 1
 		});
-		Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+		// Clear the Stack using a Time Out instead of calling the function
+		// directly, preventing an Overflow
+		setTimeout (Monogatari.run, 0, Monogatari.label ()[Monogatari.state ('step')]);
 	}
 
 	// Start game automatically withouth going trough the main menu
@@ -943,7 +945,10 @@ class Monogatari {
 									step: Monogatari.state ('step') - 1
 								});
 								if (shouldContinue === true) {
-									return Monogatari.revert ();
+									// Clear the Stack using a Time Out instead
+									// of calling the function directly, preventing
+									// an Overflow
+									setTimeout (Monogatari.revert, 0);
 								}
 							});
 						});
@@ -951,13 +956,16 @@ class Monogatari {
 						if (typeof e === 'object' || typeof e === 'string') {
 							console.error (e);
 						}
-
-						return Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+						// Clear the Stack using a Time Out instead of calling
+						// the function directly, preventing an Overflow
+						setTimeout (Monogatari.run, 0, Monogatari.label ()[Monogatari.state ('step')]);
 					});
 				}
 			}
 		} else {
-			return Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+			// Clear the Stack using a Time Out instead of calling
+			// the function directly, preventing an Overflow
+			setTimeout (Monogatari.run, 0, Monogatari.label ()[Monogatari.state ('step')]);
 		}
 		return Promise.reject ();
 	}
