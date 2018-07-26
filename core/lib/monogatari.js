@@ -1068,7 +1068,6 @@ class Monogatari {
 		// button will return to the game, if its not playing, then it'll return
 		// to the main menu.
 		$_('[data-menu]').on ('click', '[data-action="back"]:not(#game), [data-action="back"]:not(#game) *', () => {
-			event.stopPropagation ();
 			$_('section').hide ();
 			if (Monogatari.global ('playing')) {
 				$_('#game').show ();
