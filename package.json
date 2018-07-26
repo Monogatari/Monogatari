@@ -21,10 +21,11 @@
     "eslint": "eslint ./core/index.js ./core/actions/* ./core/translations/*"
   },
   "devDependencies": {
-    "@babel/polyfill": "^7.0.0-beta.52",
-    "@babel/preset-env": "^7.0.0-beta.53",
     "autoprefixer": "^8.6.5",
     "babel-core": "^6.26.3",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "eslint": "^4.19.1",
     "htmlhint": "^0.9.13",
     "jsdoc": "^3.5.5",
