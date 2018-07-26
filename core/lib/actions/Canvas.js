@@ -43,8 +43,8 @@ export class Canvas extends Action {
 		return Promise.resolve ();
 	}
 
-	static matchString ([ action ]) {
-		return action === 'canvas';
+	static matchString ([ show, type ]) {
+		return show === 'show' && type === 'canvas';
 	}
 
 	static objects (object = null) {
@@ -67,7 +67,7 @@ export class Canvas extends Action {
 	 * @param {string} [parameters.mode='displayable'] - Mode in which the canvas element will be shown (displayable, background, full-screen, immersive)
 	 * @param {string} parameters.mode
 	 */
-	constructor ([ , mode = 'displayable', name ]) {
+	constructor ([ show, type, mode = 'displayable', name ]) {
 		super ();
 		this.mode = mode;
 		this.name = name;
@@ -134,7 +134,7 @@ export class Canvas extends Action {
 		const state = Monogatari.state ('canvas');
 		if (this.mode === 'stop') {
 			const canvas = state.find ((element) => {
-				const [ , , name] = element.split (' ');
+				const [ show, type, mode, name] = element.split (' ');
 				return name === this.name;
 			});
 			Monogatari.history ('canvas').push (canvas);
@@ -154,11 +154,11 @@ export class Canvas extends Action {
 		// again. If not, then we have to stop the canvas that was shown.
 		if (this.mode === 'stop') {
 			this.last = Monogatari.history ('canvas').find ((element) => {
-				const [ , , name] = element.split (' ');
+				const [ show, type, mode, name] = element.split (' ');
 				return name === this.name;
 			});
 			if (typeof this.last !== 'undefined') {
-				const [, mode, ] = this.last.split (' ');
+				const [ show, type, mode, name ] = this.last.split (' ');
 				return this.showCanvas (mode);
 			}
 		} else {
