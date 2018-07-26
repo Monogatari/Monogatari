@@ -116,7 +116,9 @@ self.addEventListener('fetch', function (event) {
 			}
 
 			function unableToResolve () {
-				return new Response('<h1>Service Unavailable</h1>', {
+				return new Response(`
+					<!DOCTYPE html><html lang=en><title>Service Unavailable</title><meta charset=UTF-8><meta content="width=device-width,initial-scale=1"name=viewport><style>html{width:100%;	height:100%}body{width:100%;height:100%;text-align:center;color:#545454;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Fira Sans","Droid Sans","Helvetica Neue",sans-serif;margin:0}body>div{margin:0 auto;top:50%;left:50%;-webkit-transform:translate(-50%,-50%);-moz-transform:translate(-50%,-50%);-o-transform:translate(-50%,-50%);-ms-transform:translate(-50%,-50%);position:absolute;max-height:100%}h1{font-size:4em;font-weight:lighter}h2{font-size:2em;font-weight:lighter}</style><div><h1>Service Unavailable</h1><h2>Sorry, the server is currently unavailable or under maintenance, try again later.</h2></div>
+				`, {
 					status: 503,
 					statusText: 'Service Unavailable',
 					headers: new Headers({
