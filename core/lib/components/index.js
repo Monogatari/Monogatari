@@ -1,4 +1,5 @@
 export * from './CreditsMenu';
+export * from './Game';
 export * from './HelpMenu';
 export * from './ImageGallery';
 export * from './LoadMenu';

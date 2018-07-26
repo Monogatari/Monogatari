@@ -1057,9 +1057,9 @@ class Monogatari {
 			// Set the event listener for device orientation so we can display a message
 			window.addEventListener ('orientationchange', () => {
 				if (Platform.orientation () !== Monogatari.setting ('Orientation')) {
-					$_('[data-notice="orientation"]').addClass ('modal--active');
+					$_(`${selector} [data-notice="orientation"]`).addClass ('modal--active');
 				} else {
-					$_('[data-notice="orientation"]').removeClass ('modal--active');
+					$_(`${selector} [data-notice="orientation"]`).removeClass ('modal--active');
 				}
 			}, false);
 		}
@@ -1067,27 +1067,27 @@ class Monogatari {
 		// Add event listener for back buttons. If the player is plaing, the back
 		// button will return to the game, if its not playing, then it'll return
 		// to the main menu.
-		$_('[data-menu]').on ('click', '[data-action="back"]:not(#game), [data-action="back"]:not(#game) *', () => {
-			$_('section').hide ();
+		$_(`${selector} [data-menu]`).on ('click', '[data-action="back"]:not(#game), [data-action="back"]:not(#game) *', () => {
+			$_(`${selector} section`).hide ();
 			if (Monogatari.global ('playing')) {
-				$_('#game').show ();
+				$_(`${selector} #game`).show ();
 			} else {
-				$_('[data-menu="main"]').show ();
+				$_(`${selector} [data-menu="main"]`).show ();
 			}
 		});
 
-		$_('[data-action], [data-action] *').click (function (event) {
+		$_(`${selector} [data-action], [data-action] *`).click (function (event) {
 			event.stopPropagation ();
 
 			switch ($_(this).data('action')) {
 
 				case 'open-menu':
-					$_('section').hide();
+					$_(`${selector} section`).hide();
 
 					if ($_(this).data('open') == 'save') {
-						$_('[data-menu="save"] [data-input="slotName"]').value (Monogatari.niceDateTime ());
+						$_(`${selector} [data-menu="save"] [data-input="slotName"]`).value (Monogatari.niceDateTime ());
 					}
-					$_('[data-menu="' + $_(this).data('open') + '"]').show();
+					$_(`${selector} [data-menu="${$_(this).data('open')}"]`).show();
 
 					break;
 
@@ -1096,18 +1096,18 @@ class Monogatari {
 					Monogatari.global ('playing', true);
 
 					Monogatari.onStart ().then (() => {
-						$_('section').hide();
-						$_('#game').show();
+						$_(`${selector} section`).hide();
+						$_(`${selector} #game`).show();
 						Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
 					});
 					break;
 
 				case 'close':
-					$_('[data-ui="' + $_(this).data('close') + '"]').removeClass('active');
+					$_(`${selector} [data-ui="${$_(this).data('close')}"]`).removeClass('active');
 					break;
 
 				case 'dismiss-notice':
-					$_('[data-notice]').removeClass('modal--active');
+					$_(`${selector} [data-notice]`).removeClass('modal--active');
 					break;
 
 				case 'distraction-free':
@@ -1115,29 +1115,29 @@ class Monogatari {
 						$_(this).removeClass('fa-eye');
 						$_(this).addClass('fa-eye-slash');
 						$_(this).parent ().find ('[data-string]').text (Monogatari.string ('Show'));
-						$_('[data-ui="quick-menu"]').addClass ('transparent');
-						$_('[data-ui="text"]').hide();
+						$_(`${selector} [data-ui="quick-menu"]`).addClass ('transparent');
+						$_(`${selector} [data-ui="text"]`).hide();
 						Monogatari.global ('distraction-free', true);
 					} else if ($_(this).hasClass('fa-eye-slash')) {
 						$_(this).removeClass('fa-eye-slash');
 						$_(this).addClass('fa-eye');
 						$_(this).parent ().find ('[data-string]').text (Monogatari.string ('Hide'));
-						$_('[data-ui="quick-menu"]').removeClass ('transparent');
-						$_('[data-ui="text"]').show();
+						$_(`${selector} [data-ui="quick-menu"]`).removeClass ('transparent');
+						$_(`${selector} [data-ui="text"]`).show();
 						Monogatari.global ('distraction-free', false);
 					} else if ($_(this).text () === Monogatari.string ('Show')) {
 						$_(this).text (Monogatari.string('Hide'));
 						$_(this).parent ().find ('.fas').removeClass ('fa-eye-slash');
 						$_(this).parent ().find ('.fas').addClass ('fa-eye');
-						$_('[data-ui="quick-menu"]').removeClass ('transparent');
-						$_('[data-ui="text"]').show ();
+						$_(`${selector} [data-ui="quick-menu"]`).removeClass ('transparent');
+						$_(`${selector} [data-ui="text"]`).show ();
 						Monogatari.global ('distraction-free', false);
 					} else if ($_(this).text () === Monogatari.string ('Hide')) {
 						$_(this).text (Monogatari.string ('Show'));
 						$_(this).parent ().find ('.fas').removeClass ('fa-eye');
 						$_(this).parent ().find ('.fas').addClass ('fa-eye-slash');
-						$_('[data-ui="quick-menu"]').addClass ('transparent');
-						$_('[data-ui="text"]').hide ();
+						$_(`${selector} [data-ui="quick-menu"]`).addClass ('transparent');
+						$_(`${selector} [data-ui="text"]`).hide ();
 						Monogatari.global ('distraction-free', true);
 					}
 					break;
@@ -1145,30 +1145,7 @@ class Monogatari {
 			return false;
 		});
 
-		$_('#game').click (function () {
-			Monogatari.canProceed ().then (() => {
-				Monogatari.next ();
-			}).catch (() => {
-				// An action waiting for user interaction or something else
-				// is blocking the game.
-			});
-		});
-
-		$_('#game [data-action="back"], #game [data-action="back"] *').click ((event) => {
-			event.stopPropagation ();
-			Monogatari.canRevert ().then (() => {
-				Monogatari.revert ().catch (() => {
-					// The game could not be reverted, either because an
-					// action prevented it or because there are no statements
-					// left to revert to.
-				});
-			}).catch (() => {
-				// An action waiting for user interaction or something else
-				// is blocking the game.
-			});
-		});
-
-		$_('[data-action="auto-play"], [data-action="auto-play"] *').click(function () {
+		$_(`${selector} [data-action="auto-play"], ${selector} [data-action="auto-play"] *`).click(function () {
 			if ($_(this).hasClass('fa-play-circle')) {
 				$_(this).removeClass('fa-play-circle');
 				$_(this).addClass('fa-stop-circle');
@@ -1192,12 +1169,12 @@ class Monogatari {
 
 					// Escape Key
 					case 27:
-						if ($_('#game').isVisible ()) {
-							$_('#game').hide ();
-							$_('[data-menu="settings"]').show();
-						} else if ($_('[data-menu="settings"]').isVisible () && Monogatari.global ('playing')) {
-							$_('[data-menu="settings"]').hide ();
-							$_('#game').show ();
+						if ($_(`${selector} #game`).isVisible ()) {
+							$_(`${selector} #game`).hide ();
+							$_(`${selector} [data-menu="settings"]`).show();
+						} else if ($_(`${selector} [data-menu="settings"]`).isVisible () && Monogatari.global ('playing')) {
+							$_(`${selector} [data-menu="settings"]`).hide ();
+							$_(`${selector} #game`).show ();
 						}
 						break;
 
@@ -1224,15 +1201,15 @@ class Monogatari {
 					// H Key
 					case 72:
 						event.stopPropagation();
-						if ($_('[data-action="distraction-free"]').hasClass ('fa-eye')) {
-							$_('[data-action="distraction-free"]').removeClass ('fa-eye');
-							$_('[data-action="distraction-free"]').addClass ('fa-eye-slash');
-							$_('[data-ui="text"]').hide ();
+						if ($_(`${selector} [data-action="distraction-free"]`).hasClass ('fa-eye')) {
+							$_(`${selector} [data-action="distraction-free"]`).removeClass ('fa-eye');
+							$_(`${selector} [data-action="distraction-free"]`).addClass ('fa-eye-slash');
+							$_(`${selector} [data-ui="text"]`).hide ();
 							Monogatari.global ('distraction-free', true);
-						} else if ($_('[data-action="distraction-free"]').hasClass ('fa-eye-slash')) {
-							$_('[data-action="distraction-free"]').removeClass ('fa-eye-slash');
-							$_('[data-action="distraction-free"]').addClass ('fa-eye');
-							$_('[data-ui="text"]').show ();
+						} else if ($_(`${selector} [data-action="distraction-free"]`).hasClass ('fa-eye-slash')) {
+							$_(`${selector} [data-action="distraction-free"]`).removeClass ('fa-eye-slash');
+							$_(`${selector} [data-action="distraction-free"]`).addClass ('fa-eye');
+							$_(`${selector} [data-ui="text"]`).show ();
 							Monogatari.global ('distraction-free', false);
 						}
 						break;
@@ -1276,11 +1253,11 @@ class Monogatari {
 				// Check if the orientation is correct, if it's not, show the warning
 				// message so the player will rotate its device.
 				if (Platform.mobile () && Platform.orientation () !== Monogatari.setting ('Orientation')) {
-					$_('[data-notice="orientation"]').addClass ('modal--active');
+					$_(`${selector} [data-notice="orientation"]`).addClass ('modal--active');
 				}
 
 				// Set all the dynamic backgrounds of the data-background property
-				$_('[data-background]').each ((element) => {
+				$_(`${selector} [data-background]`).each ((element) => {
 					const background = $_(element).data ('background');
 					if (background.indexOf ('.') > -1) {
 						$_(element).style ('background', `url('${background}') center / cover no-repeat`);
@@ -1290,8 +1267,8 @@ class Monogatari {
 				});
 
 				Monogatari.preload ().then(() => {
-					$_('[data-menu="loading"]').fadeOut (400, () => {
-						$_('[data-menu="loading"]').hide ();
+					$_(`${selector} [data-menu="loading"]`).fadeOut (400, () => {
+						$_(`${selector} [data-menu="loading"]`).hide ();
 					});
 				}).catch ((e) => {
 					console.error (e);
@@ -1454,29 +1431,6 @@ Monogatari._html = `
 			<p data-string="OrientationWarning">Please rotate your device to play.</p>
 		</div>
 	</div>
-
-	<!--Game Screen -->
-	<section id="game" class="unselectable">
-		<div id="particles-js" data-ui="particles"></div>
-		<div id="background" data-ui="background"></div>
-		<div id='components'>
-			<audio type="audio/mpeg" data-component="music"></audio>
-			<audio type="audio/mpeg" data-component="voice"></audio>
-			<audio type="audio/mpeg" data-component="sound"></audio>
-			<div class="video-wrapper text--center vertical middle" data-component="video" data-ui="video-player">
-				<video type="video/mp4" data-ui="player" controls="true"></video>
-				<button data-action="close-video" data-string="Close">Close</button>
-			</div>
-		</div>
-
-		<div data-ui="choices" class="vertical text--center middle"></div>
-		<div data-ui="text">
-			<img data-ui="face" alt="">
-			<span data-ui="who"></span>
-			<p data-ui="say"></p>
-		</div>
-		<div data-ui="quick-menu" class="text--right"></div>
-	</section>
 
 	<!-- Loading Screen -->
 	<section data-menu="loading">
