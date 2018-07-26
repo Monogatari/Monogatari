@@ -1025,7 +1025,7 @@ class Monogatari {
 			if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
 				// TODO: There's a place in hell for this quick fix, the splitting
 				// of the sw file is just preventing parcel from tryng to bundle it.
-				navigator.serviceWorker.register ('./../service-worker' + '.js');
+				navigator.serviceWorker.register ('service-worker' + '.js');
 			} else {
 				console.warn ('Service Workers are not available in this browser or have been disabled in the engine configuration. Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/');
 			}

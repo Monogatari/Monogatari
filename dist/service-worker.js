@@ -12,16 +12,20 @@ var files = [
 	// General Files
 	'manifest.json',
 
+	// Engine Files
+	'engine/monogatari.css',
+	'engine/monogatari.js',
+
 	// HTML Files
 	// 'index.html',
 
 	// Style Sheets
-	'style/monogatari.css',
+
 	// 'style/main.css',
 
 	// JavaScript Files
-	'js/jquery.min.js',
-	'js/monogatari.js',
+	'js/vendor/jquery.min.js',
+
 	// 'js/options.js',
 	// 'js/storage.js',
 	// 'js/script.js',
