@@ -1,8 +1,26 @@
 # Contributing Guidelines
 
 Hey there! The very fact that you are reading this is awesome! It means you are
-a bit interested in contributing to Monogatari. If you want to contribute, please
-keep in mind the following guidelines!
+a bit interested in contributing to Monogatari. If you want to contribute, please keep in mind the following guidelines!
+
+## Prerequirements
+- [Git](https://git-scm.com/)
+- [Yarn](https://yarnpkg.com/en/)
+
+## Getting ready
+
+1) Get the source
+```
+git clone https://github.com/Monogatari/Monogatari.git
+```
+
+2) Install all dependencies using `Yarn`
+```
+cd Monogatari
+yarn
+```
+
+Thats it! You ready to build and contribute. See **Code Styling**.
 
 ## Code Styling
 
