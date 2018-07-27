@@ -1440,15 +1440,6 @@ Monogatari._html = `
 		</div>
 	</div>
 
-	<!-- Loading Screen -->
-	<section data-menu="loading">
-		<div class="middle">
-			<h2 data-string="Loading">Loading</h2>
-			<progress data-ui="load-progress" value="0" max="100"></progress>
-			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
-		</div>
-	</section>
-
 	<!-- Main Screen -->
 	<section data-menu="main">
 		<audio type="audio/mpeg" data-component="ambient"></audio>
