@@ -16,7 +16,7 @@
   "scripts": {
     "start": "parcel serve index.html --open --no-cache",
     "build": "parcel build ./src/index.html",
-    "build:js": "parcel build ./core/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine --no-cache",
+    "build:js": "parcel build ./core/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine --no-cache --public-url .",
     "build:css": "parcel build ./core/index.css --out-file monogatari.css --out-dir dist/engine --no-cache --no-source-maps",
     "eslint": "eslint ./core/index.js ./core/actions/* ./core/translations/*"
   },
