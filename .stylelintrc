@@ -20,6 +20,6 @@
 		}],
 		"selector-list-comma-newline-after": "always",
 		"unit-case": "lower",
-		"unit-whitelist": ["em", "rem", "s", "vmax", "vmin", "vh", "vw", "%", "px"]
+		"unit-whitelist": ["em", "rem", "s", "vmax", "vmin", "vh", "vw", "%", "px", "deg"]
     }
 }
