@@ -30,7 +30,7 @@ export class ShowImage extends Action {
 	}
 
 	static matchString ([ show, type ]) {
-		return show === 'show', type === 'image';
+		return show === 'show' && type === 'image';
 	}
 
 	constructor ([ show, type, asset, ...props ]) {
