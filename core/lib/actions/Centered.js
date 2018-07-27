@@ -12,7 +12,7 @@ export class Centered extends Action {
 
 			if (element == 'centered') {
 				Monogatari.global ('textObject').destroy ();
-				$_('[data-ui="centered"]').html (str);
+				$_(`${Monogatari.selector} [data-ui="centered"]`).html (str);
 				Monogatari.global ('finishedTyping', true);
 			}
 

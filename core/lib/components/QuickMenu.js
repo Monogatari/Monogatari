@@ -148,7 +148,7 @@ QuickMenu._configuration = {
 	]
 };
 QuickMenu._state = {};
-QuickMenu._id = 'Quick';
+QuickMenu._id = 'QuickMenu';
 
 QuickMenu._html = '';
 

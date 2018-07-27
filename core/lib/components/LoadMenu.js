@@ -220,7 +220,7 @@ class LoadMenu extends Component {
 
 LoadMenu._configuration = {};
 LoadMenu._state = {};
-LoadMenu._id = 'Load';
+LoadMenu._id = 'LoadMenu';
 
 LoadMenu._html = `
 	<section data-menu="load">

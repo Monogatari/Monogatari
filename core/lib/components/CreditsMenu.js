@@ -82,7 +82,7 @@ class CreditsMenu extends Component {
 
 CreditsMenu._configuration = {};
 CreditsMenu._state = {};
-CreditsMenu._id = 'Credits';
+CreditsMenu._id = 'CreditsMenu';
 
 CreditsMenu._html = `
 	<section data-menu="credits">

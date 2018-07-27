@@ -12,7 +12,7 @@ export class Dialog extends Action {
 
 			if (element !== 'centered') {
 				Monogatari.global ('textObject').destroy ();
-				$_('[data-ui="say"]').html (str);
+				$_(`${Monogatari.selector} [data-ui="say"]`).html (str);
 				Monogatari.global ('finishedTyping', true);
 			}
 

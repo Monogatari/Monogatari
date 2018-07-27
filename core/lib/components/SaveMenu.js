@@ -130,7 +130,7 @@ class SaveMenu extends Component {
 
 SaveMenu._configuration = {};
 SaveMenu._state = {};
-SaveMenu._id = 'Save';
+SaveMenu._id = 'SaveMenu';
 
 SaveMenu._html = `
 	<section data-menu="save">

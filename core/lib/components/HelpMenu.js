@@ -20,7 +20,7 @@ class HelpMenu extends Component {
 
 HelpMenu._configuration = {};
 HelpMenu._state = {};
-HelpMenu._id = 'Help';
+HelpMenu._id = 'HelpMenu';
 
 HelpMenu._html = `
 	<section data-menu="help">

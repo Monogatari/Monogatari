@@ -148,7 +148,7 @@ class SettingsMenu extends Component {
 
 SettingsMenu._configuration = {};
 SettingsMenu._state = {};
-SettingsMenu._id = 'Settings';
+SettingsMenu._id = 'SettingsMenu';
 
 SettingsMenu._html = `
 	<section data-menu="settings" class="text--center">
