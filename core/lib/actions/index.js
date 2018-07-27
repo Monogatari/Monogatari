@@ -9,6 +9,7 @@ export * from './Function';
 export * from './HideCharacter';
 export * from './HideImage';
 export * from './HideParticles';
+export * from './HideVideo';
 
 export * from './InputModal';
 export * from './Jump';
@@ -24,6 +25,7 @@ export * from './ShowImage';
 
 export * from './Stop';
 export * from './Vibrate';
+export * from './Video';
 export * from './Wait';
 
 // Dialog always matches strings so it has to stay last.

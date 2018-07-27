@@ -281,6 +281,31 @@ select {
 	font-size: 1.5rem;
 }
 
+[data-video] {
+	max-width: 100%;
+	max-height: 100%;
+
+	&.background {
+		height: 100%;
+		width: 100%;
+		object-fit: cover;
+	}
+
+	&.immersive {
+		height: 100%;
+		width: 100%;
+		object-fit: cover;
+		position: relative;
+		z-index: 20;
+	}
+
+	&.displayable {
+		position: absolute;
+		top: 0;
+		margin: 0 auto;
+	}
+}
+
 /**
  * ===========================
  * Data UI Styling
@@ -461,6 +486,7 @@ textarea {
 
 [data-ui="quick-menu"] button:hover {
 	color: rgba(125, 125, 125, 0.5);
+	background: transparent;
 	cursor: pointer;
 }
 
@@ -686,6 +712,7 @@ input[type=range] {
 
 	[data-ui="quick-menu"] button:hover {
 		color: rgba(255, 255, 255, 0.8);
+		background: transparent;
 	}
 
 	[data-ui="quick-menu"].transparent {
