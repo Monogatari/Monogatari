@@ -41,9 +41,8 @@ class LoadMenu extends Component {
 			Monogatari.global ('_AutoSaveInterval', setInterval(function () {
 				const id = Monogatari.global ('currentAutoSaveSlot');
 				Monogatari.saveTo ('AutoSaveLabel', id).then (({ key, value }) => {
-					const id = key.split ('_').pop ();
-					$_(`[data-menu='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (value.name);
-					$_(`[data-menu='save'] [data-ui='slots'] [data-save='${id}'] small`).text (value.name);
+					$_(`${Monogatari.selector} [data-menu='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${key}'] small`).text (value.name);
+					$_(`${Monogatari.selector} [data-menu='save'] [data-ui='slots'] [data-save='${key}'] small`).text (value.name);
 				});
 
 				if (Monogatari.global ('currentAutoSaveSlot') === Monogatari.setting ('Slots')) {
@@ -51,11 +50,11 @@ class LoadMenu extends Component {
 				} else {
 					Monogatari.global ('currentAutoSaveSlot', Monogatari.global ('currentAutoSaveSlot') + 1);
 				}
-				Monogatari.setAutoSlots ();
+				LoadMenu.setAutoSlots ();
 
 			}, Monogatari.setting ('AutoSave') * 60000));
 		} else {
-			$_('[data-menu="load"] [data-ui="autoSaveSlots"]').hide ();
+			$_(`${Monogatari.selector} [data-menu="load"] [data-ui="autoSaveSlots"]`).hide ();
 		}
 		return Promise.resolve ();
 	}
@@ -179,7 +178,7 @@ class LoadMenu extends Component {
 	static bind (selector) {
 		$_(`${selector} [data-menu="load"]`).on ('click', '[data-delete], [data-delete] *', function () {
 			Monogatari.global ('deleteSlot', $_(this).data ('delete'));
-			Monogatari.Storage.get (Monogatari.setting ('SaveLabel') + '_' + Monogatari.global ('deleteSlot')).then ((data) => {
+			Monogatari.Storage.get (Monogatari.global ('deleteSlot')).then ((data) => {
 				if (typeof data.name !== 'undefined') {
 					$_(`${selector} [data-notice="slot-deletion"] small`).text (data.name);
 				} else {
@@ -191,13 +190,8 @@ class LoadMenu extends Component {
 		});
 
 		// Load a saved game slot when it is pressed
-		$_(`${selector} [data-menu="load"] [data-ui="saveSlots"]`).on ('click', 'figcaption, img', function () {
-			Monogatari.loadFromSlot (Monogatari.setting ('SaveLabel') + '_' + $_(this).parent().data('loadSlot'));
-		});
-
-		// Load an autosaved game slot when it is pressed
-		$_(`${selector} [data-menu="load"] [data-ui="autoSaveSlots"]`).on ('click', 'figcaption, img', function () {
-			Monogatari.loadFromSlot (Monogatari.setting ('AutoSaveLabel') +  '_' + $_(this).parent().data('loadSlot'));
+		$_(`${selector} [data-menu="load"]`).on ('click', '[data-load-slot], [data-load-slot] :not([data-delete])', function () {
+			Monogatari.loadFromSlot ($_(this).closest ('[data-load-slot]').data('loadSlot'));
 		});
 		return Promise.resolve ();
 	}

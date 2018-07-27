@@ -3,8 +3,8 @@
 
 
 "@aegis-framework/artemis@^0.3.1":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@aegis-framework/artemis/-/artemis-0.3.2.tgz#8ca7244192201006012471b516b0e33cb8517a6d"
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/@aegis-framework/artemis/-/artemis-0.3.4.tgz#3ce8ec512f5b9170834450dc31ec2f665dc8fb6b"
 
 "@aegis-framework/kayros.css@^0.4.2":
   version "0.4.3"

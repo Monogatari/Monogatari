@@ -14,6 +14,11 @@ class Monogatari {
 	 */
 	static onStart () {
 		const promises = [];
+
+		for (const component of Monogatari.components ()) {
+			promises.push (component.onStart ());
+		}
+
 		for (const action of Monogatari.actions ()) {
 			promises.push (action.onStart ());
 		}
@@ -31,6 +36,11 @@ class Monogatari {
 	 */
 	static onLoad () {
 		const promises = [];
+
+		for (const component of Monogatari.components ()) {
+			promises.push (component.onLoad ());
+		}
+
 		for (const action of Monogatari.actions ()) {
 			promises.push (action.onLoad ());
 		}
@@ -603,20 +613,21 @@ class Monogatari {
 
 		$_('[data-menu="load"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
 		$_('[data-menu="save"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
-
+		const slot = `${Monogatari.setting ('SaveLabel')}_${i}`;
 		if (typeof Monogatari.asset ('scenes', data.image) !== 'undefined') {
 
+
 			$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (`
-				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
-					<button class='fas fa-times' data-delete='${i}'></button>
+				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
+					<button class='fas fa-times' data-delete='${slot}'></button>
 					<img src='assets/scenes/${Monogatari.asset ('scenes', data.image)}' alt=''>
 					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
 				</figure>
 			`);
 
 			$_('[data-menu="save"] [data-ui="slots"]').append (`
-				<figure data-save='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2'>
-					<button class='fas fa-times' data-delete='${i}'></button>
+				<figure data-save='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2'>
+					<button class='fas fa-times' data-delete='${slot}'></button>
 					<img src='assets/scenes/${Monogatari.asset ('scenes', data.image)}' alt=''>
 					<figcaption>${Monogatari.string ('Overwrite')} #${i}<small>${name}</small></figcaption>
 				</figure>
@@ -624,15 +635,15 @@ class Monogatari {
 
 		} else {
 			$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (`
-				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
-					<button class='fas fa-times' data-delete=${i}></button>
+				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
+					<button class='fas fa-times' data-delete="${slot}"></button>
 					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
 				</figure>
 			`);
 
 			$_('[data-menu="save"] [data-ui="slots"]').append (`
-				<figure data-save='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2'>
-					<button class='fas fa-times' data-delete=${i}></button>
+				<figure data-save='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2'>
+					<button class='fas fa-times' data-delete="${slot}"></button>
 					<figcaption>${Monogatari.string ('Overwrite')} #${i}<small>${name}</small></figcaption>
 				</figure>
 			`);
@@ -643,19 +654,20 @@ class Monogatari {
 		const name = data.name ? data.name : data.date;
 
 		$_('[data-menu="load"] [data-ui="slots"] [data-string="NoAutoSavedGames"]').remove ();
+		const slot = `${Monogatari.setting ('AutoSaveLabel')}_${i}`;
 
 		if (typeof Monogatari.asset ('scenes', data.image ) !== 'undefined') {
 			$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (`
-				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
-					<button class='fas fa-times' data-delete=${i}></button>
+				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
+					<button class='fas fa-times' data-delete="${Monogatari.setting ('AutoSaveLabel')}_${i}"></button>
 					<img src='assets/scenes/${Monogatari.asset ('scenes', data.image)}' alt=''>
 					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
 				</figure>
 			`);
 		} else {
 			$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (`
-				<figure data-load-slot='${i}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
-					<button class='fas fa-times' data-delete=${i}></button>
+				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
+					<button class='fas fa-times' data-delete="${slot}"></button>
 					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
 				</figure>
 			`);

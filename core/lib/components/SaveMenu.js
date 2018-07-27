@@ -59,7 +59,7 @@ class SaveMenu extends Component {
 	static bind (selector) {
 		$_(`${selector} [data-menu="save"]`).on ('click', '[data-delete], [data-delete] *', function () {
 			Monogatari.global ('deleteSlot', $_(this).data ('delete'));
-			Monogatari.Storage.get (Monogatari.setting ('SaveLabel') + '_' + Monogatari.global ('deleteSlot')).then ((data) => {
+			Monogatari.Storage.get (Monogatari.global ('deleteSlot')).then ((data) => {
 				if (typeof data.name !== 'undefined') {
 					$_(`${selector} [data-notice="slot-deletion"] small`).text (data.name);
 				} else {
@@ -93,7 +93,7 @@ class SaveMenu extends Component {
 		});
 
 		$_(`${selector} [data-action="delete-slot"], ${selector} [data-action="delete-slot"] *`).click(function () {
-			Monogatari.Storage.remove (Monogatari.setting ('SaveLabel') + '_' + Monogatari.global ('deleteSlot'));
+			Monogatari.Storage.remove (Monogatari.global ('deleteSlot'));
 			$_(`${selector} [data-load-slot="${Monogatari.global ('deleteSlot')}"], ${selector} [data-save="${Monogatari.global ('deleteSlot')}"]`).remove ();
 			Monogatari.global ('deleteSlot', null);
 			$_(`${selector} [data-notice="slot-deletion"]`).removeClass ('modal--active');
@@ -101,7 +101,7 @@ class SaveMenu extends Component {
 
 		// Save to slot when a slot is pressed.
 		$_(`${selector} [data-menu="save"]`).on ('click', 'figcaption, img, small', function () {
-			Monogatari.global ('overwriteSlot', $_(this).parent ().data ('save'));
+			Monogatari.global ('overwriteSlot', $_(this).parent ().data ('save').split ('_').pop ());
 			Monogatari.Storage.get (Monogatari.setting ('SaveLabel') + '_' + Monogatari.global ('overwriteSlot')).then ((data) => {
 				if (typeof data.name !== 'undefined') {
 					$_(`${selector} [data-notice="slot-overwrite"] input`).value (data.name);
