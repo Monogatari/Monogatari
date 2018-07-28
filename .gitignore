@@ -2,6 +2,7 @@
 .DS_Store
 *~
 ._*
+~*
 .thumbs
 .Thumbs
 
@@ -26,3 +27,6 @@ src
 build
 release
 *.log
+.conf
+.ftpconfig
+.sftpconfig

@@ -27,8 +27,8 @@ monogatari.settings({
 	'MenuMusic': '',
 
 	// Prefix for the Save Slots in Local Storage.
-	'SaveLabel': 'Save_',
-	'AutoSaveLabel': 'AutoSave_',
+	'SaveLabel': 'Save',
+	'AutoSaveLabel': 'AutoSave',
 
 	// Turn main menu on/off; Default: true *
 	'ShowMenu': true,
