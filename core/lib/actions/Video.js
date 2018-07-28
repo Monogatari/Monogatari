@@ -4,6 +4,18 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Video extends Action {
 
+	static canProceed () {
+		return new Promise ((resolve, reject) => {
+			$_('[data-video]').each ((element) => {
+				if (element.hasAttribute ('controls') === true && element.ended !== true) {
+					reject ();
+				}
+			});
+
+			resolve ();
+		});
+	}
+
 	static configuration (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
@@ -23,7 +35,7 @@ export class Video extends Action {
 				// TODO: Find a way to prevent the histories from filling up on loading
 				// So there's no need for this pop.
 				Monogatari.history ('video').pop ();
-				Monogatari.state ('video').pop ();
+				Monogatari.state ('videos').pop ();
 			}
 		}
 		return Promise.resolve ();

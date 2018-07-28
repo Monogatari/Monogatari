@@ -12,11 +12,29 @@ export class HideVideo extends Action {
 	constructor ([ hide, type, name, separator, ...classes ]) {
 		super ();
 		this.name = name;
-		this.classes = classes;
+		if (typeof classes !== 'undefined') {
+			this.classes = classes;
+		} else {
+			this.classes = [];
+		}
 	}
 
 	apply () {
-		$_(`${Monogatari.selector} [data-video="${this.name}"]`).remove ();
+
+		if (this.classes.length > 0) {
+			$_(`${Monogatari.selector} [data-video="${this.name}"]`).addClass ('animated');
+			for (const newClass of this.classes) {
+				$_(`${Monogatari.selector} [data-video="${this.name}"]`).addClass (newClass);
+			}
+
+			// Remove item after a while to prevent it from showing randomly
+			// when coming from a menu to the game because of its animation
+			setTimeout (() => {
+				$_(`${Monogatari.selector} [data-video="${this.name}"]`).remove ();
+			}, 10000);
+		} else {
+			$_(`${Monogatari.selector} [data-video="${this.name}"]`).remove ();
+		}
 
 		for (let i = Monogatari.state ('videos').length - 1; i >= 0; i--) {
 			const last = Monogatari.state ('videos')[i];
