@@ -19,8 +19,8 @@ export class Centered extends Action {
 			return Promise.reject ();
 		} else if (Monogatari.global ('finishedTyping') && $_(`${Monogatari.selector} [data-ui="centered"]`).isVisible ()) {
 			$_(`${Monogatari.selector} [data-ui="centered"]`).remove ();
+			$_(`${Monogatari.selector} [data-ui="text"]`).show ();
 		}
-		$_(`${Monogatari.selector} [data-ui="text"]`).show ();
 		return Promise.resolve (Monogatari.global ('finishedTyping'));
 	}
 
