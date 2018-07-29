@@ -59,10 +59,6 @@ body {
 	height: 100%;
 }
 
-body.light {
-	color: rgba(255, 255, 255, 0.5);
-}
-
 li {
 	list-style-type: none;
 	display: inline-block;
@@ -462,10 +458,6 @@ textarea {
 	max-height: 2.5rem;
 }
 
-[data-ui="quick-menu"].dark {
-	color: rgba(0, 0, 0, 0.5);
-}
-
 [data-ui="quick-menu"].transparent {
 	background-color: transparent;
 }
@@ -476,6 +468,7 @@ textarea {
 	font-size: 1rem;
 	margin: 0 0.25rem;
 	background: transparent;
+	color: rgba(125, 125, 125, 0.5);
 }
 
 [data-ui="quick-menu"] > button > [data-string] {
@@ -495,11 +488,6 @@ textarea {
 
 [data-ui="quick-menu"].transparent button:hover {
 	color: rgba(0, 0, 0, 0.5);
-	cursor: pointer;
-}
-
-[data-ui="quick-menu"].dark button:hover {
-	color: rgb(0, 0, 0);
 	cursor: pointer;
 }
 
@@ -626,34 +614,6 @@ textarea {
  * ====================================
 **/
 
-input[type=range].light:focus::-webkit-slider-runnable-track {
-	background: rgba(255, 255, 255, 0.5);
-}
-
-input[type=range].light::-webkit-slider-runnable-track {
-	background: rgba(255, 255, 255, 0.5);
-}
-
-input[type=range].light:focus::-ms-fill-upper {
-	background: rgba(255, 255, 255, 0.5);
-}
-
-input[type=range].light:focus::-ms-fill-lower {
-	background: rgba(255, 255, 255, 0.5);
-}
-
-input[type=range].light::-moz-range-track {
-	background: rgba(255, 255, 255, 0.5);
-}
-
-input[type=range].light::-ms-fill-lower {
-	background: rgba(255, 255, 255, 0.5);
-}
-
-input[type=range].light::-ms-fill-upper {
-	background: rgba(255, 255, 255, 0.5);
-}
-
 input[type=range] {
 	width: 60%;
 	height: 2rem;
@@ -710,7 +670,10 @@ input[type=range] {
 		bottom: 0;
 		top: auto;
 		background-color: rgba(0, 0, 0, 0.5);
-		color: rgba(255, 255, 255, 0.5);
+	}
+
+	[data-ui="quick-menu"] button {
+		color: #f7f7f7;
 	}
 
 	[data-ui="quick-menu"] button:hover {

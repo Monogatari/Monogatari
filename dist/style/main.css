@@ -148,6 +148,41 @@ button:hover {
 
 }
 
+/**
+ * ===========================
+ * Range Styling
+ * ===========================
+**/
+
+/* Use the background property to set a color for these */
+input[type=range]:focus::-webkit-slider-runnable-track {
+
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+
+}
+
+input[type=range]:focus::-ms-fill-upper {
+
+}
+
+input[type=range]:focus::-ms-fill-lower {
+
+}
+
+input[type=range]::-moz-range-track {
+
+}
+
+input[type=range]::-ms-fill-lower {
+
+}
+
+input[type=range]::-ms-fill-upper {
+
+}
+
 /* Styles for the desktop version of the Quick Menu*/
 @media screen and (min-width: 37.56255em) {
 
