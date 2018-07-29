@@ -35,7 +35,7 @@ export class HideImage extends Action {
 		}
 
 		const show = Monogatari.state ('images').filter ((item) => {
-			const [ , asset, ] = item.split (' ');
+			const [ show, type, asset, ] = item.split (' ');
 			return asset !== this.asset;
 		});
 
@@ -56,7 +56,7 @@ export class HideImage extends Action {
 	}
 
 	revert () {
-		$_(`${Monogatari.selector} #game`).append (Monogatari.history ('image').pop ());
+		Monogatari.run (Monogatari.history ('image').pop (), false);
 		return Promise.resolve ();
 	}
 

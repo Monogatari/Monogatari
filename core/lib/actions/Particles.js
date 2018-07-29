@@ -1,7 +1,8 @@
 import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
+import { $_ } from '@aegis-framework/artemis';
 
-/* global particlesJS */
+/* global particlesJS, pJSDom */
 
 export class Particles extends Action {
 
@@ -16,6 +17,29 @@ export class Particles extends Action {
 			return Particles._configuration;
 		}
 	}
+
+	static stop () {
+		try {
+			if (typeof pJSDom === 'object') {
+				if (pJSDom.length > 0) {
+					for (let i = 0; i < pJSDom.length; i++) {
+						if (typeof pJSDom[i].pJS !== 'undefined') {
+							cancelAnimationFrame (pJSDom[i].pJS.fn.drawAnimFrame);
+							pJSDom.shift ();
+						}
+					}
+				}
+			}
+		} catch (e) {
+			console.error ('An error ocurred while trying to stop particle system.');
+		}
+
+		Monogatari.state ({
+			particles: ''
+		});
+		$_(`${Monogatari.selector} #particles-js`).html ('');
+	}
+
 
 	static setup () {
 		Monogatari.history ('particle');

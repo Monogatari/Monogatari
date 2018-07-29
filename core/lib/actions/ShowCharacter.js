@@ -87,9 +87,9 @@ export class ShowCharacter extends Action {
 			$_(`${Monogatari.selector} #game`).append (object);
 		}
 
-		Monogatari.history ('character').push (object);
+		Monogatari.history ('character').push (this._statement);
 		Monogatari.state ({
-			characters: [this._statement, ...Monogatari.state ('characters')].filter ((item) => item !== null)
+			characters: [...Monogatari.state ('characters'), this._statement].filter ((item) => item !== null && typeof item !== 'undefined')
 		});
 		return Promise.resolve ();
 	}
@@ -104,9 +104,8 @@ export class ShowCharacter extends Action {
 
 		const last_character = Monogatari.history ('character').slice(-1)[0];
 		if (typeof last_character != 'undefined') {
-			if (last_character.indexOf (`data-character="${this.asset}"`) > -1) {
-				$_(`${Monogatari.selector} #game`).append (last_character);
-			}
+			this.constructor (last_character.split (' '));
+			this.apply ();
 		}
 		return Promise.resolve ();
 	}

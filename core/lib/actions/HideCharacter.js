@@ -39,7 +39,7 @@ export class HideCharacter extends Action {
 		}
 
 		const show = Monogatari.state ('characters').filter ((item) => {
-			const [ , asset, ] = item.split (' ');
+			const [ show, type , asset, ] = item.split (' ');
 			return asset !== this.asset;
 		});
 
@@ -60,7 +60,7 @@ export class HideCharacter extends Action {
 	}
 
 	revert () {
-		$_(`${Monogatari.selector} #game`).append (Monogatari.history ('character').pop ());
+		Monogatari.run (Monogatari.history ('character').pop (), false);
 		return Promise.resolve ();
 	}
 

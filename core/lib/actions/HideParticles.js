@@ -15,25 +15,7 @@ export class HideParticles extends Action {
 	}
 
 	apply () {
-		try {
-			if (typeof pJSDom === 'object') {
-				if (pJSDom.length > 0) {
-					for (let i = 0; i < pJSDom.length; i++) {
-						if (typeof pJSDom[i].pJS !== 'undefined') {
-							cancelAnimationFrame (pJSDom[i].pJS.fn.drawAnimFrame);
-							pJSDom.shift ();
-						}
-					}
-				}
-			}
-		} catch (e) {
-			console.error ('An error ocurred while trying to stop particle system.');
-		}
-
-		Monogatari.state ({
-			particles: ''
-		});
-		$_(`${Monogatari.selector} #particles-js`).html ('');
+		Monogatari.action ('Particles').stop ();
 		return Promise.resolve ();
 	}
 

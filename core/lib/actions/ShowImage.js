@@ -51,7 +51,7 @@ export class ShowImage extends Action {
 
 		const object = `<img src="assets/images/${this.image}" class="animated ${this.classes.join (' ')}" data-image="${this.asset}" data-sprite="${this.sprite}">`;
 		$_(`${Monogatari.selector} #game`).append (object);
-		Monogatari.history ('image').push (object);
+		Monogatari.history ('image').push (this._statement);
 		Monogatari.state ({
 			images: [this._statement, ...Monogatari.state ('images')]
 		});
