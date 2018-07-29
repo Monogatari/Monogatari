@@ -839,12 +839,8 @@ class Monogatari {
 
 		$_('[data-component="modal"]').removeClass ('modal--active');
 
-
-		clearInterval (Monogatari.global ('_AutoPlayTimer'));
-
-		// TODO: Fix classes to use new Font Awesome classes
-		$_('[data-action="auto-play"].fa').removeClass ('fa-stop-circle');
-		$_('[data-action="auto-play"].fa').addClass ('fa-play-circle');
+		// Stop autoplay
+		Monogatari.autoPlay (false);
 
 		// Reset Storage
 		Monogatari.storage (JSON.parse(Monogatari.global ('storageStructure')));
@@ -915,10 +911,14 @@ class Monogatari {
 				});
 			});
 			setTimeout (Monogatari.global ('_AutoPlayTimer'), interval);
+			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-string]`).text (Monogatari.string ('Stop'));
+			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] .fa-play-circle`).replaceWith ('<span class="fas fa-stop-circle"></span>');
 		} else {
 			clearTimeout (Monogatari.global ('_AutoPlayTimer'));
+			Monogatari.global ('_AutoPlayTimer', null);
+			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-string]`).text (Monogatari.string ('AutoPlay'));
+			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] .fa-stop-circle`).replaceWith ('<span class="fas fa-play-circle"></span>');
 		}
-
 	}
 
 	static object () {
@@ -1166,21 +1166,7 @@ class Monogatari {
 		});
 
 		$_(`${selector} [data-action="auto-play"], ${selector} [data-action="auto-play"] *`).click(function () {
-			if ($_(this).hasClass('fa-play-circle')) {
-				$_(this).removeClass('fa-play-circle');
-				$_(this).addClass('fa-stop-circle');
-				Monogatari.autoPlay (true);
-			} else if ($_(this).hasClass('fa-stop-circle')) {
-				$_(this).removeClass('fa-stop-circle');
-				$_(this).addClass('fa-play-circle');
-				Monogatari.autoPlay (false);
-			} else if ($_(this).text () === Monogatari.string ('AutoPlay')) {
-				$_(this).text (Monogatari.string('Stop'));
-				Monogatari.autoPlay (true);
-			} else if ($_(this).text () === Monogatari.string ('Stop')) {
-				$_(this).text (Monogatari.string ('AutoPlay'));
-				Monogatari.autoPlay (false);
-			}
+			Monogatari.autoPlay (Monogatari.global ('_AutoPlayTimer') === null);
 		});
 
 		$_(document).keyup ((e) => {
@@ -1439,7 +1425,8 @@ Monogatari.globals ({
 	overwriteSlot: null,
 	block: false,
 	playing: false,
-	currentAutoSaveSlot: 1
+	currentAutoSaveSlot: 1,
+	_AutoPlayTimer: null
 });
 
 Monogatari.Storage = new Space ();

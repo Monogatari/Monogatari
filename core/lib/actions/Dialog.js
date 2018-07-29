@@ -135,34 +135,15 @@ export class Dialog extends Action {
 		$_(`${Monogatari.selector} [data-ui="say"]`).data ('speaking', character);
 
 		// Check if the typing animation flag is set to true in order to show it
-		if (animation === true) {
+		if (animation === true && Monogatari.setting ('TypeAnimation') === true) {
 
 			// If the property is set to true, the animation will be shown
 			// if it is set to false, even if the flag was set to true,
 			// no animation will be shown in the game.
-			if (Monogatari.setting ('TypeAnimation') === true) {
-				Monogatari.global ('typedConfiguration').strings = [dialog];
-				Monogatari.global ('textObject', new Typed ('[data-ui="say"]', Monogatari.global ('typedConfiguration')));
-			} else {
-				$_(`${Monogatari.selector} [data-ui="say"]`).html (dialog);
-				if (Monogatari.global ('autoPlay') !== null) {
-					Monogatari.global ('autoPlay', setTimeout (() => {
-						if (Monogatari.canProceed () && Monogatari.global ('finishedTyping')) {
-							Monogatari.next ();
-						}
-					}, Monogatari.preference ('AutoPlaySpeed') * 1000));
-				}
-				Monogatari.global ('finishedTyping', true);
-			}
+			Monogatari.global ('typedConfiguration').strings = [dialog];
+			Monogatari.global ('textObject', new Typed ('[data-ui="say"]', Monogatari.global ('typedConfiguration')));
 		} else {
 			$_(`${Monogatari.selector} [data-ui="say"]`).html (dialog);
-			if (Monogatari.global ('autoPlay') !== null) {
-				Monogatari.global ('autoPlay', setTimeout (() => {
-					if (Monogatari.canProceed() && Monogatari.global ('finishedTyping')) {
-						Monogatari.next ();
-					}
-				}, Monogatari.preference ('AutoPlaySpeed') * 1000));
-			}
 			Monogatari.global ('finishedTyping', true);
 		}
 
