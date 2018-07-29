@@ -16,6 +16,7 @@
   "scripts": {
     "start": "parcel serve index.html --open --no-cache",
     "build": "parcel build ./src/index.html",
+    "build:core": "yarn run build:js && yarn build:css",
     "build:js": "parcel build ./core/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine --no-cache --public-url .",
     "build:css": "parcel build ./core/index.css --out-file monogatari.css --out-dir dist/engine --no-cache --no-source-maps",
     "eslint": "eslint ./core/index.js ./core/actions/* ./core/translations/*"
@@ -36,7 +37,7 @@
     "stylelint-config-standard": "^16.0.0"
   },
   "dependencies": {
-    "@aegis-framework/artemis": "^0.3.1",
+    "@aegis-framework/artemis": "^0.3.5",
     "@aegis-framework/kayros.css": "^0.4.2",
     "@fortawesome/fontawesome-free": "^5.1.0",
     "animate.css": "^3.6.1",
