@@ -722,13 +722,74 @@ class Monogatari {
 		Monogatari.resetGame ().then (() => {
 			$_('section').hide();
 			$_('#game').show();
-			Monogatari.Storage.get (slot).then ((data) => {
-				// TODO: Add compatibility for old save slots
-				const { state, history, storage } = data.game;
-				Monogatari.state (state);
-				Monogatari.history (history);
-				Monogatari.storage (storage);
 
+			// TODO: Add compatibility for old save slots
+			Monogatari.Storage.get (slot).then ((data) => {
+				// Check if an older save format was used
+				if (typeof data.Engine !== 'undefined') {
+
+					Monogatari.state ({
+						step: data.Engine.Step,
+						label: data.Engine.Label,
+						scene: `show scene ${data.Engine.Scene}`,
+					});
+
+					if (data.Engine.Song !== '' && typeof data.Engine.Song !== 'undefined') {
+						Monogatari.state ({
+							music: `${data.Engine.Song}`,
+						});
+					}
+
+					if (data.Engine.Sound !== '' && typeof data.Engine.Dound !== 'undefined') {
+						Monogatari.state ({
+							sound: `${data.Engine.Sound}`,
+						});
+					}
+
+					if (data.Engine.Particles !== '' && typeof data.Engine.Particles !== 'undefined') {
+						Monogatari.state ({
+							particles: `show particles ${data.Engine.Particles}`
+						});
+					}
+
+					if (data.Show !== '' && typeof data.Show !== 'undefined') {
+						const show = data.Show.split (',');
+						for (const element of show) {
+							if (element.trim () !== '') {
+								const div = document.createElement ('div');
+								div.innerHTML =  element;
+								const item = $_(div.firstChild);
+								if (element.indexOf ('data-character') > -1) {
+									Monogatari.state ('characters').push (`show character ${item.data ('character')} ${item.data ('sprite')} ${item.get (0).className}`);
+								} else if (element.indexOf ('data-image') > -1) {
+									Monogatari.state ('characters').push (`show image ${item.data ('image')} ${item.get (0).className}`);
+								}
+							}
+
+						}
+					}
+
+					Monogatari.history ({
+						music: data.Engine.MusicHistory,
+						sound: data.Engine.SoundHistory,
+						image: data.Engine.ImageHistory,
+						character: data.Engine.CharacterHistory,
+						scene: data.Engine.SceneHistory.map ((scene) => {
+							return `show scene ${scene}`;
+						}),
+						sceneElements: data.Engine.SceneElements,
+						particle: data.Engine.ParticlesHistory.map ((particles) => {
+							return `show particles ${particles}`;
+						}),
+					});
+					Monogatari.storage (data.Storage);
+
+				} else {
+					const { state, history, storage } = data.game;
+					Monogatari.state (state);
+					Monogatari.history (history);
+					Monogatari.storage (storage);
+				}
 				const promises = [];
 				for (const action of Monogatari.actions ()) {
 					promises.push (action.onLoad ());
