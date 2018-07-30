@@ -740,7 +740,7 @@ class Monogatari {
 						});
 					}
 
-					if (data.Engine.Sound !== '' && typeof data.Engine.Dound !== 'undefined') {
+					if (data.Engine.Sound !== '' && typeof data.Engine.Sound !== 'undefined') {
 						Monogatari.state ({
 							sound: `${data.Engine.Sound}`,
 						});
