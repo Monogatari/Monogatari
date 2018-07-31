@@ -174,11 +174,21 @@ export class Play extends Action {
 			Monogatari.state ({
 				music: this._statement
 			});
+			this.player.onended = () => {
+				Monogatari.state ({
+					music: ''
+				});
+			};
 		} else if (this.type == 'sound') {
 			Monogatari.history ('sound').push (this._statement);
 			Monogatari.state ({
 				sound: this._statement
 			});
+			this.player.onended = () => {
+				Monogatari.state ({
+					sound: ''
+				});
+			};
 		} else if (this.type == 'video') {
 			$_(`${Monogatari.selector} [data-component="video"]`).addClass ('active');
 		}
