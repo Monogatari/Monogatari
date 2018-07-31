@@ -1,4 +1,5 @@
 import { $_, Space, Platform, Preload, Util, FileSystem } from '@aegis-framework/artemis';
+import moment from 'moment';
 import { FancyError } from './FancyError';
 
 
@@ -630,27 +631,44 @@ class Monogatari {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	static addSlot (i, data) {
+
+		// Check if the slot has an older format
+		if (typeof data.Engine !== 'undefined') {
+			data.name = data.Name;
+			data.date = data.Date;
+			data.image = data.Engine.Scene;
+		}
+
+		data.date = data.date.replace ('/', '-');
+
+		const slot = `${Monogatari.setting ('SaveLabel')}_${i}`;
+		const image  = Monogatari.asset ('scenes', data.image);
+
+
 		const name = data.name ? data.name : data.date;
 
 		$_('[data-menu="load"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
 		$_('[data-menu="save"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
-		const slot = `${Monogatari.setting ('SaveLabel')}_${i}`;
-		if (typeof Monogatari.asset ('scenes', data.image) !== 'undefined') {
+
+
+		if (typeof image !== 'undefined') {
 
 
 			$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (`
 				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
 					<button class='fas fa-times' data-delete='${slot}'></button>
-					<img src='assets/scenes/${Monogatari.asset ('scenes', data.image)}' alt=''>
-					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
+					<small class='badge'>${name}</small>
+					<img src='assets/scenes/${image}' alt=''>
+					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
 				</figure>
 			`);
 
 			$_('[data-menu="save"] [data-ui="slots"]').append (`
 				<figure data-save='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2'>
 					<button class='fas fa-times' data-delete='${slot}'></button>
-					<img src='assets/scenes/${Monogatari.asset ('scenes', data.image)}' alt=''>
-					<figcaption>${Monogatari.string ('Overwrite')} #${i}<small>${name}</small></figcaption>
+					<small class='badge'>${name}</small>
+					<img src='assets/scenes/${image}' alt=''>
+					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
 				</figure>
 			`);
 
@@ -658,38 +676,52 @@ class Monogatari {
 			$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (`
 				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
 					<button class='fas fa-times' data-delete="${slot}"></button>
-					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
+					<small class='badge'>${name}</small>
+					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
 				</figure>
 			`);
 
 			$_('[data-menu="save"] [data-ui="slots"]').append (`
 				<figure data-save='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2'>
 					<button class='fas fa-times' data-delete="${slot}"></button>
-					<figcaption>${Monogatari.string ('Overwrite')} #${i}<small>${name}</small></figcaption>
+					<small class='badge'>${name}</small>
+					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
 				</figure>
 			`);
 		}
 	}
 
 	static addAutoSlot (i, data) {
+		// Check if the slot has an older format
+		if (typeof data.Engine !== 'undefined') {
+			data.name = data.Name;
+			data.date = data.Date;
+			data.image = data.Engine.Scene;
+		}
+
+		const slot = `${Monogatari.setting ('AutoSaveLabel')}_${i}`;
+		const image  = Monogatari.asset ('scenes', data.image);
+
+
 		const name = data.name ? data.name : data.date;
 
 		$_('[data-menu="load"] [data-ui="slots"] [data-string="NoAutoSavedGames"]').remove ();
-		const slot = `${Monogatari.setting ('AutoSaveLabel')}_${i}`;
 
-		if (typeof Monogatari.asset ('scenes', data.image ) !== 'undefined') {
+		if (typeof image !== 'undefined') {
 			$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (`
 				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
 					<button class='fas fa-times' data-delete="${Monogatari.setting ('AutoSaveLabel')}_${i}"></button>
-					<img src='assets/scenes/${Monogatari.asset ('scenes', data.image)}' alt=''>
-					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
+					<small class='badge'>${name}</small>
+					<img src='assets/scenes/${image}' alt=''>
+					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
 				</figure>
 			`);
 		} else {
 			$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (`
 				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
 					<button class='fas fa-times' data-delete="${slot}"></button>
-					<figcaption>${Monogatari.string ('Load')} #${i} <small>${name}</small></figcaption>
+					<small class='badge'>${name}</small>
+					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
 				</figure>
 			`);
 		}
@@ -715,7 +747,7 @@ class Monogatari {
 	static saveTo (prefix = 'SaveLabel', id = null, name = null) {
 		// Check if the player is actually playing
 		if (Monogatari.global ('playing')) {
-			const date = Monogatari.niceDateTime ();
+			const date = moment ().format ();
 
 			if (name === null || name.trim () === '') {
 				name = date;
@@ -823,10 +855,6 @@ class Monogatari {
 				});
 			});
 		});
-	}
-
-	static niceDateTime () {
-		return new Date ().toLocaleString ();
 	}
 
 	// Assert the result of a function
@@ -1189,7 +1217,7 @@ class Monogatari {
 					$_(`${selector} section`).hide();
 
 					if ($_(this).data('open') == 'save') {
-						$_(`${selector} [data-menu="save"] [data-input="slotName"]`).value (Monogatari.niceDateTime ());
+						$_(`${selector} [data-menu="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
 					}
 					$_(`${selector} [data-menu="${$_(this).data('open')}"]`).show();
 

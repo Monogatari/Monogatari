@@ -499,6 +499,22 @@ textarea {
 	vertical-align: middle;
 	cursor: pointer;
 	position: relative;
+	min-height: 10rem;
+	font-size: 1rem;
+	display: flex;
+	flex-flow: column;
+	justify-content: center;
+}
+
+[data-ui="slots"] figure .badge {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 0.5rem;
+	font-size: 0.7rem;
+	background: inherit;
+	color: inherit;
+	font-style: italic;
 }
 
 [data-ui="slots"] figure [data-delete] {

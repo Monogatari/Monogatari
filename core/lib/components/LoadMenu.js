@@ -134,8 +134,6 @@ class LoadMenu extends Component {
 		$_(`${Monogatari.selector} [data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]`).html ('');
 		$_(`${Monogatari.selector} [data-menu="save"] [data-ui="slots"]`).html ('');
 
-		$_(`${Monogatari.selector} [data-menu="save"] [data-input="slotName"]`).value (Monogatari.niceDateTime ());
-
 		return Monogatari.Storage.keys ().then ((keys) => {
 			const savedData = keys.filter ((key) => {
 				return key.indexOf (Monogatari.setting ('SaveLabel')) === 0;

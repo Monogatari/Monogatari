@@ -42,6 +42,7 @@
     "@fortawesome/fontawesome-free": "^5.1.0",
     "animate.css": "^3.6.1",
     "electron": "^2.0.4",
+    "moment": "^2.22.2",
     "particles.js": "^2.0.0",
     "typed.js": "^2.0.8"
   }
