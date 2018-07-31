@@ -34,19 +34,23 @@ export class ShowCharacter extends Action {
 		return show === 'show' && type === 'character';
 	}
 
-	constructor ([ show, type, asset, ...props ]) {
+	constructor ([ show, type, asset, sprite, ...classes ]) {
 		super ();
 		this.asset = asset;
 
 		if (typeof Monogatari.character (asset) !== 'undefined') {
-			this.type = 'character';
 			// show [character] [expression] at [position] with [animation] [infinite]
-			const [sprite, ...classes] = (' ' + props.join (' ')).replace(' at ', ' ').replace (' with ', ' ').trim ().split (' ');
-
 			this.sprite = sprite;
-			this.classes = ['animated', ...classes];
+
 			this.character = Monogatari.character (asset);
 			this.image = this.character.Images[this.sprite];
+
+			if (typeof classes !== 'undefined') {
+				this.classes = ['animated', ...classes.filter ((item) => item !== 'at' && item !== 'with')];
+			} else {
+				this.classes = [];
+			}
+
 		} else {
 			// TODO: Add Fancy Error when the specified character does not exist
 		}
@@ -86,27 +90,51 @@ export class ShowCharacter extends Action {
 			$_(`${Monogatari.selector} [data-character="${this.asset}"]`).remove ();
 			$_(`${Monogatari.selector} #game`).append (object);
 		}
-
-		Monogatari.history ('character').push (this._statement);
-		Monogatari.state ({
-			characters: [...Monogatari.state ('characters'), this._statement].filter ((item) => item !== null && typeof item !== 'undefined')
-		});
 		return Promise.resolve ();
 	}
 
 	didApply () {
+		Monogatari.history ('character').push (this._statement);
+		Monogatari.state ({
+			characters: [
+				...Monogatari.state ('characters').filter ((item) => {
+					if (item !== null && typeof item !== 'undefined') {
+						const [show, character, asset, sprite] = item.split (' ');
+						return asset !== this.asset;
+					}
+					return false;
+				}),
+				this._statement
+			]
+		});
 		return Promise.resolve (true);
 	}
 
 	revert () {
-		$_(`${Monogatari.selector} [data-character="${this.asset}"]`).remove();
-		Monogatari.history ('character').pop ();
+		$_(`${Monogatari.selector} [data-character="${this.asset}"]`).remove ();
 
-		const last_character = Monogatari.history ('character').slice(-1)[0];
-		if (typeof last_character != 'undefined') {
-			this.constructor (last_character.split (' '));
-			this.apply ();
+		for (let i = Monogatari.history ('character').length - 1; i >= 0; i--) {
+			const last = Monogatari.history ('character')[i];
+			const [show, character, asset, name] = last.split (' ');
+			if (asset === this.asset) {
+				console.log (last);
+				Monogatari.history ('character').splice (i, 1);
+				break;
+			}
 		}
+
+		for (let i = Monogatari.history ('character').length - 1; i >= 0; i--) {
+			const last = Monogatari.history ('character')[i];
+			const [show, character, asset, name] = last.split (' ');
+
+			if (asset === this.asset) {
+				console.log (last);
+				this.constructor (last.split (' '));
+				this.apply ();
+				break;
+			}
+		}
+
 		return Promise.resolve ();
 	}
 

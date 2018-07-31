@@ -1,6 +1,27 @@
 import { $_, Space, Platform, Preload, Util, FileSystem } from '@aegis-framework/artemis';
 import { FancyError } from './FancyError';
 
+
+/**
+ * Every Monogatari Game is composed mainly of the following items:
+ *
+ * Actions
+ *
+ * Components
+ *
+ * State: The current state of the game, this simple object contains the current
+ *        label and step as well as the thigs being shown or played by every action.
+ *
+ * History
+ *
+ * Assets
+ *
+ * Script
+ *
+ * Characters
+ *
+ * @class Monogatari
+ */
 class Monogatari {
 
 
@@ -1032,6 +1053,7 @@ class Monogatari {
 						// Clear the Stack using a Time Out instead of calling
 						// the function directly, preventing an Overflow
 						setTimeout (Monogatari.run, 0, Monogatari.label ()[Monogatari.state ('step')]);
+						return Promise.resolve ();
 					});
 				}
 			}
@@ -1039,6 +1061,7 @@ class Monogatari {
 			// Clear the Stack using a Time Out instead of calling
 			// the function directly, preventing an Overflow
 			setTimeout (Monogatari.run, 0, Monogatari.label ()[Monogatari.state ('step')]);
+			return Promise.resolve ();
 		}
 		return Promise.reject ();
 	}

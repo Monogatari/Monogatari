@@ -79,18 +79,16 @@ export class Scene extends Action {
 		for (const newClass of this.classes) {
 			$_(`${Monogatari.selector} [data-ui="background"]`).addClass (newClass);
 		}
+		return Promise.resolve ();
+	}
 
+	didApply () {
 		Monogatari.state ({
 			scene: this._statement
 		});
 		Monogatari.history ('scene').push (this._statement);
 
 		Monogatari.action ('Dialog').reset ();
-
-		return Promise.resolve ();
-	}
-
-	didApply () {
 		return Promise.resolve (true);
 	}
 
@@ -105,7 +103,7 @@ export class Scene extends Action {
 		Monogatari.history ('scene').pop ();
 
 		if (Monogatari.history ('scene').length > 0) {
-			const last = Monogatari.history ('scene').slice(-1)[0];
+			const last = Monogatari.history ('scene')[Monogatari.history ('scene').length - 1];
 			this.constructor (last.split (' '));
 
 			$_(`${Monogatari.selector} [data-ui="background"]`).style ('background-image', 'initial');

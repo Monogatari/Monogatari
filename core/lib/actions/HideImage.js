@@ -34,17 +34,16 @@ export class HideImage extends Action {
 			this.element.remove ();
 		}
 
+		return Promise.resolve ();
+	}
+
+	didApply () {
 		const show = Monogatari.state ('images').filter ((item) => {
 			const [ show, type, asset, ] = item.split (' ');
 			return asset !== this.asset;
 		});
 
 		Monogatari.state ({ images: show });
-
-		return Promise.resolve ();
-	}
-
-	didApply () {
 		return Promise.resolve (true);
 	}
 

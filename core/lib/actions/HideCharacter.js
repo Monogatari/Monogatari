@@ -37,18 +37,16 @@ export class HideCharacter extends Action {
 		} else {
 			this.element.remove ();
 		}
-
-		const show = Monogatari.state ('characters').filter ((item) => {
-			const [ show, type , asset, ] = item.split (' ');
-			return asset !== this.asset;
-		});
-
-		Monogatari.state ({ characters: show });
-
 		return Promise.resolve ();
 	}
 
 	didApply () {
+		const show = Monogatari.state ('characters').filter ((item) => {
+			const [ show, type, asset, ] = item.split (' ');
+			return asset !== this.asset;
+		});
+
+		Monogatari.state ({ characters: show });
 		return Promise.resolve (true);
 	}
 

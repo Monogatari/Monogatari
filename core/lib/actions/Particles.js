@@ -103,24 +103,24 @@ export class Particles extends Action {
 
 	apply () {
 		particlesJS (this.particles);
-		Monogatari.history ('particle').push (this._statement);
-		Monogatari.state ({
-			particles: this._statement
-		});
 		return Promise.resolve ();
 	}
 
 	didApply () {
+		Monogatari.history ('particle').push (this._statement);
+		Monogatari.state ({
+			particles: this._statement
+		});
 		return Promise.resolve (true);
 	}
 
 	revert () {
 		Particles.stop ();
-		Monogatari.history ('particle').pop ();
 		return Promise.resolve ();
 	}
 
 	didRevert () {
+		Monogatari.history ('particle').pop ();
 		return Promise.resolve (true);
 	}
 }

@@ -32,7 +32,10 @@ export class Stop extends Action {
 		this.player.pause ();
 		this.player.setAttribute ('src', '');
 		this.player.currentTime = 0;
+		return Promise.resolve ();
+	}
 
+	didApply () {
 		if (this.type === 'music') {
 			Monogatari.state ({
 				music: ''
@@ -42,10 +45,6 @@ export class Stop extends Action {
 				sound: ''
 			});
 		}
-		return Promise.resolve ();
-	}
-
-	didApply () {
 		return Promise.resolve (true);
 	}
 
