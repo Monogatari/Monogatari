@@ -20,6 +20,10 @@ export class Canvas extends Action {
 		if (Monogatari.state ('canvas').length > 0) {
 			for (const canvas of Monogatari.state ('canvas')) {
 				Monogatari.run (canvas, false);
+				// TODO: Find a way to prevent the histories from filling up on loading
+				// So there's no need for this pop.
+				Monogatari.history ('canvas').pop ();
+				Monogatari.state ('canvas').pop ();
 			}
 		}
 		return Promise.resolve ();
@@ -34,13 +38,23 @@ export class Canvas extends Action {
 	}
 
 	static reset () {
+		const promises = [];
+
+		// Go through each canvas element being shown so it can be properly
+		// stopped and then removed.
+		$_(`${Monogatari.selector} [data-canvas]`).each ((element) => {
+			const name = $_(element).data ('canvas');
+			promises.push (Util.callAsync (Canvas.objects (name).stop, Monogatari).then (() => {
+				$_(`${Monogatari.selector} [data-canvas="${this.name}"]`).remove ();
+			}));
+		});
 		Monogatari.history ({
 			canvas: []
 		});
 		Monogatari.state ({
 			canvas: []
 		});
-		return Promise.resolve ();
+		return Promise.all (promises);
 	}
 
 	static matchString ([ show, type ]) {
@@ -67,21 +81,25 @@ export class Canvas extends Action {
 	 * @param {string} [parameters.mode='displayable'] - Mode in which the canvas element will be shown (displayable, background, full-screen, immersive)
 	 * @param {string} parameters.mode
 	 */
-	constructor ([ show, type, mode = 'displayable', name ]) {
+	constructor ([ show, type, mode = 'displayable', name, separator, ...classes ]) {
 		super ();
 		this.mode = mode;
 		this.name = name;
 
-		if (typeof Canvas._configuration.objects[name] !== 'undefined') {
-			this.object = Canvas._configuration.objects[name];
+		this.object = Canvas.objects (name);
+
+		if (typeof classes !== 'undefined') {
+			this.classes = classes;
+		} else {
+			this.classes = [];
 		}
 	}
 
-	showCanvas (mode) {
+	show (mode) {
 		// TODO: Find a way to remove the resize listeners once the canvas is stopped
 		if (mode === 'background') {
 			$_(`${Monogatari.selector} [data-ui="background"]`).append (`
-				<canvas data-canvas="${this.name}" class='${mode}'></canvas>
+				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}'></canvas>
 			`);
 
 			$_(`${Monogatari.selector} [data-canvas="${this.name}"]`).get (0).width = Monogatari.width ();
@@ -95,7 +113,7 @@ export class Canvas extends Action {
 			return Util.callAsync (this.object.start, Monogatari, $_(`${Monogatari.selector} [data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'immersive') {
 			$_(`${Monogatari.selector} #game`).prepend (`
-				<canvas data-canvas="${this.name}" class='${mode}'></canvas>
+				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}'></canvas>
 			`);
 
 			$_(`${Monogatari.selector} [data-canvas="${this.name}"]`).get (0).width = Monogatari.width ();
@@ -109,84 +127,57 @@ export class Canvas extends Action {
 			return Util.callAsync (this.object.start, Monogatari, $_(`${Monogatari.selector} [data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'displayable') {
 			$_(`${Monogatari.selector} #game`).append (`
-				<canvas data-canvas="${this.name}" class='${mode}'></canvas>
+				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}'></canvas>
 			`);
 			return Util.callAsync (this.object.start, Monogatari, $_(`${Monogatari.selector} [data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'character') {
 			$_(`${Monogatari.selector} #game`).append (`
-				<canvas data-canvas="${this.name}" class='${mode}' data-character='${this.name}'></canvas>
+				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}' data-character='${this.name}'></canvas>
 			`);
 			return Util.callAsync (this.object.start, Monogatari, $_(`${Monogatari.selector} [data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		}
 	}
 
-	apply () {
-		if (this.mode === 'stop') {
-			return Util.callAsync (this.object.stop, Monogatari).then (() => {
-				$_(`${Monogatari.selector} [data-canvas="${this.name}"]`).remove ();
-			});
-		} else {
-			return this.showCanvas (this.mode);
-		}
-	}
-
-	didApply () {
-		const state = Monogatari.state ('canvas');
-		if (this.mode === 'stop') {
-			const canvas = state.find ((element) => {
-				const [ show, type, mode, name] = element.split (' ');
-				return name === this.name;
-			});
-			Monogatari.history ('canvas').push (canvas);
-			Monogatari.state ({
-				canvas: state.filter ((element) => element !== canvas)
-			});
-		} else {
-			Monogatari.state ({
-				canvas: [this._statement, ...state]
-			});
-		}
-		return Promise.resolve (true);
-	}
-
-	revert () {
-		// If the statement was a stop one, we need to show the canvas it stoped
-		// again. If not, then we have to stop the canvas that was shown.
-		if (this.mode === 'stop') {
-			this.last = Monogatari.history ('canvas').find ((element) => {
-				const [ show, type, mode, name] = element.split (' ');
-				return name === this.name;
-			});
-			if (typeof this.last !== 'undefined') {
-				const [ show, type, mode, name ] = this.last.split (' ');
-				return this.showCanvas (mode);
-			}
-		} else {
-			return Util.callAsync (this.object.stop, Monogatari).then (() => {
-				$_(`${Monogatari.selector} [data-canvas="${this.name}"]`).remove ();
-			});
+	willApply () {
+		if (typeof this.object !== 'undefined') {
+			return Promise.resolve ();
 		}
 		return Promise.reject ();
 	}
 
-	didRevert () {
-		const state = Monogatari.state ('canvas');
-		if (this.mode === 'stop') {
+	apply () {
+		return this.show (this.mode);
+	}
 
-			if (typeof this.last !== 'undefined') {
-				Monogatari.state ({
-					canvas: [this.last, ...state]
-				});
+	didApply () {
+		Monogatari.history ('canvas').push (this._statement);
+		Monogatari.state ('canvas').push (this._statement);
+		return Promise.resolve (true);
+	}
+
+	revert () {
+		return Util.callAsync (this.object.stop, Monogatari).then (() => {
+			$_(`${Monogatari.selector} [data-canvas="${this.name}"]`).remove ();
+		});
+	}
+
+	didRevert () {
+		for (let i = Monogatari.state ('canvas').length - 1; i >= 0; i--) {
+			const last = Monogatari.state ('canvas')[i];
+			const [show, canvas, mode, name] = last.split (' ');
+			if (name === this.name) {
+				Monogatari.state ('canvas').splice (i, 1);
+				break;
 			}
-		} else {
-			const canvas = state.find ((element) => {
-				const [, , name] = element.split (' ');
-				return name === this.name;
-			});
-			Monogatari.history ('canvas').push (canvas);
-			Monogatari.state ({
-				canvas: state.filter ((element) => element !== canvas)
-			});
+		}
+
+		for (let i = Monogatari.history ('canvas').length - 1; i >= 0; i--) {
+			const last = Monogatari.history ('canvas')[i];
+			const [show, canvas, mode, name] = last.split (' ');
+			if (name === this.name) {
+				Monogatari.history ('canvas').splice (i, 1);
+				break;
+			}
 		}
 		return Promise.resolve (true);
 	}

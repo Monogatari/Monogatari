@@ -35,7 +35,10 @@ export class HideVideo extends Action {
 		} else {
 			$_(`${Monogatari.selector} [data-video="${this.name}"]`).remove ();
 		}
+		return Promise.resolve ();
+	}
 
+	didApply () {
 		for (let i = Monogatari.state ('videos').length - 1; i >= 0; i--) {
 			const last = Monogatari.state ('videos')[i];
 			const [show, video, mode, name] = last.split (' ');
@@ -44,11 +47,6 @@ export class HideVideo extends Action {
 				break;
 			}
 		}
-
-		return Promise.resolve ();
-	}
-
-	didApply () {
 		return Promise.resolve (true);
 	}
 

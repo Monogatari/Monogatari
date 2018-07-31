@@ -135,15 +135,16 @@ export class Video extends Action {
 
 	didApply () {
 		Monogatari.state ('videos').push (this._statement);
-
 		Monogatari.history ('video').push (this._statement);
-
 		return Promise.resolve (true);
 	}
 
 	revert () {
 		$_(`${Monogatari.selector} [data-video="${this.name}"]`).remove ();
+		return Promise.resolve ();
+	}
 
+	didRevert () {
 		for (let i = Monogatari.state ('videos').length - 1; i >= 0; i--) {
 			const last = Monogatari.state ('videos')[i];
 			const [show, video, mode, name] = last.split (' ');
@@ -161,11 +162,6 @@ export class Video extends Action {
 				break;
 			}
 		}
-
-		return Promise.resolve ();
-	}
-
-	didRevert () {
 		return Promise.resolve (true);
 	}
 }
