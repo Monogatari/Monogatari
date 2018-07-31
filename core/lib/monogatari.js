@@ -639,8 +639,6 @@ class Monogatari {
 			data.image = data.Engine.Scene;
 		}
 
-		data.date = data.date.replace ('/', '-');
-
 		const slot = `${Monogatari.setting ('SaveLabel')}_${i}`;
 		const image  = Monogatari.asset ('scenes', data.image);
 
