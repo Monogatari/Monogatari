@@ -6,6 +6,7 @@ export * from './Conditional';
 export * from './End';
 export * from './Function';
 
+export * from './HideCanvas';
 export * from './HideCharacter';
 export * from './HideImage';
 export * from './HideParticles';
