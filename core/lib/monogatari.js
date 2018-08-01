@@ -1175,6 +1175,25 @@ class Monogatari {
 		return Promise.all (promises);
 	}
 
+	static skip (enable) {
+		if (enable === true) {
+			if (Monogatari.setting ('Skip') > 0) {
+				Monogatari.global ('skip', setTimeout (() => {
+					Monogatari.canProceed ().then (() => {
+						Monogatari.next ();
+					}).catch (() => {
+						// An action waiting for user interaction or something else
+						// is blocking the game.
+					});
+					Monogatari.skip (true);
+				}, Monogatari.setting ('Skip')));
+			}
+		} else {
+			clearTimeout (Monogatari.global ('skip'));
+			Monogatari.global ('skip', null);
+		}
+	}
+
 	/**
 	 * Every event listener should be binded in this function.
 	 */
@@ -1277,6 +1296,25 @@ class Monogatari {
 
 		$_(`${selector} [data-action="auto-play"], ${selector} [data-action="auto-play"] *`).click(function () {
 			Monogatari.autoPlay (Monogatari.global ('_AutoPlayTimer') === null);
+		});
+
+		$_(document).keydown (function (e) {
+			if (e.target.tagName.toLowerCase() != 'input') {
+				switch (e.which) {
+
+					case 83:
+						if (Monogatari.global ('skip') !== null) {
+							Monogatari.skip (false);
+						} else {
+							Monogatari.skip (true);
+						}
+						break;
+
+					default:
+						return;
+
+				}
+			}
 		});
 
 		$_(document).keyup ((e) => {
@@ -1500,7 +1538,14 @@ Monogatari._settings = {
 	// to portrait or landscape, a warning message will be displayed so the
 	// player rotates its device.
 	// Possible values: any, portrait or landscape.
-	'Orientation': 'any'
+	'Orientation': 'any',
+
+	// Allow players to skip through the game. Similar to the auto play feature,
+	// skipping will allow players to go through the game really fast.
+	// If this value is set to 0, no skipping will be allowed but if it's set
+	// to a higher number, skipping will be allowed and that value will be taken
+	// as the speed in milliseconds with which the game will skip through the script
+	'Skip': 0
 };
 
 Monogatari._preferences = {
@@ -1536,7 +1581,8 @@ Monogatari.globals ({
 	block: false,
 	playing: false,
 	currentAutoSaveSlot: 1,
-	_AutoPlayTimer: null
+	_AutoPlayTimer: null,
+	skip: null
 });
 
 Monogatari.Storage = new Space ();

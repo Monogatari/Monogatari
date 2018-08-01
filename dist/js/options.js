@@ -63,7 +63,14 @@ monogatari.settings({
 	// to portrait or landscape, a warning message will be displayed so the
 	// player rotates its device.
 	// Possible values: any, portrait or landscape.
-	'Orientation': 'any'
+	'Orientation': 'any',
+
+	// Allow players to skip through the game. Similar to the auto play feature,
+	// skipping will allow players to go through the game really fast.
+	// If this value is set to 0, no skipping will be allowed but if it's set
+	// to a higher number, skipping will be allowed and that value will be taken
+	// as the speed in milliseconds with which the game will skip through the script
+	'Skip': 0
 });
 
 // Initial Settings
