@@ -1355,17 +1355,22 @@ class Monogatari {
 					// H Key
 					case 72:
 						event.stopPropagation();
-						if ($_(`${selector} [data-action="distraction-free"]`).hasClass ('fa-eye')) {
-							$_(`${selector} [data-action="distraction-free"]`).removeClass ('fa-eye');
-							$_(`${selector} [data-action="distraction-free"]`).addClass ('fa-eye-slash');
-							$_(`${selector} [data-ui="text"]`).hide ();
+
+						const hideButton = $_(`${selector} svg[data-action="distraction-free"]`);
+						const textDiv = $_(`${selector} div[data-ui="text"]`);
+
+						if (hideButton.hasClass ('fa-eye')) {
+							hideButton.removeClass ('fa-eye');
+							hideButton.addClass ('fa-eye-slash');
+							textDiv.hide ();
 							Monogatari.global ('distraction-free', true);
-						} else if ($_(`${selector} [data-action="distraction-free"]`).hasClass ('fa-eye-slash')) {
-							$_(`${selector} [data-action="distraction-free"]`).removeClass ('fa-eye-slash');
-							$_(`${selector} [data-action="distraction-free"]`).addClass ('fa-eye');
-							$_(`${selector} [data-ui="text"]`).show ();
+						} else if (hideButton.hasClass ('fa-eye-slash')) {
+							hideButton.removeClass ('fa-eye-slash');
+							hideButton.addClass ('fa-eye');
+							textDiv.show ();
 							Monogatari.global ('distraction-free', false);
 						}
+
 						break;
 
 					// Exit this handler for other keys to run normally
