@@ -1020,12 +1020,29 @@ class Monogatari {
 			});
 			setTimeout (Monogatari.global ('_AutoPlayTimer'), interval);
 			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-string]`).text (Monogatari.string ('Stop'));
-			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] .fa-play-circle`).replaceWith ('<span class="fas fa-stop-circle"></span>');
+			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-icon]`).replaceWith ('<span class="fas fa-stop-circle"></span>');
 		} else {
 			clearTimeout (Monogatari.global ('_AutoPlayTimer'));
 			Monogatari.global ('_AutoPlayTimer', null);
 			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-string]`).text (Monogatari.string ('AutoPlay'));
-			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] .fa-stop-circle`).replaceWith ('<span class="fas fa-play-circle"></span>');
+			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-icon]`).replaceWith ('<span class="fas fa-play-circle"></span>');
+		}
+	}
+
+	static distractionFree () {
+		// Check if the distraction free is currently enabled
+		if (Monogatari.global ('distraction-free') === true) {
+			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-string]`).text (Monogatari.string ('Hide'));
+			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye"></span>');
+			$_(`${Monogatari.selector} [data-ui="quick-menu"]`).removeClass ('transparent');
+			$_(`${Monogatari.selector} [data-ui="text"]`).show ();
+			Monogatari.global ('distraction-free', false);
+		} else {
+			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-string]`).text (Monogatari.string ('Show'));
+			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye-slash"></span>');
+			$_(`${Monogatari.selector} [data-ui="quick-menu"]`).addClass ('transparent');
+			$_(`${Monogatari.selector} [data-ui="text"]`).hide();
+			Monogatari.global ('distraction-free', true);
 		}
 	}
 
@@ -1260,35 +1277,7 @@ class Monogatari {
 					break;
 
 				case 'distraction-free':
-					if ($_(this).hasClass('fa-eye')) {
-						$_(this).removeClass('fa-eye');
-						$_(this).addClass('fa-eye-slash');
-						$_(this).parent ().find ('[data-string]').text (Monogatari.string ('Show'));
-						$_(`${selector} [data-ui="quick-menu"]`).addClass ('transparent');
-						$_(`${selector} [data-ui="text"]`).hide();
-						Monogatari.global ('distraction-free', true);
-					} else if ($_(this).hasClass('fa-eye-slash')) {
-						$_(this).removeClass('fa-eye-slash');
-						$_(this).addClass('fa-eye');
-						$_(this).parent ().find ('[data-string]').text (Monogatari.string ('Hide'));
-						$_(`${selector} [data-ui="quick-menu"]`).removeClass ('transparent');
-						$_(`${selector} [data-ui="text"]`).show();
-						Monogatari.global ('distraction-free', false);
-					} else if ($_(this).text () === Monogatari.string ('Show')) {
-						$_(this).text (Monogatari.string('Hide'));
-						$_(this).parent ().find ('.fas').removeClass ('fa-eye-slash');
-						$_(this).parent ().find ('.fas').addClass ('fa-eye');
-						$_(`${selector} [data-ui="quick-menu"]`).removeClass ('transparent');
-						$_(`${selector} [data-ui="text"]`).show ();
-						Monogatari.global ('distraction-free', false);
-					} else if ($_(this).text () === Monogatari.string ('Hide')) {
-						$_(this).text (Monogatari.string ('Show'));
-						$_(this).parent ().find ('.fas').removeClass ('fa-eye');
-						$_(this).parent ().find ('.fas').addClass ('fa-eye-slash');
-						$_(`${selector} [data-ui="quick-menu"]`).addClass ('transparent');
-						$_(`${selector} [data-ui="text"]`).hide ();
-						Monogatari.global ('distraction-free', true);
-					}
+					Monogatari.distractionFree ();
 					break;
 			}
 			return false;
@@ -1317,9 +1306,9 @@ class Monogatari {
 			}
 		});
 
-		$_(document).keyup ((e) => {
-			if (e.target.tagName.toLowerCase () != 'input') {
-				switch (e.which) {
+		$_(document).keyup ((event) => {
+			if (event.target.tagName.toLowerCase () != 'input') {
+				switch (event.which) {
 
 					// Escape Key
 					case 27:
@@ -1355,17 +1344,7 @@ class Monogatari {
 					// H Key
 					case 72:
 						event.stopPropagation();
-						if ($_(`${selector} [data-action="distraction-free"]`).hasClass ('fa-eye')) {
-							$_(`${selector} [data-action="distraction-free"]`).removeClass ('fa-eye');
-							$_(`${selector} [data-action="distraction-free"]`).addClass ('fa-eye-slash');
-							$_(`${selector} [data-ui="text"]`).hide ();
-							Monogatari.global ('distraction-free', true);
-						} else if ($_(`${selector} [data-action="distraction-free"]`).hasClass ('fa-eye-slash')) {
-							$_(`${selector} [data-action="distraction-free"]`).removeClass ('fa-eye-slash');
-							$_(`${selector} [data-action="distraction-free"]`).addClass ('fa-eye');
-							$_(`${selector} [data-ui="text"]`).show ();
-							Monogatari.global ('distraction-free', false);
-						}
+						Monogatari.distractionFree ();
 						break;
 
 					// Exit this handler for other keys to run normally
@@ -1374,7 +1353,7 @@ class Monogatari {
 				}
 			}
 
-			e.preventDefault();
+			event.preventDefault();
 		});
 
 		const promises = [];
