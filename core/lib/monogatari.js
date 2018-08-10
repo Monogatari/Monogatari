@@ -13,7 +13,8 @@ import { FancyError } from './FancyError';
  * State: The current state of the game, this simple object contains the current
  *        label and step as well as the thigs being shown or played by every action.
  *
- * History
+ * History: Every action and even components may keep a history on what statements 
+ *			have been applied. The history is 
  *
  * Assets
  *
@@ -1288,7 +1289,7 @@ class Monogatari {
 		});
 
 		$_(document).keydown (function (e) {
-			if (e.target.tagName.toLowerCase() != 'input') {
+			if (e.target.tagName.toLowerCase() !== 'input') {
 				switch (e.which) {
 
 					case 83:

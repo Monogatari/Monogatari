@@ -35,15 +35,17 @@ export class Wait extends Action {
 	}
 
 	apply () {
-		// Block the game so the player can't advance
-		Monogatari.global ('block', true);
+		return new Promise ((resolve) => {
+			// Block the game so the player can't advance
+			Monogatari.global ('block', true);
 
-		// Set the timeout for the specified time
-		setTimeout (() => {
-			// Unlock the game when the timeout ends.
-			Monogatari.global ('block', false);
-		}, this.time);
-		return Promise.resolve ();
+			// Set the timeout for the specified time
+			setTimeout (() => {
+				// Unlock the game when the timeout ends.
+				Monogatari.global ('block', false);
+				resolve ();
+			}, this.time);
+		});
 	}
 
 	didApply () {
