@@ -12,6 +12,7 @@ export class HideCanvas extends Action {
 	constructor ([ hide, type, name, separator, ...classes ]) {
 		super ();
 		this.name = name;
+		this.object = Monogatari.action ('Canvas').objects (name);
 		if (typeof classes !== 'undefined') {
 			this.classes = classes;
 		} else {
