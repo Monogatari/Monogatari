@@ -34,7 +34,7 @@ var files = [
 	// Fonts
 
 	// App Images
-	'assets/favicon.ico',
+	'favicon.ico',
 	'assets/icons/icon_48x48.png',
 	'assets/icons/icon_60x60.png',
 	'assets/icons/icon_70x70.png',
