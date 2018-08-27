@@ -1,0 +1,49 @@
+{
+  "name": "my-game",
+  "version": "0.1.0",
+  "main": "electron.js",
+  "description": "A description of your game",
+  "author": "Your Name",
+  "license": "MIT",
+  "homepage": "https://example.com",
+  "build": {
+    "appId": "com.example.mygame",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icons/icon.ico"
+    },
+    "mac": {
+      "category": "public.app-category.games",
+      "target": [
+        "zip"
+      ],
+      "type": "distribution",
+      "icon": "assets/icons/icon.icns"
+    },
+    "linux": {
+      "category": "Game",
+      "target": [
+        "AppImage"
+      ],
+      "synopsis": "A small synopsis of your game",
+      "description": "A more detailed description of your game"
+	},
+	"icon": "assets/icons/512x512.png"
+  },
+  "scripts": {
+		"serve": "parcel serve index.html --open",
+		"start": "electron . --enable-logging",
+		"build": "build -mwl",
+		"build:windows": "build -w",
+		"build:mac": "build -m",
+		"build:linux": "build -l",
+		"build:web": "parcel build index.html"
+  },
+  "devDependencies": {
+    "electron": "^2.0.8",
+    "electron-builder": "^20.28.2",
+    "parcel": "^1.9.7"
+  }
+}

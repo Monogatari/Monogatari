@@ -20,6 +20,7 @@ package-lock.json
 
 # Build systems
 .cache
+dist/dist
 
 # Other
 cache
