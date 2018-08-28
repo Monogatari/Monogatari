@@ -10,9 +10,13 @@ export class Dialog extends Action {
 			const str = Monogatari.global ('textObject').strings [0];
 			const element = $_(Monogatari.global ('textObject').el).data ('ui');
 
-			if (element !== 'centered') {
+			if (element !== 'centered' && !$_('[data-ui="text"]').hasClass ('nvl')) {
 				Monogatari.global ('textObject').destroy ();
 				$_(`${Monogatari.selector} [data-ui="say"]`).html (str);
+				Monogatari.global ('finishedTyping', true);
+			} else if ($_('[data-ui="text"]').hasClass ('nvl')) {
+				Monogatari.global ('textObject').destroy ();
+				$_(`${Monogatari.selector} [data-ui="say"]:last-child`).html (str);
 				Monogatari.global ('finishedTyping', true);
 			}
 
@@ -73,6 +77,7 @@ export class Dialog extends Action {
 		if (Monogatari.global ('textObject') !== null) {
 			Monogatari.global ('textObject').destroy ();
 		}
+
 		$_(`${Monogatari.selector} [data-ui="who"]`).html ('');
 		$_(`${Monogatari.selector} [data-ui="say"]`).html ('');
 		return Promise.resolve ();
@@ -91,6 +96,12 @@ export class Dialog extends Action {
 			this.character = Monogatari.character (id);
 			this.id = id;
 			this.dialog = dialog.join (' ');
+
+			if (typeof this.character.nvl !== 'undefined') {
+				this.nvl = this.character.nvl;
+			} else {
+				this.nvl = false;
+			}
 
 			if (typeof expression !== 'undefined') {
 				if (typeof this.character.Side !== 'undefined') {
@@ -124,27 +135,49 @@ export class Dialog extends Action {
 
 	displayDialog (dialog, character, animation) {
 
-		// Destroy the previous textObject so the text is rewritten.
-		// If not destroyed, the text would be appended instead of replaced.
-		if (Monogatari.global ('textObject') !== null) {
-			Monogatari.global ('textObject').destroy ();
-		}
+		if (this.nvl === false) {
+			// Destroy the previous textObject so the text is rewritten.
+			// If not destroyed, the text would be appended instead of replaced.
+			if (Monogatari.global ('textObject') !== null) {
+				Monogatari.global ('textObject').destroy ();
+			}
 
-		// Remove contents from the dialog area.
-		$_(`${Monogatari.selector} [data-ui="say"]`).html ('');
-		$_(`${Monogatari.selector} [data-ui="say"]`).data ('speaking', character);
+			// Remove contents from the dialog area.
+			$_(`${Monogatari.selector} [data-ui="say"]`).html ('');
+			$_(`${Monogatari.selector} [data-ui="say"]`).data ('speaking', character);
 
-		// Check if the typing animation flag is set to true in order to show it
-		if (animation === true && Monogatari.setting ('TypeAnimation') === true) {
+			// Check if the typing animation flag is set to true in order to show it
+			if (animation === true && Monogatari.setting ('TypeAnimation') === true) {
 
-			// If the property is set to true, the animation will be shown
-			// if it is set to false, even if the flag was set to true,
-			// no animation will be shown in the game.
-			Monogatari.global ('typedConfiguration').strings = [dialog];
-			Monogatari.global ('textObject', new Typed ('[data-ui="say"]', Monogatari.global ('typedConfiguration')));
+				// If the property is set to true, the animation will be shown
+				// if it is set to false, even if the flag was set to true,
+				// no animation will be shown in the game.
+				Monogatari.global ('typedConfiguration').strings = [dialog];
+				Monogatari.global ('textObject', new Typed ('[data-ui="say"]', Monogatari.global ('typedConfiguration')));
+			} else {
+				$_(`${Monogatari.selector} [data-ui="say"]`).html (dialog);
+				Monogatari.global ('finishedTyping', true);
+			}
 		} else {
-			$_(`${Monogatari.selector} [data-ui="say"]`).html (dialog);
+			$_(`${Monogatari.selector} [data-ui="text"]`).addClass ('nvl');
+
+			// Remove contents from the dialog area.
+			//$_(`${Monogatari.selector} [data-ui="say"]`).html ('');
+			$_(`${Monogatari.selector} [data-ui="say"]`).data ('speaking', character);
+
+			// Check if the typing animation flag is set to true in order to show it
+			/*if (animation === true && Monogatari.setting ('TypeAnimation') === true) {
+
+				// If the property is set to true, the animation will be shown
+				// if it is set to false, even if the flag was set to true,
+				// no animation will be shown in the game.
+				$_(`${Monogatari.selector} [data-ui="say"]`).append ('<p></p>');
+				Monogatari.global ('typedConfiguration').strings = [dialog + '\n'];
+				Monogatari.global ('textObject', new Typed ('[data-ui="say"]:last-child', Monogatari.global ('typedConfiguration')));
+			} else {*/
+			$_(`${Monogatari.selector} [data-ui="say"]`).append (`<p data-spoke="${this.character.Name}">${dialog}</p>`);
 			Monogatari.global ('finishedTyping', true);
+			//}
 		}
 
 		return Promise.resolve ();
@@ -155,13 +188,18 @@ export class Dialog extends Action {
 	}
 
 	characterDialog () {
+		// Check if the character has a name to show
 		if (typeof this.character.Name !== 'undefined') {
 			$_(`${Monogatari.selector} [data-ui="who"]`).html (Monogatari.replaceVariables (this.character.Name));
 		}
 
+		// Focus the character's sprite and colorize it's name with the defined
+		// color on its declaration
 		$_(`${Monogatari.selector} [data-character="${this.id}"]`).addClass ('focus');
 		$_(`${Monogatari.selector} [data-ui="who"]`).style ('color', this.character.Color);
 
+		// Check if an expression or face image was used and if it exists and
+		// display it
 		if (typeof this.image !== 'undefined') {
 			$_(`${Monogatari.selector} [data-ui="face"]`).attribute ('src', 'img/characters/' + this.image);
 			$_(`${Monogatari.selector} [data-ui="face"]`).show ();
@@ -176,6 +214,7 @@ export class Dialog extends Action {
 	}
 
 	apply () {
+		// Check if a character is the one speaking or if the narrator is speaking
 		if (typeof this.character !== 'undefined') {
 			return this.characterDialog ();
 		} else {
