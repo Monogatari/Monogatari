@@ -460,6 +460,10 @@ textarea {
 	display: inline-block;
 }
 
+[data-spoke="narrator"] p {
+	padding-left: 0;
+}
+
 [data-ui="who"] {
 	display: block;
 	width: 100%;

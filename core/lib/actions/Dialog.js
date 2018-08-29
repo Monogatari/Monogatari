@@ -66,6 +66,7 @@ export class Dialog extends Action {
 	}
 
 	static bind (selector) {
+		// Add listener for the text speed setting
 		$_(`${selector} [data-action="set-text-speed"]`).on ('change mouseover', function () {
 			const value =  Monogatari.setting ('maxTextSpeed') - parseInt($_(this).value());
 			Monogatari.global ('typedConfiguration').typeSpeed = value;
@@ -191,7 +192,8 @@ export class Dialog extends Action {
 
 			// Remove contents from the dialog area.
 			//$_(`${Monogatari.selector} [data-ui="say"]`).html ('');
-			$_(`${Monogatari.selector} [data-ui="say"]`).data ('speaking', character);
+			const previous = $_(`${Monogatari.selector} [data-ui="text"]`).data ('speaking');
+			$_(`${Monogatari.selector} [data-ui="text"]`).data ('speaking', character);
 
 			// Check if the typing animation flag is set to true in order to show it
 			/*if (animation === true && Monogatari.setting ('TypeAnimation') === true) {
@@ -203,8 +205,18 @@ export class Dialog extends Action {
 				Monogatari.global ('typedConfiguration').strings = [dialog + '\n'];
 				Monogatari.global ('textObject', new Typed ('[data-ui="say"]:last-child', Monogatari.global ('typedConfiguration')));
 			} else {*/
-			$_(`${Monogatari.selector} [data-ui="say"]`).append (`<p data-spoke="${this.id}">${dialog}</p>`);
+			if (character !== 'narrator') {
+				if (previous !== character) {
+					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}" class='named'><span style='color:${Monogatari.character (character).Color};'>${Monogatari.replaceVariables (Monogatari.character (character).Name)}: </span><p>${dialog}</p></div>`);
+				} else {
+					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}"><p>${dialog}</p></div>`);
+				}
+
+			} else {
+				$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${this.id}" class='unnamed'><p>${dialog}</p></div>`);
+			}
 			Monogatari.global ('finishedTyping', true);
+
 			//}
 		}
 
@@ -219,7 +231,7 @@ export class Dialog extends Action {
 
 	characterDialog () {
 		// Check if the character has a name to show
-		if (typeof this.character.Name !== 'undefined') {
+		if (typeof this.character.Name !== 'undefined' && !this.nvl) {
 			$_(`${Monogatari.selector} [data-ui="who"]`).html (Monogatari.replaceVariables (this.character.Name));
 		}
 
