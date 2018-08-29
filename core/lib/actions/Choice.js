@@ -18,8 +18,7 @@ export class Choice extends Action {
 
 	static canRevert () {
 		if ($_(`${Monogatari.selector} [data-ui="choices"]`).isVisible ()) {
-			$_(`${Monogatari.selector} [data-ui="choices"]`).hide ();
-			$_(`${Monogatari.selector} [data-ui="choices"]`).html ('');
+			$_(`${Monogatari.selector} [data-ui="choices"]`).remove ();
 			Monogatari.global ('_CurrentChoice', null);
 		}
 		return Promise.resolve ();
@@ -28,8 +27,7 @@ export class Choice extends Action {
 	static bind (selector) {
 		$_(`${selector}`).on('click', '[data-do]', function () {
 			if ($_(this).data('do') != 'null' && $_(this).data('do') != '') {
-				$_(`${selector} [data-ui="choices"]`).hide ();
-				$_(`${selector} [data-ui="choices"]`).html ('');
+				$_(`${Monogatari.selector} [data-ui="choices"]`).remove ();
 				if (Monogatari.global ('_CurrentChoice') !== null) {
 					if (typeof Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')] !== 'undefined') {
 						if (typeof Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].onChosen === 'function') {
@@ -52,8 +50,7 @@ export class Choice extends Action {
 	}
 
 	static reset () {
-		$_(`${Monogatari.selector} [data-ui="choices"]`).hide ();
-		$_(`${Monogatari.selector} [data-ui="choices"]`).html ('');
+		$_(`${Monogatari.selector} [data-ui="choices"]`).remove ();
 		Monogatari.global ('_CurrentChoice', null);
 		return Promise.resolve ();
 	}
@@ -74,36 +71,62 @@ export class Choice extends Action {
 
 	apply () {
 		Monogatari.global ('_CurrentChoice', this.statement);
+
+		const element = $_(document.createElement ('div'));
+		element.addClass ('text--center');
+		element.data ('ui', 'choices');
+
+		const promises = [];
+
 		for (const i in this.statement) {
 			const choice = this.statement[i];
 
 			if (typeof choice.Condition !== 'undefined' && choice.Condition !== '') {
 
-				Monogatari.assertAsync (this.statement[i].Condition, Monogatari).then (() => {
-					if (typeof choice.Class !== 'undefined') {
-						$_(`${Monogatari.selector} [data-ui="choices"]`).append (`<button data-do="${choice.Do}" class="${choice.Class}" data-choice="${i}">${choice.Text}</button>`);
-					} else {
-						$_(`${Monogatari.selector} [data-ui="choices"]`).append (`<button data-do="${choice.Do}" data-choice="${i}">${choice.Text}</button>`);
-					}
-				}).catch (() => {
-					// The condition wasn't met
-				}).finally (() => {
-					Monogatari.global ('block', false);
-				});
+				promises.push (
+					new Promise ((resolve) => {
+						Monogatari.assertAsync (this.statement[i].Condition, Monogatari).then (() => {
+							if (typeof choice.Class !== 'undefined') {
+								element.append (`<button data-do="${choice.Do}" class="${choice.Class}" data-choice="${i}">${choice.Text}</button>`);
+							} else {
+								element.append (`<button data-do="${choice.Do}" data-choice="${i}">${choice.Text}</button>`);
+							}
+						}).catch (() => {
+							// The condition wasn't met
+						}).finally (() => {
+							Monogatari.global ('block', false);
+							resolve ();
+						});
+					})
+				);
 			} else {
 				if (typeof choice == 'object') {
 					if (typeof choice.Class != 'undefined') {
-						$_(`${Monogatari.selector} [data-ui="choices"]`).append (`<button data-do="${choice.Do}" class="${choice.Class}" data-choice="${i}">${choice.Text}</button>`);
+						element.append (`<button data-do="${choice.Do}" class="${choice.Class}" data-choice="${i}">${choice.Text}</button>`);
 					} else {
-						$_(`${Monogatari.selector} [data-ui="choices"]`).append (`<button data-do="${choice.Do}" data-choice="${i}">${choice.Text}</button>`);
+						element.append (`<button data-do="${choice.Do}" data-choice="${i}">${choice.Text}</button>`);
 					}
 				} else if (typeof choice == 'string') {
-					Monogatari.run (choice, false);
+					promises.push (Monogatari.run (choice, false));
 				}
 			}
 			$_(`${Monogatari.selector} [data-ui="choices"]`).show ('flex');
 		}
-		return Promise.resolve ();
+
+		return Promise.all (promises).then (() => {
+			if ($_(`${Monogatari.selector} #game [data-ui="text"]`).hasClass ('nvl')) {
+				element.addClass ('horizontal');
+				$_(`${Monogatari.selector}  #game [data-ui="text"]`).append (element.get (0));
+			} else {
+				element.addClass ('vertical');
+				element.addClass ('middle');
+				$_(`${Monogatari.selector}  #game`).append (element.get (0));
+			}
+		});
+
+
+
+		//return Promise.resolve ();
 	}
 
 	willRevert () {

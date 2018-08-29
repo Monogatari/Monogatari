@@ -5,7 +5,11 @@ import { $_ } from '@aegis-framework/artemis';
 export class ShowCharacter extends Action {
 
 	static setup () {
+		// The character history saves what characters have been displayed
 		Monogatari.history ('character');
+
+		// The characters state variable holds what characters are being shown
+		// right now
 		Monogatari.state ({
 			characters: []
 		});
@@ -117,7 +121,6 @@ export class ShowCharacter extends Action {
 			const last = Monogatari.history ('character')[i];
 			const [show, character, asset, name] = last.split (' ');
 			if (asset === this.asset) {
-				console.log (last);
 				Monogatari.history ('character').splice (i, 1);
 				break;
 			}
@@ -128,7 +131,6 @@ export class ShowCharacter extends Action {
 			const [show, character, asset, name] = last.split (' ');
 
 			if (asset === this.asset) {
-				console.log (last);
 				this.constructor (last.split (' '));
 				this.apply ();
 				break;

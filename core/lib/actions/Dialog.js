@@ -6,8 +6,13 @@ import { $_ } from '@aegis-framework/artemis';
 export class Dialog extends Action {
 
 	static canProceed () {
+
+		// Check if the type animation has finished and the Typed object still exists
 		if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
+			// Get the string it was typing
 			const str = Monogatari.global ('textObject').strings [0];
+
+			// Get the element it was typing to
 			const element = $_(Monogatari.global ('textObject').el).data ('ui');
 
 			if (element !== 'centered' && !$_('[data-ui="text"]').hasClass ('nvl')) {
@@ -23,6 +28,16 @@ export class Dialog extends Action {
 			return Promise.reject ();
 		}
 		return Promise.resolve (Monogatari.global ('finishedTyping'));
+	}
+
+	static checkUnread () {
+		const height = $_(`${Monogatari.selector} [data-ui="text"]`).get (0).clientHeight;
+		const scrollHeight = $_(`${Monogatari.selector} [data-ui="text"]`).get (0).scrollHeight;
+		if (height < scrollHeight) {
+			$_(`${Monogatari.selector} [data-ui="text"]`).addClass ('unread');
+		} else {
+			$_(`${Monogatari.selector} [data-ui="text"]`).removeClass ('unread');
+		}
 	}
 
 	static setup () {
@@ -55,6 +70,10 @@ export class Dialog extends Action {
 			const value =  Monogatari.setting ('maxTextSpeed') - parseInt($_(this).value());
 			Monogatari.global ('typedConfiguration').typeSpeed = value;
 			Monogatari.preference ('TextSpeed', value);
+		});
+
+		$_(`${selector} [data-ui="text"]`).on ('scroll', () => {
+			$_(`${Monogatari.selector} [data-ui="text"]`).removeClass ('unread');
 		});
 		return Promise.resolve ();
 	}
@@ -121,9 +140,13 @@ export class Dialog extends Action {
 			}
 		} else {
 			this.id = 'narrator';
-			this.dialog = [ character, ...dialog ].join (' ');
+			if (id === 'nvl') {
+				this.nvl = true;
+				this.dialog = dialog.join (' ');
+			} else {
+				this.dialog = [ character, ...dialog ].join (' ');
+			}
 		}
-
 	}
 
 	willApply () {
@@ -136,6 +159,8 @@ export class Dialog extends Action {
 	displayDialog (dialog, character, animation) {
 
 		if (this.nvl === false) {
+			$_(`${Monogatari.selector} [data-ui="text"]`).removeClass ('nvl');
+
 			// Destroy the previous textObject so the text is rewritten.
 			// If not destroyed, the text would be appended instead of replaced.
 			if (Monogatari.global ('textObject') !== null) {
@@ -144,7 +169,7 @@ export class Dialog extends Action {
 
 			// Remove contents from the dialog area.
 			$_(`${Monogatari.selector} [data-ui="say"]`).html ('');
-			$_(`${Monogatari.selector} [data-ui="say"]`).data ('speaking', character);
+			$_(`${Monogatari.selector} [data-ui="text"]`).data ('speaking', character);
 
 			// Check if the typing animation flag is set to true in order to show it
 			if (animation === true && Monogatari.setting ('TypeAnimation') === true) {
@@ -159,7 +184,10 @@ export class Dialog extends Action {
 				Monogatari.global ('finishedTyping', true);
 			}
 		} else {
-			$_(`${Monogatari.selector} [data-ui="text"]`).addClass ('nvl');
+			if (!$_(`${Monogatari.selector} [data-ui="text"]`).hasClass ('nvl')) {
+				Dialog.reset ();
+				$_(`${Monogatari.selector} [data-ui="text"]`).addClass ('nvl');
+			}
 
 			// Remove contents from the dialog area.
 			//$_(`${Monogatari.selector} [data-ui="say"]`).html ('');
@@ -175,10 +203,12 @@ export class Dialog extends Action {
 				Monogatari.global ('typedConfiguration').strings = [dialog + '\n'];
 				Monogatari.global ('textObject', new Typed ('[data-ui="say"]:last-child', Monogatari.global ('typedConfiguration')));
 			} else {*/
-			$_(`${Monogatari.selector} [data-ui="say"]`).append (`<p data-spoke="${this.character.Name}">${dialog}</p>`);
+			$_(`${Monogatari.selector} [data-ui="say"]`).append (`<p data-spoke="${this.id}">${dialog}</p>`);
 			Monogatari.global ('finishedTyping', true);
 			//}
 		}
+
+		Dialog.checkUnread ();
 
 		return Promise.resolve ();
 	}

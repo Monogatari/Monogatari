@@ -67,7 +67,11 @@ export class Jump extends Action {
 			step: 0,
 			label: this.label
 		});
-		Monogatari.action ('Dialog').reset ();
+
+		if (!$_(`${Monogatari.selector} [data-ui="text"]`).hasClass ('nvl')) {
+			Monogatari.action ('Dialog').reset ();
+		}
+
 		Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
 		Monogatari.history ('label').push (this.label);
 

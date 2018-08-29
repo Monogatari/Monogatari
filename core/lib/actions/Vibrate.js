@@ -14,8 +14,11 @@ export class Vibrate extends Action {
 		// First check if vibration is available available
 		if (navigator) {
 			if (navigator.vibrate) {
+				// Since time can be a pattern made of different lengths, we have
+				// to use an array
 				this.time = [];
 				for (const i in time) {
+					// Check if all times are valid integers
 					if (!isNaN (time[i])) {
 						this.time[i] = parseInt (time[i]);
 					} else {

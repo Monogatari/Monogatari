@@ -63,7 +63,7 @@ Game._html = `
 			</div>
 		</div>
 
-		<div data-ui="choices" class="vertical text--center middle"></div>
+
 		<div data-ui="text">
 			<img data-ui="face" alt="">
 			<span data-ui="who"></span>
