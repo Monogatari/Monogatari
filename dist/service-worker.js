@@ -50,6 +50,7 @@ const files = [
 ];
 
 self.addEventListener ('install', (event) => {
+	self.skipWaiting ();
 	event.waitUntil (
 		caches.open (`${name}-v${version}`).then ((cache) => {
 			return cache.addAll (files);

@@ -1182,8 +1182,9 @@ class Monogatari {
 		if (Monogatari.setting ('ServiceWorkers')) {
 			if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
 				// TODO: There's a place in hell for this quick fix, the splitting
-				// of the sw file is just preventing parcel from tryng to bundle it.
-				navigator.serviceWorker.register ('service-worker' + '.js').then ((registration) => {
+				// of the sw file is just preventing parcel from tryng to bundle it
+				// when building the core libraries.
+				navigator.serviceWorker.register ('./../service-worker' + '.js').then ((registration) => {
 					registration.onupdatefound = () => {
 						const worker = registration.installing;
 						worker.onstatechange = () => {
