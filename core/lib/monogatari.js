@@ -1191,7 +1191,7 @@ class Monogatari {
 								if (navigator.serviceWorker.controller) {
 									const element = `
 										<div data-ui="broadcast">
-											<p data-string="NewContent">There is new content available, reload the page to get the latest version</p>
+											<p data-string="NewContent">${Monogatari.string ('NewContent')}.</p>
 										</div>
 									`;
 									$_(`${selector} [data-menu='main']`).prepend (element);
