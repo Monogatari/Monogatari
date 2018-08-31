@@ -506,6 +506,16 @@ class Monogatari {
 		}
 	}
 
+	static temp (key, value) {
+		if (typeof value !== 'undefined') {
+			Monogatari._temp[key] = value;
+		} else {
+			const value = Monogatari._temp[key];
+			delete Monogatari._temp[key];
+			return value;
+		}
+	}
+
 	/**
 	 * Localize every element with a data-string property using the translations
 	 * available. If no translation is found for the current language, the current
@@ -1173,7 +1183,27 @@ class Monogatari {
 			if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
 				// TODO: There's a place in hell for this quick fix, the splitting
 				// of the sw file is just preventing parcel from tryng to bundle it.
-				navigator.serviceWorker.register ('service-worker' + '.js');
+				navigator.serviceWorker.register ('service-worker' + '.js').then ((registration) => {
+					registration.onupdatefound = () => {
+						const worker = registration.installing;
+						worker.onstatechange = () => {
+							if (worker.state === 'installed') {
+								if (navigator.serviceWorker.controller) {
+									const element = `
+										<div data-ui="broadcast">
+											<p data-string="NewContent">There is new content available, reload the page to get the latest version</p>
+										</div>
+									`;
+									$_(`${selector} [data-menu='main']`).prepend (element);
+									$_(`${selector} #game`).prepend (element);
+									$_(`${selector} [data-ui="broadcast"]`).click (() => {
+										$_(`${selector} [data-ui="broadcast"]`).remove ();
+									});
+								}
+							}
+						};
+					};
+				});
 			} else {
 				console.warn ('Service Workers are not available in this browser or have been disabled in the engine configuration. Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/');
 			}
@@ -1419,7 +1449,7 @@ class Monogatari {
 				}
 
 				// Play the main menu song
-				Monogatari.playAmbient();
+				Monogatari.playAmbient ();
 			});
 		});
 	}
@@ -1564,6 +1594,8 @@ Monogatari.globals ({
 	_AutoPlayTimer: null,
 	skip: null
 });
+
+Monogatari._temp = {};
 
 Monogatari.Storage = new Space ();
 

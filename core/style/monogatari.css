@@ -313,6 +313,19 @@ select {
 	}
 }
 
+[data-ui="broadcast"] {
+	display: flex;
+	justify-content: center;
+	background: #fff;
+	color: #424242;
+	box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.24), 0 1.5px 6px rgba(0, 0, 0, 0.12);
+	font-size: 1rem;
+	position: absolute;
+	width: 100%;
+	cursor: pointer;
+	z-index: 21;
+}
+
 /**
  * ===========================
  * Data UI Styling

@@ -45,6 +45,7 @@ Monogatari.translation ('Nederlands', {
 
 	'Music': 'Muziek Volume',
 
+	'NewContent': 'There is new content available, reload the page to get the latest version',
 	'NoSavedGames': 'Geen opgeslagen spellen.',
 	'NoAutoSavedGames': 'Geen automatsch opgeslagen spellen.',
 

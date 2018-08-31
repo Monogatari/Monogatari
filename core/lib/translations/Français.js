@@ -44,6 +44,7 @@ Monogatari.translation ('Français', {
 
 	'Music': 'Volume de la Musique',
 
+	'NewContent': 'There is new content available, reload the page to get the latest version',
 	'NoSavedGames': 'Pas de parties sauvegardées.',
 	'NoAutoSavedGames': 'Aucune partie enregistrée automatiquement.',
 

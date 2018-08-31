@@ -44,6 +44,7 @@ Monogatari.translation ('日本語', {
 
 	'Music': '音楽の音量',
 
+	'NewContent': 'There is new content available, reload the page to get the latest version',
 	'NoSavedGames': '保存されたゲームはありません。',
 	'NoAutoSavedGames': '自動的に保存されたゲームはありません。',
 

@@ -76,5 +76,6 @@ Monogatari.translation('Русский', {
 	'SaveInSlot': 'Сохранить в слот',
 	'SlotDeletion': 'Вы действительно хотите удалить этот слот?',
 	'SlotOverwrite': 'Вы действительно хотите перезаписать этот слот?',
-	'Windowed': 'Оконный режим'
+	'Windowed': 'Оконный режим',
+	'NewContent': 'There is new content available, reload the page to get the latest version',
 });
