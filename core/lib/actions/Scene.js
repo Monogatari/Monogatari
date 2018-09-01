@@ -42,7 +42,7 @@ export class Scene extends Action {
 		this.scene = scene;
 		this.property = 'background-image';
 		if (typeof Monogatari.asset ('scenes', scene) !== 'undefined') {
-			this.value = `url(assets/scenes/${Monogatari.asset ('scenes', scene)})`;
+			this.value = `url(${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${Monogatari.asset ('scenes', scene)})`;
 		} else {
 			if (this.scene.indexOf ('.') === -1) {
 				this.property = 'background-color';

@@ -49,7 +49,7 @@ export class ShowImage extends Action {
 
 	apply () {
 
-		const object = `<img src="assets/images/${this.image}" class="animated ${this.classes.join (' ')}" data-image="${this.asset}" data-sprite="${this.sprite}">`;
+		const object = `<img src="${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').images}/${this.image}" class="animated ${this.classes.join (' ')}" data-image="${this.asset}" data-sprite="${this.sprite}">`;
 		$_(`${Monogatari.selector} #game`).append (object);
 		return Promise.resolve ();
 	}

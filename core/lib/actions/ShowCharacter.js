@@ -80,11 +80,11 @@ export class ShowCharacter extends Action {
 			directory += '/';
 		}
 
-		const object = `<img src="assets/characters/${directory}${this.image}" class="animated ${this.classes.join (' ')}" data-character="${this.asset}" data-sprite="${this.sprite}">`;
+		const object = `<img src="${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}" class="animated ${this.classes.join (' ')}" data-character="${this.asset}" data-sprite="${this.sprite}">`;
 
 		if ($_(`${Monogatari.selector} [data-character="${this.asset}"]`).isVisible ()) {
 			$_(`${Monogatari.selector} [data-character="${this.asset}"]`).removeClass ();
-			$_(`${Monogatari.selector} [data-character="${this.asset}"]`).attribute ('src', `assets/characters/${directory}${this.image}`);
+			$_(`${Monogatari.selector} [data-character="${this.asset}"]`).attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}`);
 			for (const newClass of this.classes) {
 				$_(`${Monogatari.selector} [data-character="${this.asset}"]`).addClass (newClass);
 			}

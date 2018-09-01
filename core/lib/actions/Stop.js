@@ -74,9 +74,9 @@ export class Stop extends Action {
 		}
 
 		if (typeof  Monogatari.asset (this.type, media) !== 'undefined') {
-			this.player.setAttribute('src', `assets/${this.type}/${Monogatari.asset (this.type, media)}`);
+			this.player.setAttribute('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath')[this.type]}/${Monogatari.asset (this.type, media)}`);
 		} else {
-			this.player.setAttribute('src', `assets/${this.type}/${media}`);
+			this.player.setAttribute('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath')[this.type]}/${media}`);
 		}
 
 		if (this.type == 'music') {

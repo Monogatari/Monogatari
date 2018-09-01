@@ -91,7 +91,7 @@ export class Video extends Action {
 		$_(element).data ('video', this.name);
 		$_(element).addClass (this.mode);
 
-		$_(element).attribute ('src', `assets/video/${this.src}`);
+		$_(element).attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').videos}/${this.src}`);
 
 		if (this.props.indexOf ('close') > -1) {
 			element.onended = () => {

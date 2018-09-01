@@ -551,12 +551,14 @@ class Monogatari {
 
 			for (const category of Object.keys (Monogatari.assets ())) {
 				for (const asset of Object.values (Monogatari.assets (category))) {
+					const directory = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath')[category]}`;
 					if (FileSystem.isImage (asset)) {
-						promises.push (Preload.image (`assets/${category}/${asset}`).finally (() => {
+						
+						promises.push (Preload.image (`${directory}/${asset}`).finally (() => {
 							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
 						}));
 					} else {
-						promises.push (Preload.file (`assets/${category}/${asset}`).finally (() => {
+						promises.push (Preload.file (`${directory}/${asset}`).finally (() => {
 							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
 						}));
 					}
@@ -572,10 +574,11 @@ class Monogatari {
 				if (typeof character.Directory !== 'undefined') {
 					directory = character.Directory + '/';
 				}
+				directory = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}`;
 
 				if (typeof character.Images !== 'undefined') {
 					for (const image of Object.values (character.Images)) {
-						promises.push (Preload.image ('assets/characters/' + directory + image).finally (() => {
+						promises.push (Preload.image (`${directory}${image}`).finally (() => {
 							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
 						}));
 					}
@@ -584,7 +587,7 @@ class Monogatari {
 
 				if (typeof character.Side !== 'undefined') {
 					for (const image of Object.values (character.Side)) {
-						promises.push (Preload.image ('assets/characters/' + directory + image).finally (() => {
+						promises.push (Preload.image (`${directory}${image}`).finally (() => {
 							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
 						}));
 					}
@@ -592,7 +595,7 @@ class Monogatari {
 				}
 
 				if (typeof character.Face !== 'undefined') {
-					promises.push (Preload.image ('assets/characters/' + directory + character.Face).finally (() => {
+					promises.push (Preload.image (`${directory}${character.Face}`).finally (() => {
 						$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
 					}));
 					assetCount += 1;
@@ -667,7 +670,7 @@ class Monogatari {
 				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
 					<button class='fas fa-times' data-delete='${slot}'></button>
 					<small class='badge'>${name}</small>
-					<img src='assets/scenes/${image}' alt=''>
+					<img src="${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${image}" alt=''>
 					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
 				</figure>
 			`);
@@ -676,7 +679,7 @@ class Monogatari {
 				<figure data-save='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2'>
 					<button class='fas fa-times' data-delete='${slot}'></button>
 					<small class='badge'>${name}</small>
-					<img src='assets/scenes/${image}' alt=''>
+					<img src="${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${image}" alt=''>
 					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
 				</figure>
 			`);
@@ -721,7 +724,7 @@ class Monogatari {
 				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
 					<button class='fas fa-times' data-delete="${Monogatari.setting ('AutoSaveLabel')}_${i}"></button>
 					<small class='badge'>${name}</small>
-					<img src='assets/scenes/${image}' alt=''>
+					<img src="${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${image}" alt=''>
 					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
 				</figure>
 			`);
@@ -1498,6 +1501,9 @@ Monogatari._assets = {
 	scenes: {}
 };
 
+// These are the default settings and they are overwritten by the user's settings
+// New elements here will no conflict with the user's settings and allows a better
+// update experience
 Monogatari._settings = {
 
 	// Initial Label *
@@ -1556,7 +1562,23 @@ Monogatari._settings = {
 	// If this value is set to 0, no skipping will be allowed but if it's set
 	// to a higher number, skipping will be allowed and that value will be taken
 	// as the speed in milliseconds with which the game will skip through the script
-	'Skip': 0
+	'Skip': 0,
+	
+	// Define the directories where the assets are located. The root directory is
+	// the holder for the other asset specific directories, this directories are
+	// used when retrieving the files on the game.
+	'AssetsPath': {
+		'root': 'assets',
+		'characters': 'characters',
+		'icons': 'icons',
+		'images': 'images',
+		'music': 'music',
+		'scenes': 'scenes',
+		'sound': 'sound',
+		'ui': 'ui',
+		'video': 'video',
+		'voice': 'voice'
+	}
 };
 
 Monogatari._preferences = {

@@ -167,7 +167,7 @@ export class Play extends Action {
 			this.player.setAttribute ('loop', '');
 		}
 
-		this.player.setAttribute ('src', `assets/${this.type}/${this.media}`);
+		this.player.setAttribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting('AssetsPath')[this.type]}/${this.media}`);
 
 		if (this.type == 'music') {
 			Monogatari.history ('music').push (this._statement);
