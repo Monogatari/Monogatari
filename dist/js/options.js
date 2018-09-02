@@ -49,6 +49,10 @@ monogatari.settings({
 	// Enables or disables the typing text animation for the whole game.
 	'TypeAnimation': true,
 
+	// Enables or disables the typing text animation in NVL dialogs for the 
+	// whole game.
+	'NVLTypeAnimation': true,
+
 	// Enables or disables the typing animation for the narrator.
 	// If the previous property was set to false, the narrator won't shown
 	// the animation even if this is set to true.

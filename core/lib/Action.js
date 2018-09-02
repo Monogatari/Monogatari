@@ -50,7 +50,7 @@
  *                for cleanup operations or any other thing that needs to be done
  *                after the action was applied.
  *
- * While the Application clycle is all about executing the action, the Reverting
+ * While the Application clycle is all about executing the action, the Revert
  * cycle is the opposite and it reverts the things the Application cycle does.
  * Reverting is used when the player goes back in the game and has equivalent
  * steps to the Application Cycle:
@@ -279,11 +279,23 @@ class Action {
 	 * Because of this function, you can always refere to the original statement
 	 * in the Application and Reverting cycles with this._statement;
 	 *
-	 * @param  {type} statement description
-	 * @return {type}           description
+	 * @param  {string|Object|function} statement - The statement with which the action was run
 	 */
 	_setStatement (statement) {
 		this._statement = statement;
+	}
+
+	/**
+	 * _setCycle - This simple method is used to set what cycle the action is 
+	 * currently performing. This is useful to know on those actions that may
+	 * use the apply or revert methods on any situation but that have slight
+	 * differences on the logic.
+	 *
+	 * @param  {string} cycle - 'Application' if the action is running the application
+	 * cycle or 'Revert' if it's running the revert cycle.
+	 */
+	_setCycle (cycle) {
+		this._cycle = cycle;
 	}
 
 	/**

@@ -1088,6 +1088,7 @@ class Monogatari {
 					const act = new action (actionStatement);
 
 					act.setContext (Monogatari);
+					act._setCycle ('Revert');
 
 					return act.willRevert ().then (() => {
 						return act.revert ().then (() => {
@@ -1155,6 +1156,7 @@ class Monogatari {
 			if (matches === true) {
 				const act = new action (actionStatement);
 				act._setStatement (statement);
+				act._setCycle ('Application');
 				act.setContext (Monogatari);
 
 				return act.willApply ().then (() => {
@@ -1540,6 +1542,10 @@ Monogatari._settings = {
 
 	// Enables or disables the typing text animation for the whole game.
 	'TypeAnimation': true,
+
+	// Enables or disables the typing text animation in NVL dialogs for the 
+	// whole game.
+	'NVLTypeAnimation': true,
 
 	// Enables or disables the typing animation for the narrator.
 	// If the previous property was set to false, the narrator won't shown

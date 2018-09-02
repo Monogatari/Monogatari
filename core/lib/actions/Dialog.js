@@ -6,7 +6,6 @@ import { $_ } from '@aegis-framework/artemis';
 export class Dialog extends Action {
 
 	static canProceed () {
-
 		// Check if the type animation has finished and the Typed object still exists
 		if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
 			// Get the string it was typing
@@ -20,8 +19,9 @@ export class Dialog extends Action {
 				$_(`${Monogatari.selector} [data-ui="say"]`).html (str);
 				Monogatari.global ('finishedTyping', true);
 			} else if ($_('[data-ui="text"]').hasClass ('nvl')) {
+				const last = $_('[data-ui="say"] [data-spoke] p').last ().get (0);
 				Monogatari.global ('textObject').destroy ();
-				$_(`${Monogatari.selector} [data-ui="say"]:last-child`).html (str);
+				$_(last).html (str);
 				Monogatari.global ('finishedTyping', true);
 			}
 
@@ -62,6 +62,12 @@ export class Dialog extends Action {
 				}
 			}
 		});
+
+		// The NVL mode has its own history so that when going back, all dialogs
+		// that were shown on screen can be shown again instead of just showing 
+		// the last one.
+		Monogatari.history ('nvl');
+
 		return Promise.resolve ();
 	}
 
@@ -73,6 +79,8 @@ export class Dialog extends Action {
 			Monogatari.preference ('TextSpeed', value);
 		});
 
+		// Detect scroll on the text element to remove the unread class used when
+		// there's text not being shown in NVL mode.
 		$_(`${selector} [data-ui="text"]`).on ('scroll', () => {
 			$_(`${Monogatari.selector} [data-ui="text"]`).removeClass ('unread');
 		});
@@ -146,6 +154,7 @@ export class Dialog extends Action {
 				this.dialog = dialog.join (' ');
 			} else {
 				this.dialog = [ character, ...dialog ].join (' ');
+				this.nvl = false;
 			}
 		}
 	}
@@ -157,9 +166,59 @@ export class Dialog extends Action {
 		return Promise.resolve ();
 	}
 
-	displayDialog (dialog, character, animation) {
+	displayNvlDialog (dialog, character, animation) {
+		if (!$_(`${Monogatari.selector} [data-ui="text"]`).hasClass ('nvl')) {
+			Dialog.reset ();
+			$_(`${Monogatari.selector} [data-ui="text"]`).addClass ('nvl');
+		}
 
+		// Remove contents from the dialog area.
+		const previous = $_(`${Monogatari.selector} [data-ui="text"]`).data ('speaking');
+		$_(`${Monogatari.selector} [data-ui="text"]`).data ('speaking', character);
+
+		// Check if the typing animation flag is set to true in order to show it
+		if (animation === true && Monogatari.setting ('TypeAnimation') === true && Monogatari.setting ('NVLTypeAnimation') === true) {
+
+			// If the property is set to true, the animation will be shown
+			// if it is set to false, even if the flag was set to true,
+			// no animation will be shown in the game.
+			if (character !== 'narrator') {
+				if (previous !== character) {
+					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}" class='named'><span style='color:${Monogatari.character (character).Color};'>${Monogatari.replaceVariables (Monogatari.character (character).Name)}: </span><p></p></div>`);
+				} else {
+					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}"><p></p></div>`);
+				}
+
+			} else {
+				$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}" class='unnamed'><p></p></div>`);
+			}
+
+			const elements = $_('[data-ui="say"] [data-spoke] p');
+			const last = elements.last ().get (0);
+
+			Monogatari.global ('typedConfiguration').strings = [dialog];
+			Monogatari.global ('textObject', new Typed (last, Monogatari.global ('typedConfiguration')));
+		
+		} else {
+			if (character !== 'narrator') {
+				if (previous !== character) {
+					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}" class='named'><span style='color:${Monogatari.character (character).Color};'>${Monogatari.replaceVariables (Monogatari.character (character).Name)}: </span><p>${dialog}</p></div>`);
+				} else {
+					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}"><p>${dialog}</p></div>`);
+				}
+
+			} else {
+				$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}" class='unnamed'><p>${dialog}</p></div>`);
+			}
+			Monogatari.global ('finishedTyping', true);
+		}
+	}
+
+	displayDialog (dialog, character, animation) {
 		if (this.nvl === false) {
+			if ($_(`${Monogatari.selector} [data-ui="text"]`).hasClass ('nvl') && this._cycle === 'Application') {
+				Monogatari.history ('nvl').push ($_(`${Monogatari.selector} [data-ui="text"] [data-ui="say"]`).html ());
+			}
 			$_(`${Monogatari.selector} [data-ui="text"]`).removeClass ('nvl');
 
 			// Destroy the previous textObject so the text is rewritten.
@@ -185,39 +244,7 @@ export class Dialog extends Action {
 				Monogatari.global ('finishedTyping', true);
 			}
 		} else {
-			if (!$_(`${Monogatari.selector} [data-ui="text"]`).hasClass ('nvl')) {
-				Dialog.reset ();
-				$_(`${Monogatari.selector} [data-ui="text"]`).addClass ('nvl');
-			}
-
-			// Remove contents from the dialog area.
-			//$_(`${Monogatari.selector} [data-ui="say"]`).html ('');
-			const previous = $_(`${Monogatari.selector} [data-ui="text"]`).data ('speaking');
-			$_(`${Monogatari.selector} [data-ui="text"]`).data ('speaking', character);
-
-			// Check if the typing animation flag is set to true in order to show it
-			/*if (animation === true && Monogatari.setting ('TypeAnimation') === true) {
-
-				// If the property is set to true, the animation will be shown
-				// if it is set to false, even if the flag was set to true,
-				// no animation will be shown in the game.
-				$_(`${Monogatari.selector} [data-ui="say"]`).append ('<p></p>');
-				Monogatari.global ('typedConfiguration').strings = [dialog + '\n'];
-				Monogatari.global ('textObject', new Typed ('[data-ui="say"]:last-child', Monogatari.global ('typedConfiguration')));
-			} else {*/
-			if (character !== 'narrator') {
-				if (previous !== character) {
-					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}" class='named'><span style='color:${Monogatari.character (character).Color};'>${Monogatari.replaceVariables (Monogatari.character (character).Name)}: </span><p>${dialog}</p></div>`);
-				} else {
-					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}"><p>${dialog}</p></div>`);
-				}
-
-			} else {
-				$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${this.id}" class='unnamed'><p>${dialog}</p></div>`);
-			}
-			Monogatari.global ('finishedTyping', true);
-
-			//}
+			this.displayNvlDialog (dialog, character, animation);	
 		}
 
 		Dialog.checkUnread ();
@@ -242,7 +269,7 @@ export class Dialog extends Action {
 
 		// Check if an expression or face image was used and if it exists and
 		// display it
-		if (typeof this.image !== 'undefined') {
+		if (typeof this.image !== 'undefined' && !this.nvl) {
 			$_(`${Monogatari.selector} [data-ui="face"]`).attribute ('src', 'img/characters/' + this.image);
 			$_(`${Monogatari.selector} [data-ui="face"]`).show ();
 		}
@@ -264,8 +291,28 @@ export class Dialog extends Action {
 		}
 	}
 
+	willRevert () {
+		this._action = 'revert';
+		return Promise.resolve ();
+	}
+
 	revert () {
-		return this.apply ();
+		// Check if the dialog to replay is a NVL one or not
+		if (this.nvl === true) {
+			if ($_(`${Monogatari.selector} [data-ui="text"]`).hasClass ('nvl')) {
+				$_(`${Monogatari.selector} [data-ui="text"] [data-ui="say"] [data-spoke]`).last ().remove ();
+				return Promise.resolve ();
+			} else {
+				if (Monogatari.history ('nvl').length > 0) {
+					$_(`${Monogatari.selector} [data-ui="text"]`).addClass ('nvl');
+					$_(`${Monogatari.selector} [data-ui="text"] [data-ui="say"]`).html (Monogatari.history ('nvl').pop ());
+					return Promise.resolve ();
+				}
+				return Promise.reject ();
+			}
+		} else {
+			return this.apply ();
+		}
 	}
 
 }
