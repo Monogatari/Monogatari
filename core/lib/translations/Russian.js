@@ -78,4 +78,5 @@ Monogatari.translation('Русский', {
 	'SlotOverwrite': 'Вы действительно хотите перезаписать этот слот?',
 	'Windowed': 'Оконный режим',
 	'NewContent': 'There is new content available, reload the page to get the latest version',
+	'AllowPlayback': 'Click here to allow audio playback'
 });

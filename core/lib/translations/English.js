@@ -13,6 +13,7 @@ import { Monogatari } from './../monogatari';
 Monogatari.translation ('English', {
 
 	'AdvanceHelp': 'To advance through the game, press the space key or click.',
+	'AllowPlayback': 'Click here to allow audio playback',
 	'Audio': 'Audio',
 	'AutoPlay': 'Auto',
 	'AutoPlaySpeed': 'Autoplay Speed',

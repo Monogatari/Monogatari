@@ -938,15 +938,63 @@ class Monogatari {
 	}
 
 	static playAmbient () {
+		// Check if a menu music was defined
 		if (Monogatari.setting ('MenuMusic') !== '') {
+
+			// Make the ambient player loop
 			Monogatari.ambientPlayer.setAttribute ('loop', '');
 
+			// Check if the music was defined in the music assets object
 			if (typeof Monogatari.asset ('music', Monogatari.setting ('MenuMusic')) !== 'undefined') {
-				Monogatari.ambientPlayer.setAttribute('src', 'audio/music/' + Monogatari.asset ('music', Monogatari.setting ('MenuMusic')));
+				
+				// Get the full path to the asset and set the src to the ambient player
+				Monogatari.ambientPlayer.setAttribute('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').music}/${Monogatari.asset ('music', Monogatari.setting ('MenuMusic'))}`);
+
+				// Play the music but catch any errors. Error catching is necessary
+				// since some browsers like chrome, have added some protections to
+				// avoid media from being autoplayed. Because of these protections,
+				// the user needs to interact with the page first before the media
+				// is able to play.
+				Monogatari.ambientPlayer.play ().catch (() => {
+
+					// Create a broadcast message
+					const element = `
+						<div data-ui="broadcast">
+							<p data-string="AllowPlayback">${Monogatari.string ('AllowPlayback')}.</p>
+						</div>
+					`;
+
+					// Add it to the main menu and game screens
+					$_(`${Monogatari.selector} [data-menu='main']`).prepend (element);
+					$_(`${Monogatari.selector} #game`).prepend (element);
+
+					// Try to play the media again once the element has been clicked
+					// and remove it.
+					$_(`${Monogatari.selector} [data-ui="broadcast"]`).click (() => {
+						this.playAmbient ();
+						$_(`${Monogatari.selector} [data-ui="broadcast"]`).remove ();
+					});
+				});
 			} else {
-				Monogatari.ambientPlayer.setAttribute('src', 'audio/music/' + Monogatari.setting ('MenuMusic'));
+				FancyError.show (
+					`The music "${Monogatari.setting ('MenuMusic')}" is not defined.`,
+					'Monogatari attempted to find a definition of a music asset but there was none.',
+					{
+						'Music Not Found': Monogatari.setting ('MenuMusic'),
+						'You may have meant one of these': Object.keys (Monogatari.assets ('music')),
+						'Help': {
+							'_': 'Please check that you have correctly defined this music asset and wrote its name correctly in the `MenuMusic` variable',
+							'_1': `
+								<pre>
+									<code class='language-javascript'>
+									'MenuMusic': 'TheKeyToYourMusicAsset'
+									</code>
+								</pre>
+							`,
+						}
+					}
+				);
 			}
-			Monogatari.ambientPlayer.play();
 		}
 	}
 
@@ -988,9 +1036,11 @@ class Monogatari {
 	}
 
 	static next () {
+		// Advance 1 step
 		Monogatari.state ({
 			step: Monogatari.state ('step') + 1
 		});
+		
 		// Clear the Stack using a Time Out instead of calling the function
 		// directly, preventing an Overflow
 		setTimeout (Monogatari.run, 0, Monogatari.label ()[Monogatari.state ('step')]);

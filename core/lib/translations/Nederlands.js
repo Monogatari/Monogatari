@@ -13,6 +13,7 @@ import { Monogatari } from './../monogatari';
 Monogatari.translation ('Nederlands', {
 
 	'AdvanceHelp': 'Gebruik de spatiebalk of linker muisknop om te spelen.',
+	'AllowPlayback': 'Click here to allow audio playback',
 	'Audio': 'Audio',
 	'AutoPlay': 'Auto',
 	'AutoPlaySpeed': 'Autoplay snelheid',
