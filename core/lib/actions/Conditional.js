@@ -15,8 +15,18 @@ export class Conditional extends Action {
 
 	apply () {
 		return new Promise ((resolve) => {
+
+			// Call the condition function. Since the function might use a 
+			// Promise.reject () to return as false, we also define a catch
+			// block to run the False branch of the condition.
 			Util.callAsync (this.statement.Condition, Monogatari).then ((returnValue) => {
+
 				Monogatari.global ('block', false);
+
+				// Check if the function returned true so we run the True branch
+				// of the conditional. If false is returned, we run the False
+				// branch of the conditional and if a string is returned, we use 
+				// it as a key so we run the branch that has that key
 				if (returnValue === true) {
 					Monogatari.run (this.statement.True, false);
 				} else if (typeof returnValue === 'string') {

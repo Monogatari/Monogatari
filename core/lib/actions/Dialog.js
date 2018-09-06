@@ -29,7 +29,13 @@ export class Dialog extends Action {
 		}
 		return Promise.resolve (Monogatari.global ('finishedTyping'));
 	}
-
+	
+	/**
+	 * @static checkUnread - This function is used to add the unread class to the
+	 * text box if new contents (dialogs) were added to it causing it to overflow
+	 * but are not visible on screen right now so the player knows there is more 
+	 * and scrolls the element.
+	 */
 	static checkUnread () {
 		const height = $_(`${Monogatari.selector} [data-ui="text"]`).get (0).clientHeight;
 		const scrollHeight = $_(`${Monogatari.selector} [data-ui="text"]`).get (0).scrollHeight;
@@ -299,10 +305,14 @@ export class Dialog extends Action {
 	revert () {
 		// Check if the dialog to replay is a NVL one or not
 		if (this.nvl === true) {
+			//  Check if the NVL screen is currently being shown
 			if ($_(`${Monogatari.selector} [data-ui="text"]`).hasClass ('nvl')) {
+				// If it is being shown, then to go back, we need to remove the last dialog from it
 				$_(`${Monogatari.selector} [data-ui="text"] [data-ui="say"] [data-spoke]`).last ().remove ();
 				return Promise.resolve ();
 			} else {
+				// If it is not shown right now, then we need to recover the dialogs
+				// that were being shown the last time we hid it
 				if (Monogatari.history ('nvl').length > 0) {
 					$_(`${Monogatari.selector} [data-ui="text"]`).addClass ('nvl');
 					$_(`${Monogatari.selector} [data-ui="text"] [data-ui="say"]`).html (Monogatari.history ('nvl').pop ());
@@ -311,6 +321,8 @@ export class Dialog extends Action {
 				return Promise.reject ();
 			}
 		} else {
+			// If the dialog was not NVL, we can simply show it as if we were 
+			// doing a simple application
 			return this.apply ();
 		}
 	}

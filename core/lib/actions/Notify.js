@@ -58,7 +58,7 @@ export class Notify extends Action {
 									'_': 'Check if the value you provided is actually an integer (whole number). Remember the value used must be given in milliseconds and must not be mixed with characters other than numbers.',
 									'_1': 'For example, the following statement would make a notification go away after 5 seconds:',
 									'_3':`
-										<pre><code class='language-javascript'>"notify Welcome 5000"</code></pre>
+										<pre><code class='language-javascript'>"show notification Welcome 5000"</code></pre>
 									`
 								}
 							}
@@ -79,13 +79,11 @@ export class Notify extends Action {
 							'_1':`
 								<pre>
 									<code class='language-javascript'>
-										monogatari.action ('Notify', {
-											notifications: {
-												'Welcome': {
-													title: 'Welcome!',
-													body: 'This is the Monogatari VN Engine',
-													icon: ''
-												}
+										Monogatari.action ('Notify').notifications ({
+											'Welcome': {
+												title: 'Welcome!',
+												body: 'This is the Monogatari VN Engine',
+												icon: ''
 											}
 										});
 									</code>
@@ -93,7 +91,7 @@ export class Notify extends Action {
 							`,
 							'_2': 'Notice the notification defined uses a name or an id, in this case it was set to "Welcome" and to show it, you must use that exact name:',
 							'_3':`
-								<pre><code class='language-javascript'>"notify Welcome"</code></pre>
+								<pre><code class='language-javascript'>"show notification Welcome"</code></pre>
 							`
 						}
 					}

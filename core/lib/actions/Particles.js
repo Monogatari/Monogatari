@@ -24,6 +24,9 @@ export class Particles extends Action {
 				if (pJSDom.length > 0) {
 					for (let i = 0; i < pJSDom.length; i++) {
 						if (typeof pJSDom[i].pJS !== 'undefined') {
+							// Cancel all the animation frame requests to prevent
+							// memory from being used even then the element
+							// has been destroyed.
 							cancelAnimationFrame (pJSDom[i].pJS.fn.drawAnimFrame);
 							pJSDom.shift ();
 						}

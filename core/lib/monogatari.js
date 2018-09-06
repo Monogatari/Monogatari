@@ -6,9 +6,9 @@ import { FancyError } from './FancyError';
 /**
  * Every Monogatari Game is composed mainly of the following items:
  *
- * Actions
+ * Actions: The list of capabilities a Monogatari script can run.
  *
- * Components
+ * Components: The list of screens and other HTML elements available in the game.
  *
  * State: The current state of the game, this simple object contains the current
  *        label and step as well as the thigs being shown or played by every action.
@@ -16,12 +16,27 @@ import { FancyError } from './FancyError';
  * History: Every action and even components may keep a history on what statements 
  *			have been applied. The history is 
  *
- * Assets
+ * Assets: The list of different assets declared by the developer to use in throughout
+ * 		   the game.
  *
- * Script
+ * Script: All the labels and statements that make up the story and gameplay.
  *
- * Characters
+ * Characters: The list of characters that participate in the script of the game.
  *
+ * Monogatari follows a 3-step lifecycle:
+ * 
+ * 1. Setup - All needed elements are added to the DOM and all variables get
+ * 			  initialized. This first step is all about preparing all the needed
+ * 			  elements.
+ *
+ * 2. Bind - Once the game has been setup, its time to bind all the necessary
+ *           event listeners or perfom more operations on the DOM.
+ *
+ * 3. Init - Finally, once the game was setup and it performed all the needed
+ *           bindings, it may declare or modify variables that needed the HTML to
+ *           be setup first or perform any other needed final operations. In this
+ * 			 step, all needed elements will now be shown and the game will begin.
+ * 
  * @class Monogatari
  */
 class Monogatari {
@@ -305,9 +320,10 @@ class Monogatari {
 	 * all declared assets such as audio, videos and images should be registered
 	 * in these objects.
 	 *
-	 * @param  {string} [type = null] - Assets
-	 * @param  {Object} [object = null] description
-	 * @return {Object} - If the
+	 * @param  {string} [type = null] - The type of asset you are refering to
+	 * @param  {Object} [object = null] - The key/value object to assign to that asset type
+	 * @return {Object} - If this function is called with no arguments, the whole
+	 * assets object will be returned.
 	 */
 	static assets (type = null, object = null) {
 		if (type !== null && object !== null) {
@@ -609,11 +625,28 @@ class Monogatari {
 		}
 	}
 
+	/**
+	 * @static translate - This method will try to translate parts of a string
+	 * using the translation strings available. Any string containing a format 
+	 * like this one: "_(SomeKey)" will get that replaced with the translated 
+	 * string of that key.
+	 * 
+	 * @param {string} statement - String to translate. 
+	 * 
+	 * @returns {string} - The translated string
+	 */
 	static translate (statement) {
+		// Find all elements in the string that match the "_(key)" format
 		const matches = statement.match (/_\(\S+\)/g);
+
+		// Check if any matches were found, if not then no translation is needed
 		if (matches !== null) {
+			// Go through all the found matches so we can get the string it maps to
 			for (const match of matches) {
+				// Remove the _() from the key
 				const path = match.replace ('_(', '').replace (')', '').split ('.');
+
+				// Retrieve the string from the translations using the given key
 				let data = Monogatari.translations (Monogatari.preference ('Language'))[path[0]];
 
 				for (let j = 1; j < path.length; j++) {
@@ -739,7 +772,6 @@ class Monogatari {
 		}
 	}
 
-
 	// Get's the highest number currently available as a slot id (Save_{?})
 	static getMaxSlotId (prefix = 'SaveLabel') {
 		return Monogatari.Storage.keys ().then ((keys) => {
@@ -764,8 +796,11 @@ class Monogatari {
 			if (name === null || name.trim () === '') {
 				name = date;
 			}
+
+			// We have to get the last ID available for the slots
 			return Monogatari.getMaxSlotId (prefix).then ((max) => {
 
+				// Make it the next one to the max
 				if (id === null) {
 					id = max + 1;
 				}
@@ -780,6 +815,12 @@ class Monogatari {
 		}
 	}
 
+	/**
+	 * @static loadFromSlot - Load a slot from the storage. This will recover the
+	 * state of the game from what was saved in it.
+	 * 
+	 * @param {string} slot - The key with which the slot was saved on the storage
+	 */
 	static loadFromSlot (slot) {
 		document.body.style.cursor = 'wait';
 		Monogatari.global ('playing', true);
@@ -788,37 +829,44 @@ class Monogatari {
 			$_('section').hide();
 			$_('#game').show();
 
-			// TODO: Add compatibility for old save slots
 			Monogatari.Storage.get (slot).then ((data) => {
-				// Check if an older save format was used
+				// Check if an older save format was used so we can transform
+				// that information into the new format
 				if (typeof data.Engine !== 'undefined') {
 
+					// Set the game state
 					Monogatari.state ({
 						step: data.Engine.Step,
 						label: data.Engine.Label,
 						scene: `show scene ${data.Engine.Scene}`,
 					});
 
+					// Retrieve if a song was playing so we can set it to the state
 					if (data.Engine.Song !== '' && typeof data.Engine.Song !== 'undefined') {
 						Monogatari.state ({
 							music: `${data.Engine.Song}`,
 						});
 					}
 
+					// Retrieve if a sound was playing so we can set it to the state
 					if (data.Engine.Sound !== '' && typeof data.Engine.Sound !== 'undefined') {
 						Monogatari.state ({
 							sound: `${data.Engine.Sound}`,
 						});
 					}
 
+					// Retrieve if particles were shown so we can set it to the state
 					if (data.Engine.Particles !== '' && typeof data.Engine.Particles !== 'undefined') {
 						Monogatari.state ({
 							particles: `show particles ${data.Engine.Particles}`
 						});
 					}
 
+					// Check if there are images to be shown
 					if (data.Show !== '' && typeof data.Show !== 'undefined') {
 						const show = data.Show.split (',');
+
+						// For every image saved, add their element to the game
 						for (const element of show) {
 							if (element.trim () !== '') {
 								const div = document.createElement ('div');
@@ -834,6 +882,8 @@ class Monogatari {
 						}
 					}
 
+					// Set all the history variables with the ones from the old
+					// format
 					Monogatari.history ({
 						music: data.Engine.MusicHistory,
 						sound: data.Engine.SoundHistory,
@@ -850,17 +900,21 @@ class Monogatari {
 					Monogatari.storage (data.Storage);
 
 				} else {
+					// If the new format is being used, things are a lot more simple
 					const { state, history, storage } = data.game;
 					Monogatari.state (state);
 					Monogatari.history (history);
 					Monogatari.storage (storage);
 				}
+
+				// Run the onLoad event of all the actions
 				const promises = [];
 				for (const action of Monogatari.actions ()) {
 					promises.push (action.onLoad ());
 				}
 
 				Promise.all (promises).then (() => {
+					// Finally show the game and start playing
 					$_('#game').show ();
 					Monogatari.run(Monogatari.label ()[Monogatari.state ('step')]);
 					document.body.style.cursor = 'auto';
@@ -869,7 +923,16 @@ class Monogatari {
 		});
 	}
 
-	// Assert the result of a function
+	/**
+	 * @static assertAsync - This function will run any function asynchronously
+	 * regardless of if the function to be run is async or not.
+	 * 
+	 * @param {function} callable - The function to run
+	 * @param {Object} [self=null] - The reference to `this` in the function
+	 * @param {any[]} [args=null] - The arguments with which to call the function
+	 * @returns {Promise} - Resolves if the function returned true and rejects if 
+	 * the function returned false.
+	 */
 	static assertAsync (callable, self = null, args = null) {
 		Monogatari.global ('block', true);
 		return new Promise (function (resolve, reject) {
@@ -904,12 +967,24 @@ class Monogatari {
 		});
 	}
 
+	/**
+	 * @static canProceed - Check if the game can proceed
+	 * 
+	 * @returns {Promise} - Resolves if the game can proceed or reject if it
+	 * can't proceed right now.
+	 */
 	static canProceed () {
 		const promises = [];
+
+		// Check action by action if they will allow the game to proceed
 		for (const action of Monogatari.actions ()) {
 			promises.push (action.canProceed ());
 		}
 
+		// Check if the game is visible, if it's not, then it probably is not
+		// playing or is looking at some menu and thus the game should not
+		// proceed. The game will not proceed if it's blocked or if the distraction
+		// free mode is enabled.
 		if ($_('#game').isVisible ()
 			&& !$_('[data-component="modal"]').isVisible ()
 			&& !Monogatari.global ('distraction-free')
@@ -921,12 +996,24 @@ class Monogatari {
 		return Promise.all (promises);
 	}
 
+	/**
+	 * @static canRevert - Check if the game can revert
+	 * 
+	 * @returns {Promise} - Resolves if the game can be reverted or reject if it
+	 * can't be reverted right now.
+	 */
 	static canRevert () {
 		const promises = [];
+
+		// Check action by action if they will allow the game to revert
 		for (const action of Monogatari.actions ()) {
 			promises.push (action.canRevert ());
 		}
 
+		// Check if the game is visible, if it's not, then it probably is not
+		// playing or is looking at some menu and thus the game should not
+		// revert. The game will not revert if it's blocked or if the distraction
+		// free mode is enabled.
 		if ($_('#game').isVisible ()
 			&& !Monogatari.global ('distraction-free')
 			&& !Monogatari.global ('block')) {
@@ -937,6 +1024,10 @@ class Monogatari {
 		return Promise.all (promises);
 	}
 
+	/**
+	 * @static playAmbient - Play the main menu music using the key defined in the
+	 * 'MenuMusic' property of the game settings.
+	 */
 	static playAmbient () {
 		// Check if a menu music was defined
 		if (Monogatari.setting ('MenuMusic') !== '') {
@@ -1028,6 +1119,8 @@ class Monogatari {
 			Monogatari._history[history] = [];
 		}
 
+		// Run the reset method of all the actions so each of them can reset
+		// their own elements correctly
 		const promises = [];
 		for (const action of Monogatari.actions ()) {
 			promises.push (action.reset ());
@@ -1062,8 +1155,17 @@ class Monogatari {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 
+	/**
+	 * @static autoPlay - Enable or disable the autoplay feature which allows the 
+	 * game to play itself (of sorts), it will go through the dialogs alone but
+	 * will wait when user interaction is needed.
+	 * 
+	 * @param {boolean} enable - Wether the auto play feature will be enabled (true)
+	 * or disabled (false);
+	 */
 	static autoPlay (enable) {
 		if (enable === true) {
+			// The interval for autoplay speed is measured in minutes
 			const interval = Monogatari.preference ('AutoPlaySpeed') * 1000;
 			let expected = Date.now () + interval;
 
@@ -1093,6 +1195,12 @@ class Monogatari {
 		}
 	}
 
+	/**
+	 * @static distractionFree - Enable or disable the distraction free mode 
+	 * where the dialog box is hidden so that the player can look at the characters
+	 * and background with no other elements on the way. A 'transparent' class
+	 * is added to the quick menu when this mode is enabled.
+	 */
 	static distractionFree () {
 		// Check if the distraction free is currently enabled
 		if (Monogatari.global ('distraction-free') === true) {
@@ -1110,6 +1218,15 @@ class Monogatari {
 		}
 	}
 
+	/**
+	 * @static object - Get all the relevant information of the game state
+	 * 
+	 * @returns {Object} - An object containing the current histories, state and
+	 * storage variables.
+	 * @returns {Object} history - The full history object
+	 * @returns {Object} state - The full state object
+	 * @returns {Object} storage- The full storage object
+	 */
 	static object () {
 		return {
 			history: Monogatari.history (),
@@ -1118,34 +1235,78 @@ class Monogatari {
 		};
 	}
 
-	// Function to execute the previous statement in the script.
+	/**
+	 * @static revert - This is the function that allows to go back in the game
+	 * by reverting the statements played.
+	 * 
+	 * @returns {Promise} - Whether the game was able to go back or not
+	 */
 	static revert () {
 
+		// Check if we have steps behind us to revert to. If there aren't, then 
+		// we can't revert since we are already at the first statement.
 		if (Monogatari.state ('step') >= 1) {
 
+			// Iterate over all the registered actions to find one that matches with
+			// the statement to revert.
 			for (const action of Monogatari.actions ()) {
 				let actionStatement = Monogatari.label ()[Monogatari.state ('step') - 1];
 				let matches = false;
 
+				// Use the correct matching function (matchString or matchObject) 
+				// depending on the type of the current statement. If the statement
+				// is a pure js function, it won't be reverted since we don't
+				// know what to do to revert it.
 				if (typeof actionStatement === 'string') {
+					// Split the statement into an array using the space separations
 					actionStatement = actionStatement.split (' ');
+
+					// Check if it matches using the matchString method
 					matches = action.matchString (actionStatement);
 				} else if (typeof actionStatement === 'object') {
+					// Check if it matches using the matchObject method
 					matches = action.matchObject (actionStatement);
 				}
 
+				// Check if the statement matched any of the registered actions
 				if (matches === true) {
+					// Create an instance of the action and initialize it with the 
+					// current statement
 					const act = new action (actionStatement);
 
-					act.setContext (Monogatari);
+					// The original statement is set just in case the action needs
+					// access to it
+					act._setStatement (actionStatement);
+
+					// The current cycle is also set just in case the action needs to
+					// know what cycle it's currently being performed.
 					act._setCycle ('Revert');
 
+					// Monogatari is set as the context of the action so that it can 
+					// access all its functionalities
+					act.setContext (Monogatari);
+
+					// Run the willRevert method of the action first. This method
+					// is usually used to tell whether an action can be reverted
+					// or not.
 					return act.willRevert ().then (() => {
+						// If it can be reverted, then run the revert method
 						return act.revert ().then (() => {
+							// If the reversion was succesfull, run the didRevert
+							// function. The action will return a boolean (shouldContinue) 
+							// specifying if the game should go ahead and revert
+							// the previous statement as well or if it should
+							// wait instead
 							return act.didRevert (). then ((shouldContinue) => {
+
+								// Since we reverted correctly, the step should
+								// go back.
 								Monogatari.state ({
 									step: Monogatari.state ('step') - 1
 								});
+
+								// Revert the previous statement if the action
+								// told us to.
 								if (shouldContinue === true) {
 									// Clear the Stack using a Time Out instead
 									// of calling the function directly, preventing
@@ -1174,27 +1335,55 @@ class Monogatari {
 		return Promise.reject ();
 	}
 
+	/**
+	 * @static run - Run a specified statement.
+	 * 
+	 * @param {string|Object|function} statement - The Monogatari statement to run
+	 * @param {boolean} advance - Whether the game should advance or wait for user
+	 * interaction. This parameter is mainly used to prevent the game from advancing
+	 * when loading the game or performing some actions and we don't want them to
+	 * affect the game flow.
+	 * 
+	 * @returns {Promise} - Resolves if the statement was run correctly or rejects
+	 * if it couldn't be run correctly.
+	 */
 	static run (statement, advance) {
 
+		// Don't allow null as a valid statement
 		if (statement === null) {
 			return Promise.reject ();
 		}
 
+		// By default, the statement will be run and after that, the next one 
+		// will be run immediately.
 		if (typeof advance !== 'boolean') {
 			advance = true;
 		}
 
+		// Iterate over all the registered actions to find one that matches with
+		// the statement to run.
 		for (const action of Monogatari.actions ()) {
 			let actionStatement = statement;
 			let matches = false;
 
+			// Use the correct matching function (matchString or matchObject) 
+			// depending on the type of the current statement. If the statement
+			// is a function, it will simply be run.
 			if (typeof statement === 'string') {
+				// Split the statement into an array using the space separations
 				actionStatement = Monogatari.replaceVariables (statement).split (' ');
+
+				// Check if it matches using the matchString method
 				matches = action.matchString (actionStatement);
 			} else if (typeof statement === 'object') {
+				// Check if it matches using the matchObject method
 				matches = action.matchObject (statement);
 			} else if (typeof actionStatement === 'function') {
+				// Block the game while the function is being run
 				Monogatari.global ('block', true);
+
+				// Run the function asynchronously and after it has run, unblock
+				// the game so it can continue.
 				return Util.callAsync (actionStatement, Monogatari).finally (() => {
 					Monogatari.global ('block', false);
 					if (advance) {
@@ -1203,14 +1392,34 @@ class Monogatari {
 				});
 			}
 
+			// Check if the statement matched any of the registered actions
 			if (matches === true) {
+				// Create an instance of the action and initialize it with the 
+				// current statement
 				const act = new action (actionStatement);
+
+				// The original statement is set just in case the action needs
+				// access to it
 				act._setStatement (statement);
+
+				// The current cycle is also set just in case the action needs to
+				// know what cycle it's currently being performed.
 				act._setCycle ('Application');
+
+				// Monogatari is set as the context of the action so that it can 
+				// access all its functionalities
 				act.setContext (Monogatari);
 
+				// Run the willApply method of the action first
 				return act.willApply ().then (() => {
+
+					// Run the apply method
 					return act.apply (advance).then (() => {
+						
+						// If everything has been run correctly, then run the
+						// didApply method. The action will return a boolean
+						// (shouldContinue) specifying if the game should run the
+						// next statement right away or if it should wait instead
 						return act.didApply ().then ((shouldContinue) => {
 							if (shouldContinue === true && advance === true) {
 								Monogatari.next ();
@@ -1226,23 +1435,34 @@ class Monogatari {
 
 		$_(selector).html (Monogatari._html);
 
-		// Set the initial settings if they don't exist or load them.
+		// Set the initial settings if they don't exist or load them from the 
+		// Storage if they do.
 		Monogatari.Storage.get ('Settings').then ((local_settings) => {
 			Monogatari._preferences = Object.assign ({}, Monogatari._preferences, local_settings);
 		}).catch (() => {
 			Monogatari.Storage.set ('Settings', Monogatari._preferences);
 		});
 
-		// Register service worker
+		// Register service worker. The service worker will save all requests into
+		// the cache so the game loads more quickly and we can play offline. The
+		// service worker will only be used if it was allowed by the settings and 
+		// if we are not running in a local platform such as electron or cordova
+		// where the assets are expected to be available locally and thus don't 
+		// require being cached.
 		if (Monogatari.setting ('ServiceWorkers')) {
 			if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
 				// TODO: There's a place in hell for this quick fix, the splitting
 				// of the sw file is just preventing parcel from tryng to bundle it
 				// when building the core libraries.
 				navigator.serviceWorker.register ('./../service-worker' + '.js').then ((registration) => {
+					
+					// Check if an update to the service worker was found
 					registration.onupdatefound = () => {
 						const worker = registration.installing;
 						worker.onstatechange = () => {
+							// Once the updated service worker has been installed,
+							// show a notice to the players so that they reload the
+							// page and get the latest content.
 							if (worker.state === 'installed') {
 								if (navigator.serviceWorker.controller) {
 									const element = `
@@ -1265,6 +1485,9 @@ class Monogatari {
 			}
 		}
 
+		// Save the structure of the storage variable. The structure is saved as 
+		// a string so that we have a reference to how the storage was originally
+		// and we can reset the storage when the game ends.
 		Monogatari.global ('storageStructure', JSON.stringify(Monogatari.storage ()));
 
 		const promises = [];
@@ -1278,10 +1501,21 @@ class Monogatari {
 		}
 		return Promise.all (promises);
 	}
-
+	/**
+	 * @static skip - Enable or disable the skip mode which is similar to auto
+	 * play but simply skips fast through the game.
+	 * 
+	 * @param {boolean} enable - Wether it should be enabled (true) or disabled (false)
+	 */
 	static skip (enable) {
 		if (enable === true) {
+			// Check if Skip was enabled on the settings, if it has a value greater
+			// than 0, it represents the speed with which the game will skip through
+			// statements. If it's lesser or equal to 0 then it's disabled.
 			if (Monogatari.setting ('Skip') > 0) {
+
+				// Start the timeout with the time specified on the settings. We
+				// save it on a global variable so that we can disable later.
 				Monogatari.global ('skip', setTimeout (() => {
 					Monogatari.canProceed ().then (() => {
 						Monogatari.next ();
@@ -1289,6 +1523,8 @@ class Monogatari {
 						// An action waiting for user interaction or something else
 						// is blocking the game.
 					});
+
+					// Start all over again
 					Monogatari.skip (true);
 				}, Monogatari.setting ('Skip')));
 			}
@@ -1309,6 +1545,9 @@ class Monogatari {
 
 			// Set the event listener for device orientation so we can display a message
 			window.addEventListener ('orientationchange', () => {
+
+				// Display or remove the device orientation notice depending on the
+				// current device orientation
 				if (Platform.orientation () !== Monogatari.setting ('Orientation')) {
 					$_(`${selector} [data-notice="orientation"]`).addClass ('modal--active');
 				} else {
@@ -1322,6 +1561,7 @@ class Monogatari {
 		// to the main menu.
 		$_(`${selector} [data-menu]`).on ('click', '[data-action="back"]:not(#game), [data-action="back"]:not(#game) *', () => {
 			$_(`${selector} section`).hide ();
+			
 			if (Monogatari.global ('playing')) {
 				$_(`${selector} #game`).show ();
 			} else {
@@ -1329,11 +1569,15 @@ class Monogatari {
 			}
 		});
 
+		// Add listeners for the data-action properties
 		$_(`${selector} [data-action], [data-action] *`).click (function (event) {
 			event.stopPropagation ();
 
 			switch ($_(this).data('action')) {
 
+				// The open-menu action does exactly what it says, it takes the
+				// data-menu property of the object it's in and then opens that
+				// menu, meaning it hides everything else and shows that one.
 				case 'open-menu':
 					$_(`${selector} section`).hide();
 
@@ -1341,9 +1585,10 @@ class Monogatari {
 						$_(`${selector} [data-menu="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
 					}
 					$_(`${selector} [data-menu="${$_(this).data('open')}"]`).show();
-
 					break;
 
+				// The start action starts the game so it shows the game screen 
+				// and the game starts
 				case 'start':
 					Monogatari.stopAmbient();
 					Monogatari.global ('playing', true);
@@ -1355,6 +1600,8 @@ class Monogatari {
 					});
 					break;
 
+				// The close action removes the active class from the element it
+				// points to.
 				case 'close':
 					$_(`${selector} [data-ui="${$_(this).data('close')}"]`).removeClass('active');
 					break;
@@ -1370,14 +1617,21 @@ class Monogatari {
 			return false;
 		});
 
+		// Add listener to the auto-play buttons, activating or deactivating the
+		// auto-play feature
 		$_(`${selector} [data-action="auto-play"], ${selector} [data-action="auto-play"] *`).click(function () {
 			Monogatari.autoPlay (Monogatari.global ('_AutoPlayTimer') === null);
 		});
 
+		// Listen for KeyDown events
 		$_(document).keydown (function (e) {
+
+			// If the player is typing into the input box, we shouldn't do 
+			// any weird things with their keys so we check for that first.
 			if (e.target.tagName.toLowerCase() !== 'input') {
 				switch (e.which) {
 
+					// The S key activates skipping mode
 					case 83:
 						if (Monogatari.global ('skip') !== null) {
 							Monogatari.skip (false);
@@ -1393,6 +1647,7 @@ class Monogatari {
 			}
 		});
 
+		
 		$_(document).keyup ((event) => {
 			if (event.target.tagName.toLowerCase () != 'input') {
 				switch (event.which) {
@@ -1486,6 +1741,7 @@ class Monogatari {
 					}
 				});
 
+				// Preload all the game assets
 				Monogatari.preload ().then(() => {
 					$_(`${selector} [data-menu="loading"]`).fadeOut (400, () => {
 						$_(`${selector} [data-menu="loading"]`).hide ();
