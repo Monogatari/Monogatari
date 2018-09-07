@@ -13,7 +13,7 @@ import { Monogatari } from './../monogatari';
 Monogatari.translation ('简体中文', {
 
     'AdvanceHelp': '按下空格键或点击屏幕以继续。',
-    'AllowPlayback': 'Click here to allow audio playback',
+    'AllowPlayback': '点击这里以启用语音回放',
     'Audio': '音效',
     'AutoPlay': '自动',
     'AutoPlaySpeed': '自动播放速度',
