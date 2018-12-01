@@ -29,21 +29,21 @@
       ],
       "synopsis": "A small synopsis of your game",
       "description": "A more detailed description of your game"
-	},
-	"icon": "assets/icons/512x512.png"
+    },
+    "icon": "assets/icons/512x512.png"
   },
   "scripts": {
-		"serve": "parcel serve index.html --open",
-		"start": "electron . --enable-logging",
-		"build": "build -mwl",
-		"build:windows": "build -w",
-		"build:mac": "build -m",
-		"build:linux": "build -l",
-		"build:web": "parcel build index.html"
+    "serve": "parcel serve index.html --open",
+    "start": "electron . --enable-logging",
+    "build": "build -mwl",
+    "build:windows": "build -w",
+    "build:mac": "build -m",
+    "build:linux": "build -l",
+    "build:web": "parcel build index.html"
   },
   "devDependencies": {
-    "electron": "^2.0.8",
-    "electron-builder": "^20.28.2",
-    "parcel": "^1.9.7"
+    "electron": "^3.0.10",
+    "electron-builder": "^20.38.2",
+    "parcel": "^1.10.3"
   }
 }

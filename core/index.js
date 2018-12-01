@@ -7,12 +7,10 @@
 /**
  * Import Global Vendor Libraries, these are third party libraries that must be
  * globally imported in order for Monogatari to work correctly.
+ *
  * TODO: Find a way to import Font Awesome in a better way
- * TODO: Uncomment polyfill import once Parcel supports babel 7 and the engine is
- * properly updated. Right now, it causes problems with the finally () method on
- * promises since it's not yet in the spec.
  */
-// import 'babel-polyfill';
+import '@babel/polyfill';
 import './../node_modules/@fortawesome/fontawesome-free/js/all.js';
 
 /**
