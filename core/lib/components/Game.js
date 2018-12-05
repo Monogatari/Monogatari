@@ -54,9 +54,6 @@ Game._html = `
 		<div id="particles-js" data-ui="particles"></div>
 		<div id="background" data-ui="background"></div>
 		<div id='components'>
-			<audio type="audio/mpeg" data-component="music"></audio>
-			<audio type="audio/mpeg" data-component="voice"></audio>
-			<audio type="audio/mpeg" data-component="sound"></audio>
 			<div class="video-wrapper text--center vertical middle" data-component="video" data-ui="video-player">
 				<video type="video/mp4" data-ui="player" controls="true"></video>
 				<button data-action="close-video" data-string="Close">Close</button>

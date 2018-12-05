@@ -7,24 +7,27 @@ export class Pause extends Action {
 		return action === 'pause';
 	}
 
-	constructor ([ action, type ]) {
+	constructor ([ action, type, media ]) {
 		super ();
 
 		this.type = type;
+		this.media = media;
 
-		if (this.type == 'music') {
-			this.player = Monogatari.musicPlayer;
-		} else if (this.type == 'sound') {
-			this.player = Monogatari.soundPlayer;
-		} else if (this.type == 'voice') {
-			this.player = Monogatari.voicePlayer;
-		} else if (this.type == 'video') {
-			this.player = Monogatari.videoPlayer;
+		if (typeof media === 'undefined') {
+			this.player = Monogatari.mediaPlayers (type, true);
+		} else {
+			this.player = Monogatari.mediaPlayer (type, media);
 		}
 	}
 
 	apply () {
-		this.player.pause ();
+		if (this.player instanceof Array) {
+			for (const player of this.player) {
+				player.pause ();
+			}
+		} else {
+			this.player.pause ();
+		}
 		return Promise.resolve ();
 	}
 
@@ -33,8 +36,15 @@ export class Pause extends Action {
 	}
 
 	revert () {
-		this.player.play ();
-		return Promise.resolve ();
+		if (this.player instanceof Array) {
+			const promises = [];
+			for (const player of this.player) {
+				promises.push (player.play ());
+			}
+			return Promise.all (promises);
+		} else {
+			return this.player.play ();
+		}
 	}
 
 	didRevert () {

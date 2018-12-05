@@ -7,90 +7,72 @@ export class Stop extends Action {
 		return action === 'stop';
 	}
 
-	constructor ([ action, type ]) {
+	constructor ([ action, type, media ]) {
 		super ();
 
 		this.type = type;
+		this.media = media;
 
-		if (this.type == 'music') {
-			this.player = Monogatari.musicPlayer;
-		} else if (this.type == 'sound') {
-			this.player = Monogatari.soundPlayer;
-		} else if (this.type == 'voice') {
-			this.player = Monogatari.voicePlayer;
-		} else if (this.type == 'video') {
-			this.player = Monogatari.videoPlayer;
+		if (typeof media === 'undefined') {
+			this.player = Monogatari.mediaPlayers (type, true);
+		} else {
+			this.player = Monogatari.mediaPlayer (type, media);
 		}
 	}
 
 	willApply () {
-		this.player.removeAttribute ('loop');
+		if (typeof this.player === 'object' && !(this.player instanceof Audio)) {
+			for (const player of Object.values (this.player)) {
+				player.loop = false;
+			}
+		} else {
+			this.player.loop = false;
+		}
 		return Promise.resolve ();
 	}
 
 	apply () {
-		this.player.pause ();
-		this.player.setAttribute ('src', '');
-		this.player.currentTime = 0;
+		if (typeof this.player === 'object' && !(this.player instanceof Audio)) {
+			Monogatari.removeMediaPlayer (this.type);
+		} else {
+			Monogatari.removeMediaPlayer (this.type, this.mediaKey);
+		}
+
 		return Promise.resolve ();
 	}
 
 	didApply () {
-		if (this.type === 'music') {
-			Monogatari.state ({
-				music: ''
-			});
-		} else if (this.type === 'sound') {
-			Monogatari.state ({
-				sound: ''
-			});
+		const state = {};
+
+		if (typeof this.media !== 'undefined') {
+			state[this.type] = Monogatari.state (this.type).filter ((m) => m.indexOf (`play ${this.type} ${this.media}`) <= -1);
+		} else {
+			Monogatari.history (this.type).push (Monogatari.state (this.type));
+			state[this.type] = [];
 		}
+
+		Monogatari.state (state);
+
 		return Promise.resolve (true);
 	}
 
-	willRevert () {
-		this.player.removeAttribute ('loop');
-		return Promise.resolve ();
-	}
-
 	revert () {
-		let last;
-		if (this.type === 'music') {
-			Monogatari.state ({
-				music: ''
-			});
-			last = Monogatari.history ('music')[Monogatari.history ('music').length - 1].split (' ');
-		} else if (this.type === 'sound') {
-			Monogatari.state ({
-				sound: ''
-			});
-			last = Monogatari.history ('sound')[Monogatari.history ('sound').length - 1].split (' ');
-		}
+		if (typeof this.media !== 'undefined') {
+			const last = Monogatari.history (this.type).reverse ().find ((m) => m.indexOf (`play ${this.type} ${this.media}`) > -1);
 
-		const [ , , media, ...props ] = last;
-
-		if (props.indexOf ('loop') > -1) {
-			this.player.setAttribute ('loop', '');
-		}
-
-		if (typeof  Monogatari.asset (this.type, media) !== 'undefined') {
-			this.player.setAttribute('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath')[this.type]}/${Monogatari.asset (this.type, media)}`);
+			return Monogatari.run (last);
 		} else {
-			this.player.setAttribute('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath')[this.type]}/${media}`);
-		}
+			const statements = Monogatari.history (this.type).pop ();
 
-		if (this.type == 'music') {
-			Monogatari.state ({
-				music: last.join (' ')
-			});
-		} else if (this.type == 'sound') {
-			Monogatari.state ({
-				sound: last.join (' ')
-			});
+			const promises = [];
+			for (const statement of statements) {
+				promises.push (Monogatari.run (statement, false).then (() => {
+					Monogatari.history (this.type).pop ();
+					return Promise.resolve ();
+				}));
+			}
+			return Promise.all (promises);
 		}
-
-		this.player.play ();
-		return Promise.resolve ();
 	}
 
 	didRevert () {
