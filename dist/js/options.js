@@ -14,6 +14,14 @@ const { Monogatari: monogatari } = Monogatari;
 
 monogatari.settings({
 
+	// The name of your game, this will be used to store all the data so once
+	// you've released a game using one name, it shouldn't change. Please use the
+	// Version Setting to indicate a new release of your game!
+	'Name': 'My Visual Novel',
+
+	// The version of your game in semantic versioning (https://semver.org/).
+	'Version': '0.1.0',
+
 	// Initial Label *
 	'Label': 'Start',
 
@@ -49,7 +57,7 @@ monogatari.settings({
 	// Enables or disables the typing text animation for the whole game.
 	'TypeAnimation': true,
 
-	// Enables or disables the typing text animation in NVL dialogs for the 
+	// Enables or disables the typing text animation in NVL dialogs for the
 	// whole game.
 	'NVLTypeAnimation': true,
 
@@ -90,6 +98,18 @@ monogatari.settings({
 		'ui': 'ui',
 		'video': 'video',
 		'voice': 'voice'
+	// Define what storage engine should be used to save the game data. *
+	// Adapters Available:
+	// - LocalStorage: This one is used by default
+	// - SessionStorage: Same as LocalStorage but will be cleared when the page
+	// 					 is closed.
+	// - IndexedDB: The information is saved using the IndexedDB web API
+	// - RemoteStorage: The information will be sent and retrieved from a given
+	//					URL Endpoint providing a REST API.
+	'Storage': {
+		'Adapter': 'LocalStorage',
+		'Store': 'GameData',
+		'Endpoint': ''
 	}
 });
 

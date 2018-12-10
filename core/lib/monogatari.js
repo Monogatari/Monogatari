@@ -1,4 +1,4 @@
-import { $_, Space, Platform, Preload, Util, FileSystem } from '@aegis-framework/artemis';
+import { $_, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, Text } from '@aegis-framework/artemis';
 import moment from 'moment';
 import { FancyError } from './FancyError';
 
@@ -431,6 +431,9 @@ class Monogatari {
 	static preferences (object = null) {
 		if (object !== null) {
 			Monogatari._preferences = Object.assign ({}, Monogatari._preferences, object);
+			if (Monogatari.Storage.configuration ().name === '') {
+				Monogatari.setupStorage ();
+			}
 			Monogatari.Storage.update ('Settings', Monogatari._preferences);
 		} else {
 			return Monogatari._preferences;
@@ -1749,7 +1752,51 @@ class Monogatari {
 		return Promise.all (promises);
 	}
 
+	static setupStorage () {
+
+		if (Monogatari.setting ('Storage').Adapter.trim () !== '') {
+			let adapter;
+
+			switch (Monogatari.setting ('Storage').Adapter) {
+				case 'LocalStorage':
+					adapter = SpaceAdapter.LocalStorage;
+					break;
+
+				case 'SessionStorage':
+					adapter = SpaceAdapter.SessionStorage;
+					break;
+
+				case 'IndexedDB':
+					adapter = SpaceAdapter.IndexedDB;
+					break;
+
+				case 'RemoteStorage':
+					adapter = SpaceAdapter.RemoteStorage;
+					break;
+
+				default:
+					adapter = SpaceAdapter.LocalStorage;
+					break;
+			}
+
+			Monogatari.Storage = new Space (adapter, {
+				name: Text.friendly (Monogatari.setting ('Name')),
+				version: Monogatari.setting ('Version'),
+				store:  Monogatari.setting ('Storage').Store,
+				endpoint: Monogatari.setting ('Storage').Endpoint,
+				props: {
+					keyPath: 'id'
+				}
+			});
+		}
+	}
+
 	static init (selector = '#monogatari') {
+
+		if (Monogatari.Storage.configuration ().name === '') {
+			Monogatari.setupStorage ();
+		}
+
 		Monogatari.selector = selector;
 		FancyError.init ();
 
@@ -1813,6 +1860,8 @@ Monogatari._script = {};
 Monogatari._characters = {};
 Monogatari._storage = {};
 
+Monogatari.Storage = new Space ();
+
 Monogatari._mediaPlayers = {
 	music: {},
 	sound: {},
@@ -1859,6 +1908,14 @@ Monogatari._assets = {
 // New elements here will no conflict with the user's settings and allows a better
 // update experience
 Monogatari._settings = {
+
+	// The name of your game, this will be used to store all the data so once
+	// you've released a game using one name, it shouldn't change. Please use the
+	// Version Setting to indicate a new release of your game!
+	'Name': 'My Visual Novel',
+
+	// The version of your game in semantic versioning (https://semver.org/).
+	'Version': '0.1.0',
 
 	// Initial Label *
 	'Label': 'Start',
@@ -1936,6 +1993,19 @@ Monogatari._settings = {
 		'ui': 'ui',
 		'video': 'video',
 		'voice': 'voice'
+	},
+	// Define what storage engine should be used to save the game data. *
+	// Adapters Available:
+	// - LocalStorage: This one is used by default
+	// - SessionStorage: Same as LocalStorage but will be cleared when the page
+	// 					 is closed.
+	// - IndexedDB: The information is saved using the IndexedDB web API
+	// - RemoteStorage: The information will be sent and retrieved from a given
+	//					URL Endpoint providing a REST API.
+	'Storage': {
+		'Adapter': 'LocalStorage',
+		'Store': 'GameData',
+		'Endpoint': ''
 	}
 };
 
@@ -2000,5 +2070,7 @@ Monogatari._html = `
 		</div>
 	</section>
 `;
+
+Monogatari.version = '2.0.0';
 
 export { Monogatari };
