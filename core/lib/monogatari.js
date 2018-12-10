@@ -492,7 +492,7 @@ class Monogatari {
 		} else if (typeof language === 'string' && value === null) {
 			return Monogatari._script[language][key];
 		} else if (key !== null) {
-			return Monogatari._script[key];
+			return Monogatari.script (key);
 		} else {
 			return Monogatari.script (Monogatari.state ('label'));
 		}
@@ -1194,6 +1194,27 @@ class Monogatari {
 		}
 	}
 
+	static showSplashScreen () {
+		const labelName = Monogatari.setting ('SplashScreenLabel');
+		if (typeof labelName === 'string' && labelName !== '') {
+			const label = Monogatari.label (labelName);
+			if (typeof label !== 'undefined') {
+				Monogatari.state ({
+					label: labelName
+				});
+
+				$_('[data-ui="quick-menu"]').hide ();
+				$_('section').hide ();
+				$_('#game').show ();
+				Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+			} else {
+				Monogatari.showMainMenu ();
+			}
+		} else {
+			Monogatari.showMainMenu ();
+		}
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 
@@ -1637,6 +1658,7 @@ class Monogatari {
 
 					Monogatari.onStart ().then (() => {
 						$_(`${selector} section`).hide();
+						$_('[data-ui="quick-menu"]').show ();
 						$_(`${selector} #game`).show();
 						Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
 					});
@@ -1696,7 +1718,7 @@ class Monogatari {
 
 					// Escape Key
 					case 27:
-						if ($_(`${selector} #game`).isVisible ()) {
+						if ($_(`${selector} #game`).isVisible () && Monogatari.global ('playing')) {
 							$_(`${selector} #game`).hide ();
 							$_(`${selector} [data-menu="settings"]`).show();
 						} else if ($_(`${selector} [data-menu="settings"]`).isVisible () && Monogatari.global ('playing')) {
@@ -1728,7 +1750,9 @@ class Monogatari {
 					// H Key
 					case 72:
 						event.stopPropagation();
-						Monogatari.distractionFree ();
+						if (Monogatari.global ('playing')) {
+							Monogatari.distractionFree ();
+						}
 						break;
 
 					// Exit this handler for other keys to run normally
@@ -1835,7 +1859,7 @@ class Monogatari {
 				}).catch ((e) => {
 					console.error (e);
 				}).finally (() => {
-					Monogatari.showMainMenu ();
+					Monogatari.showSplashScreen ();
 				});
 
 				for (const component of Monogatari.components ()) {
@@ -1994,6 +2018,12 @@ Monogatari._settings = {
 		'video': 'video',
 		'voice': 'voice'
 	},
+
+	// Name of the Splash Screen Label. If a name is given and a label with that
+	// name exists on the game's script, it will be used to show a splash screen
+	// right after the loading screen.
+	'SplashScreenLabel': '_SplashScreen',
+
 	// Define what storage engine should be used to save the game data. *
 	// Adapters Available:
 	// - LocalStorage: This one is used by default
