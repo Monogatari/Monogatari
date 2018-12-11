@@ -1,5 +1,6 @@
 import { $_, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, Text } from '@aegis-framework/artemis';
 import moment from 'moment';
+import mousetrap from 'mousetrap';
 import { FancyError } from './FancyError';
 
 
@@ -1215,6 +1216,15 @@ class Monogatari {
 		}
 	}
 
+	static keyboardShortcut (shortcut, callback) {
+		mousetrap.bind (shortcut, (event) => {
+			if (event.target.tagName.toLowerCase () != 'input') {
+				event.preventDefault ();
+				callback.call (null, event);
+			}
+		});
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 
@@ -1597,6 +1607,51 @@ class Monogatari {
 		}
 	}
 
+	static runAction (action, element) {
+		switch (action) {
+
+			// The open-menu action does exactly what it says, it takes the
+			// data-menu property of the object it's in and then opens that
+			// menu, meaning it hides everything else and shows that one.
+			case 'open-menu':
+				$_(`${Monogatari.selector} section`).hide();
+
+				if (element.data('open') == 'save') {
+					$_(`${Monogatari.selector} [data-menu="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
+				}
+				$_(`${Monogatari.selector} [data-menu="${element.data('open')}"]`).show();
+				break;
+
+			// The start action starts the game so it shows the game screen
+			// and the game starts
+			case 'start':
+				Monogatari.stopAmbient();
+				Monogatari.global ('playing', true);
+
+				Monogatari.onStart ().then (() => {
+					$_(`${Monogatari.selector} section`).hide();
+					$_('[data-ui="quick-menu"]').show ();
+					$_(`${Monogatari.selector} #game`).show();
+					Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+				});
+				break;
+
+			// The close action removes the active class from the element it
+			// points to.
+			case 'close':
+				$_(`${Monogatari.selector} [data-ui="${element.data('close')}"]`).removeClass('active');
+				break;
+
+			case 'dismiss-notice':
+				$_(`${Monogatari.selector} [data-notice]`).removeClass('modal--active');
+				break;
+
+			case 'distraction-free':
+				Monogatari.distractionFree ();
+				break;
+		}
+	}
+
 	/**
 	 * Every event listener should be binded in this function.
 	 */
@@ -1635,49 +1690,7 @@ class Monogatari {
 		// Add listeners for the data-action properties
 		$_(`${selector} [data-action], [data-action] *`).click (function (event) {
 			event.stopPropagation ();
-
-			switch ($_(this).data('action')) {
-
-				// The open-menu action does exactly what it says, it takes the
-				// data-menu property of the object it's in and then opens that
-				// menu, meaning it hides everything else and shows that one.
-				case 'open-menu':
-					$_(`${selector} section`).hide();
-
-					if ($_(this).data('open') == 'save') {
-						$_(`${selector} [data-menu="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
-					}
-					$_(`${selector} [data-menu="${$_(this).data('open')}"]`).show();
-					break;
-
-				// The start action starts the game so it shows the game screen
-				// and the game starts
-				case 'start':
-					Monogatari.stopAmbient();
-					Monogatari.global ('playing', true);
-
-					Monogatari.onStart ().then (() => {
-						$_(`${selector} section`).hide();
-						$_('[data-ui="quick-menu"]').show ();
-						$_(`${selector} #game`).show();
-						Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
-					});
-					break;
-
-				// The close action removes the active class from the element it
-				// points to.
-				case 'close':
-					$_(`${selector} [data-ui="${$_(this).data('close')}"]`).removeClass('active');
-					break;
-
-				case 'dismiss-notice':
-					$_(`${selector} [data-notice]`).removeClass('modal--active');
-					break;
-
-				case 'distraction-free':
-					Monogatari.distractionFree ();
-					break;
-			}
+			Monogatari.runAction ($_(this).data ('action'), $_(this));
 			return false;
 		});
 
@@ -1687,81 +1700,69 @@ class Monogatari {
 			Monogatari.autoPlay (Monogatari.global ('_AutoPlayTimer') === null);
 		});
 
-		// Listen for KeyDown events
-		$_(document).keydown (function (e) {
+		Monogatari.keyboardShortcut (['right', 'space'], () => {
+			Monogatari.canProceed ().then (() => {
+				Monogatari.next ();
+			}).catch (() => {
+				// An action waiting for user interaction or something else
+				// is blocking the game.
+			});
+		});
 
-			// If the player is typing into the input box, we shouldn't do
-			// any weird things with their keys so we check for that first.
-			if (e.target.tagName.toLowerCase() !== 'input') {
-				switch (e.which) {
+		Monogatari.keyboardShortcut ('esc', () => {
+			if ($_(`${selector} #game`).isVisible () && Monogatari.global ('playing')) {
+				$_(`${selector} #game`).hide ();
+				$_(`${selector} [data-menu="settings"]`).show();
+			} else if ($_(`${selector} [data-menu="settings"]`).isVisible () && Monogatari.global ('playing')) {
+				$_(`${selector} [data-menu="settings"]`).hide ();
+				$_(`${selector} #game`).show ();
+			}
+		});
 
-					// The S key activates skipping mode
-					case 83:
-						if (Monogatari.global ('skip') !== null) {
-							Monogatari.skip (false);
-						} else {
-							Monogatari.skip (true);
-						}
-						break;
+		Monogatari.keyboardShortcut ('left', () => {
+			Monogatari.revert ().catch (() => {
+				// The game could not be reverted, either because an
+				// action prevented it or because there are no statements
+				// left to revert to.
+			});
+		});
 
-					default:
-						return;
+		Monogatari.keyboardShortcut ('h', () => {
+			if (Monogatari.global ('playing')) {
+				Monogatari.distractionFree ();
+			}
+		});
 
+		Monogatari.keyboardShortcut ('s', () => {
+			if (Monogatari.global ('playing')) {
+				if (Monogatari.global ('skip') !== null) {
+					Monogatari.skip (false);
+				} else {
+					Monogatari.skip (true);
 				}
 			}
 		});
 
+		Monogatari.keyboardShortcut ('shift+s', () => {
+			if (Monogatari.global ('playing')) {
+				$_(`${Monogatari.selector} section`).hide();
 
-		$_(document).keyup ((event) => {
-			if (event.target.tagName.toLowerCase () != 'input') {
-				switch (event.which) {
-
-					// Escape Key
-					case 27:
-						if ($_(`${selector} #game`).isVisible () && Monogatari.global ('playing')) {
-							$_(`${selector} #game`).hide ();
-							$_(`${selector} [data-menu="settings"]`).show();
-						} else if ($_(`${selector} [data-menu="settings"]`).isVisible () && Monogatari.global ('playing')) {
-							$_(`${selector} [data-menu="settings"]`).hide ();
-							$_(`${selector} #game`).show ();
-						}
-						break;
-
-					// Spacebar and Right Arrow
-					case 32:
-					case 39:
-						Monogatari.canProceed ().then (() => {
-							Monogatari.next ();
-						}).catch (() => {
-							// An action waiting for user interaction or something else
-							// is blocking the game.
-						});
-						break;
-
-					// Left Arrow
-					case 37:
-						Monogatari.revert ().catch (() => {
-							// The game could not be reverted, either because an
-							// action prevented it or because there are no statements
-							// left to revert to.
-						});
-						break;
-
-					// H Key
-					case 72:
-						event.stopPropagation();
-						if (Monogatari.global ('playing')) {
-							Monogatari.distractionFree ();
-						}
-						break;
-
-					// Exit this handler for other keys to run normally
-					default:
-						return;
-				}
+				$_(`${Monogatari.selector} [data-menu="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
+				$_(`${Monogatari.selector} [data-menu="save"]`).show();
 			}
+		});
 
-			event.preventDefault();
+		Monogatari.keyboardShortcut ('shift+l', () => {
+			if (Monogatari.global ('playing')) {
+				$_(`${Monogatari.selector} section`).hide();
+				$_(`${Monogatari.selector} [data-menu="load"]`).show();
+			}
+		});
+
+		Monogatari.keyboardShortcut ('shift+q', () => {
+			if (Monogatari.global ('playing')) {
+				$_(`${Monogatari.selector} [data-notice="exit"]`).addClass ('modal--active');
+			}
 		});
 
 		const promises = [];

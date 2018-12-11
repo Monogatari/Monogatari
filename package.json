@@ -43,6 +43,7 @@
     "animate.css": "^3.6.1",
     "electron": "^3.0.10",
     "moment": "^2.22.2",
+    "mousetrap": "^1.6.2",
     "particles.js": "^2.0.0",
     "typed.js": "^2.0.8"
   }
