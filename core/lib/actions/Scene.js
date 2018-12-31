@@ -68,6 +68,7 @@ export class Scene extends Action {
 		$_(`${Monogatari.selector} [data-character]`).remove ();
 		$_(`${Monogatari.selector} [data-image]`).remove ();
 		$_(`${Monogatari.selector} [data-ui="background"]`).removeClass ();
+		void $_(`${Monogatari.selector} [data-ui="background"]`).get (0).offsetWidth;
 		return Promise.resolve ();
 	}
 

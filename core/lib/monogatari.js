@@ -1191,6 +1191,8 @@ class Monogatari {
 			$_('#game').show ();
 			Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
 		} else {
+			// Play the main menu song
+			Monogatari.playAmbient ();
 			$_('[data-menu="main"]').show ();
 		}
 	}
@@ -1870,9 +1872,6 @@ class Monogatari {
 				for (const action of Monogatari.actions ()) {
 					action.init (selector);
 				}
-
-				// Play the main menu song
-				Monogatari.playAmbient ();
 			});
 		});
 	}

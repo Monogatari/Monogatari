@@ -1,7 +1,6 @@
 import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
 import { $_, Text } from '@aegis-framework/artemis';
-import { throws } from 'assert';
 
 export class Play extends Action {
 

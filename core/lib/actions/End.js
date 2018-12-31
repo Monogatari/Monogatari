@@ -47,10 +47,7 @@ export class End extends Action {
 	apply () {
 		Monogatari.global ('playing', false);
 		Monogatari.resetGame ();
-
-		// Show main menu
-		Monogatari.playAmbient ();
-		$_(`${Monogatari.selector} [data-menu="main"]`).show ();
+		Monogatari.showMainMenu ();
 		return Promise.resolve ();
 	}
 
