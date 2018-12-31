@@ -2,7 +2,7 @@ import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
-class LoadScreen extends Component {
+class MainMenu extends Component {
 
 	static html (html = null, ...params) {
 		if (html !== null && typeof params === 'undefined') {
@@ -28,23 +28,24 @@ class LoadScreen extends Component {
 	}
 
 	static setup (selector) {
-		$_(selector).append (LoadScreen.html ());
+		$_(selector).append (this.html ());
 		return Promise.resolve ();
 	}
 }
 
-LoadScreen._configuration = {};
-LoadScreen._state = {};
-LoadScreen._id = 'LOAD_SCREEN';
+MainMenu._id = 'MAIN_MENU';
 
-LoadScreen._html = `
-	<section data-menu="loading">
-		<div class="middle">
-			<h2 data-string="Loading">Loading</h2>
-			<progress data-ui="load-progress" value="0" max="100"></progress>
-			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
+MainMenu._html = `
+	<section data-menu="main">
+		<audio type="audio/mpeg" data-component="ambient"></audio>
+
+		<div class="vertical vertical--right text--right bottom animated bounceIn" data-ui="inner-menu">
+			<button data-action="start" data-string="Start">Start</button>
+			<button data-action="open-menu" data-open="load" data-string="Load">Load</button>
+			<button data-action="open-menu" data-open="settings" data-string="Settings">Settings</button>
+			<button data-action="open-menu" data-open="help" data-string="Help">Help</button>
 		</div>
 	</section>
 `;
 
-Monogatari.registerComponent (LoadScreen);
+Monogatari.registerComponent (MainMenu);

@@ -1,8 +1,7 @@
 import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
-import { $_ } from '@aegis-framework/artemis';
 
-class LoadScreen extends Component {
+class Message extends Component {
 
 	static html (html = null, ...params) {
 		if (html !== null && typeof params === 'undefined') {
@@ -27,24 +26,26 @@ class LoadScreen extends Component {
 		}
 	}
 
-	static setup (selector) {
-		$_(selector).append (LoadScreen.html ());
-		return Promise.resolve ();
+	static render (title, subtitle, message) {
+		return this.html (null, title, subtitle, message);
 	}
 }
 
-LoadScreen._configuration = {};
-LoadScreen._state = {};
-LoadScreen._id = 'LOAD_SCREEN';
+Message._configuration = {};
+Message._state = {};
+Message._id = 'MESSAGE';
 
-LoadScreen._html = `
-	<section data-menu="loading">
-		<div class="middle">
-			<h2 data-string="Loading">Loading</h2>
-			<progress data-ui="load-progress" value="0" max="100"></progress>
-			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
+Message._html = (title, subtitle, message) => `
+	<div data-component="modal" data-ui="messages" class="middle active">
+		<div data-ui="message-content">
+			<h3>${title}</h3>
+			<p>${subtitle}</p>
+			<p>${message}</p>
 		</div>
-	</section>
+		<div class="horizontal horizontal--center" data-ui="inner-menu">
+			<button data-action="close" data-close="messages" data-string="Close">Close</button>
+		</div>
+	</div>
 `;
 
-Monogatari.registerComponent (LoadScreen);
+Monogatari.registerComponent (Message);

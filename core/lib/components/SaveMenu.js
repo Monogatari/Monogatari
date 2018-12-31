@@ -30,29 +30,31 @@ class SaveMenu extends Component {
 		}
 	}
 
-	static html (html = null) {
-		if (html !== null) {
-			SaveMenu._html = html;
+	static html (html = null, ...params) {
+		if (html !== null && typeof params === 'undefined') {
+			this._html = html;
 		} else {
-			return SaveMenu._html;
+			// Check if additional parameters have been sent to a rendering function
+			if (typeof params !== 'undefined' && typeof this._html === 'function') {
+				if (html === null) {
+					return this._html.call (this, ...params);
+				} else {
+					return this._html.call (html, ...params);
+				}
+			}
+
+			// Check if no parameters were set but the HTML is still a function to be called
+			if (typeof params === 'undefined' && html === null && typeof this._html === 'function') {
+				return this._html.call (this);
+			}
+
+			// If this is reached, the HTML was just a string
+			return this._html;
 		}
 	}
 
 	static setup (selector) {
 		$_(selector).append (SaveMenu.html ());
-
-		$_(selector).prepend (`
-			<div data-notice="slot-overwrite" class="modal">
-				<div class="modal__content">
-					<p data-string="SlotOverwrite"">Are you sure you want to overwrite this slot?</p>
-					<input type="text" name="name" class="margin" required>
-					<div>
-						<button data-action="overwrite-slot" data-string="Overwrite">Overwrite</button>
-						<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
-					</div>
-				</div>
-			</div>
-		`);
 		return Promise.resolve ();
 	}
 
@@ -130,7 +132,7 @@ class SaveMenu extends Component {
 
 SaveMenu._configuration = {};
 SaveMenu._state = {};
-SaveMenu._id = 'SaveMenu';
+SaveMenu._id = 'SAVE_MENU';
 
 SaveMenu._html = `
 	<section data-menu="save">

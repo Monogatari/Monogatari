@@ -526,6 +526,14 @@ class Monogatari {
 		}
 	}
 
+	static template (key, value) {
+		if (typeof value !== 'undefined') {
+			Monogatari._templates[key] = value;
+		} else {
+			return Monogatari._templates[key];
+		}
+	}
+
 	static mediaPlayers (key, object = false) {
 		if (typeof key === 'string') {
 			if (object) {
@@ -738,45 +746,8 @@ class Monogatari {
 		$_('[data-menu="load"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
 		$_('[data-menu="save"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
 
-
-		if (typeof image !== 'undefined') {
-
-
-			$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (`
-				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
-					<button class='fas fa-times' data-delete='${slot}'></button>
-					<small class='badge'>${name}</small>
-					<img src="${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${image}" alt=''>
-					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
-				</figure>
-			`);
-
-			$_('[data-menu="save"] [data-ui="slots"]').append (`
-				<figure data-save='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2'>
-					<button class='fas fa-times' data-delete='${slot}'></button>
-					<small class='badge'>${name}</small>
-					<img src="${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${image}" alt=''>
-					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
-				</figure>
-			`);
-
-		} else {
-			$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (`
-				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
-					<button class='fas fa-times' data-delete="${slot}"></button>
-					<small class='badge'>${name}</small>
-					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
-				</figure>
-			`);
-
-			$_('[data-menu="save"] [data-ui="slots"]').append (`
-				<figure data-save='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2'>
-					<button class='fas fa-times' data-delete="${slot}"></button>
-					<small class='badge'>${name}</small>
-					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
-				</figure>
-			`);
-		}
+		$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
+		$_('[data-menu="save"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
 	}
 
 	static addAutoSlot (i, data) {
@@ -794,25 +765,7 @@ class Monogatari {
 		const name = data.name ? data.name : data.date;
 
 		$_('[data-menu="load"] [data-ui="slots"] [data-string="NoAutoSavedGames"]').remove ();
-
-		if (typeof image !== 'undefined') {
-			$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (`
-				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
-					<button class='fas fa-times' data-delete="${Monogatari.setting ('AutoSaveLabel')}_${i}"></button>
-					<small class='badge'>${name}</small>
-					<img src="${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${image}" alt=''>
-					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
-				</figure>
-			`);
-		} else {
-			$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (`
-				<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
-					<button class='fas fa-times' data-delete="${slot}"></button>
-					<small class='badge'>${name}</small>
-					<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
-				</figure>
-			`);
-		}
+		$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
 	}
 
 	// Get's the highest number currently available as a slot id (Save_{?})
@@ -1508,8 +1461,6 @@ class Monogatari {
 
 	static setup (selector) {
 
-		$_(selector).html (Monogatari._html);
-
 		// Set the initial settings if they don't exist or load them from the
 		// Storage if they do.
 		Monogatari.Storage.get ('Settings').then ((local_settings) => {
@@ -1690,7 +1641,7 @@ class Monogatari {
 		});
 
 		// Add listeners for the data-action properties
-		$_(`${selector} [data-action], [data-action] *`).click (function (event) {
+		$_(`${selector}`).on ('click', '[data-action], [data-action] *', function (event) {
 			event.stopPropagation ();
 			Monogatari.runAction ($_(this).data ('action'), $_(this));
 			return false;
@@ -2076,30 +2027,11 @@ Monogatari.globals ({
 	skip: null
 });
 
+Monogatari._templates = {};
+
 Monogatari._temp = {};
 
 Monogatari.Storage = new Space ();
-
-Monogatari._html = `
-	<!-- Notice messages -->
-	<div data-notice="orientation" class="modal">
-		<div class="modal__content">
-			<p data-string="OrientationWarning">Please rotate your device to play.</p>
-		</div>
-	</div>
-
-	<!-- Main Screen -->
-	<section data-menu="main">
-		<audio type="audio/mpeg" data-component="ambient"></audio>
-
-		<div class="vertical vertical--right text--right bottom animated bounceIn" data-ui="inner-menu">
-			<button data-action="start" data-string="Start">Start</button>
-			<button data-action="open-menu" data-open="load" data-string="Load">Load</button>
-			<button data-action="open-menu" data-open="settings" data-string="Settings">Settings</button>
-			<button data-action="open-menu" data-open="help" data-string="Help">Help</button>
-		</div>
-	</section>
-`;
 
 Monogatari.version = '2.0.0';
 

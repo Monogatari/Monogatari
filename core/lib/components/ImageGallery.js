@@ -47,32 +47,36 @@ export class ImageGallery extends Component {
 		}
 	}
 
+	static html (html = null, ...params) {
+		if (html !== null && typeof params === 'undefined') {
+			this._html = html;
+		} else {
+			// Check if additional parameters have been sent to a rendering function
+			if (typeof params !== 'undefined' && typeof this._html === 'function') {
+				if (html === null) {
+					return this._html.call (this, ...params);
+				} else {
+					return this._html.call (html, ...params);
+				}
+			}
+
+			// Check if no parameters were set but the HTML is still a function to be called
+			if (typeof params === 'undefined' && html === null && typeof this._html === 'function') {
+				return this._html.call (this);
+			}
+
+			// If this is reached, the HTML was just a string
+			return this._html;
+		}
+	}
+
 	// We'll set up all needed variables in here
 	static setup (selector) {
-		// Let's add up those nice translation strings we added to the actual
-		// translations object. This will enable our gallery to work with multiple
-		// languages as well!
-		Monogatari.translation ('English', {
-			'Gallery': 'Gallery'
-		});
-
-		Monogatari.translation ('Español', {
-			'Gallery': 'Galería'
-		});
 
 		// Let's add the gallery component itself to the HTML body, notice we are
 		// keeping the data attributes to keep consistency between Monogatari
 		// prebuilt components or menus
-		$_(selector).append (`
-			<section data-menu="gallery">
-				<div class='modal' data-ui="image-viewer">
-					<figure></figure>
-				</div>
-				<button class='fas fa-arrow-left top left' data-action='back'></button>
-				<h2 data-string='Gallery'>Gallery</h2>
-				<div class='row row--spaced text--center' data-ui="gallery"></div>
-			</section>
-		`.trim ());
+		$_(selector).append (this.html ());
 
 		// Let's add a button to the main menu, we'll use this button to open
 		// the gallery.
@@ -192,7 +196,7 @@ export class ImageGallery extends Component {
 	}
 }
 
-ImageGallery._id = 'Gallery';
+ImageGallery._id = 'GALLERY';
 ImageGallery._configuration = {
 	directory: 'gallery',
 	images: {}
@@ -201,5 +205,16 @@ ImageGallery._configuration = {
 ImageGallery._state = {
 	unlocked: []
 };
+
+ImageGallery._html = `
+	<section data-menu="gallery">
+		<div class='modal' data-ui="image-viewer">
+			<figure></figure>
+		</div>
+		<button class='fas fa-arrow-left top left' data-action='back'></button>
+		<h2 data-string='Gallery'>Gallery</h2>
+		<div class='row row--spaced text--center' data-ui="gallery"></div>
+	</section>
+`;
 
 Monogatari.registerComponent (ImageGallery);

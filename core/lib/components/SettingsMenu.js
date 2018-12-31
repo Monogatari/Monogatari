@@ -6,11 +6,26 @@ import { $_, Platform } from '@aegis-framework/artemis';
 
 class SettingsMenu extends Component {
 
-	static html (html = null) {
-		if (html !== null) {
-			SettingsMenu._html = html;
+	static html (html = null, ...params) {
+		if (html !== null && typeof params === 'undefined') {
+			this._html = html;
 		} else {
-			return SettingsMenu._html;
+			// Check if additional parameters have been sent to a rendering function
+			if (typeof params !== 'undefined' && typeof this._html === 'function') {
+				if (html === null) {
+					return this._html.call (this, ...params);
+				} else {
+					return this._html.call (html, ...params);
+				}
+			}
+
+			// Check if no parameters were set but the HTML is still a function to be called
+			if (typeof params === 'undefined' && html === null && typeof this._html === 'function') {
+				return this._html.call (this);
+			}
+
+			// If this is reached, the HTML was just a string
+			return this._html;
 		}
 	}
 
@@ -148,7 +163,7 @@ class SettingsMenu extends Component {
 
 SettingsMenu._configuration = {};
 SettingsMenu._state = {};
-SettingsMenu._id = 'SettingsMenu';
+SettingsMenu._id = 'SETTINGS_MENU';
 
 SettingsMenu._html = `
 	<section data-menu="settings" class="text--center">

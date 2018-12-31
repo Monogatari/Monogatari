@@ -18,20 +18,8 @@ export class Message extends Action {
 		}
 	}
 
-	static setup (selector) {
-		$_(`${selector} #game #components`).append (`
-			<div data-component="modal" data-ui="messages" class="middle">
-				<div data-ui="message-content"></div>
-				<div class="horizontal horizontal--center" data-ui="inner-menu">
-					<button data-action="close" data-close="messages" data-string="Close">Close</button>
-				</div>
-			</div>
-		`);
-		return Promise.resolve ();
-	}
-
 	static reset () {
-		$_(`${Monogatari.selector} [data-ui="messages"]`).removeClass ('active');
+		$_(`${Monogatari.selector} [data-ui="messages"]`).remove ();
 		return Promise.resolve ();
 	}
 
@@ -44,8 +32,7 @@ export class Message extends Action {
 
 	static canRevert () {
 		if ($_(`${Monogatari.selector} [data-ui="messages"]`).isVisible ()) {
-			$_(`${Monogatari.selector} [data-ui="messages"]`).removeClass ('active');
-			$_(`${Monogatari.selector} [data-ui="message-content"]`).html ('');
+			$_(`${Monogatari.selector} [data-ui="messages"]`).remove ();
 			Monogatari.global ('block', false);
 		}
 		return Promise.resolve ();
@@ -112,18 +99,12 @@ export class Message extends Action {
 	}
 
 	apply () {
-		$_(`${Monogatari.selector} [data-ui="message-content"]`).html (`
-			<h3>${this.message.Title}</h3>
-			<p>${this.message.Subtitle}</p>
-			<p>${this.message.Message}</p>
-		`);
-		$_(`${Monogatari.selector} [data-ui="messages"]`).addClass ('active');
+		$_(`${Monogatari.selector} #game #components`).append (Monogatari.component ('MESSAGE').render (this.message.Title, this.message.Subtitle, this.message.Message));
 		return Promise.resolve ();
 	}
 
 	revert () {
-		$_(`${Monogatari.selector} [data-ui="message-content"]`).html ('');
-		$_(`${Monogatari.selector} [data-ui="messages"]`).removeClass ('active');
+		$_(`${Monogatari.selector} [data-ui="messages"]`).remove ();
 		return Promise.resolve ();
 	}
 

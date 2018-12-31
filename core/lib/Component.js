@@ -41,15 +41,15 @@ class Component extends HTMLElement {
 	static configuration (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return Component._configuration[object];
+				return this._configuration[object];
 			} else {
-				Component._configuration = Object.assign ({}, Component._configuration, object);
-				Component.onConfigurationUpdate ().then (() => {
-					Component.onUpdate ();
+				this._configuration = Object.assign ({}, this._configuration, object);
+				this.onConfigurationUpdate ().then (() => {
+					this.onUpdate ();
 				});
 			}
 		} else {
-			return Component._configuration;
+			return this._configuration;
 		}
 	}
 
@@ -69,15 +69,50 @@ class Component extends HTMLElement {
 	static state (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return Component._state[object];
+				return this._state[object];
 			} else {
-				Component._state = Object.assign ({}, Component._state, object);
-				Component.onStateUpdate ().then (() => {
-					Component.onUpdate ();
+				this._state = Object.assign ({}, this._state, object);
+				this.onStateUpdate ().then (() => {
+					this.onUpdate ();
 				});
 			}
 		} else {
-			return Component._state;
+			return this._state;
+		}
+	}
+
+
+	/**
+	 * @static html - A simple function providing access to the basic HTML
+	 * structure of the component.
+	 *
+	 * @param {function|string} html - A string or function that renders the
+	 * component into a valid HTML structure.
+	 * @param {*} params - Any additional params that should be used when calling
+	 * the rendering function
+	 *
+	 * @returns {void|string} - Void or the HTML structure in a string
+	 */
+	static html (html = null, ...params) {
+		if (html !== null && typeof params === 'undefined') {
+			this._html = html;
+		} else {
+			// Check if additional parameters have been sent to a rendering function
+			if (typeof params !== 'undefined' && typeof this._html === 'function') {
+				if (html === null) {
+					return this._html.call (this, ...params);
+				} else {
+					return this._html.call (html, ...params);
+				}
+			}
+
+			// Check if no parameters were set but the HTML is still a function to be called
+			if (typeof params === 'undefined' && html === null && typeof this._html === 'function') {
+				return this._html.call (this);
+			}
+
+			// If this is reached, the HTML was just a string
+			return this._html;
 		}
 	}
 
@@ -114,7 +149,7 @@ class Component extends HTMLElement {
 	 * @return {Promise} - Result of the onUpdate operation.
 	 */
 	static onUpdate () {
-		Component.render ();
+		this.render ();
 		return Promise.resolve ();
 	}
 
@@ -127,7 +162,7 @@ class Component extends HTMLElement {
 	 * @return {Promise} - Result of the onConfigurationUpdate operation.
 	 */
 	static onConfigurationUpdate () {
-		Component.render ();
+		this.render ();
 		return Promise.resolve ();
 	}
 
@@ -139,7 +174,7 @@ class Component extends HTMLElement {
 	 * @return {Promise} - Result of the onStateUpdate operation.
 	 */
 	static onStateUpdate () {
-		Component.render ();
+		this.render ();
 		return Promise.resolve ();
 	}
 
@@ -220,6 +255,12 @@ class Component extends HTMLElement {
 		return Promise.resolve ();
 	}
 }
+
+/**
+ * Each component can define its initial HTML structure, which should be used on
+ * the setup or rendering functions of the cycle, adding to the DOM.
+*/
+Component.html = '';
 
 /**
  * If needed, every component should declare its configuration as follows. This

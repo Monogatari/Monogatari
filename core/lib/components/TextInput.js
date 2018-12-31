@@ -1,8 +1,7 @@
 import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
-import { $_ } from '@aegis-framework/artemis';
 
-class LoadScreen extends Component {
+class TextInput extends Component {
 
 	static html (html = null, ...params) {
 		if (html !== null && typeof params === 'undefined') {
@@ -27,24 +26,24 @@ class LoadScreen extends Component {
 		}
 	}
 
-	static setup (selector) {
-		$_(selector).append (LoadScreen.html ());
-		return Promise.resolve ();
+	static render (message) {
+		return this.html (null, message);
 	}
 }
 
-LoadScreen._configuration = {};
-LoadScreen._state = {};
-LoadScreen._id = 'LOAD_SCREEN';
+TextInput._configuration = {};
+TextInput._state = {};
+TextInput._id = 'TEXT_INPUT';
 
-LoadScreen._html = `
-	<section data-menu="loading">
-		<div class="middle">
-			<h2 data-string="Loading">Loading</h2>
-			<progress data-ui="load-progress" value="0" max="100"></progress>
-			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
+TextInput._html = message => `
+	<form data-component="modal" data-ui="input" class="middle active">
+		<p data-ui="input-message" class="block">${message}</p>
+		<input type="text">
+		<small data-ui="warning" class="block"></small>
+		<div>
+			<button data-action="submit" type='submit'>Ok</button>
 		</div>
-	</section>
+	<form>
 `;
 
-Monogatari.registerComponent (LoadScreen);
+Monogatari.registerComponent (TextInput);

@@ -2,7 +2,7 @@ import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
-class LoadScreen extends Component {
+class QuitWarning extends Component {
 
 	static html (html = null, ...params) {
 		if (html !== null && typeof params === 'undefined') {
@@ -28,23 +28,23 @@ class LoadScreen extends Component {
 	}
 
 	static setup (selector) {
-		$_(selector).append (LoadScreen.html ());
+		$_(selector).prepend (QuitWarning.html ());
 		return Promise.resolve ();
 	}
 }
 
-LoadScreen._configuration = {};
-LoadScreen._state = {};
-LoadScreen._id = 'LOAD_SCREEN';
+QuitWarning._id = 'QUIT_WARNING';
 
-LoadScreen._html = `
-	<section data-menu="loading">
-		<div class="middle">
-			<h2 data-string="Loading">Loading</h2>
-			<progress data-ui="load-progress" value="0" max="100"></progress>
-			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
+QuitWarning._html = `
+	<div data-notice="exit" class="modal">
+		<div class="modal__content">
+			<p data-string="Confirm">Do you want to quit</p>
+			<div>
+				<button data-action="quit" data-string="Quit">Quit</button>
+				<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
+			</div>
 		</div>
-	</section>
+	</div>
 `;
 
-Monogatari.registerComponent (LoadScreen);
+Monogatari.registerComponent (QuitWarning);

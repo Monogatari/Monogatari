@@ -2,7 +2,7 @@ import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
-class LoadScreen extends Component {
+class SlotOverwriteWarning extends Component {
 
 	static html (html = null, ...params) {
 		if (html !== null && typeof params === 'undefined') {
@@ -28,23 +28,24 @@ class LoadScreen extends Component {
 	}
 
 	static setup (selector) {
-		$_(selector).append (LoadScreen.html ());
+		$_(selector).prepend (SlotOverwriteWarning.html ());
 		return Promise.resolve ();
 	}
 }
 
-LoadScreen._configuration = {};
-LoadScreen._state = {};
-LoadScreen._id = 'LOAD_SCREEN';
+SlotOverwriteWarning._id = 'SLOT_OVERWRITE_WARNING';
 
-LoadScreen._html = `
-	<section data-menu="loading">
-		<div class="middle">
-			<h2 data-string="Loading">Loading</h2>
-			<progress data-ui="load-progress" value="0" max="100"></progress>
-			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
+SlotOverwriteWarning._html = `
+	<div data-notice="slot-overwrite" class="modal">
+		<div class="modal__content">
+			<p data-string="SlotOverwrite"">Are you sure you want to overwrite this slot?</p>
+			<input type="text" name="name" class="margin" required>
+			<div>
+				<button data-action="overwrite-slot" data-string="Overwrite">Overwrite</button>
+				<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
+			</div>
 		</div>
-	</section>
+	</div>
 `;
 
-Monogatari.registerComponent (LoadScreen);
+Monogatari.registerComponent (SlotOverwriteWarning);

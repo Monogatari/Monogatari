@@ -2,7 +2,7 @@ import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
-class LoadScreen extends Component {
+class SlotDeletionWarning extends Component {
 
 	static html (html = null, ...params) {
 		if (html !== null && typeof params === 'undefined') {
@@ -28,23 +28,24 @@ class LoadScreen extends Component {
 	}
 
 	static setup (selector) {
-		$_(selector).append (LoadScreen.html ());
+		$_(selector).prepend (SlotDeletionWarning.html ());
 		return Promise.resolve ();
 	}
 }
 
-LoadScreen._configuration = {};
-LoadScreen._state = {};
-LoadScreen._id = 'LOAD_SCREEN';
+SlotDeletionWarning._id = 'SLOT_DELETION_WARNING';
 
-LoadScreen._html = `
-	<section data-menu="loading">
-		<div class="middle">
-			<h2 data-string="Loading">Loading</h2>
-			<progress data-ui="load-progress" value="0" max="100"></progress>
-			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
+SlotDeletionWarning._html = `
+	<div data-notice="slot-deletion" class="modal">
+		<div class="modal__content">
+			<p data-string="SlotDeletion">Are you sure you want to delete this slot?</p>
+			<p><small></small></p>
+			<div>
+				<button data-action="delete-slot" data-string="Delete">Delete</button>
+				<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
+			</div>
 		</div>
-	</section>
+	</div>
 `;
 
-Monogatari.registerComponent (LoadScreen);
+Monogatari.registerComponent (SlotDeletionWarning);

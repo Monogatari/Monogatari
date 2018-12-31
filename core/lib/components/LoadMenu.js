@@ -67,26 +67,29 @@ class LoadMenu extends Component {
 	static setup (selector) {
 		Monogatari.global ('_AutoSaveInterval', null);
 		$_(selector).append (LoadMenu.html ());
-		$_(selector).prepend (`
-			<div data-notice="slot-deletion" class="modal">
-				<div class="modal__content">
-					<p data-string="SlotDeletion">Are you sure you want to delete this slot?</p>
-					<p><small></small></p>
-					<div>
-						<button data-action="delete-slot" data-string="Delete">Delete</button>
-						<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
-					</div>
-				</div>
-			</div>
-		`);
 		return Promise.resolve ();
 	}
 
-	static html (html = null) {
-		if (html !== null) {
-			LoadMenu._html = html;
+	static html (html = null, ...params) {
+		if (html !== null && typeof params === 'undefined') {
+			this._html = html;
 		} else {
-			return LoadMenu._html;
+			// Check if additional parameters have been sent to a rendering function
+			if (typeof params !== 'undefined' && typeof this._html === 'function') {
+				if (html === null) {
+					return this._html.call (this, ...params);
+				} else {
+					return this._html.call (html, ...params);
+				}
+			}
+
+			// Check if no parameters were set but the HTML is still a function to be called
+			if (typeof params === 'undefined' && html === null && typeof this._html === 'function') {
+				return this._html.call (this);
+			}
+
+			// If this is reached, the HTML was just a string
+			return this._html;
 		}
 	}
 
@@ -212,7 +215,7 @@ class LoadMenu extends Component {
 
 LoadMenu._configuration = {};
 LoadMenu._state = {};
-LoadMenu._id = 'LoadMenu';
+LoadMenu._id = 'LOAD_MENU';
 
 LoadMenu._html = `
 	<section data-menu="load">

@@ -1,8 +1,8 @@
 import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
-import { $_ } from '@aegis-framework/artemis';
+import moment from 'moment';
 
-class LoadScreen extends Component {
+class Slot extends Component {
 
 	static html (html = null, ...params) {
 		if (html !== null && typeof params === 'undefined') {
@@ -27,24 +27,20 @@ class LoadScreen extends Component {
 		}
 	}
 
-	static setup (selector) {
-		$_(selector).append (LoadScreen.html ());
-		return Promise.resolve ();
+	static render (slot, name, image, data) {
+		return this.html (null, slot, name, image, data);
 	}
 }
 
-LoadScreen._configuration = {};
-LoadScreen._state = {};
-LoadScreen._id = 'LOAD_SCREEN';
+Slot._id = 'SLOT';
 
-LoadScreen._html = `
-	<section data-menu="loading">
-		<div class="middle">
-			<h2 data-string="Loading">Loading</h2>
-			<progress data-ui="load-progress" value="0" max="100"></progress>
-			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
-		</div>
-	</section>
+Slot._html = (slot, name, image, data) => `
+	<figure data-load-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
+		<button class='fas fa-times' data-delete='${slot}'></button>
+		<small class='badge'>${name}</small>
+		${ image ? `<img src="${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${image}" alt=''>` : '' }
+		<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
+	</figure>
 `;
 
-Monogatari.registerComponent (LoadScreen);
+Monogatari.registerComponent (Slot);

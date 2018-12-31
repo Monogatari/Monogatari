@@ -1,8 +1,7 @@
 import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
-import { $_ } from '@aegis-framework/artemis';
 
-class LoadScreen extends Component {
+class ImageGalleryItem extends Component {
 
 	static html (html = null, ...params) {
 		if (html !== null && typeof params === 'undefined') {
@@ -27,24 +26,21 @@ class LoadScreen extends Component {
 		}
 	}
 
-	static setup (selector) {
-		$_(selector).append (LoadScreen.html ());
-		return Promise.resolve ();
+	static render (image) {
+		return this.html (null, image);
 	}
 }
 
-LoadScreen._configuration = {};
-LoadScreen._state = {};
-LoadScreen._id = 'LOAD_SCREEN';
+ImageGalleryItem._id = 'GALLERY_ITEM';
 
-LoadScreen._html = `
-	<section data-menu="loading">
-		<div class="middle">
-			<h2 data-string="Loading">Loading</h2>
-			<progress data-ui="load-progress" value="0" max="100"></progress>
-			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
-		</div>
-	</section>
-`;
+ImageGalleryItem._html = image => {
+	// Check if the image has been unlocked or not, if it hasn't then a
+	// lock will be shown instead of the image.
+	if (Monogatari.component ('GALLERY').state ('unlocked').includes (image)) {
+		return `<figure class='md-depth-2 col xs6 s6 m4 l3 xl3' data-image='${image}' style='background-image: url('./img/gallery/${Monogatari.component ('GALLERY').images (image)}')'></figure>`;
+	} else {
+		return '<figure class="md-depth-2 column column--col xs6 s6 m4 l3 xl3"><span class="fa fa-lock"></span></figure>';
+	}
+};
 
-Monogatari.registerComponent (LoadScreen);
+Monogatari.registerComponent (ImageGalleryItem);

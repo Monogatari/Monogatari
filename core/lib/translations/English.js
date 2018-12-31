@@ -24,10 +24,13 @@ Monogatari.translation ('English', {
 	'Cancel': 'Cancel',
 	'Close': 'Close',
 	'Confirm': 'Do you want to quit?',
+	'Credits': 'Credits',
 
 	'Delete': 'Delete',
 
 	'FullScreen': 'Full Screen',
+
+	'Gallery': 'Gallery',
 
 	'Help': 'Help',
 	'Hide': 'Hide',

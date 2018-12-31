@@ -4,21 +4,6 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class End extends Action {
 
-	static setup (selector) {
-		$_(selector).prepend (`
-			<div data-notice="exit" class="modal">
-				<div class="modal__content">
-					<p data-string="Confirm">Do you want to quit</p>
-					<div>
-						<button data-action="quit" data-string="Quit">Quit</button>
-						<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
-					</div>
-				</div>
-			</div>
-		`);
-		return Promise.resolve ();
-	}
-
 	static bind (selector) {
 		$_(`${selector} [data-action="end"]`).click (() => {
 			$_(`${Monogatari.selector} [data-notice="exit"]`).addClass ('modal--active');

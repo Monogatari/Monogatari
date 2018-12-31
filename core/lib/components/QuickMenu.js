@@ -4,11 +4,26 @@ import { $_ } from '@aegis-framework/artemis';
 
 class QuickMenu extends Component {
 
-	static html (html = null) {
-		if (html !== null) {
-			QuickMenu._html = html;
+	static html (html = null, ...params) {
+		if (html !== null && typeof params === 'undefined') {
+			this._html = html;
 		} else {
-			return QuickMenu._html;
+			// Check if additional parameters have been sent to a rendering function
+			if (typeof params !== 'undefined' && typeof this._html === 'function') {
+				if (html === null) {
+					return this._html.call (this, ...params);
+				} else {
+					return this._html.call (html, ...params);
+				}
+			}
+
+			// Check if no parameters were set but the HTML is still a function to be called
+			if (typeof params === 'undefined' && html === null && typeof this._html === 'function') {
+				return this._html.call (this);
+			}
+
+			// If this is reached, the HTML was just a string
+			return this._html;
 		}
 	}
 
@@ -148,7 +163,7 @@ QuickMenu._configuration = {
 	]
 };
 QuickMenu._state = {};
-QuickMenu._id = 'QuickMenu';
+QuickMenu._id = 'QUICK_MENU';
 
 QuickMenu._html = '';
 

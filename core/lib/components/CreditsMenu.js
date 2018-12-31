@@ -7,82 +7,75 @@ class CreditsMenu extends Component {
 	static configuration (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return CreditsMenu._configuration[object];
+				return this._configuration[object];
 			} else {
-				CreditsMenu._configuration = Object.assign ({}, CreditsMenu._configuration, object);
+				this._configuration = Object.assign ({}, this._configuration, object);
 			}
 		} else {
-			return CreditsMenu._configuration;
+			return this._configuration;
 		}
 	}
 
 	static credits (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return CreditsMenu._configuration.credits[object];
+				return this._configuration.credits[object];
 			} else {
-				CreditsMenu._configuration.credits = Object.assign ({}, CreditsMenu._configuration.credits, object);
+				this._configuration.credits = Object.assign ({}, this._configuration.credits, object);
 			}
 		} else {
-			return CreditsMenu._configuration.credits;
+			return this._configuration.credits;
 		}
 	}
 
-	static html (html = null) {
-		if (html !== null) {
-			CreditsMenu._html = html;
+	static html (html = null, ...params) {
+		if (html !== null && typeof params === 'undefined') {
+			this._html = html;
 		} else {
-			return CreditsMenu._html;
+			// Check if additional parameters have been sent to a rendering function
+			if (typeof params !== 'undefined' && typeof this._html === 'function') {
+				if (html === null) {
+					return this._html.call (this, ...params);
+				} else {
+					return this._html.call (html, ...params);
+				}
+			}
+
+			// Check if no parameters were set but the HTML is still a function to be called
+			if (typeof params === 'undefined' && html === null && typeof this._html === 'function') {
+				return this._html.call (this);
+			}
+
+			// If this is reached, the HTML was just a string
+			return this._html;
 		}
 	}
 
 	static setup (selector) {
-		$_(selector).append (CreditsMenu.html ());
-		$_(`${selector} [data-menu="main"] [data-ui="inner-menu"]`).append ('<button data-action="open-menu" data-open="credits" data-string="Credits">Credits</button>');
-		Monogatari.translation ('English', {
-			'Credits': 'Credits'
-		});
+		$_(selector).append (this.html ());
 		return Promise.resolve ();
 	}
 
 	static init (selector) {
-		if (Object.keys (CreditsMenu.credits ()).length > 0) {
-			$_(`${Monogatari.selector} [data-menu="credits"] [data-ui="credits"]`).html (CreditsMenu.render ());
-		} else {
-			// Hide Gallery if there are no images defined.
-			$_(`${selector} [data-menu="credits"]`).remove ();
-			$_(`${selector} [data-open="credits"]`).remove ();
+		if (Object.keys (this.credits ()).length > 0) {
+			$_(selector).append (this.html ());
+			$_(`${selector} [data-menu="main"] [data-ui="inner-menu"]`).append ('<button data-action="open-menu" data-open="credits" data-string="Credits">Credits</button>');
+			$_(`${Monogatari.selector} [data-menu="credits"] [data-ui="credits"]`).html (this.render ());
 		}
 		return Promise.resolve ();
 	}
 
 	static render () {
-		$_(`${Monogatari.selector} [data-menu="credits"] [data-ui="credits"]`).html ('');
-		return Object.keys (CreditsMenu.credits ()).map ((section) => {
-			let html = `<h3>${section}</h3><div>`;
-			const content = CreditsMenu.credits (section);
-			for (const key of Object.keys (content)) {
-				if (key.indexOf ('_') === 0) {
-					html += `<p class='row row--spaced'>
-								<span class="row__column row__column--phone--12">${content[key]}</span>
-							</p>`;
-				} else {
-					html += `<p class='row row--spaced'>
-								<b class="row__column row__column--phone--6">${key}</b>
-								<span class="row__column row__column--phone--6">${content[key]}</span>
-							</p>`;
-				}
-
-			}
-			html += '</div>';
-			return html;
+		const items = Object.keys (this.credits ()).map ((section) => {
+			return Monogatari.component ('CREDITS_MENU_ITEM').render (section, this.credits (section));
 		});
+
+		$_(`${Monogatari.selector} [data-menu="credits"] [data-ui="credits"]`).html (items);
 	}
 }
 
-CreditsMenu._configuration = {};
 CreditsMenu._state = {};
-CreditsMenu._id = 'CreditsMenu';
+CreditsMenu._id = 'CREDITS_MENU';
 
 CreditsMenu._html = `
 	<section data-menu="credits">
