@@ -23,10 +23,13 @@ Monogatari.translation ('Français', {
 	'Cancel': 'Annuler',
 	'Close': 'Fermer',
 	'Confirm': 'Voulez-vous vraiment quitter?',
+	'Credits': 'Credits',
 
 	'Delete': 'Delete',
 
 	'FullScreen': 'Plein Écran',
+
+	'Gallery': 'Gallery',
 
 	'Help': 'Aide',
 	'Hide': 'Cacher',

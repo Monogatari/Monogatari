@@ -24,10 +24,13 @@ Monogatari.translation ('简体中文', {
 	'Cancel': '取消',
 	'Close': '关闭',
 	'Confirm': '确定要退出吗？',
+	'Credits': 'Credits',
 
 	'Delete': '删除',
 
 	'FullScreen': '全屏显示',
+
+	'Gallery': 'Gallery',
 
 	'Help': '帮助',
 	'Hide': '隐藏',

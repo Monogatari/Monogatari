@@ -25,10 +25,13 @@ Monogatari.translation ('Deutsch', {
 	'Cancel': 'Abbrechen',
 	'Close': 'Schließen',
 	'Confirm': 'Möchtest Du das Spiel verlassen?',
+	'Credits': 'Credits',
 
 	'Delete': 'Löschen',
 
 	'FullScreen': 'Vollbildmodus',
+
+	'Gallery': 'Gallery',
 
 	'Help': 'Hilfe',
 	'Hide': 'Verbergen',

@@ -28,6 +28,8 @@ Monogatari.translation('Русский', {
 	'Save': 'Сохранить',
 	'Quit': 'Выйти',
 	'Confirm': 'Вы действительно хотите выйти?',
+	'Credits': 'Credits',
+	'Gallery': 'Gallery',
 
 	/* Load menu. */
 

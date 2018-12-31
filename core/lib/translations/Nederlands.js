@@ -24,10 +24,13 @@ Monogatari.translation ('Nederlands', {
 	'Cancel': 'Stop',
 	'Close': 'Sluit',
 	'Confirm': 'Ben je zeker dat je wilt stoppen?',
+	'Credits': 'Credits',
 
 	'Delete': 'Delete',
 
 	'FullScreen': 'Volledig scherm',
+
+	'Gallery': 'Gallery',
 
 	'Help': 'Help',
 	'Hide': 'Verberg',
