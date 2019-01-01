@@ -5,9 +5,6 @@ export class FancyError {
 
 	static init () {
 
-		window.onerror = () => {
-
-		};
 	}
 
 	static pop () {
@@ -48,7 +45,7 @@ export class FancyError {
 	}
 
 	static show (title = 'Error', message = 'An error has ocurred! Please check the console so you get more insight.', props = {}) {
-		if ((window.location.protocol.indexOf ('file') === 0 || window.location.host === 'localhost') && typeof Prism !== 'undefined') {
+		if (typeof MonogatariDebug === 'object') {
 			const id = Util.uuid ();
 
 			const object = {
