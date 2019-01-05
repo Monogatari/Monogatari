@@ -1730,8 +1730,13 @@ class Monogatari {
 		return Promise.all (promises);
 	}
 
-	static setupStorage () {
+	static upgrade (oldVersion, newVersion, callbacks) {
+		Monogatari._upgrade[`${oldVersion}::${newVersion}`] = callbacks;
+	}
 
+	static setupStorage () {
+		// Check if an Adapter has been set or else, the global local storage
+		// object will be used
 		if (Monogatari.setting ('Storage').Adapter.trim () !== '') {
 			let adapter;
 
@@ -1766,6 +1771,14 @@ class Monogatari {
 					keyPath: 'id'
 				}
 			});
+		}
+
+		// Setup all the upgrade functions
+		for (const upgrade of Object.keys (Monogatari._upgrade)) {
+			const [oldVersion, newVersion] = upgrade.split ('::');
+			const callback = Monogatari._upgrade[upgrade].storage;
+
+			Monogatari.Storage.upgrade (oldVersion, newVersion, callback);
 		}
 	}
 
@@ -2028,6 +2041,8 @@ Monogatari.globals ({
 });
 
 Monogatari._templates = {};
+
+Monogatari._upgrade = {};
 
 Monogatari._temp = {};
 
