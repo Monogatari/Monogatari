@@ -59,7 +59,7 @@ export class Scene extends Action {
 
 	willApply () {
 		const scene_elements = [];
-		$_(`${Monogatari.selector} #game img:not([data-ui="face"]):not([data-visibility="invisible"])`).each ((element) => {
+		$_(`${Monogatari.selector} [data-screen="game"] img:not([data-ui="face"]):not([data-visibility="invisible"])`).each ((element) => {
 			scene_elements.push (element.outerHTML);
 		});
 
@@ -124,7 +124,7 @@ export class Scene extends Action {
 
 				if (typeof scene_elements === 'object') {
 					for (const element of scene_elements) {
-						$_(`${Monogatari.selector} #game`).append (element);
+						$_(`${Monogatari.selector} [data-screen="game"]`).append (element);
 					}
 				}
 			}

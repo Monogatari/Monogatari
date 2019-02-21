@@ -2,7 +2,7 @@ import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
-class CreditsMenu extends Component {
+class CreditsScreen extends Component {
 
 	static configuration (object = null) {
 		if (object !== null) {
@@ -59,8 +59,8 @@ class CreditsMenu extends Component {
 	static init (selector) {
 		if (Object.keys (this.credits ()).length > 0) {
 			$_(selector).append (this.html ());
-			$_(`${selector} [data-menu="main"] [data-ui="inner-menu"]`).append ('<button data-action="open-menu" data-open="credits" data-string="Credits">Credits</button>');
-			$_(`${Monogatari.selector} [data-menu="credits"] [data-ui="credits"]`).html (this.render ());
+			$_(`${selector} [data-screen="main"] [data-ui="inner-menu"]`).append ('<button data-action="open-screen" data-open="credits" data-string="Credits">Credits</button>');
+			$_(`${Monogatari.selector} [data-screen="credits"] [data-ui="credits"]`).html (this.render ());
 		}
 		return Promise.resolve ();
 	}
@@ -70,23 +70,23 @@ class CreditsMenu extends Component {
 			return Monogatari.component ('CREDITS_MENU_ITEM').render (section, this.credits (section));
 		});
 
-		$_(`${Monogatari.selector} [data-menu="credits"] [data-ui="credits"]`).html (items);
+		$_(`${Monogatari.selector} [data-screen="credits"] [data-ui="credits"]`).html (items);
 	}
 }
 
-CreditsMenu._state = {};
-CreditsMenu._id = 'CREDITS_MENU';
+CreditsScreen._state = {};
+CreditsScreen._id = 'CREDITS_MENU';
 
-CreditsMenu._html = `
-	<section data-menu="credits">
+CreditsScreen._html = `
+	<section data-screen="credits">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Credits">Credits</h2>
 		<div class="text--center padded" data-ui="credits"></div>
 	</section>
 `;
 
-CreditsMenu._configuration = {
+CreditsScreen._configuration = {
 	credits: {}
 };
 
-Monogatari.registerComponent (CreditsMenu);
+Monogatari.registerComponent (CreditsScreen);

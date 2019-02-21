@@ -99,7 +99,7 @@ export class Message extends Action {
 	}
 
 	apply () {
-		$_(`${Monogatari.selector} #game #components`).append (Monogatari.component ('MESSAGE').render (this.message.Title, this.message.Subtitle, this.message.Message));
+		$_(`${Monogatari.selector} [data-screen="game"] #components`).append (Monogatari.component ('MESSAGE').render (this.message.Title, this.message.Subtitle, this.message.Message));
 		return Promise.resolve ();
 	}
 

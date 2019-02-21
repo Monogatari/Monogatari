@@ -114,18 +114,18 @@ export class Video extends Action {
 			$_(`${Monogatari.selector} [data-ui="background"]`).append (element);
 		} else if (this.mode === 'immersive') {
 			Monogatari.global ('block', true);
-			$_(`${Monogatari.selector} #game`).prepend (element);
+			$_(`${Monogatari.selector} [data-screen="game"]`).prepend (element);
 		} else if (this.mode === 'full-screen') {
 			if (element.requestFullscreen) {
-				$_(`${Monogatari.selector} #game`).append (element);
+				$_(`${Monogatari.selector} [data-screen="game"]`).append (element);
 				element.requestFullscreen ();
 			} else {
 				Monogatari.global ('block', true);
 				$_(element).toggleClass ('full-screen immersive');
-				$_(`${Monogatari.selector} #game`).prepend (element);
+				$_(`${Monogatari.selector} [data-screen="game"]`).prepend (element);
 			}
 		} else {
-			$_(`${Monogatari.selector} #game`).append (element);
+			$_(`${Monogatari.selector} [data-screen="game"]`).append (element);
 		}
 
 		element.play ();

@@ -13,7 +13,7 @@ export class ShowImage extends Action {
 	}
 
 	static reset () {
-		$_(`${Monogatari.selector} #game [data-image]`).remove ();
+		$_(`${Monogatari.selector} [data-screen="game"] [data-image]`).remove ();
 		return Promise.resolve ();
 	}
 
@@ -50,7 +50,7 @@ export class ShowImage extends Action {
 	apply () {
 
 		const object = `<img src="${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').images}/${this.image}" class="animated ${this.classes.join (' ')}" data-image="${this.asset}" data-sprite="${this.sprite}">`;
-		$_(`${Monogatari.selector} #game`).append (object);
+		$_(`${Monogatari.selector} [data-screen="game"]`).append (object);
 		return Promise.resolve ();
 	}
 

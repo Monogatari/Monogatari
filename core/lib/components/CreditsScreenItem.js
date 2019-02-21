@@ -1,7 +1,7 @@
 import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
 
-class CreditsMenuItem extends Component {
+class CreditsScreenItem extends Component {
 
 	static html (html = null, ...params) {
 		if (html !== null && typeof params === 'undefined') {
@@ -31,9 +31,9 @@ class CreditsMenuItem extends Component {
 	}
 }
 
-CreditsMenuItem._id = 'CREDITS_MENU_ITEM';
+CreditsScreenItem._id = 'CREDITS_MENU_ITEM';
 
-CreditsMenuItem._html = (section, content) => {
+CreditsScreenItem._html = (section, content) => {
 	let html = `<h3>${section}</h3><div>`;
 
 	if (typeof content === 'string') {
@@ -60,4 +60,4 @@ CreditsMenuItem._html = (section, content) => {
 	return html;
 };
 
-Monogatari.registerComponent (CreditsMenuItem);
+Monogatari.registerComponent (CreditsScreenItem);

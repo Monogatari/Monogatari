@@ -117,7 +117,7 @@ select {
  * ===========================
 **/
 
-#game {
+[data-screen='game'] {
 	height: 100%;
 	max-height: 100%;
 	max-width: 100%;
@@ -128,12 +128,12 @@ select {
 	background-color: #000000;
 }
 
-#game img {
+[data-screen='game'] img {
 	position: absolute;
 	max-height: 90%;
 }
 
-#game [data-image] {
+[data-screen='game'] [data-image] {
 	top: 0;
 	bottom: 0;
 	margin: auto;
@@ -141,7 +141,7 @@ select {
 	max-height: 100%;
 }
 
-#game [data-character] {
+[data-screen='game'] [data-character] {
 	bottom: 0;
 	position: absolute;
 	max-width: 100%;
@@ -199,7 +199,7 @@ select {
 
 [data-canvas] {
 	&.character {
-		@extend #game [data-character];
+		@extend [data-screen='game'] [data-character];
 	}
 
 	&.immersive {
@@ -248,7 +248,7 @@ select {
 	background-position: center;
 }
 
-[data-component="modal"] {
+[data-component='modal'] {
 	height: auto;
 	max-height: 70%;
 	width: 100%;
@@ -264,20 +264,20 @@ select {
 	color: rgba(66, 66, 66, 0.9);
 }
 
-[data-component="video"] {
+[data-component='video'] {
 	height: auto;
 	margin: 0 auto;
 	z-index: 15;
 }
 
-[data-component="modal"] img,
-[data-component="modal"] video {
+[data-component='modal'] img,
+[data-component='modal'] video {
 	max-width: 100%;
 	position: initial !important;
 }
 
-[data-component="modal"].active,
-[data-component="video"].active {
+[data-component='modal'].active,
+[data-component='video'].active {
 	display: block;
 }
 
@@ -313,7 +313,7 @@ select {
 	}
 }
 
-[data-ui="broadcast"] {
+[data-ui='broadcast'] {
 	display: flex;
 	justify-content: center;
 	background: #fff;
@@ -332,7 +332,7 @@ select {
  * ===========================
 **/
 
-[data-ui="load-progress"] {
+[data-ui='load-progress'] {
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
@@ -345,65 +345,65 @@ select {
 	width: 50vw;
 }
 
-[data-ui="load-progress"]::-webkit-progress-bar {
+[data-ui='load-progress']::-webkit-progress-bar {
 	background: transparent;
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2) inset;
 	border-radius: 3px;
 }
 
-[data-ui="load-progress"]::-webkit-progress-value {
+[data-ui='load-progress']::-webkit-progress-value {
 	background-color: #f16272;
 	border-radius: 3px;
 }
 
-[data-ui="load-progress"]::-moz-progress-bar {
+[data-ui='load-progress']::-moz-progress-bar {
 	background-color: #f16272;
 	border-radius: 3px;
 }
 
-[data-ui="messages"] div {
+[data-ui='messages'] div {
 	width: auto;
 	padding: 1rem;
 }
 
-[data-ui="message-content"] {
+[data-ui='message-content'] {
 	text-align: left;
 	max-width: 100%;
 }
 
-[data-ui="input"] div {
+[data-ui='input'] div {
 	width: auto;
 	padding: 1rem;
 }
 
-[data-ui="input"] small {
+[data-ui='input'] small {
 	margin: 0.5rem auto;
 }
 
-[data-ui="input-message"] {
+[data-ui='input-message'] {
 	font-size: 1rem;
 }
 
-[data-ui="input"] input,
+[data-ui='input'] input,
 textarea {
 	background-color: #eee;
 	min-width: 50%;
 }
 
-[data-ui="input"] button {
+[data-ui='input'] button {
 	width: 3.5rem;
 	height: 2rem;
 	font-size: 1rem;
 	padding: 0;
 }
 
-[data-ui="player"] {
+[data-ui='player'] {
 	max-height: 50vh;
 	max-width: 50vw;
 	z-index: 2;
 }
 
-[data-ui="choices"] {
+[data-ui='choices'] {
 	z-index: 11;
 	max-height: 100vh;
 	overflow-y: auto;
@@ -413,7 +413,7 @@ textarea {
 	margin: 0 auto;
 }
 
-[data-ui="choices"] button {
+[data-ui='choices'] button {
 	margin: 1em;
 	padding: 0.5em;
 	border-radius: 0.5em;
@@ -422,13 +422,13 @@ textarea {
 	color: rgb(255, 255, 255);
 }
 
-[data-ui="face"] {
+[data-ui='face'] {
 	float: left;
 	max-height: 20vh !important;
 	position: initial !important;
 }
 
-[data-ui="text"] {
+[data-ui='text'] {
 	background-color: rgba(0, 0, 0, 0.5);
 	min-height: 20%;
 	max-height: 25%;
@@ -441,8 +441,8 @@ textarea {
 	color: rgb(255, 255, 255);
 }
 
-[data-ui="text"]::after {
-	content: " ";
+[data-ui='text']::after {
+	content: ' ';
 	width: 100%;
 	height: 0;
 	display: block;
@@ -452,32 +452,32 @@ textarea {
 	transition: all ease 0.5s;
 }
 
-[data-ui="text"].unread::after {
+[data-ui='text'].unread::after {
 	height: 2rem;
 }
 
-[data-ui="text"].nvl {
+[data-ui='text'].nvl {
 	max-height: 100%;
 	height: 100%;
 }
 
-[data-ui="text"] p {
+[data-ui='text'] p {
 	display: block;
 	width: 100%;
 	padding: 1rem;
 	margin: 0;
 }
 
-[data-ui="text"] .fa {
+[data-ui='text'] .fa {
 	width: auto;
 	display: inline-block;
 }
 
-[data-spoke="narrator"] p {
+[data-spoke='narrator'] p {
 	padding-left: 0;
 }
 
-[data-ui="who"] {
+[data-ui='who'] {
 	display: block;
 	width: 100%;
 	padding: 1rem;
@@ -489,7 +489,7 @@ textarea {
 	margin: 0;
 }
 
-[data-ui="quick-menu"] {
+[data-ui='quick-menu'] {
 	top: 0;
 	background-color: transparent;
 	width: 100%;
@@ -499,11 +499,11 @@ textarea {
 	max-height: 2.5rem;
 }
 
-[data-ui="quick-menu"].transparent {
+[data-ui='quick-menu'].transparent {
 	background-color: transparent;
 }
 
-[data-ui="quick-menu"] button {
+[data-ui='quick-menu'] button {
 	display: inline-block;
 	width: auto;
 	font-size: 1rem;
@@ -512,27 +512,27 @@ textarea {
 	color: rgba(125, 125, 125, 0.5);
 }
 
-[data-ui="quick-menu"] > button > [data-string] {
+[data-ui='quick-menu'] > button > [data-string] {
 	display: none;
 }
 
-[data-ui="quick-menu"] > button > .fas {
+[data-ui='quick-menu'] > button > .fas {
 	display: inline-block;
 	font-size: 1.5rem;
 }
 
-[data-ui="quick-menu"] button:hover {
+[data-ui='quick-menu'] button:hover {
 	color: rgba(125, 125, 125, 0.5);
 	background: transparent;
 	cursor: pointer;
 }
 
-[data-ui="quick-menu"].transparent button:hover {
+[data-ui='quick-menu'].transparent button:hover {
 	color: rgba(0, 0, 0, 0.5);
 	cursor: pointer;
 }
 
-[data-ui="slots"] figure {
+[data-ui='slots'] figure {
 	width: 20rem;
 	height: auto;
 	background-color: rgba(0, 0, 0, 0.5);
@@ -547,7 +547,7 @@ textarea {
 	justify-content: center;
 }
 
-[data-ui="slots"] figure .badge {
+[data-ui='slots'] figure .badge {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -559,7 +559,7 @@ textarea {
 	font-weight: bold;
 }
 
-[data-ui="slots"] figure [data-delete] {
+[data-ui='slots'] figure [data-delete] {
 	top: -1rem;
 	border-radius: 100%;
 	width: 2rem;
@@ -573,34 +573,34 @@ textarea {
 	color: #f7f7f7;
 }
 
-[data-ui="slots"] img {
+[data-ui='slots'] img {
 	width: 100%;
 }
 
-[data-ui="slots"] figcaption {
+[data-ui='slots'] figcaption {
 	padding: 1rem;
 }
 
-[data-ui="slots"] figcaption small {
+[data-ui='slots'] figcaption small {
 	display: block;
 }
 
-[data-notice="slot-overwrite"] input {
+[data-notice='slot-overwrite'] input {
 	text-align: center;
 }
 
-[data-ui="centered"] {
+[data-ui='centered'] {
 	margin: 0;
 }
 
-[data-ui="particles"] {
+[data-ui='particles'] {
 	width: 100%;
 	height: 100%;
 	position: absolute;
 	z-index: 1;
 }
 
-[data-ui="background"] {
+[data-ui='background'] {
 	width: 100%;
 	height: 100%;
 	background-position: center;
@@ -618,7 +618,7 @@ textarea {
  * ===========================
 **/
 
-[data-menu] {
+[data-screen] {
 	height: 100vh;
 	max-height: 100vh;
 	max-width: 100vw;
@@ -634,18 +634,18 @@ textarea {
 	background-position: center;
 }
 
-[data-menu='settings'] input,
-[data-menu='settings'] select {
+[data-screen='settings'] input,
+[data-screen='settings'] select {
 	margin: 2rem;
 	background-color: transparent;
 }
 
-[data-menu='save'] input {
+[data-screen='save'] input {
 	background-color: #fff;
 	border: 1px solid #666;
 }
 
-[data-menu] [data-action="back"] {
+[data-screen]:not([data-screen='game']) [data-action='back'] {
 	position: absolute;
 	border-radius: 100%;
 	width: 3rem;
@@ -657,16 +657,16 @@ textarea {
 	color: #f7f7f7;
 }
 
-[data-menu="load"] h3,
-[data-menu="save"] h3 {
+[data-screen='load'] h3,
+[data-screen='save'] h3 {
 	margin: 2rem auto;
 }
 
-[data-menu="loading"] div {
+[data-screen='loading'] div {
 	width: 90%;
 }
 
-[data-menu="help"] .row__column {
+[data-screen='help'] .row__column {
 	align-self: auto;
 }
 
@@ -687,7 +687,7 @@ input[type=range] {
  * ====================================
 **/
 
-#game [data-image].bottom {
+[data-screen='game'] [data-image].bottom {
 	top: auto;
 }
 
@@ -706,20 +706,20 @@ input[type=range] {
 /** Medium Screens, Tablets (601px) **/
 @media screen and (min-width: 37.56255em) {
 
-	[data-ui="input"] button {
+	[data-ui='input'] button {
 		width: 5rem;
 		height: 3rem;
 	}
 
-	[data-ui="input-message"] {
+	[data-ui='input-message'] {
 		font-size: 1.5rem;
 	}
 
-	[data-ui="text"] {
+	[data-ui='text'] {
 		bottom: 2.5rem;
 	}
 
-	[data-component="modal"] {
+	[data-component='modal'] {
 		width: 80%;
 	}
 
@@ -728,34 +728,34 @@ input[type=range] {
 	}
 
 
-	[data-ui="quick-menu"] {
+	[data-ui='quick-menu'] {
 		bottom: 0;
 		top: auto;
 		background-color: rgba(0, 0, 0, 0.5);
 	}
 
-	[data-ui="quick-menu"] button {
+	[data-ui='quick-menu'] button {
 		color: #f7f7f7;
 	}
 
-	[data-ui="quick-menu"] button:hover {
+	[data-ui='quick-menu'] button:hover {
 		color: rgba(255, 255, 255, 0.8);
 		background: transparent;
 	}
 
-	[data-ui="quick-menu"].transparent {
+	[data-ui='quick-menu'].transparent {
 		color: rgba(0, 0, 0, 0.5);
 	}
 
-	[data-ui="quick-menu"] > button > [data-string] {
+	[data-ui='quick-menu'] > button > [data-string] {
 		display: inline-block;
 	}
 
-	[data-ui="quick-menu"] > button > .fas {
+	[data-ui='quick-menu'] > button > .fas {
 		display: none;
 	}
 
-	[data-ui="load-progress"] {
+	[data-ui='load-progress'] {
 		width: 80%;
 	}
 }
@@ -766,7 +766,7 @@ input[type=range] {
 		font-size: 1.5rem;
 	}
 
-	[data-ui="choices"] {
+	[data-ui='choices'] {
 		width: 70%;
 	}
 
@@ -779,7 +779,7 @@ input[type=range] {
 		width: 60%;
 	}
 
-	[data-component="modal"] {
+	[data-component='modal'] {
 		width: 70%;
 	}
 }
@@ -791,7 +791,7 @@ input[type=range] {
 		font-size: 5rem;
 	}
 
-	[data-ui="choices"] {
+	[data-ui='choices'] {
 		width: 60%;
 	}
 
@@ -799,7 +799,7 @@ input[type=range] {
 		width: 50%;
 	}
 
-	[data-component="modal"] {
+	[data-component='modal'] {
 		width: 60%;
 	}
 }
@@ -807,7 +807,7 @@ input[type=range] {
 /** HD Screen, Large Devices, Wide Screens (1200px) **/
 @media screen and (min-width: 75em) {
 
-	[data-ui="choices"] {
+	[data-ui='choices'] {
 		width: 50%;
 	}
 
@@ -815,7 +815,7 @@ input[type=range] {
 		width: 40%;
 	}
 
-	[data-component="modal"] {
+	[data-component='modal'] {
 		width: 50%;
 	}
 }

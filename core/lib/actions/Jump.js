@@ -30,8 +30,8 @@ export class Jump extends Action {
 	willApply () {
 		if (typeof Monogatari.script (this.label) !== 'undefined') {
 			Monogatari.stopAmbient ();
-			$_(`${Monogatari.selector} section`).hide ();
-			$_(`${Monogatari.selector} #game`).show ();
+			$_(`${Monogatari.selector} [data-screen]`).hide ();
+			$_(`${Monogatari.selector} [data-screen="game"]`).show ();
 			return Promise.resolve ();
 		} else {
 			FancyError.show (

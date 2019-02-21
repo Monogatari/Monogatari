@@ -33,7 +33,7 @@ button:hover {
 }
 
 /* General Styling for Menu Screens */
-[data-menu] {
+[data-screen] {
 
 }
 
@@ -44,12 +44,12 @@ button:hover {
 **/
 
 /* Main Menu Styling */
-[data-menu="main"] {
+[data-screen="main"] {
 
 }
 
 /* Main Menu Buttons Styling */
-[data-menu="main"] button {
+[data-screen="main"] button {
 
 }
 
@@ -111,12 +111,12 @@ button:hover {
 }
 
 /* Character Images Styles */
-#game [data-character] {
+[data-screen="game"] [data-character] {
 
 }
 
 /* Other Images Styles */
-#game [data-image] {
+[data-screen="game"] [data-image] {
 
 }
 

@@ -2,7 +2,7 @@ import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
-class MainMenu extends Component {
+class MainScreen extends Component {
 
 	static html (html = null, ...params) {
 		if (html !== null && typeof params === 'undefined') {
@@ -33,19 +33,19 @@ class MainMenu extends Component {
 	}
 }
 
-MainMenu._id = 'MAIN_MENU';
+MainScreen._id = 'MAIN_MENU';
 
-MainMenu._html = `
-	<section data-menu="main">
+MainScreen._html = `
+	<section data-screen="main">
 		<audio type="audio/mpeg" data-component="ambient"></audio>
 
 		<div class="vertical vertical--right text--right bottom animated bounceIn" data-ui="inner-menu">
 			<button data-action="start" data-string="Start">Start</button>
-			<button data-action="open-menu" data-open="load" data-string="Load">Load</button>
-			<button data-action="open-menu" data-open="settings" data-string="Settings">Settings</button>
-			<button data-action="open-menu" data-open="help" data-string="Help">Help</button>
+			<button data-action="open-screen" data-open="load" data-string="Load">Load</button>
+			<button data-action="open-screen" data-open="settings" data-string="Settings">Settings</button>
+			<button data-action="open-screen" data-open="help" data-string="Help">Help</button>
 		</div>
 	</section>
 `;
 
-Monogatari.registerComponent (MainMenu);
+Monogatari.registerComponent (MainScreen);

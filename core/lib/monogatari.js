@@ -462,20 +462,73 @@ class Monogatari {
 	}
 
 	static script (object = null) {
+
 		if (typeof object === 'object' && object !== null) {
 			Monogatari._script = Object.assign ({}, Monogatari._script, object);
-		} else if (typeof object === 'string') {
-			if (Monogatari.setting ('MultiLanguage') === true) {
-				return Monogatari._script[Monogatari.preference ('Language')][object];
-			} else {
-				return Monogatari._script[object];
-			}
 		} else {
+			let script = Monogatari._script;
+
 			if (Monogatari.setting ('MultiLanguage') === true) {
-				return Monogatari._script[Monogatari.preference ('Language')];
-			} else {
-				return Monogatari._script;
+				if (!Object.keys (script).includes (Monogatari.preference ('Language'))) {
+					// First check if the label exists in the current script
+					FancyError.show (
+						`Script Language "${Monogatari.preference ('Language')}" Was Not Found`,
+						'Monogatari attempted to retrieve the script for this language but it does not exists',
+						{
+							'Language Not Found': Monogatari.preference ('Language'),
+							'MultiLanguage Setting': 'The Multilanguage Setting is set to '+ Monogatari.setting ('MultiLanguage'),
+							'You may have meant one of these': Object.keys (script),
+							'Help': {
+								'_': 'If your game is not a multilanguage game, change the setting on your options.js file',
+								'_1': `
+									<pre>
+										<code class='language-javascript'>
+										"MultiLanguage": false,
+										</code>
+									</pre>
+								`,
+								'_2': 'If your game is a multilanguage game, please check that the language label is correctly written on your script. Remember a multilanguage script looks like this:',
+								'_3': `
+									<pre>
+										<code class='language-javascript'>
+										Monogatari.script ({
+											'English': {
+												'Start': [
+													'Hi, welcome to your first Visual Novel with Monogatari.'
+												]
+											},
+											'Español': {
+												'Start': [
+													'Hola, bienvenido a tu primer Novela Visual con Monogatari.'
+												]
+											}
+										});
+										</code>
+									</pre>
+								`,
+								'Documentation': '<a href="https://monogatari.io/documentation/configuration/internationalization/" target="_blank">Internationalization</a>',
+								'_4': `If ${Monogatari.preference ('Language')} should not be the default language, you can change that preference on your options.js file.`,
+								'_5': `
+									<pre>
+										<code class='language-javascript'>
+										'Language': 'English',
+										</code>
+									</pre>
+								`,
+
+							}
+						}
+					);
+				} else {
+					script = script[Monogatari.preference ('Language')];
+				}
 			}
+
+			if (typeof object === 'string') {
+				script = script[object];
+			}
+
+			return script;
 		}
 	}
 
@@ -614,7 +667,7 @@ class Monogatari {
 		if (Monogatari.setting ('Preload') && !Platform.electron () && !Platform.cordova () && location.protocol.indexOf ('file') < 0) {
 
 			// Show loading screen
-			$_('[data-menu="loading"]').show ();
+			$_('[data-screen="loading"]').show ();
 
 			for (const category of Object.keys (Monogatari.assets ())) {
 				for (const asset of Object.values (Monogatari.assets (category))) {
@@ -743,11 +796,11 @@ class Monogatari {
 
 		const name = data.name ? data.name : data.date;
 
-		$_('[data-menu="load"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
-		$_('[data-menu="save"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
+		$_('[data-screen="load"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
+		$_('[data-screen="save"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
 
-		$_('[data-menu="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
-		$_('[data-menu="save"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
+		$_('[data-screen="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
+		$_('[data-screen="save"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
 	}
 
 	static addAutoSlot (i, data) {
@@ -764,8 +817,8 @@ class Monogatari {
 
 		const name = data.name ? data.name : data.date;
 
-		$_('[data-menu="load"] [data-ui="slots"] [data-string="NoAutoSavedGames"]').remove ();
-		$_('[data-menu="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
+		$_('[data-screen="load"] [data-ui="slots"] [data-string="NoAutoSavedGames"]').remove ();
+		$_('[data-screen="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
 	}
 
 	// Get's the highest number currently available as a slot id (Save_{?})
@@ -822,8 +875,8 @@ class Monogatari {
 		Monogatari.global ('playing', true);
 
 		Monogatari.resetGame ().then (() => {
-			$_('section').hide();
-			$_('#game').show();
+			$_(`${Monogatari.selector} [data-screen]`).hide();
+			$_(`${Monogatari.selector} [data-screen="game"]`).show();
 
 			Monogatari.Storage.get (slot).then ((data) => {
 				// Check if an older save format was used so we can transform
@@ -911,7 +964,7 @@ class Monogatari {
 
 				Promise.all (promises).then (() => {
 					// Finally show the game and start playing
-					$_('#game').show ();
+					$_('[data-screen="game"]').show ();
 					Monogatari.run(Monogatari.label ()[Monogatari.state ('step')]);
 					document.body.style.cursor = 'auto';
 				});
@@ -981,7 +1034,7 @@ class Monogatari {
 		// playing or is looking at some menu and thus the game should not
 		// proceed. The game will not proceed if it's blocked or if the distraction
 		// free mode is enabled.
-		if ($_('#game').isVisible ()
+		if ($_('[data-screen="game"]').isVisible ()
 			&& !$_('[data-component="modal"]').isVisible ()
 			&& !Monogatari.global ('distraction-free')
 			&& !Monogatari.global ('block')) {
@@ -1010,7 +1063,7 @@ class Monogatari {
 		// playing or is looking at some menu and thus the game should not
 		// revert. The game will not revert if it's blocked or if the distraction
 		// free mode is enabled.
-		if ($_('#game').isVisible ()
+		if ($_('[data-screen="game"]').isVisible ()
 			&& !Monogatari.global ('distraction-free')
 			&& !Monogatari.global ('block')) {
 			promises.push (Promise.resolve ());
@@ -1022,20 +1075,20 @@ class Monogatari {
 
 	/**
 	 * @static playAmbient - Play the main menu music using the key defined in the
-	 * 'MenuMusic' property of the game settings.
+	 * 'MainScreenMusic' property of the game settings.
 	 */
 	static playAmbient () {
 		// Check if a menu music was defined
-		if (Monogatari.setting ('MenuMusic') !== '') {
+		if (Monogatari.setting ('MainScreenMusic') !== '') {
 
 			// Make the ambient player loop
 			Monogatari.ambientPlayer.setAttribute ('loop', '');
 
 			// Check if the music was defined in the music assets object
-			if (typeof Monogatari.asset ('music', Monogatari.setting ('MenuMusic')) !== 'undefined') {
+			if (typeof Monogatari.asset ('music', Monogatari.setting ('MainScreenMusic')) !== 'undefined') {
 
 				// Get the full path to the asset and set the src to the ambient player
-				Monogatari.ambientPlayer.setAttribute('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').music}/${Monogatari.asset ('music', Monogatari.setting ('MenuMusic'))}`);
+				Monogatari.ambientPlayer.setAttribute('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').music}/${Monogatari.asset ('music', Monogatari.setting ('MainScreenMusic'))}`);
 
 				// Play the music but catch any errors. Error catching is necessary
 				// since some browsers like chrome, have added some protections to
@@ -1052,8 +1105,8 @@ class Monogatari {
 					`;
 
 					// Add it to the main menu and game screens
-					$_(`${Monogatari.selector} [data-menu='main']`).prepend (element);
-					$_(`${Monogatari.selector} #game`).prepend (element);
+					$_(`${Monogatari.selector} [data-screen='main']`).prepend (element);
+					$_(`${Monogatari.selector} [data-screen="game"]`).prepend (element);
 
 					// Try to play the media again once the element has been clicked
 					// and remove it.
@@ -1064,17 +1117,17 @@ class Monogatari {
 				});
 			} else {
 				FancyError.show (
-					`The music "${Monogatari.setting ('MenuMusic')}" is not defined.`,
+					`The music "${Monogatari.setting ('MainScreenMusic')}" is not defined.`,
 					'Monogatari attempted to find a definition of a music asset but there was none.',
 					{
-						'Music Not Found': Monogatari.setting ('MenuMusic'),
+						'Music Not Found': Monogatari.setting ('MainScreenMusic'),
 						'You may have meant one of these': Object.keys (Monogatari.assets ('music')),
 						'Help': {
-							'_': 'Please check that you have correctly defined this music asset and wrote its name correctly in the `MenuMusic` variable',
+							'_': 'Please check that you have correctly defined this music asset and wrote its name correctly in the `MainScreenMusic` variable',
 							'_1': `
 								<pre>
 									<code class='language-javascript'>
-									'MenuMusic': 'TheKeyToYourMusicAsset'
+									'MainScreenMusic': 'TheKeyToYourMusicAsset'
 									</code>
 								</pre>
 							`,
@@ -1136,17 +1189,17 @@ class Monogatari {
 	}
 
 	// Start game automatically withouth going trough the main menu
-	static showMainMenu () {
-		if (!Monogatari.setting ('ShowMenu')) {
+	static showMainScreen () {
+		if (!Monogatari.setting ('ShowMainScreen')) {
 			Monogatari.stopAmbient ();
 			Monogatari.global ('playing', true);
-			$_('section').hide ();
-			$_('#game').show ();
+			$_(`${Monogatari.selector} [data-screen]`).hide ();
+			$_(`${Monogatari.selector} [data-screen="game"]`).show ();
 			Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
 		} else {
 			// Play the main menu song
 			Monogatari.playAmbient ();
-			$_('[data-menu="main"]').show ();
+			$_('[data-screen="main"]').show ();
 		}
 	}
 
@@ -1160,14 +1213,14 @@ class Monogatari {
 				});
 
 				$_('[data-ui="quick-menu"]').hide ();
-				$_('section').hide ();
-				$_('#game').show ();
+				$_(`${Monogatari.selector} [data-screen]`).hide ();
+				$_(`${Monogatari.selector} [data-screen="game"]`).show ();
 				Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
 			} else {
-				Monogatari.showMainMenu ();
+				Monogatari.showMainScreen ();
 			}
 		} else {
-			Monogatari.showMainMenu ();
+			Monogatari.showMainScreen ();
 		}
 	}
 
@@ -1496,8 +1549,8 @@ class Monogatari {
 											<p data-string="NewContent">${Monogatari.string ('NewContent')}.</p>
 										</div>
 									`;
-									$_(`${selector} [data-menu='main']`).prepend (element);
-									$_(`${selector} #game`).prepend (element);
+									$_(`${selector} [data-screen='main']`).prepend (element);
+									$_(`${selector} [data-screen="game"]`).prepend (element);
 									$_(`${selector} [data-ui="broadcast"]`).click (() => {
 										$_(`${selector} [data-ui="broadcast"]`).remove ();
 									});
@@ -1563,16 +1616,16 @@ class Monogatari {
 	static runAction (action, element) {
 		switch (action) {
 
-			// The open-menu action does exactly what it says, it takes the
-			// data-menu property of the object it's in and then opens that
+			// The open-screen action does exactly what it says, it takes the
+			// data-screen property of the object it's in and then opens that
 			// menu, meaning it hides everything else and shows that one.
-			case 'open-menu':
-				$_(`${Monogatari.selector} section`).hide();
+			case 'open-screen':
+				$_(`${Monogatari.selector} [data-screen]`).hide();
 
-				if (element.data('open') == 'save') {
-					$_(`${Monogatari.selector} [data-menu="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
+				if (element.data ('open') == 'save') {
+					$_(`${Monogatari.selector} [data-screen="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
 				}
-				$_(`${Monogatari.selector} [data-menu="${element.data('open')}"]`).show();
+				$_(`${Monogatari.selector} [data-screen="${element.data('open')}"]`).show ();
 				break;
 
 			// The start action starts the game so it shows the game screen
@@ -1582,10 +1635,16 @@ class Monogatari {
 				Monogatari.global ('playing', true);
 
 				Monogatari.onStart ().then (() => {
-					$_(`${Monogatari.selector} section`).hide();
+					$_(`${Monogatari.selector} [data-screen]`).hide ();
 					$_('[data-ui="quick-menu"]').show ();
-					$_(`${Monogatari.selector} #game`).show();
-					Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+					$_(`${Monogatari.selector} [data-screen="game"]`).show ();
+
+					// Check if the initial label exists
+					if (Monogatari.label ()) {
+						Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+					} else {
+
+					}
 				});
 				break;
 
@@ -1630,13 +1689,13 @@ class Monogatari {
 		// Add event listener for back buttons. If the player is plaing, the back
 		// button will return to the game, if its not playing, then it'll return
 		// to the main menu.
-		$_(`${selector} [data-menu]`).on ('click', '[data-action="back"]:not(#game), [data-action="back"]:not(#game) *', () => {
-			$_(`${selector} section`).hide ();
+		$_(`${selector} [data-screen]`).on ('click', '[data-action="back"]:not([data-screen="game"]), [data-action="back"]:not([data-screen="game"]) *', () => {
+			$_(`${selector} [data-screen]`).hide ();
 
 			if (Monogatari.global ('playing')) {
-				$_(`${selector} #game`).show ();
+				$_(`${selector} [data-screen="game"]`).show ();
 			} else {
-				$_(`${selector} [data-menu="main"]`).show ();
+				$_(`${selector} [data-screen="main"]`).show ();
 			}
 		});
 
@@ -1663,12 +1722,12 @@ class Monogatari {
 		});
 
 		Monogatari.keyboardShortcut ('esc', () => {
-			if ($_(`${selector} #game`).isVisible () && Monogatari.global ('playing')) {
-				$_(`${selector} #game`).hide ();
-				$_(`${selector} [data-menu="settings"]`).show();
-			} else if ($_(`${selector} [data-menu="settings"]`).isVisible () && Monogatari.global ('playing')) {
-				$_(`${selector} [data-menu="settings"]`).hide ();
-				$_(`${selector} #game`).show ();
+			if ($_(`${selector} [data-screen="game"]`).isVisible () && Monogatari.global ('playing')) {
+				$_(`${selector} [data-screen="game"]`).hide ();
+				$_(`${selector} [data-screen="settings"]`).show();
+			} else if ($_(`${selector} [data-screen="settings"]`).isVisible () && Monogatari.global ('playing')) {
+				$_(`${selector} [data-screen="settings"]`).hide ();
+				$_(`${selector} [data-screen="game"]`).show ();
 			}
 		});
 
@@ -1698,17 +1757,17 @@ class Monogatari {
 
 		Monogatari.keyboardShortcut ('shift+s', () => {
 			if (Monogatari.global ('playing')) {
-				$_(`${Monogatari.selector} section`).hide();
+				$_(`${Monogatari.selector} [data-screen]`).hide();
 
-				$_(`${Monogatari.selector} [data-menu="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
-				$_(`${Monogatari.selector} [data-menu="save"]`).show();
+				$_(`${Monogatari.selector} [data-screen="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
+				$_(`${Monogatari.selector} [data-screen="save"]`).show();
 			}
 		});
 
 		Monogatari.keyboardShortcut ('shift+l', () => {
 			if (Monogatari.global ('playing')) {
-				$_(`${Monogatari.selector} section`).hide();
-				$_(`${Monogatari.selector} [data-menu="load"]`).show();
+				$_(`${Monogatari.selector} [data-screen]`).hide();
+				$_(`${Monogatari.selector} [data-screen="load"]`).show();
 			}
 		});
 
@@ -1820,13 +1879,17 @@ class Monogatari {
 
 				// Preload all the game assets
 				Monogatari.preload ().then(() => {
-					$_(`${selector} [data-menu="loading"]`).fadeOut (400, () => {
-						$_(`${selector} [data-menu="loading"]`).hide ();
+					$_(`${selector} [data-screen="loading"]`).fadeOut (400, () => {
+						$_(`${selector} [data-screen="loading"]`).hide ();
 					});
 				}).catch ((e) => {
 					console.error (e);
 				}).finally (() => {
-					Monogatari.showSplashScreen ();
+					if (Monogatari.label ()) {
+						Monogatari.showSplashScreen ();
+					} else {
+
+					}
 				});
 
 				for (const component of Monogatari.components ()) {
@@ -1911,18 +1974,18 @@ Monogatari._settings = {
 	// Number of AutoSave Slots
 	'Slots': 10,
 
-	// Change to true for a MultiLanguage Game.
+	// Change to true for a MultiLanguage GameScreen.
 	'MultiLanguage': false,
 
 	// Music for the Main Menu.
-	'MenuMusic': '',
+	'MainScreenMusic': '',
 
 	// Prefix for the Save Slots in Local Storage.
 	'SaveLabel': 'Save',
 	'AutoSaveLabel': 'AutoSave',
 
 	// Turn main menu on/off; Default: true *
-	'ShowMenu': true,
+	'ShowMainScreen': true,
 
 	// Turn image preloading on/off, Default: true
 	'Preload': true,

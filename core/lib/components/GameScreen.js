@@ -2,7 +2,7 @@ import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
-class Game extends Component {
+class GameScreen extends Component {
 
 	static html (html = null, ...params) {
 		if (html !== null && typeof params === 'undefined') {
@@ -28,12 +28,12 @@ class Game extends Component {
 	}
 
 	static setup (selector) {
-		$_(selector).append (Game.html ());
+		$_(selector).append (GameScreen.html ());
 		return Promise.resolve ();
 	}
 
 	static bind (selector) {
-		$_(`${selector} #game`).click (function () {
+		$_(`${selector} [data-screen="game"]`).click (function () {
 			Monogatari.canProceed ().then (() => {
 				Monogatari.next ();
 			}).catch (() => {
@@ -42,7 +42,7 @@ class Game extends Component {
 			});
 		});
 
-		$_(`${selector} #game [data-action="back"], ${selector} #game [data-action="back"] *`).click ((event) => {
+		$_(`${selector} [data-screen="game"] [data-action="back"], ${selector} [data-screen="game"] [data-action="back"] *`).click ((event) => {
 			event.stopPropagation ();
 			Monogatari.canRevert ().then (() => {
 				Monogatari.revert ().catch (() => {
@@ -60,12 +60,12 @@ class Game extends Component {
 
 }
 
-Game._configuration = {};
-Game._state = {};
-Game._id = 'GAME';
+GameScreen._configuration = {};
+GameScreen._state = {};
+GameScreen._id = 'GAME';
 
-Game._html = `
-	<section id="game" class="unselectable">
+GameScreen._html = `
+	<section data-screen="game" id="game" class="unselectable">
 		<div id="particles-js" data-ui="particles"></div>
 		<div id="background" data-ui="background"></div>
 		<div id='components'>
@@ -85,4 +85,4 @@ Game._html = `
 	</section>
 `;
 
-Monogatari.registerComponent (Game);
+Monogatari.registerComponent (GameScreen);

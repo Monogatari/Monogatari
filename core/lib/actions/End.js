@@ -25,14 +25,14 @@ export class End extends Action {
 	}
 
 	willApply () {
-		$_(`${Monogatari.selector} section`).hide ();
+		$_(`${Monogatari.selector} [data-screen]`).hide ();
 		return Promise.resolve ();
 	}
 
 	apply () {
 		Monogatari.global ('playing', false);
 		Monogatari.resetGame ();
-		Monogatari.showMainMenu ();
+		Monogatari.showMainScreen ();
 		return Promise.resolve ();
 	}
 

@@ -2,14 +2,14 @@ import { Monogatari } from './../monogatari';
 import moment from 'moment';
 
 Monogatari.component ('MAIN_MENU').html (`
-	<section data-menu="main">
+	<section data-screen="main">
 		<audio type="audio/mpeg" data-component="ambient"></audio>
 
 		<div class="vertical vertical--right text--right bottom animated bounceIn" data-ui="inner-menu">
 			<button data-action="start" data-string="Start">Start</button>
-			<button data-action="open-menu" data-open="load" data-string="Load">Load</button>
-			<button data-action="open-menu" data-open="settings" data-string="Settings">Settings</button>
-			<button data-action="open-menu" data-open="help" data-string="Help">Help</button>
+			<button data-action="open-screen" data-open="load" data-string="Load">Load</button>
+			<button data-action="open-screen" data-open="settings" data-string="Settings">Settings</button>
+			<button data-action="open-screen" data-open="help" data-string="Help">Help</button>
 		</div>
 	</section>
 `);
@@ -23,7 +23,7 @@ Monogatari.component ('ORIENTATION_WARNING').html (`
 `);
 
 Monogatari.component ('CREDITS_MENU').html (`
-	<section data-menu="credits">
+	<section data-screen="credits">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 			<h2 data-string="Credits">Credits</h2>
 		<div class="text--center padded" data-ui="credits"></div>
@@ -79,7 +79,7 @@ Monogatari.component ('GAME').html (`
 `);
 
 Monogatari.component ('HELP_MENU').html (`
-	<section data-menu="help">
+	<section data-screen="help">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Help">Help</h2>
 		<div class="text--left padded">
@@ -90,13 +90,13 @@ Monogatari.component ('HELP_MENU').html (`
 			<p><span class="fas fa-save"></span> <span data-string="SaveButon">Open the Save Screen.</span></p>
 			<p><span class="fas fa-undo"></span> <span data-string="LoadButton">Open the Load Screen.</span></p>
 			<p><span class="fas fa-cog"></span> <span data-string="SettingsButton">Open the Settings Screen.</span></p>
-			<p><span class="fas fa-times-circle"></span> <span data-string="QuitButton">Quit Game.</span></p>
+			<p><span class="fas fa-times-circle"></span> <span data-string="QuitButton">Quit GameScreen.</span></p>
 		</div>
 	</section>
 `);
 
 Monogatari.component ('GALLERY').html (`
-	<section data-menu="gallery">
+	<section data-screen="gallery">
 		<div class='modal' data-ui="image-viewer">
 			<figure></figure>
 		</div>
@@ -117,7 +117,7 @@ Monogatari.component ('GALLERY_ITEM').html (image => {
 });
 
 Monogatari.component ('LOAD_MENU').html (`
-	<section data-menu="load">
+	<section data-screen="load">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Load">Load</h2>
 		<div data-ui="saveSlots">
@@ -142,7 +142,7 @@ Monogatari.component ('SLOT').html ((slot, name, image, data) => `
 
 
 Monogatari.component ('LOAD_SCREEN').html (`
-	<section data-menu="loading">
+	<section data-screen="loading">
 		<div class="middle">
 			<h2 data-string="Loading">Loading</h2>
 			<progress data-ui="load-progress" value="0" max="100"></progress>
@@ -152,7 +152,7 @@ Monogatari.component ('LOAD_SCREEN').html (`
 `);
 
 Monogatari.component ('SAVE_MENU').html (`
-	<section data-menu="save">
+	<section data-screen="save">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<div class="horizontal horizontal--center">
 			<input type="text" placeholder="Save Slot Name" data-input="slotName" required>
@@ -163,7 +163,7 @@ Monogatari.component ('SAVE_MENU').html (`
 `);
 
 Monogatari.component ('SETTINGS_MENU').html (`
-	<section data-menu="settings" class="text--center">
+	<section data-screen="settings" class="text--center">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Settings">Settings</h2>
 		<div class="row row--spaced padded text---center">

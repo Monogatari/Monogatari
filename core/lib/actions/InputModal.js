@@ -45,7 +45,7 @@ export class InputModal extends Action {
 
 	apply () {
 
-		$_(`${Monogatari.selector} #game #components`).append (Monogatari.component ('TEXT_INPUT').render (this.statement.Text));
+		$_(`${Monogatari.selector} [data-screen="game"] #components`).append (Monogatari.component ('TEXT_INPUT').render (this.statement.Text));
 
 		// When the input modal is being shown, the game should be blocked so
 		// the player won't continue until an input is correctly received.

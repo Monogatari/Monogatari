@@ -138,13 +138,13 @@ export class Choice extends Action {
 		}
 
 		return Promise.all (promises).then (() => {
-			if ($_(`${Monogatari.selector} #game [data-ui="text"]`).hasClass ('nvl')) {
+			if ($_(`${Monogatari.selector} [data-screen="game"] [data-ui="text"]`).hasClass ('nvl')) {
 				element.addClass ('horizontal');
-				$_(`${Monogatari.selector}  #game [data-ui="text"]`).append (element.get (0));
+				$_(`${Monogatari.selector}  [data-screen="game"] [data-ui="text"]`).append (element.get (0));
 			} else {
 				element.addClass ('vertical');
 				element.addClass ('middle');
-				$_(`${Monogatari.selector}  #game`).append (element.get (0));
+				$_(`${Monogatari.selector}  [data-screen="game"]`).append (element.get (0));
 			}
 		});
 	}

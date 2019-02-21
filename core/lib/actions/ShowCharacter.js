@@ -17,7 +17,7 @@ export class ShowCharacter extends Action {
 	}
 
 	static reset () {
-		$_(`${Monogatari.selector} #game [data-character]`).remove ();
+		$_(`${Monogatari.selector} [data-screen="game"] [data-character]`).remove ();
 		return Promise.resolve ();
 	}
 
@@ -92,7 +92,7 @@ export class ShowCharacter extends Action {
 
 		} else {
 			$_(`${Monogatari.selector} [data-character="${this.asset}"]`).remove ();
-			$_(`${Monogatari.selector} #game`).append (object);
+			$_(`${Monogatari.selector} [data-screen="game"]`).append (object);
 		}
 		return Promise.resolve ();
 	}

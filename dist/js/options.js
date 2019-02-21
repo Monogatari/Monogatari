@@ -28,18 +28,18 @@ monogatari.settings({
 	// Number of AutoSave Slots
 	'Slots': 10,
 
-	// Change to true for a MultiLanguage Game.
+	// Change to true for a MultiLanguage GameScreen.
 	'MultiLanguage': false,
 
 	// Music for the Main Menu.
-	'MenuMusic': '',
+	'MainScreenMusic': '',
 
 	// Prefix for the Save Slots in Local Storage.
 	'SaveLabel': 'Save',
 	'AutoSaveLabel': 'AutoSave',
 
 	// Turn main menu on/off; Default: true *
-	'ShowMenu': true,
+	'ShowMainScreen': true,
 
 	// Turn image preloading on/off, Default: true
 	'Preload': true,

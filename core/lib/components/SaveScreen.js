@@ -2,31 +2,31 @@ import { Component } from '../Component';
 import { Monogatari } from '../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
-class SaveMenu extends Component {
+class SaveScreen extends Component {
 
 	static configuration (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return SaveMenu._configuration[object];
+				return SaveScreen._configuration[object];
 			} else {
-				SaveMenu._configuration = Object.assign ({}, SaveMenu._configuration, object);
-				SaveMenu.onUpdate ();
+				SaveScreen._configuration = Object.assign ({}, SaveScreen._configuration, object);
+				SaveScreen.onUpdate ();
 			}
 		} else {
-			return SaveMenu._configuration;
+			return SaveScreen._configuration;
 		}
 	}
 
 	static state (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return SaveMenu._state[object];
+				return SaveScreen._state[object];
 			} else {
-				SaveMenu._state = Object.assign ({}, SaveMenu._state, object);
-				SaveMenu.onUpdate ();
+				SaveScreen._state = Object.assign ({}, SaveScreen._state, object);
+				SaveScreen.onUpdate ();
 			}
 		} else {
-			return SaveMenu._state;
+			return SaveScreen._state;
 		}
 	}
 
@@ -54,12 +54,12 @@ class SaveMenu extends Component {
 	}
 
 	static setup (selector) {
-		$_(selector).append (SaveMenu.html ());
+		$_(selector).append (SaveScreen.html ());
 		return Promise.resolve ();
 	}
 
 	static bind (selector) {
-		$_(`${selector} [data-menu="save"]`).on ('click', '[data-delete], [data-delete] *', function () {
+		$_(`${selector} [data-screen="save"]`).on ('click', '[data-delete], [data-delete] *', function () {
 			Monogatari.global ('deleteSlot', $_(this).data ('delete'));
 			Monogatari.Storage.get (Monogatari.global ('deleteSlot')).then ((data) => {
 				if (typeof data.name !== 'undefined') {
@@ -73,7 +73,7 @@ class SaveMenu extends Component {
 		});
 
 		$_(`${selector} [data-action="save"], ${selector} [data-action="save"] *`).click(function () {
-			const slotName = $_(`${selector} [data-menu="save"] [data-input="slotName"]`).value ().trim ();
+			const slotName = $_(`${selector} [data-screen="save"] [data-input="slotName"]`).value ().trim ();
 			if (slotName !== '') {
 				Monogatari.saveTo ('SaveLabel', null, slotName).then (({ key, value }) => {
 					Monogatari.addSlot (key.split ('_').pop (), value);
@@ -86,8 +86,8 @@ class SaveMenu extends Component {
 			if (customName !== '') {
 				Monogatari.saveTo ('SaveLabel', Monogatari.global ('overwriteSlot'), customName).then (({ key, value }) => {
 					const id = key.split ('_').pop ();
-					$_(`${selector} [data-menu='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (value.name);
-					$_(`${selector} [data-menu='save'] [data-ui='slots'] [data-save='${id}'] small`).text (value.name);
+					$_(`${selector} [data-screen='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (value.name);
+					$_(`${selector} [data-screen='save'] [data-ui='slots'] [data-save='${id}'] small`).text (value.name);
 				});
 				Monogatari.global ('overwriteSlot', null);
 				$_(`${selector} [data-notice="slot-overwrite"]`).removeClass ('modal--active');
@@ -102,7 +102,7 @@ class SaveMenu extends Component {
 		});
 
 		// Save to slot when a slot is pressed.
-		$_(`${selector} [data-menu="save"]`).on ('click', 'figcaption, img, small', function () {
+		$_(`${selector} [data-screen="save"]`).on ('click', 'figcaption, img, small', function () {
 			Monogatari.global ('overwriteSlot', $_(this).parent ().data ('save').split ('_').pop ());
 			Monogatari.Storage.get (Monogatari.setting ('SaveLabel') + '_' + Monogatari.global ('overwriteSlot')).then ((data) => {
 				if (typeof data.name !== 'undefined') {
@@ -119,23 +119,23 @@ class SaveMenu extends Component {
 	static init (selector) {
 		// Disable the load and save slots in case Local Storage is not supported.
 		if (!window.localStorage) {
-			$_(`${selector} [data-menu="save"] [data-ui="slots"]`).html (`<p>${Monogatari.string ('LocalStorageWarning')}</p>`);
+			$_(`${selector} [data-screen="save"] [data-ui="slots"]`).html (`<p>${Monogatari.string ('LocalStorageWarning')}</p>`);
 		}
 		return Promise.resolve ();
 	}
 
 	static render () {
-		$_(`${Monogatari.selector} [data-menu="save"] [data-ui="slots"]`).html ('');
+		$_(`${Monogatari.selector} [data-screen="save"] [data-ui="slots"]`).html ('');
 		return Promise.resolve ();
 	}
 }
 
-SaveMenu._configuration = {};
-SaveMenu._state = {};
-SaveMenu._id = 'SAVE_MENU';
+SaveScreen._configuration = {};
+SaveScreen._state = {};
+SaveScreen._id = 'SAVE_MENU';
 
-SaveMenu._html = `
-	<section data-menu="save">
+SaveScreen._html = `
+	<section data-screen="save">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<div class="horizontal horizontal--center">
 			<input type="text" placeholder="Save Slot Name" data-input="slotName" required>
@@ -145,4 +145,4 @@ SaveMenu._html = `
 	</section>
 `;
 
-Monogatari.registerComponent (SaveMenu);
+Monogatari.registerComponent (SaveScreen);

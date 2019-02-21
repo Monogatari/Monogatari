@@ -80,7 +80,7 @@ export class ImageGallery extends Component {
 
 		// Let's add a button to the main menu, we'll use this button to open
 		// the gallery.
-		$_(`${selector} [data-menu="main"] [data-ui="inner-menu"]`).append ('<button data-action="open-menu" data-open="gallery" data-string="Gallery">Gallery</button>');
+		$_(`${selector} [data-screen="main"] [data-ui="inner-menu"]`).append ('<button data-action="open-screen" data-open="gallery" data-string="Gallery">Gallery</button>');
 		return Promise.resolve ();
 	}
 
@@ -95,26 +95,26 @@ export class ImageGallery extends Component {
 		// You may notice we also added a 'back' button in the gallery HTML so
 		// that players can return to the main menu, let's add a lister for that
 		// to happen.
-		$_(`${selector} [data-menu="gallery"] [data-action="back"]`).click (() => {
+		$_(`${selector} [data-screen="gallery"] [data-action="back"]`).click (() => {
 			// Hide gallery
-			$_(`${selector} [data-menu="gallery"]`).hide ();
+			$_(`${selector} [data-screen="gallery"]`).hide ();
 
 			// Show main menu
-			$_(`${selector} [data-menu="main"]`).show ();
+			$_(`${selector} [data-screen="main"]`).show ();
 		});
 
 		// Now that we added the button, let's add a listener for it so that when
 		// players click it, the gallery gets opened.
 		$_(`${selector} [data-open="gallery"]`).click (() => {
 			// Hide all the other screens
-			$_(`${selector} [data-menu]`).hide ();
+			$_(`${selector} [data-screen]`).hide ();
 
 			// Use the render function to render properly all the images in the gallery
-			$_(`${selector} [data-menu="gallery"] [data-ui="gallery"]`).html (this.render ());
+			$_(`${selector} [data-screen="gallery"] [data-ui="gallery"]`).html (this.render ());
 
 			// Now that the images have been added in the render, we can finally
 			// show it
-			$_(`${selector} [data-menu="gallery"]`).show ();
+			$_(`${selector} [data-screen="gallery"]`).show ();
 		});
 
 		// Now lets make it so that when a player clicks on one of the Images
@@ -133,8 +133,8 @@ export class ImageGallery extends Component {
 		// This listener will make it so that any click on the image viewer
 		// closes it
 		$_(`${selector} [data-ui="image-viewer"]`).click (() => {
-			$_(`${selector} [data-menu="gallery"] [data-ui="image-viewer"]`).removeClass ('active');
-			$_(`${selector} [data-menu="gallery"] [data-ui="image-viewer"] figure`).style ('background-image', '');
+			$_(`${selector} [data-screen="gallery"] [data-ui="image-viewer"]`).removeClass ('active');
+			$_(`${selector} [data-screen="gallery"] [data-ui="image-viewer"] figure`).style ('background-image', '');
 		});
 		return Promise.resolve ();
 	}
@@ -152,7 +152,7 @@ export class ImageGallery extends Component {
 			});
 		} else {
 			// Hide Gallery if there are no images defined.
-			$_(`${selector} [data-menu="gallery"]`).remove ();
+			$_(`${selector} [data-screen="gallery"]`).remove ();
 			$_(`${selector} [data-open="gallery"]`).remove ();
 		}
 
@@ -162,15 +162,15 @@ export class ImageGallery extends Component {
 	// A simple function to show an image, this will activate the image viewer
 	// and set the image as a background for it.
 	static showImage (image) {
-		$_(`${Monogatari.selector} [data-menu="gallery"] [data-ui="image-viewer"] figure`).style ('background-image', `url('./img/gallery/${this.images[image]}')`);
-		$_(`${Monogatari.selector} [data-menu="gallery"] [data-ui="image-viewer"]`).addClass ('active');
+		$_(`${Monogatari.selector} [data-screen="gallery"] [data-ui="image-viewer"] figure`).style ('background-image', `url('./img/gallery/${this.images[image]}')`);
+		$_(`${Monogatari.selector} [data-screen="gallery"] [data-ui="image-viewer"]`).addClass ('active');
 	}
 
 	// The render image will build all the image elements we need in the gallery
 	static render () {
 		// Clear the gallery images so we can rebuild them every time the gallery
 		// gets opened
-		$_(`${Monogatari.selector} [data-menu="gallery"] [data-ui="gallery"]`).html ('');
+		$_(`${Monogatari.selector} [data-screen="gallery"] [data-ui="gallery"]`).html ('');
 		// Create an image element for evert image declared in the constructor
 		return Object.keys (ImageGallery.state ('unlocked')).map ((image) => {
 			// Check if the image has been unlocked or not, if it hasn't then a
@@ -207,7 +207,7 @@ ImageGallery._state = {
 };
 
 ImageGallery._html = `
-	<section data-menu="gallery">
+	<section data-screen="gallery">
 		<div class='modal' data-ui="image-viewer">
 			<figure></figure>
 		</div>

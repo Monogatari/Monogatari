@@ -57,7 +57,7 @@ export class Centered extends Action {
 
 	apply () {
 		$_(`${Monogatari.selector} [data-ui="text"]`).hide ();
-		$_(`${Monogatari.selector} #game`).append ('<div class="middle align-center" data-ui="centered"></div>');
+		$_(`${Monogatari.selector} [data-screen="game"]`).append ('<div class="middle align-center" data-ui="centered"></div>');
 		if (this.animate) {
 			Monogatari.global ('typedConfiguration').strings = [this.dialog];
 			Monogatari.global ('textObject', new Typed (`${Monogatari.selector} [data-ui="centered"]`, Monogatari.global ('typedConfiguration')));

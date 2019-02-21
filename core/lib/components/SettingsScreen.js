@@ -4,7 +4,7 @@ import { $_, Platform } from '@aegis-framework/artemis';
 
 /* global require */
 
-class SettingsMenu extends Component {
+class SettingsScreen extends Component {
 
 	static html (html = null, ...params) {
 		if (html !== null && typeof params === 'undefined') {
@@ -31,7 +31,7 @@ class SettingsMenu extends Component {
 
 	static setup (selector) {
 
-		$_(selector).append (SettingsMenu.html ());
+		$_(selector).append (SettingsScreen.html ());
 		if (Monogatari.setting ('MultiLanguage') === true) {
 			$_(`${selector} [data-settings="language"] div`).html ('');
 			$_(`${selector} [data-settings="language"] div`).html (`
@@ -82,7 +82,7 @@ class SettingsMenu extends Component {
 
 		// Set the electron quit handler.
 		if (Platform.electron ()) {
-			SettingsMenu.electron (selector);
+			SettingsScreen.electron (selector);
 		} else {
 			$_(`${selector} [data-platform="electron"]`).hide ();
 		}
@@ -125,10 +125,10 @@ class SettingsMenu extends Component {
 
 			$_(`${selector} [data-action="set-resolution"]`).append(`<option value="fullscreen">${Monogatari.string ('FullScreen')}</option>`);
 
-			SettingsMenu.changeWindowResolution (Monogatari.preference ('Resolution'));
+			SettingsScreen.changeWindowResolution (Monogatari.preference ('Resolution'));
 			$_(`${selector} [data-action="set-resolution"]`).change(function () {
 				const size = $_(this).value ();
-				SettingsMenu.changeWindowResolution (size);
+				SettingsScreen.changeWindowResolution (size);
 			});
 		} else {
 			$_(`${selector} [data-settings="resolution"]`).hide ();
@@ -161,12 +161,12 @@ class SettingsMenu extends Component {
 	}
 }
 
-SettingsMenu._configuration = {};
-SettingsMenu._state = {};
-SettingsMenu._id = 'SETTINGS_MENU';
+SettingsScreen._configuration = {};
+SettingsScreen._state = {};
+SettingsScreen._id = 'SETTINGS_MENU';
 
-SettingsMenu._html = `
-	<section data-menu="settings" class="text--center">
+SettingsScreen._html = `
+	<section data-screen="settings" class="text--center">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Settings">Settings</h2>
 		<div class="row row--spaced padded text---center">
@@ -210,4 +210,4 @@ SettingsMenu._html = `
 	</section>
 `;
 
-Monogatari.registerComponent (SettingsMenu);
+Monogatari.registerComponent (SettingsScreen);

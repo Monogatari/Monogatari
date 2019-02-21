@@ -112,7 +112,7 @@ export class Canvas extends Action {
 			});
 			return Util.callAsync (this.object.start, Monogatari, $_(`${Monogatari.selector} [data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'immersive') {
-			$_(`${Monogatari.selector} #game`).prepend (`
+			$_(`${Monogatari.selector} [data-screen="game"]`).prepend (`
 				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}'></canvas>
 			`);
 
@@ -126,12 +126,12 @@ export class Canvas extends Action {
 			});
 			return Util.callAsync (this.object.start, Monogatari, $_(`${Monogatari.selector} [data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'displayable') {
-			$_(`${Monogatari.selector} #game`).append (`
+			$_(`${Monogatari.selector} [data-screen="game"]`).append (`
 				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}'></canvas>
 			`);
 			return Util.callAsync (this.object.start, Monogatari, $_(`${Monogatari.selector} [data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'character') {
-			$_(`${Monogatari.selector} #game`).append (`
+			$_(`${Monogatari.selector} [data-screen="game"]`).append (`
 				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}' data-character='${this.name}'></canvas>
 			`);
 			return Util.callAsync (this.object.start, Monogatari, $_(`${Monogatari.selector} [data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
