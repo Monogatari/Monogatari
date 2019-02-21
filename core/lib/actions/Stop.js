@@ -94,12 +94,12 @@ export class Stop extends Action {
 
 	apply () {
 		// Check if the audio should have a fade time
-		const fadePosition = this.props.indexOf ('fadeOut');
+		const fadePosition = this.props.indexOf ('fade');
 
 		if (typeof this.player === 'object' && !(this.player instanceof Audio)) {
 			if (fadePosition > -1) {
 				for (const player of this.player) {
-					Stop.fadeOut (this.props[fadePosition + 2], this.player).then (() => {
+					Stop.fadeOut (this.props[fadePosition + 1], this.player).then (() => {
 						Monogatari.removeMediaPlayer (this.type, player.dataset.key);
 					});
 				}
@@ -109,7 +109,7 @@ export class Stop extends Action {
 		} else {
 
 			if (fadePosition > -1) {
-				Stop.fadeOut (this.props[fadePosition + 2], this.player).then (() => {
+				Stop.fadeOut (this.props[fadePosition + 1], this.player).then (() => {
 					Monogatari.removeMediaPlayer (this.type, this.media);
 				});
 			} else {

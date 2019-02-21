@@ -238,7 +238,7 @@ export class Play extends Action {
 
 	apply () {
 		// Check if the audio should have a fade time
-		const fadePosition = this.props.indexOf ('fadeIn');
+		const fadePosition = this.props.indexOf ('fade');
 
 		if (this.player instanceof Audio) {
 			// Make the audio loop if it was provided as a prop
@@ -262,7 +262,7 @@ export class Play extends Action {
 			};
 
 			if (fadePosition > -1) {
-				Play.fadeIn (this.props[fadePosition + 2], this.player);
+				Play.fadeIn (this.props[fadePosition + 1], this.player);
 			}
 
 			return this.player.play ();
@@ -276,7 +276,7 @@ export class Play extends Action {
 			for (const player of this.player) {
 				if (player.paused && !player.ended) {
 					if (fadePosition > -1) {
-						Play.fadeIn (this.props[fadePosition + 2], player);
+						Play.fadeIn (this.props[fadePosition + 1], player);
 					}
 					promises.push (player.play ());
 				}
