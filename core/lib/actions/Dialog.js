@@ -29,11 +29,11 @@ export class Dialog extends Action {
 		}
 		return Promise.resolve (Monogatari.global ('finishedTyping'));
 	}
-	
+
 	/**
 	 * @static checkUnread - This function is used to add the unread class to the
 	 * text box if new contents (dialogs) were added to it causing it to overflow
-	 * but are not visible on screen right now so the player knows there is more 
+	 * but are not visible on screen right now so the player knows there is more
 	 * and scrolls the element.
 	 */
 	static checkUnread () {
@@ -70,7 +70,7 @@ export class Dialog extends Action {
 		});
 
 		// The NVL mode has its own history so that when going back, all dialogs
-		// that were shown on screen can be shown again instead of just showing 
+		// that were shown on screen can be shown again instead of just showing
 		// the last one.
 		Monogatari.history ('nvl');
 
@@ -204,7 +204,7 @@ export class Dialog extends Action {
 
 			Monogatari.global ('typedConfiguration').strings = [dialog];
 			Monogatari.global ('textObject', new Typed (last, Monogatari.global ('typedConfiguration')));
-		
+
 		} else {
 			if (character !== 'narrator') {
 				if (previous !== character) {
@@ -243,14 +243,14 @@ export class Dialog extends Action {
 				// If the property is set to true, the animation will be shown
 				// if it is set to false, even if the flag was set to true,
 				// no animation will be shown in the game.
-				Monogatari.global ('typedConfiguration').strings = [dialog];
+				Monogatari.global ('typedConfiguration').strings = [Monogatari.replaceVariables (dialog)];
 				Monogatari.global ('textObject', new Typed ('[data-ui="say"]', Monogatari.global ('typedConfiguration')));
 			} else {
-				$_(`${Monogatari.selector} [data-ui="say"]`).html (dialog);
+				$_(`${Monogatari.selector} [data-ui="say"]`).html (Monogatari.replaceVariables (dialog));
 				Monogatari.global ('finishedTyping', true);
 			}
 		} else {
-			this.displayNvlDialog (dialog, character, animation);	
+			this.displayNvlDialog (dialog, character, animation);
 		}
 
 		Dialog.checkUnread ();
@@ -321,7 +321,7 @@ export class Dialog extends Action {
 				return Promise.reject ();
 			}
 		} else {
-			// If the dialog was not NVL, we can simply show it as if we were 
+			// If the dialog was not NVL, we can simply show it as if we were
 			// doing a simple application
 			return this.apply ();
 		}

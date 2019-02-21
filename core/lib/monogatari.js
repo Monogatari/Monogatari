@@ -602,6 +602,8 @@ class Monogatari {
 		if (typeof value === 'undefined') {
 			return Monogatari.mediaPlayers (type, true)[key];
 		} else {
+			value.dataset.type = type;
+			value.dataset.key = key;
 			Monogatari._mediaPlayers[type][key] = value;
 			return Monogatari._mediaPlayers[type][key];
 		}
