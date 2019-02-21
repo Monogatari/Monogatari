@@ -29,6 +29,15 @@ export class HideCharacter extends Action {
 	apply () {
 		this.element.removeClass ();
 		this.element.addClass ('animated');
+
+		const durationPosition = this.classes.indexOf ('duration');
+
+		if (durationPosition > -1) {
+			this.element.style ('animation-duration', this.classes[durationPosition + 1]);
+		} else {
+			this.element.style ('animation-duration', '');
+		}
+
 		if (this.classes.length > 0) {
 			for (const newClass of this.classes) {
 				this.element.addClass (newClass);
