@@ -10,7 +10,7 @@ export class Wait extends Action {
 
 	constructor ([ action, time ]) {
 		super ();
-		// Check if the providad time is a valid integer
+		// Check if the provided time is a valid integer
 		if (!isNaN (time)) {
 			this.time = parseInt (time);
 		} else {

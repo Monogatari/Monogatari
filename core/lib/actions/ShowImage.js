@@ -49,8 +49,23 @@ export class ShowImage extends Action {
 
 	apply () {
 
-		const object = `<img src="${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').images}/${this.image}" class="animated ${this.classes.join (' ')}" data-image="${this.asset}" data-sprite="${this.sprite}">`;
-		$_(`${Monogatari.selector} [data-screen="game"]`).append (object);
+		const image = document.createElement ('img');
+		$_(image).attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').images}/${this.image}`);
+		$_(image).addClass ('animated');
+		$_(image).data ('image', this.asset);
+		$_(image).data ('sprite', this.sprite);
+
+		for (const className of this.classes) {
+			$_(image).addClass (className);
+		}
+
+		const durationPosition = this.classes.indexOf ('duration');
+
+		if (durationPosition > -1) {
+			$_(image).style ('animation-duration', this.classes[durationPosition + 1]);
+		}
+
+		$_(`${Monogatari.selector} [data-screen="game"]`).append (image.outerHTML);
 		return Promise.resolve ();
 	}
 

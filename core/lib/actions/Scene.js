@@ -75,11 +75,19 @@ export class Scene extends Action {
 	apply () {
 		$_(`${Monogatari.selector} [data-ui="background"]`).style ('background-image', 'initial');
 		$_(`${Monogatari.selector} [data-ui="background"]`).style ('background-color', 'initial');
+		$_(`${Monogatari.selector} [data-ui="background"]`).style ('animation-duration', '');
 		$_(`${Monogatari.selector} [data-ui="background"]`).style (this.property, this.value);
+
+		const durationPosition = this.classes.indexOf ('duration');
+
+		if (durationPosition > -1) {
+			$_(`${Monogatari.selector} [data-ui="background"]`).style ('animation-duration', this.classes[durationPosition + 1]);
+		}
 
 		for (const newClass of this.classes) {
 			$_(`${Monogatari.selector} [data-ui="background"]`).addClass (newClass);
 		}
+
 		return Promise.resolve ();
 	}
 
