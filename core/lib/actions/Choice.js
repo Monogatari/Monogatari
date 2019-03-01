@@ -29,14 +29,14 @@ export class Choice extends Action {
 	}
 
 	static bind (selector) {
-		// Bind the click event on data-do elements. This property is used for 
+		// Bind the click event on data-do elements. This property is used for
 		// every choice button.
-		$_(`${selector}`).on('click', '[data-do]', function () {
+		$_(`${selector}`).on('click', '[data-choice]', function () {
 
-			// Check that the data property was not empty or it was created with
+			// Check that the data property was not created with
 			// a null property
-			if ($_(this).data('do') != 'null' && $_(this).data('do') != '') {
-				
+			if ($_(this).data('do') != 'null') {
+
 				// Remove all the choices
 				$_(`${Monogatari.selector} [data-ui="choices"]`).remove ();
 
@@ -45,10 +45,10 @@ export class Choice extends Action {
 					if (typeof Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')] !== 'undefined') {
 						if (typeof Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].onChosen === 'function') {
 							Util.callAsync (Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].onChosen, Monogatari).then (() => {
-								Monogatari.run ($_(this).data ('do'), false);
+								Monogatari.run (Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].Do, false);
 							});
 						} else {
-							Monogatari.run ($_(this).data ('do'), false);
+							Monogatari.run (Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].Do, false);
 						}
 					} else {
 						Monogatari.run ($_(this).data ('do'), false);
@@ -96,7 +96,7 @@ export class Choice extends Action {
 
 		const promises = [];
 
-		// Go over all the objects defined in the choice object which should be 
+		// Go over all the objects defined in the choice object which should be
 		// call the options to chose from or the string to show as dialog
 		for (const i in this.statement) {
 			const choice = this.statement[i];
