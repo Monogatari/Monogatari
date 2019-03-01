@@ -46,18 +46,21 @@ export class Choice extends Action {
 						if (typeof Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].onChosen === 'function') {
 							Util.callAsync (Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].onChosen, Monogatari).then (() => {
 								Monogatari.run (Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].Do, false);
+								Monogatari.global ('_CurrentChoice', null);
 							});
 						} else {
 							Monogatari.run (Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].Do, false);
+							Monogatari.global ('_CurrentChoice', null);
 						}
 					} else {
 						Monogatari.run ($_(this).data ('do'), false);
+						Monogatari.global ('_CurrentChoice', null);
 					}
 				} else {
 					Monogatari.run ($_(this).data ('do'), false);
+					Monogatari.global ('_CurrentChoice', null);
 				}
 			}
-			Monogatari.global ('_CurrentChoice', null);
 		});
 		return Promise.resolve ();
 	}
