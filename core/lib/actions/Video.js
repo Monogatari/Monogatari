@@ -69,11 +69,11 @@ export class Video extends Action {
 	 *
 	 * @param {string[]} parameters - List of parameters received from the script statement.
 	 * @param {string} parameters.action - In this case, action will always be 'video'
-	 * @param {string} [parameters.mode='displayable'] - Mode in which the video element will be shown (displayable, background, immersive, full-screen)
+	 * @param {string} [parameters.mode='modal'] - Mode in which the video element will be shown (modal, background, immersive, full-screen)
 	 * @param {string} parameters.name
 	 * @param {string} parameters.props
 	 */
-	constructor ([ show, type, mode = 'displayable', name, ...props]) {
+	constructor ([ show, type, mode = 'modal', name, ...props]) {
 		super ();
 		this.mode = mode;
 		this.name = name;
@@ -115,7 +115,7 @@ export class Video extends Action {
 		} else if (this.mode === 'immersive') {
 			Monogatari.global ('block', true);
 			$_(`${Monogatari.selector} [data-screen="game"]`).prepend (element);
-		} else if (this.mode === 'full-screen') {
+		} else if (this.mode === 'fullscreen') {
 			if (element.requestFullscreen) {
 				$_(`${Monogatari.selector} [data-screen="game"]`).append (element);
 				element.requestFullscreen ();
@@ -136,7 +136,7 @@ export class Video extends Action {
 	didApply () {
 		Monogatari.state ('videos').push (this._statement);
 		Monogatari.history ('video').push (this._statement);
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
@@ -162,7 +162,7 @@ export class Video extends Action {
 				break;
 			}
 		}
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

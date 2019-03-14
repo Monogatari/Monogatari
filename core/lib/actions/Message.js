@@ -54,10 +54,11 @@ export class Message extends Action {
 		}
 	}
 
-	constructor ([ show, type, message ]) {
+	constructor ([ show, type, message, ...classes ]) {
 		super ();
 		this.id = message;
 		this.message = Message.messages (message);
+		this.classes = classes;
 	}
 
 	willApply () {
@@ -79,9 +80,9 @@ export class Message extends Action {
 								<code class='language-javascript'>
 									Monogatari.action ('Message').mesages ({
 										'Welcome': {
-											Title: 'Welcome!',
-											Subtitle: 'This is the Monogatari VN Engine',
-											Message: 'This is where the magic gets done!'
+											title: 'Welcome!',
+											subtitle: 'This is the Monogatari VN Engine',
+											body: 'This is where the magic gets done!'
 										}
 									});
 								</code>
@@ -99,17 +100,22 @@ export class Message extends Action {
 	}
 
 	apply () {
-		$_(`${Monogatari.selector} [data-screen="game"] #components`).append (Monogatari.component ('MESSAGE').render (this.message.Title, this.message.Subtitle, this.message.Message));
+		$_(`${Monogatari.selector} [data-screen="game"] #components`).append (Monogatari.component ('MESSAGE').render (this.message.title, this.message.subtitle, this.message.body));
+
+		for (const newClass of this.classes) {
+			$_(`${Monogatari.selector} [data-ui="messages"]`).addClass (newClass);
+		}
+
 		return Promise.resolve ();
 	}
 
 	revert () {
 		$_(`${Monogatari.selector} [data-ui="messages"]`).remove ();
-		return Promise.resolve ();
+		return this.apply ();
 	}
 
 	didRevert () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: false, step: true });
 	}
 }
 

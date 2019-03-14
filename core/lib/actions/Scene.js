@@ -98,7 +98,7 @@ export class Scene extends Action {
 		Monogatari.history ('scene').push (this._statement);
 
 		Monogatari.action ('Dialog').reset ();
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	willRevert () {
@@ -142,7 +142,7 @@ export class Scene extends Action {
 	}
 
 	didRevert () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

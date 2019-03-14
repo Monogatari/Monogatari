@@ -56,7 +56,7 @@ export class HideCharacter extends Action {
 		});
 
 		Monogatari.state ({ characters: show });
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	willRevert () {
@@ -72,7 +72,7 @@ export class HideCharacter extends Action {
 	}
 
 	didRevert () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

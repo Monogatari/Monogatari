@@ -67,11 +67,11 @@ export class Vibrate extends Action {
 	}
 
 	didApply () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	didRevert () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

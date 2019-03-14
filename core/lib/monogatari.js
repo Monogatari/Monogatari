@@ -967,7 +967,7 @@ class Monogatari {
 				Promise.all (promises).then (() => {
 					// Finally show the game and start playing
 					$_('[data-screen="game"]').show ();
-					Monogatari.run(Monogatari.label ()[Monogatari.state ('step')]);
+					Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
 					document.body.style.cursor = 'auto';
 				});
 			});
@@ -1190,6 +1190,15 @@ class Monogatari {
 		setTimeout (Monogatari.run, 0, Monogatari.label ()[Monogatari.state ('step')]);
 	}
 
+	static previous () {
+		Monogatari.revert ().catch (() => {
+			// The game could not be reverted, either because an
+			// action prevented it or because there are no statements
+			// left to revert to.
+		});
+
+	}
+
 	// Start game automatically withouth going trough the main menu
 	static showMainScreen () {
 		if (!Monogatari.setting ('ShowMainScreen')) {
@@ -1324,16 +1333,38 @@ class Monogatari {
 	 *
 	 * @returns {Promise} - Whether the game was able to go back or not
 	 */
-	static revert () {
+	static revert (statement = null, shouldAdvance = true) {
 
 		// Check if we have steps behind us to revert to. If there aren't, then
 		// we can't revert since we are already at the first statement.
-		if (Monogatari.state ('step') >= 1) {
+		let actionToRevert = null;
+
+		if (statement !== null) {
+			actionToRevert = statement;
+		} else if (Monogatari.state ('step') >= 1) {
+			actionToRevert = Monogatari.label ()[Monogatari.state ('step') - 1];
+		} else {
+			const jump = Monogatari.history ('jump').reverse ().find (o => {
+				return o.destination.label === Monogatari.state ('label') && o.destination.step === 0;
+			});
+
+			if (typeof jump !== 'undefined') {
+				Monogatari.state ({
+					label: jump.source.label,
+					step: jump.source.step
+				});
+				actionToRevert = Monogatari.label ()[Monogatari.state ('step')];
+			}
+
+
+		}
+
+		if (actionToRevert !== null) {
 
 			// Iterate over all the registered actions to find one that matches with
 			// the statement to revert.
 			for (const action of Monogatari.actions ()) {
-				let actionStatement = Monogatari.label ()[Monogatari.state ('step') - 1];
+				let actionStatement = actionToRevert;
 				let matches = false;
 
 				// Use the correct matching function (matchString or matchObject)
@@ -1380,22 +1411,27 @@ class Monogatari {
 							// specifying if the game should go ahead and revert
 							// the previous statement as well or if it should
 							// wait instead
-							return act.didRevert (). then ((shouldContinue) => {
+							return act.didRevert (). then (({ advance, step }) => {
 
 								// Since we reverted correctly, the step should
 								// go back.
-								Monogatari.state ({
-									step: Monogatari.state ('step') - 1
-								});
+
+								if (step === true) {
+									Monogatari.state ({
+										step: Monogatari.state ('step') - 1
+									});
+								}
+
 
 								// Revert the previous statement if the action
 								// told us to.
-								if (shouldContinue === true) {
+								if (advance === true && shouldAdvance === true) {
 									// Clear the Stack using a Time Out instead
 									// of calling the function directly, preventing
 									// an Overflow
 									setTimeout (Monogatari.revert, 0);
 								}
+
 							});
 						});
 					}).catch ((e) => {
@@ -1430,17 +1466,11 @@ class Monogatari {
 	 * @returns {Promise} - Resolves if the statement was run correctly or rejects
 	 * if it couldn't be run correctly.
 	 */
-	static run (statement, advance) {
+	static run (statement, shouldAdvance = true) {
 
 		// Don't allow null as a valid statement
 		if (statement === null) {
 			return Promise.reject ();
-		}
-
-		// By default, the statement will be run and after that, the next one
-		// will be run immediately.
-		if (typeof advance !== 'boolean') {
-			advance = true;
 		}
 
 		// Iterate over all the registered actions to find one that matches with
@@ -1469,7 +1499,7 @@ class Monogatari {
 				// the game so it can continue.
 				return Util.callAsync (actionStatement, Monogatari).finally (() => {
 					Monogatari.global ('block', false);
-					if (advance) {
+					if (shouldAdvance) {
 						return Monogatari.next ();
 					}
 				});
@@ -1497,14 +1527,14 @@ class Monogatari {
 				return act.willApply ().then (() => {
 
 					// Run the apply method
-					return act.apply (advance).then (() => {
+					return act.apply (shouldAdvance).then (() => {
 
 						// If everything has been run correctly, then run the
 						// didApply method. The action will return a boolean
 						// (shouldContinue) specifying if the game should run the
 						// next statement right away or if it should wait instead
-						return act.didApply ().then ((shouldContinue) => {
-							if (shouldContinue === true && advance === true) {
+						return act.didApply ().then (({ advance }) => {
+							if (advance === true && shouldAdvance === true) {
 								Monogatari.next ();
 							}
 						});

@@ -71,6 +71,10 @@ export class Centered extends Action {
 		this.apply ();
 		return Promise.resolve ();
 	}
+
+	didRevert () {
+		return Promise.resolve ({ advance: false, step: true });
+	}
 }
 
 Centered.id = 'Centered';

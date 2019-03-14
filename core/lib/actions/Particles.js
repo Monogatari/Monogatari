@@ -114,7 +114,7 @@ export class Particles extends Action {
 		Monogatari.state ({
 			particles: this._statement
 		});
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
@@ -124,7 +124,7 @@ export class Particles extends Action {
 
 	didRevert () {
 		Monogatari.history ('particle').pop ();
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

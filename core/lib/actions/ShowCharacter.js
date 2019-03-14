@@ -131,7 +131,7 @@ export class ShowCharacter extends Action {
 				this._statement
 			]
 		});
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
@@ -161,7 +161,7 @@ export class ShowCharacter extends Action {
 	}
 
 	didRevert () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

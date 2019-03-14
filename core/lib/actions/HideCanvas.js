@@ -48,7 +48,7 @@ export class HideCanvas extends Action {
 				break;
 			}
 		}
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
@@ -65,7 +65,7 @@ export class HideCanvas extends Action {
 	}
 
 	didRevert () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

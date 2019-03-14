@@ -327,6 +327,10 @@ export class Dialog extends Action {
 		}
 	}
 
+	didRevert () {
+		return Promise.resolve ({ advance: false, step: true });
+	}
+
 }
 
 Dialog.id = 'Dialog';

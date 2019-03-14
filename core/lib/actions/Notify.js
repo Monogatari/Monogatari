@@ -141,11 +141,11 @@ export class Notify extends Action {
 
 	didApply () {
 		// Advance the game instead of waiting for another click
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	didRevert () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

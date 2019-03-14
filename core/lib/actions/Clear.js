@@ -17,7 +17,7 @@ export class Clear extends Action {
 	}
 
 	didApply () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	willRevert () {

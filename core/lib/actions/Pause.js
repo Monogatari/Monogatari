@@ -32,7 +32,7 @@ export class Pause extends Action {
 	}
 
 	didApply () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
@@ -48,7 +48,7 @@ export class Pause extends Action {
 	}
 
 	didRevert () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

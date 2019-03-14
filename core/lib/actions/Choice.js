@@ -6,6 +6,7 @@ export class Choice extends Action {
 
 	static setup () {
 		Monogatari.global ('_CurrentChoice', null);
+		Monogatari.history ('choice');
 		return Promise.resolve ();
 	}
 
@@ -52,6 +53,7 @@ export class Choice extends Action {
 							Monogatari.run (Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].Do, false);
 							Monogatari.global ('_CurrentChoice', null);
 						}
+						Monogatari.history ('choice').push ($_(this).data ('choice'));
 					} else {
 						Monogatari.run ($_(this).data ('do'), false);
 						Monogatari.global ('_CurrentChoice', null);
@@ -155,7 +157,35 @@ export class Choice extends Action {
 	// Revert is disabled for choices since we still don't have a way to know what
 	// a choice did
 	willRevert () {
+		if (Monogatari.history ('choice').length > 0) {
+			const choice = Monogatari.history ('choice')[Monogatari.history ('choice').length - 1];
+			if (this.statement[choice] !== 'undefined') {
+
+				// Check if the choice had an onChosen function with it's matching
+				// onRevert functionality, or if no onChosen function was provided
+				// which are the only cases where it can be reverted.
+				const functionReversible = (typeof this.statement[choice]['onRevert'] === 'function' && typeof this.statement[choice]['onChosen'] === 'function') || typeof this.statement[choice]['onChosen'] !== 'function';
+
+				if (functionReversible) {
+					return Promise.resolve ();
+				}
+			}
+		}
 		return Promise.reject ();
+	}
+
+	revert () {
+		const choice = Monogatari.history ('choice')[Monogatari.history ('choice').length - 1];
+		return Monogatari.revert (this.statement[choice].Do, false).then (() => {
+			return Monogatari.run (this.statement);
+		}).catch (() => {
+		});
+		return Promise.resolve ();
+	}
+
+	didRevert () {
+		Monogatari.history ('choice').pop ();
+		return Promise.resolve ({ advance: false, step: false });
 	}
 }
 

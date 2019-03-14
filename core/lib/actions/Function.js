@@ -19,7 +19,7 @@ export class ReversibleFunction extends Action {
 		// The function will be run asynchronously (No matter if its code isn't)
 		// if the function returns false, the next statement will not be run
 		// automatically and the game will wait for user interaction or some other
-		// code inside the function to keep going. Any other returnValue will 
+		// code inside the function to keep going. Any other returnValue will
 		// allow the game to keep going right away.
 		return Util.callAsync (this.statement.Apply, Monogatari).then ((returnValue) => {
 			Monogatari.global ('block', false);
@@ -52,7 +52,7 @@ export class ReversibleFunction extends Action {
 		// The function will be run asynchronously (No matter if its code isn't)
 		// if the function returns false, the previous statement will not be run
 		// automatically and the game will wait for user interaction or some other
-		// code inside the function to keep going. Any other returnValue will 
+		// code inside the function to keep going. Any other returnValue will
 		// allow the game to keep going right away.
 		return Util.callAsync (this.statement.Reverse, Monogatari).then ((returnValue) => {
 			Monogatari.global ('block', false);
@@ -78,7 +78,7 @@ export class ReversibleFunction extends Action {
 	}
 
 	didRevert () {
-		return Promise.resolve (this.shouldContinue);
+		return Promise.resolve ({ advance: this.shouldContinue, step: true });
 	}
 }
 

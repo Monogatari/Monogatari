@@ -132,7 +132,7 @@ export class Stop extends Action {
 
 		Monogatari.state (state);
 
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
@@ -160,7 +160,7 @@ export class Stop extends Action {
 	}
 
 	didRevert () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

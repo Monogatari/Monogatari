@@ -45,11 +45,7 @@ class GameScreen extends Component {
 		$_(`${selector} [data-screen="game"] [data-action="back"], ${selector} [data-screen="game"] [data-action="back"] *`).click ((event) => {
 			event.stopPropagation ();
 			Monogatari.canRevert ().then (() => {
-				Monogatari.revert ().catch (() => {
-					// The game could not be reverted, either because an
-					// action prevented it or because there are no statements
-					// left to revert to.
-				});
+				Monogatari.previous ();
 			}).catch (() => {
 				// An action waiting for user interaction or something else
 				// is blocking the game.

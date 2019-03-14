@@ -288,7 +288,7 @@ export class Play extends Action {
 
 	didApply () {
 		if (this.type !== 'video') {
-			return Promise.resolve (true);
+			return Promise.resolve ({ advance: true });
 		}
 
 		return Promise.resolve ();
@@ -315,7 +315,7 @@ export class Play extends Action {
 	}
 
 	didRevert () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

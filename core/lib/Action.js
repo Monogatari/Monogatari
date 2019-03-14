@@ -286,7 +286,7 @@ class Action {
 	}
 
 	/**
-	 * _setCycle - This simple method is used to set what cycle the action is 
+	 * _setCycle - This simple method is used to set what cycle the action is
 	 * currently performing. This is useful to know on those actions that may
 	 * use the apply or revert methods on any situation but that have slight
 	 * differences on the logic.
@@ -329,7 +329,9 @@ class Action {
 	 * next statement right away, false if it should wait for user's interaction.
 	 */
 	didApply () {
-		return Promise.resolve ();
+		return Promise.resolve ({
+			advance: false
+		});
 	}
 
 	/**
@@ -374,7 +376,10 @@ class Action {
 	 * previous statement right away, false if it should wait for user's interaction.
 	 */
 	didRevert () {
-		return Promise.resolve ();
+		return Promise.resolve ({
+			advance: false,
+			step: true
+		});
 	}
 }
 

@@ -26,8 +26,8 @@ class Message extends Component {
 		}
 	}
 
-	static render (title, subtitle, message) {
-		return this.html (null, title, subtitle, message);
+	static render (title, subtitle, body) {
+		return this.html (null, title, subtitle, body);
 	}
 }
 
@@ -35,12 +35,12 @@ Message._configuration = {};
 Message._state = {};
 Message._id = 'MESSAGE';
 
-Message._html = (title, subtitle, message) => `
+Message._html = (title, subtitle, body) => `
 	<div data-component="modal" data-ui="messages" class="middle active">
 		<div data-ui="message-content">
 			<h3>${title}</h3>
 			<p>${subtitle}</p>
-			<p>${message}</p>
+			<p>${body}</p>
 		</div>
 		<div class="horizontal horizontal--center" data-ui="inner-menu">
 			<button data-action="close" data-close="messages" data-string="Close">Close</button>

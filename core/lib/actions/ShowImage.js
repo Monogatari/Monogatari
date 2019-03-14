@@ -74,7 +74,7 @@ export class ShowImage extends Action {
 		Monogatari.state ({
 			images: [this._statement, ...Monogatari.state ('images')]
 		});
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
@@ -91,7 +91,7 @@ export class ShowImage extends Action {
 	}
 
 	didRevert () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

@@ -52,7 +52,7 @@ export class HideImage extends Action {
 		});
 
 		Monogatari.state ({ images: show });
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	willRevert () {
@@ -68,7 +68,7 @@ export class HideImage extends Action {
 	}
 
 	didRevert () {
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

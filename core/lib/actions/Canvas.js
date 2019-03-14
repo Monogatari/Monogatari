@@ -152,7 +152,7 @@ export class Canvas extends Action {
 	didApply () {
 		Monogatari.history ('canvas').push (this._statement);
 		Monogatari.state ('canvas').push (this._statement);
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
@@ -179,7 +179,7 @@ export class Canvas extends Action {
 				break;
 			}
 		}
-		return Promise.resolve (true);
+		return Promise.resolve ({ advance: true, step: true });
 	}
 }
 

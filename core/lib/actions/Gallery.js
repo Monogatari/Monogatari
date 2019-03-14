@@ -42,6 +42,10 @@ export class Gallery extends Action {
 		}
 		return Promise.resolve ();
 	}
+
+	didRevert () {
+		return Promise.resolve ({ advance: true, step: true });
+	}
 }
 
 Gallery.id = 'Gallery';
