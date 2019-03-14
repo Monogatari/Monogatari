@@ -164,7 +164,7 @@ export class Choice extends Action {
 				// Check if the choice had an onChosen function with it's matching
 				// onRevert functionality, or if no onChosen function was provided
 				// which are the only cases where it can be reverted.
-				const functionReversible = (typeof this.statement[choice]['onRevert'] === 'function' && typeof this.statement[choice]['onChosen'] === 'function') || typeof this.statement[choice]['onChosen'] !== 'function';
+				const functionReversible = (typeof this.statement[choice].onRevert === 'function' && typeof this.statement[choice].onChosen === 'function') || typeof this.statement[choice].onChosen !== 'function';
 
 				if (functionReversible) {
 					return Promise.resolve ();
@@ -177,10 +177,13 @@ export class Choice extends Action {
 	revert () {
 		const choice = Monogatari.history ('choice')[Monogatari.history ('choice').length - 1];
 		return Monogatari.revert (this.statement[choice].Do, false).then (() => {
+			if (typeof this.statement[choice].onRevert === 'function') {
+				return Util.callAsync (this.statement[choice].onRevert, Monogatari).then (() => {
+					return Monogatari.run (this.statement, false);
+				});
+			}
 			return Monogatari.run (this.statement);
-		}).catch (() => {
 		});
-		return Promise.resolve ();
 	}
 
 	didRevert () {

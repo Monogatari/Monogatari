@@ -78,16 +78,23 @@ monogatari.script ({
 				'Save': function (input) {
 					this.storage ({
 						player: {
-							Name: input
+							name: input
 						}
 					});
 					return true;
+				},
+				'Revert': function () {
+					this.storage ({
+						player: {
+							name: ''
+						}
+					});
 				},
 				'Warning': 'You must enter a name!'
 			}
 		},
 
-		'h Hi {{player.Name}} Welcome to Monogatari!',
+		'h Hi {{player.name}} Welcome to Monogatari!',
 
 		{
 			'Choice': {

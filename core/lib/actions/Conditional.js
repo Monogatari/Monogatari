@@ -33,14 +33,18 @@ export class Conditional extends Action {
 				// it as a key so we run the branch that has that key
 				if (returnValue === true) {
 					Monogatari.run (this.statement.True, false);
+					Monogatari.history ('conditional').push ('True');
 				} else if (typeof returnValue === 'string') {
 					Monogatari.run (this.statement[returnValue], false);
+					Monogatari.history ('conditional').push (returnValue);
 				} else {
 					Monogatari.run (this.statement.False, false);
+					Monogatari.history ('conditional').push ('False');
 				}
 			}).catch (() => {
 				Monogatari.global ('block', false);
 				Monogatari.run (this.statement.False, false);
+				Monogatari.history ('conditional').push ('False');
 			}).finally (() => {
 				resolve ();
 			});
@@ -51,7 +55,25 @@ export class Conditional extends Action {
 	// tell what they actually did in all cases. And there's also no history on
 	// what function was applied.
 	willRevert () {
+		if (Monogatari.history ('conditional').length > 0) {
+			const conditional = Monogatari.history ('conditional')[Monogatari.history ('conditional').length - 1];
+			if (this.statement[conditional] !== 'undefined') {
+				return Promise.resolve ();
+			}
+		}
 		return Promise.reject ();
+	}
+
+	revert () {
+		const conditional = Monogatari.history ('conditional')[Monogatari.history ('conditional').length - 1];
+		return Monogatari.revert (this.statement[conditional], false).then (() => {
+			//return Monogatari.run (this.statement);
+		});
+	}
+
+	didRevert () {
+		Monogatari.history ('conditional').pop ();
+		return Promise.resolve ({ advance: false, step: false });
 	}
 }
 

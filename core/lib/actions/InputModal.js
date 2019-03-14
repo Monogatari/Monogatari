@@ -1,6 +1,6 @@
 import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
-import { $_ } from '@aegis-framework/artemis';
+import { $_, Util } from '@aegis-framework/artemis';
 
 export class InputModal extends Action {
 
@@ -92,7 +92,20 @@ export class InputModal extends Action {
 	}
 
 	willRevert () {
+		if (typeof this.statement.Revert === 'function') {
+			return Promise.resolve ();
+		}
 		return Promise.reject ();
+	}
+
+	revert () {
+		return Util.callAsync (this.statement.Revert, Monogatari).then (() => {
+			return this.apply ();
+		});
+	}
+
+	didRevert () {
+		return Promise.resolve ({ advance: false, step: true });
 	}
 }
 

@@ -12,7 +12,7 @@ import { FancyError } from './FancyError';
  * Components: The list of screens and other HTML elements available in the game.
  *
  * State: The current state of the game, this simple object contains the current
- *        label and step as well as the thigs being shown or played by every action.
+ *        label and step as well as the things being shown or played by every action.
  *
  * History: Every action and even components may keep a history on what statements
  *			have been applied. The history is
@@ -24,14 +24,14 @@ import { FancyError } from './FancyError';
  *
  * Characters: The list of characters that participate in the script of the game.
  *
- * Monogatari follows a 3-step lifecycle:
+ * Monogatari follows a 3-step life cycle:
  *
  * 1. Setup - All needed elements are added to the DOM and all variables get
  * 			  initialized. This first step is all about preparing all the needed
  * 			  elements.
  *
  * 2. Bind - Once the game has been setup, its time to bind all the necessary
- *           event listeners or perfom more operations on the DOM.
+ *           event listeners or perform more operations on the DOM.
  *
  * 3. Init - Finally, once the game was setup and it performed all the needed
  *           bindings, it may declare or modify variables that needed the HTML to
@@ -45,7 +45,7 @@ class Monogatari {
 
 	/**
 	 * @static onStart - This is the main onStart function, it acts as an event
-	 * listerner when the game is started. This function will call its action
+	 * listener when the game is started. This function will call its action
 	 * counterparts.
 	 *
 	 * @return {Promise} - The promise is resolved if all action's onStart function
@@ -66,7 +66,7 @@ class Monogatari {
 
 	/**
 	 * @static onLoad - This is the main onStart function, it acts as an event
-	 * listerner when a game is loaded. This function will call its action
+	 * listener when a game is loaded. This function will call its action
 	 * counterparts so that each action is able to run any operations needed
 	 * when a game is loaded such as restoring their state.
 	 *
@@ -108,7 +108,7 @@ class Monogatari {
 
 	/**
 	 * @static string - Gets the translation of a string. This is of course limited
-	 * to the translations defined for eeach language and string using the translation
+	 * to the translations defined for each language and string using the translation
 	 * function.
 	 *
 	 * @param  {string} key - The key of the string whose translation is needed
@@ -181,7 +181,7 @@ class Monogatari {
 
 	/**
 	 * @static history - Simple function to access, create and modify history
-	 * objects. Each history is a simple arrray.
+	 * objects. Each history is a simple array.
 	 *
 	 * @param  {Object|string} [object = null] - Object with which current
 	 * history object will be updated with (i.e. Object.assign) or a string to access
@@ -321,7 +321,7 @@ class Monogatari {
 	 * all declared assets such as audio, videos and images should be registered
 	 * in these objects.
 	 *
-	 * @param  {string} [type = null] - The type of asset you are refering to
+	 * @param  {string} [type = null] - The type of asset you are referring to
 	 * @param  {Object} [object = null] - The key/value object to assign to that asset type
 	 * @return {Object} - If this function is called with no arguments, the whole
 	 * assets object will be returned.
@@ -823,7 +823,7 @@ class Monogatari {
 		$_('[data-screen="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
 	}
 
-	// Get's the highest number currently available as a slot id (Save_{?})
+	// Gets the highest number currently available as a slot id (Save_{?})
 	static getMaxSlotId (prefix = 'SaveLabel') {
 		return Monogatari.Storage.keys ().then ((keys) => {
 			let max = 1;
@@ -1199,7 +1199,7 @@ class Monogatari {
 
 	}
 
-	// Start game automatically withouth going trough the main menu
+	// Start game automatically without going trough the main menu
 	static showMainScreen () {
 		if (!Monogatari.setting ('ShowMainScreen')) {
 			Monogatari.stopAmbient ();
@@ -1406,7 +1406,7 @@ class Monogatari {
 					return act.willRevert ().then (() => {
 						// If it can be reverted, then run the revert method
 						return act.revert ().then (() => {
-							// If the reversion was succesfull, run the didRevert
+							// If the reversion was successful, run the didRevert
 							// function. The action will return a boolean (shouldContinue)
 							// specifying if the game should go ahead and revert
 							// the previous statement as well or if it should
@@ -1563,7 +1563,7 @@ class Monogatari {
 		if (Monogatari.setting ('ServiceWorkers')) {
 			if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
 				// TODO: There's a place in hell for this quick fix, the splitting
-				// of the sw file is just preventing parcel from tryng to bundle it
+				// of the sw file is just preventing parcel from trying to bundle it
 				// when building the core libraries.
 				navigator.serviceWorker.register ('./../service-worker' + '.js').then ((registration) => {
 
@@ -1718,7 +1718,7 @@ class Monogatari {
 			}, false);
 		}
 
-		// Add event listener for back buttons. If the player is plaing, the back
+		// Add event listener for back buttons. If the player is playing, the back
 		// button will return to the game, if its not playing, then it'll return
 		// to the main menu.
 		$_(`${selector} [data-screen]`).on ('click', '[data-action="back"]:not([data-screen="game"]), [data-action="back"]:not([data-screen="game"]) *', () => {
