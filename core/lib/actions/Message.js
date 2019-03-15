@@ -100,7 +100,16 @@ export class Message extends Action {
 	}
 
 	apply () {
+		// Check if the old format is being use and translate it to the new one
+		if (this.message.Title && this.message.Subtitle && this.message.Message) {
+			this.message.title = this.message.Title;
+			this.message.subtitle = this.message.Subtitle;
+			this.message.body = this.message.Message;
+		}
+
 		$_(`${Monogatari.selector} [data-screen="game"] #components`).append (Monogatari.component ('MESSAGE').render (this.message.title, this.message.subtitle, this.message.body));
+
+		$_(`${Monogatari.selector} [data-ui="messages"]`).addClass ('animated');
 
 		for (const newClass of this.classes) {
 			$_(`${Monogatari.selector} [data-ui="messages"]`).addClass (newClass);

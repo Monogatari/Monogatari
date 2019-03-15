@@ -17,7 +17,7 @@ window.addEventListener('error', (event) => {
 				'Line': lineno,
 				'Help': {
 					'_': 'This is most likely a scripting error, please check your script and JavaScript code for missing commas or incorrect syntax.',
-					'_1': 'There may be additional information on your browser’s console.'
+					'_1': 'There may be additional information on your browser’s console. You can open your console by pressing Ctrl + Shift + I'
 				}
 			}
 		);

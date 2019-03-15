@@ -58,8 +58,8 @@ monogatari.assets ('scenes', {
 
 // Define the Characters
 monogatari.characters ({
-	'h': {
-		'Name': 'Hikaru',
+	'y': {
+		'Name': 'Yui',
 		'Color': '#5bcaff'
 	}
 });
@@ -93,12 +93,10 @@ monogatari.script ({
 				'Warning': 'You must enter a name!'
 			}
 		},
-
-		'h Hi {{player.name}} Welcome to Monogatari!',
-
+		'y Hi {{player.name}} Welcome to Monogatari!',
 		{
 			'Choice': {
-				'Dialog': 'h Have you already read some documentation?',
+				'Dialog': 'y Have you already read some documentation?',
 				'Yes': {
 					'Text': 'Yes',
 					'Do': 'jump Yes'
@@ -112,21 +110,20 @@ monogatari.script ({
 	],
 
 	'Yes': [
-
-		'h Thats awesome!',
-		'h Then you are ready to go ahead and create an amazing Game!',
-		'h I can’t wait to see what story you’ll tell!',
+		'y Thats awesome!',
+		'y Then you are ready to go ahead and create an amazing Game!',
+		'y I can’t wait to see what story you’ll tell!',
 		'end'
 	],
 
 	'No': [
 
-		'h You can do it now.',
+		'y You can do it now.',
 
 		'show message Help',
 
-		'h Go ahead and create an amazing Game!',
-		'h I can’t wait to see what story you’ll tell!',
+		'y Go ahead and create an amazing Game!',
+		'y I can’t wait to see what story you’ll tell!',
 		'end'
 	]
 });

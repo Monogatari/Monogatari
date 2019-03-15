@@ -775,6 +775,11 @@ input[type=range] {
 		height: 3.5rem;
 	}
 
+	[data-ui='quick-menu'] > button {
+		width: auto;
+		height: auto;
+	}
+
 	.modal > * {
 		width: 60%;
 	}

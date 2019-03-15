@@ -51,9 +51,6 @@ export class Conditional extends Action {
 		});
 	}
 
-	// TODO: Conditionals are not reversible right now because there's no way to
-	// tell what they actually did in all cases. And there's also no history on
-	// what function was applied.
 	willRevert () {
 		if (Monogatari.history ('conditional').length > 0) {
 			const conditional = Monogatari.history ('conditional')[Monogatari.history ('conditional').length - 1];
@@ -66,9 +63,7 @@ export class Conditional extends Action {
 
 	revert () {
 		const conditional = Monogatari.history ('conditional')[Monogatari.history ('conditional').length - 1];
-		return Monogatari.revert (this.statement[conditional], false).then (() => {
-			//return Monogatari.run (this.statement);
-		});
+		return Monogatari.revert (this.statement[conditional], false);
 	}
 
 	didRevert () {
