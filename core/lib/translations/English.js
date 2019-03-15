@@ -68,6 +68,7 @@ Monogatari.translation ('English', {
 	'Settings': 'Settings',
 	'SettingsButton': 'Open the Settings Screen.',
 	'Show': 'Show',
+	'Skip': 'Skip',
 	'SlotDeletion': 'Are you sure you want to delete this slot?',
 	'SlotOverwrite': 'Are you sure you want to overwrite this slot?',
 	'Sound': 'Sound Volume',

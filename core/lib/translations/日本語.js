@@ -67,6 +67,7 @@ Monogatari.translation ('日本語', {
 	'Settings': '環境設定',
 	'SettingsButton': '設定画面を開きます。',
 	'Show': 'ショー',
+	'Skip': 'Skip',
 	'SlotDeletion': '本当にこのスロットを削除しますか？',
 	'SlotOverwrite': '本当にこのスロットを上書きしますか？',
 	'Sound': '効果音の音量',

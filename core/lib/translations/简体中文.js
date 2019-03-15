@@ -68,6 +68,7 @@ Monogatari.translation ('简体中文', {
 	'Settings': '环境设定',
 	'SettingsButton': '显示环境设定界面。',
 	'Show': '显示',
+	'Skip': 'Skip',
 	'SlotDeletion': '确定要删除这个存档槽位吗？',
 	'SlotOverwrite': '确定要覆盖这个存档槽位吗？',
 	'Sound': '音效音量',

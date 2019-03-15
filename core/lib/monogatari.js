@@ -1625,6 +1625,8 @@ class Monogatari {
 			// statements. If it's lesser or equal to 0 then it's disabled.
 			if (Monogatari.setting ('Skip') > 0) {
 
+				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="skip"] [data-icon]`).replaceWith ('<span class="far fa-play-circle"></span>');
+
 				// Start the timeout with the time specified on the settings. We
 				// save it on a global variable so that we can disable later.
 				Monogatari.global ('skip', setTimeout (() => {
@@ -1642,6 +1644,7 @@ class Monogatari {
 		} else {
 			clearTimeout (Monogatari.global ('skip'));
 			Monogatari.global ('skip', null);
+			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="skip"] [data-icon]`).replaceWith ('<span class="fas fa-fast-forward"></span>');
 		}
 	}
 
@@ -1692,6 +1695,16 @@ class Monogatari {
 
 			case 'distraction-free':
 				Monogatari.distractionFree ();
+				break;
+
+			case 'skip':
+				if (Monogatari.global ('playing')) {
+					if (Monogatari.global ('skip') !== null) {
+						Monogatari.skip (false);
+					} else {
+						Monogatari.skip (true);
+					}
+				}
 				break;
 		}
 	}
@@ -1923,6 +1936,10 @@ class Monogatari {
 
 					}
 				});
+
+				if (!(Monogatari.setting ('Skip') > 0)) {
+					Monogatari.component ('QUICK_MENU').remove ('Skip');
+				}
 
 				for (const component of Monogatari.components ()) {
 					component.init (selector);

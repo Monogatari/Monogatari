@@ -69,6 +69,7 @@ Monogatari.translation ('Deutsch', {
 	'Settings': 'Optionen',
 	'SettingsButton': 'Öffne die Optionen.',
 	'Show': 'Einblenden',
+	'Skip': 'Skip',
 	'SlotDeletion': 'Bist Du sicher, dass Du diesen Slot löschen möchtest?',
 	'SlotOverwrite': 'Bist Du sicher, dass Du diesen Slot überschreiben möchtest?',
 	'Sound': 'Sound-Lautstärke',

@@ -81,7 +81,7 @@ class QuickMenu extends Component {
 	}
 
 	static remove (string) {
-		QuickMenu._configuration.buttons.filter ((button) => button.string !== string);
+		QuickMenu._configuration.buttons = QuickMenu._configuration.buttons.filter ((button) => button.string !== string);
 		QuickMenu.render ();
 	}
 
@@ -127,6 +127,13 @@ QuickMenu._configuration = {
 			icon: 'fas fa-play-circle',
 			data: {
 				action: 'auto-play'
+			}
+		},
+		{
+			string: 'Skip',
+			icon: 'fas fa-fast-forward',
+			data: {
+				action: 'skip'
 			}
 		},
 		{

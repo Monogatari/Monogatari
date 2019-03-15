@@ -67,6 +67,7 @@ Monogatari.translation ('Español', {
 	'Settings': 'Configuración',
 	'SettingsButton': 'Abrir la Pantalla de Configuración.',
 	'Show': 'Mostrar',
+	'Skip': 'Skip',
 	'SlotDeletion': '¿Está seguro de querer eliminar este juego?',
 	'SlotOverwrite': '¿Está seguro de querer Sobreescribir este juego?',
 	'Sound': 'Volumen de los Sonidos',

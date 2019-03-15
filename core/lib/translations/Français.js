@@ -67,6 +67,7 @@ Monogatari.translation ('Français', {
 	'Settings': 'Préférences',
 	'SettingsButton': 'Ouvrir l’écran des Préférences.',
 	'Show': 'Monter',
+	'Skip': 'Skip',
 	'SlotDeletion': 'Êtes-vous sûr de vouloir supprimer cet emplacement ?',
 	'SlotOverwrite': 'Êtes vous sûr de vouloir remplacer cet emplacement ?',
 	'Sound': 'Volume des Sons',

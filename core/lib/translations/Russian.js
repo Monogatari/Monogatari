@@ -23,6 +23,7 @@ Monogatari.translation('Русский', {
 	'Back': 'Назад',
 	'Hide': 'Скрыть',
 	'Show': 'Показать',
+	'Skip': 'Skip',
 	'AutoPlay': 'Авто',
 	'Stop': 'Стоп',
 	'Save': 'Сохранить',

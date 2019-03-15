@@ -68,6 +68,7 @@ Monogatari.translation ('Nederlands', {
 	'Settings': 'Instellingen',
 	'SettingsButton': 'Open de instellingen',
 	'Show': 'Tonen',
+	'Skip': 'Skip',
 	'SlotDeletion': 'Weet u zeker dat u dit slot verwijderen?',
 	'SlotOverwrite': 'Weet u zeker dat u dit slot overschrijven?',
 	'Sound': 'Geluids volume',
