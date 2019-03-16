@@ -5,11 +5,11 @@ import { $_ } from '@aegis-framework/artemis';
 export class End extends Action {
 
 	static bind (selector) {
-		$_(`${selector} [data-action="end"]`).click (() => {
-			$_(`${Monogatari.selector} [data-notice="exit"]`).addClass ('modal--active');
+		$_(selector).on ('click', '[data-action="end"], [data-action="end"] *', () => {
+			$_(`${selector} [data-notice="exit"]`).addClass ('modal--active');
 		});
 
-		$_(`${selector} [data-action="quit"]`).click (() => {
+		$_(selector).on ('click', '[data-action="quit"], [data-action="quit"] *', () => {
 			$_(`${selector} [data-notice="exit"]`).removeClass ('modal--active');
 			Monogatari.run ('end');
 		});

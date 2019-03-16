@@ -1748,7 +1748,7 @@ class Monogatari {
 		$_(`${selector}`).on ('click', '[data-action], [data-action] *', function (event) {
 			event.stopPropagation ();
 			Monogatari.runAction ($_(this).data ('action'), $_(this));
-			return false;
+			//return false;
 		});
 
 		// Add listener to the auto-play buttons, activating or deactivating the
