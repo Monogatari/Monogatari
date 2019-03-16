@@ -1,5 +1,6 @@
 export * from './CreditsScreen';
 export * from './CreditsScreenItem';
+export * from './DialogLog';
 export * from './GameScreen';
 export * from './HelpScreen';
 export * from './ImageGallery';

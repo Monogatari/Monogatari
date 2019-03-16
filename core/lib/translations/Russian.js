@@ -23,6 +23,7 @@ Monogatari.translation('Русский', {
 	'Back': 'Назад',
 	'Hide': 'Скрыть',
 	'Show': 'Показать',
+	'Log': 'Log',
 	'Skip': 'Skip',
 	'AutoPlay': 'Авто',
 	'Stop': 'Стоп',
@@ -81,5 +82,6 @@ Monogatari.translation('Русский', {
 	'SlotOverwrite': 'Вы действительно хотите перезаписать этот слот?',
 	'Windowed': 'Оконный режим',
 	'NewContent': 'There is new content available, reload the page to get the latest version',
-	'AllowPlayback': 'Click here to allow audio playback'
+	'AllowPlayback': 'Click here to allow audio playback',
+	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up.',
 });

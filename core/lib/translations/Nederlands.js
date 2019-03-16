@@ -46,12 +46,14 @@ Monogatari.translation ('Nederlands', {
 	'LoadingMessage': 'Wacht tot de onderdelen zijn geladen.',
 	'LoadSlots': 'Opgeslagen spellen',
 	'LocalStorageWarning': 'Locale Opslag is niet mogelijk in deze Browser.',
+	'Log': 'Log',
 
 	'Music': 'Muziek Volume',
 
 	'NewContent': 'There is new content available, reload the page to get the latest version',
 	'NoSavedGames': 'Geen opgeslagen spellen.',
 	'NoAutoSavedGames': 'Geen automatsch opgeslagen spellen.',
+	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up.',
 
 	'OrientationWarning': 'Please rotate your device to play.',
 	'Overwrite': 'Overschrijven',

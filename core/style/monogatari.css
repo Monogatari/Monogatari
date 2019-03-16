@@ -612,6 +612,42 @@ textarea {
 	width: 100%;
 }
 
+[data-ui="dialog-log"] {
+
+
+	& .modal__content {
+		width: 95%;
+		height: 95%;
+		max-height: 95%;
+		max-width: 1000px;
+		overflow: auto;
+
+		& h2 {
+			font-size: 2rem;
+		}
+
+		& [data-content="log"] {
+			text-align: left;
+			align-content: flex-start;
+			padding: 1rem;
+
+			height: 95%;
+			max-height: 95%;
+
+			overflow: auto;
+
+			& [data-spoke] {
+				font-size: 1rem;
+				margin-right: 0.5rem;
+			}
+
+			& > * {
+				margin: 0.5rem 0;
+			}
+		}
+	}
+}
+
 /**
  * ===========================
  * Data Menu Styling
@@ -773,6 +809,12 @@ input[type=range] {
 	button {
 		width: 10rem;
 		height: 3.5rem;
+	}
+
+	[data-ui="dialog-log"] button {
+		width: 8rem;
+		height: 2.5rem;
+		font-size: 1rem;
 	}
 
 	[data-ui='quick-menu'] > button {

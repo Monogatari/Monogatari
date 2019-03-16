@@ -45,12 +45,14 @@ Monogatari.translation ('Français', {
 	'LoadingMessage': 'Veuillez patienter pendant que les fichiers sont chargés.',
 	'LoadSlots': 'Parties Sauvegardées',
 	'LocalStorageWarning': 'Le stockage local n’est pas disponible sur ce navigateur.',
+	'Log': 'Log',
 
 	'Music': 'Volume de la Musique',
 
 	'NewContent': 'There is new content available, reload the page to get the latest version',
 	'NoSavedGames': 'Pas de parties sauvegardées.',
 	'NoAutoSavedGames': 'Aucune partie enregistrée automatiquement.',
+	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up.',
 
 	'OrientationWarning': 'Please rotate your device to play.',
 	'Overwrite': 'Écraser',

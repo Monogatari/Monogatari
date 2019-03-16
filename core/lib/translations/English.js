@@ -46,11 +46,13 @@ Monogatari.translation ('English', {
 	'LoadingMessage': 'Wait while the assets are loaded.',
 	'LoadSlots': 'Saved Games',
 	'LocalStorageWarning': 'Local Storage is not available in this browser.',
+	'Log': 'Log',
 
 	'Music': 'Music Volume',
 
 	'NoSavedGames': 'No saved games.',
 	'NoAutoSavedGames': 'No automatically saved games.',
+	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up.',
 	'NewContent': 'There is new content available, reload the page to get the latest version',
 
 	'OrientationWarning': 'Please rotate your device to play.',

@@ -46,12 +46,14 @@ Monogatari.translation ('简体中文', {
 	'LoadingMessage': '等待素材加载中。',
 	'LoadSlots': '存储的游戏进度',
 	'LocalStorageWarning': '该浏览器暂不支持本地存储功能。',
+	'Log': 'Log',
 
 	'Music': '音乐音量',
 
 	'NoSavedGames': '没有存储的游戏进度。',
 	'NoAutoSavedGames': '没有自动存储的游戏进度。',
 	'NewContent': '有新的内容可供使用，重新加载页面以获取最新版本',
+	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up.',
 
 	'OrientationWarning': '请将设备旋转以体验游戏内容',
 	'Overwrite': '覆盖',

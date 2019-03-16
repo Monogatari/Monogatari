@@ -45,12 +45,14 @@ Monogatari.translation ('Español', {
 	'LoadingMessage': 'Espere mientras se cargan los archivos.',
 	'LoadSlots': 'Juegos Guardados',
 	'LocalStorageWarning': 'El Almacenaje Local no está disponible en este navegador.',
+	'Log': 'Log',
 
 	'Music': 'Volumen de la Música',
 
 	'NewContent': 'There is new content available, reload the page to get the latest version',
 	'NoSavedGames': 'No hay juegos guardados.',
 	'NoAutoSavedGames': 'No hay juegos guardados automaticamente.',
+	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up.',
 
 	'OrientationWarning': 'Por favor rota tu dispositivo para jugar.',
 	'Overwrite': 'Sobreescribir',

@@ -47,12 +47,14 @@ Monogatari.translation ('Deutsch', {
 	'LoadingMessage': 'Bitte warte, während die Assets geladen werden.',
 	'LoadSlots': 'Gespeicherte Spiele',
 	'LocalStorageWarning': 'Lokaler Speicher ist in diesem Browser nicht verfügbar.',
+	'Log': 'Log',
 
 	'Music': 'Musik-Lautstärke',
 
 	'NewContent': 'There is new content available, reload the page to get the latest version',
 	'NoSavedGames': 'Keine gespeicherten Spiele.',
 	'NoAutoSavedGames': 'Keine automatisch gespeicherten Spiele.',
+	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up.',
 
 	'OrientationWarning': 'Um das Spiel zu spielen, Bitte drehen sie Ihr Gerät.',
 	'Overwrite': 'Überschreiben',

@@ -45,12 +45,14 @@ Monogatari.translation ('日本語', {
 	'LoadingMessage': 'ファイルがロードされるのを待ちます。',
 	'LoadSlots': '保存されたゲーム',
 	'LocalStorageWarning': 'このブラウザではローカルストレージは使用できません。',
+	'Log': 'Log',
 
 	'Music': '音楽の音量',
 
 	'NewContent': 'There is new content available, reload the page to get the latest version',
 	'NoSavedGames': '保存されたゲームはありません。',
 	'NoAutoSavedGames': '自動的に保存されたゲームはありません。',
+	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up.',
 
 	'OrientationWarning': 'Please rotate your device to play.',
 	'Overwrite': '上書き',
