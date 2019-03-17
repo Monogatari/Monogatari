@@ -12,8 +12,10 @@ export class Jump extends Action {
 	}
 
 	static bind (selector) {
-		$_(`${selector}`).on ('click', '[data-action="jump"]', function () {
-			Monogatari.run (`jump ${$_(this).data('jump')}`, false);
+		Monogatari.registerListener ('jump', {
+			callback: (element) => {
+				Monogatari.run (`jump ${element.data('jump')}`, false);
+			}
 		});
 		return Promise.resolve ();
 	}

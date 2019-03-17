@@ -40,11 +40,14 @@ class DialogLog extends Component {
 	}
 
 	static bind (selector) {
-		$_(selector).on ('click', '[data-action="dialog-log"], [data-action="dialog-log"] *', () => {
-			if ($_('[data-ui="dialog-log"]').isVisible ()) {
-				$_('[data-ui="dialog-log"]').removeClass ('modal--active');
-			} else {
-				$_('[data-ui="dialog-log"]').addClass ('modal--active');
+
+		Monogatari.registerListener ('dialog-log', {
+			callback: () => {
+				if ($_('[data-ui="dialog-log"]').isVisible ()) {
+					$_('[data-ui="dialog-log"]').removeClass ('modal--active');
+				} else {
+					$_('[data-ui="dialog-log"]').addClass ('modal--active');
+				}
 			}
 		});
 	}

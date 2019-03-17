@@ -1294,19 +1294,21 @@ class Monogatari {
 	 * is added to the quick menu when this mode is enabled.
 	 */
 	static distractionFree () {
-		// Check if the distraction free is currently enabled
-		if (Monogatari.global ('distraction-free') === true) {
-			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-string]`).text (Monogatari.string ('Hide'));
-			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye"></span>');
-			$_(`${Monogatari.selector} [data-ui="quick-menu"]`).removeClass ('transparent');
-			$_(`${Monogatari.selector} [data-ui="text"]`).show ();
-			Monogatari.global ('distraction-free', false);
-		} else {
-			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-string]`).text (Monogatari.string ('Show'));
-			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye-slash"></span>');
-			$_(`${Monogatari.selector} [data-ui="quick-menu"]`).addClass ('transparent');
-			$_(`${Monogatari.selector} [data-ui="text"]`).hide();
-			Monogatari.global ('distraction-free', true);
+		if (Monogatari.global ('playing')) {
+			// Check if the distraction free is currently enabled
+			if (Monogatari.global ('distraction-free') === true) {
+				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-string]`).text (Monogatari.string ('Hide'));
+				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye"></span>');
+				$_(`${Monogatari.selector} [data-ui="quick-menu"]`).removeClass ('transparent');
+				$_(`${Monogatari.selector} [data-ui="text"]`).show ();
+				Monogatari.global ('distraction-free', false);
+			} else {
+				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-string]`).text (Monogatari.string ('Show'));
+				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye-slash"></span>');
+				$_(`${Monogatari.selector} [data-ui="quick-menu"]`).addClass ('transparent');
+				$_(`${Monogatari.selector} [data-ui="text"]`).hide();
+				Monogatari.global ('distraction-free', true);
+			}
 		}
 	}
 
@@ -1601,6 +1603,84 @@ class Monogatari {
 		// and we can reset the storage when the game ends.
 		Monogatari.global ('storageStructure', JSON.stringify(Monogatari.storage ()));
 
+		// The open-screen action does exactly what it says, it takes the
+		// data-screen property of the object it's in and then opens that
+		// menu, meaning it hides everything else and shows that one.
+		Monogatari.registerListener ('open-screen', {
+			callback: (element) => {
+				$_(`${Monogatari.selector} [data-screen]`).hide();
+
+				if (element.data ('open') == 'save') {
+					$_(`${Monogatari.selector} [data-screen="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
+				}
+				$_(`${Monogatari.selector} [data-screen="${element.data('open')}"]`).show ();
+			}
+		});
+
+		// The start action starts the game so it shows the game screen
+		// and the game starts
+		Monogatari.registerListener ('start', {
+			callback: () => {
+				Monogatari.stopAmbient();
+				Monogatari.global ('playing', true);
+
+				Monogatari.onStart ().then (() => {
+					$_(`${Monogatari.selector} [data-screen]`).hide ();
+					$_('[data-ui="quick-menu"]').show ();
+					$_(`${Monogatari.selector} [data-screen="game"]`).show ();
+
+					// Check if the initial label exists
+					if (Monogatari.label ()) {
+						Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+					} else {
+
+					}
+				});
+			}
+		});
+
+		// The close action removes the active class from the element it
+		// points to.
+		Monogatari.registerListener ('close', {
+			callback: (element) => {
+				$_(`${Monogatari.selector} [data-ui="${element.data('close')}"]`).removeClass('active');
+			}
+		});
+
+		Monogatari.registerListener ('dismiss-notice', {
+			callback: () => {
+				$_(`${Monogatari.selector} [data-notice]`).removeClass('modal--active');
+			}
+		});
+
+		Monogatari.registerListener ('distraction-free', {
+			keys: 'h',
+			callback: () => {
+				Monogatari.distractionFree ();
+			}
+		});
+
+		Monogatari.registerListener ('skip', {
+			keys: 's',
+			callback: () => {
+				if (Monogatari.global ('playing')) {
+					if (Monogatari.global ('skip') !== null) {
+						Monogatari.skip (false);
+					} else {
+						Monogatari.skip (true);
+					}
+				}
+			}
+		});
+
+		// Add listener to the auto-play buttons, activating or deactivating the
+		// auto-play feature
+		Monogatari.registerListener ('auto-play', {
+			callback: () => {
+				Monogatari.autoPlay (Monogatari.global ('_AutoPlayTimer') === null);
+			}
+		});
+
 		const promises = [];
 
 		for (const component of Monogatari.components ()) {
@@ -1648,65 +1728,31 @@ class Monogatari {
 		}
 	}
 
-	static runAction (action, element) {
-		switch (action) {
+	static registerListener (name, listener, replace = false) {
+		listener.name = name;
+		if (replace === true) {
+			const index = Monogatari._listeners.findIndex (listener => listener.name === name);
 
-			// The open-screen action does exactly what it says, it takes the
-			// data-screen property of the object it's in and then opens that
-			// menu, meaning it hides everything else and shows that one.
-			case 'open-screen':
-				$_(`${Monogatari.selector} [data-screen]`).hide();
-
-				if (element.data ('open') == 'save') {
-					$_(`${Monogatari.selector} [data-screen="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
-				}
-				$_(`${Monogatari.selector} [data-screen="${element.data('open')}"]`).show ();
-				break;
-
-			// The start action starts the game so it shows the game screen
-			// and the game starts
-			case 'start':
-				Monogatari.stopAmbient();
-				Monogatari.global ('playing', true);
-
-				Monogatari.onStart ().then (() => {
-					$_(`${Monogatari.selector} [data-screen]`).hide ();
-					$_('[data-ui="quick-menu"]').show ();
-					$_(`${Monogatari.selector} [data-screen="game"]`).show ();
-
-					// Check if the initial label exists
-					if (Monogatari.label ()) {
-						Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
-					} else {
-
-					}
-				});
-				break;
-
-			// The close action removes the active class from the element it
-			// points to.
-			case 'close':
-				$_(`${Monogatari.selector} [data-ui="${element.data('close')}"]`).removeClass('active');
-				break;
-
-			case 'dismiss-notice':
-				$_(`${Monogatari.selector} [data-notice]`).removeClass('modal--active');
-				break;
-
-			case 'distraction-free':
-				Monogatari.distractionFree ();
-				break;
-
-			case 'skip':
-				if (Monogatari.global ('playing')) {
-					if (Monogatari.global ('skip') !== null) {
-						Monogatari.skip (false);
-					} else {
-						Monogatari.skip (true);
-					}
-				}
-				break;
+			if (index > -1) {
+				Monogatari._listeners[index] = listener;
+			} else {
+				Monogatari._listeners.push (listener);
+			}
+		} else {
+			Monogatari._listeners.push (listener);
 		}
+	}
+
+	static runListener (name, element, event) {
+		const promises = [];
+		for (const listener of Monogatari._listeners) {
+			if (listener.name === name) {
+				promises.push (Monogatari.assertAsync (listener.callback), Monogatari, [element, event]);
+			}
+		}
+		Promise.all (promises).catch (() => {
+			event.stopImmediatePropagation ();
+		});
 	}
 
 	/**
@@ -1746,16 +1792,18 @@ class Monogatari {
 
 		// Add listeners for the data-action properties
 		$_(`${selector}`).on ('click', '[data-action], [data-action] *', function (event) {
-			event.stopPropagation ();
-			Monogatari.runAction ($_(this).data ('action'), $_(this));
-			//return false;
+			const element = $_(this);
+			const action = element.data ('action');
+
+			Monogatari.runListener (action, element, event);
 		});
 
-		// Add listener to the auto-play buttons, activating or deactivating the
-		// auto-play feature
-		$_(`${selector} [data-action="auto-play"], ${selector} [data-action="auto-play"] *`).click(function () {
-			Monogatari.autoPlay (Monogatari.global ('_AutoPlayTimer') === null);
-		});
+		for (const listener of Monogatari._listeners) {
+			const { keys, callback } = listener;
+			if (typeof keys !== 'undefined') {
+				Monogatari.keyboardShortcut (keys, callback);
+			}
+		}
 
 		Monogatari.keyboardShortcut (['right', 'space'], () => {
 			Monogatari.canProceed ().then (() => {
@@ -1784,21 +1832,6 @@ class Monogatari {
 			});
 		});
 
-		Monogatari.keyboardShortcut ('h', () => {
-			if (Monogatari.global ('playing')) {
-				Monogatari.distractionFree ();
-			}
-		});
-
-		Monogatari.keyboardShortcut ('s', () => {
-			if (Monogatari.global ('playing')) {
-				if (Monogatari.global ('skip') !== null) {
-					Monogatari.skip (false);
-				} else {
-					Monogatari.skip (true);
-				}
-			}
-		});
 
 		Monogatari.keyboardShortcut ('shift+s', () => {
 			if (Monogatari.global ('playing')) {
@@ -2149,8 +2182,11 @@ Monogatari.globals ({
 	playing: false,
 	currentAutoSaveSlot: 1,
 	_AutoPlayTimer: null,
-	skip: null
+	skip: null,
+	_log: []
 });
+
+Monogatari._listeners = [];
 
 Monogatari._templates = {};
 
