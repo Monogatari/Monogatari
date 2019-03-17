@@ -2144,7 +2144,9 @@ $_ready(function () {
 							if (parts[1] == "message") {
 								if (typeof messages == "object") {
 									const mess = messages[parts[2]];
-									$_("[data-ui='message-content']").html("<h3>" + mess.Title + "</h3><p>" + mess.Subtitle + "</p>" + "<p>" + mess.Message + "</p>");
+									$_("[data-ui='message-content']").html(
+										replaceVariables("<h3>" + mess.Title + "</h3><p>" + mess.Subtitle + "</p>" + "<p>" + mess.Message + "</p>")
+									);
 									$_("[data-ui='messages']").addClass("active");
 								}
 							} else if (parts[1] == "image") {
