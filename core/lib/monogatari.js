@@ -767,7 +767,7 @@ class Monogatari {
 
 	static replaceVariables (statement) {
 		statement = Monogatari.translate (statement);
-		const matches = statement.match (/{{\S+}}/g);
+		const matches = statement.match (/{{\S+?}}/g);
 		if (matches !== null) {
 			for (const match of matches) {
 				const path = match.replace ('{{', '').replace ('}}', '').split ('.');
