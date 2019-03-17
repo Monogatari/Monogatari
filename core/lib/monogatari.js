@@ -2,6 +2,7 @@ import { $_, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, Text } fr
 import moment from 'moment';
 import mousetrap from 'mousetrap';
 import { FancyError } from './FancyError';
+import merge  from 'deeply';
 
 
 /**
@@ -454,7 +455,7 @@ class Monogatari {
 			if (typeof object === 'string') {
 				return Monogatari._storage[object];
 			} else {
-				Monogatari._storage = Object.assign ({}, Monogatari._storage, object);
+				Monogatari._storage = merge (Monogatari._storage, object);
 			}
 		} else {
 			return Monogatari._storage;

@@ -21,9 +21,9 @@
     "build:js": "parcel build ./core/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine --no-cache --public-url .",
     "build:debug": "parcel build ./debug/index.js --global MonogatariDebug --out-file debug.js --out-dir dist/engine --no-cache --public-url .",
     "build:css": "parcel build ./core/index.css --out-file monogatari.css --out-dir dist/engine --no-cache --no-source-maps",
-	"eslint": "eslint ./core/index.js ./core/actions/* ./core/translations/*",
-	"watch:js": "parcel watch ./core/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine --no-cache --public-url .",
-	"watch:css": "parcel watch ./core/index.css --out-file monogatari.css --out-dir dist/engine --no-cache --no-source-maps"
+    "eslint": "eslint ./core/index.js ./core/actions/* ./core/translations/*",
+    "watch:js": "parcel watch ./core/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine --no-cache --public-url .",
+    "watch:css": "parcel watch ./core/index.css --out-file monogatari.css --out-dir dist/engine --no-cache --no-source-maps"
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",
@@ -45,6 +45,7 @@
     "@aegis-framework/kayros.css": "^0.4.2",
     "@fortawesome/fontawesome-free": "^5.5.0",
     "animate.css": "^3.6.1",
+    "deeply": "^3.0.0",
     "electron": "^4.0.1",
     "moment": "^2.22.2",
     "mousetrap": "^1.6.2",
@@ -52,8 +53,8 @@
     "typed.js": "^2.0.8"
   },
   "files": [
-	"index.js",
-	"core/*",
-	"dist/*"
+    "index.js",
+    "core/*",
+    "dist/*"
   ]
 }
