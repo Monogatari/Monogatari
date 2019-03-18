@@ -1645,6 +1645,7 @@ class Monogatari {
 		Monogatari.registerListener ('close', {
 			callback: (element) => {
 				$_(`${Monogatari.selector} [data-ui="${element.data('close')}"]`).removeClass('active');
+				return true;
 			}
 		});
 
@@ -1748,11 +1749,14 @@ class Monogatari {
 		const promises = [];
 		for (const listener of Monogatari._listeners) {
 			if (listener.name === name) {
-				promises.push (Monogatari.assertAsync (listener.callback), Monogatari, [element, event]);
+				promises.push (Monogatari.assertAsync (listener.callback , Monogatari, [element, event]));
 			}
 		}
 		Promise.all (promises).catch (() => {
 			event.stopImmediatePropagation ();
+			Monogatari.global ('block', false);
+		}).then (() => {
+			Monogatari.global ('block', false);
 		});
 	}
 
