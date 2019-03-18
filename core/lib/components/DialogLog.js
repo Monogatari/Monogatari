@@ -52,11 +52,14 @@ class DialogLog extends Component {
 		});
 	}
 
-	static write ({ id, character: { Name, Color }, dialog }) {
+	static write ({ id, character, dialog }) {
+
+
 
 		$_('[data-string="NoDialogsAvailable"]').remove ();
 
 		if (id !== 'narrator') {
+			const { Name, Color } = character;
 			$_(`${Monogatari.selector} [data-content="log"]`).append (`
 				<div data-spoke="${id}" class="named row__column--12 row">
 					<span style="color:${Color};" class="row__column--4 row__column--phablet--3 row__column--tablet--2">${Monogatari.replaceVariables (Name)} </span>
