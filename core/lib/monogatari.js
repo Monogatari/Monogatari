@@ -1946,9 +1946,12 @@ class Monogatari {
 
 				// Check if the orientation is correct, if it's not, show the warning
 				// message so the player will rotate its device.
-				if (Platform.mobile () && Platform.orientation () !== Monogatari.setting ('Orientation')) {
-					$_(`${selector} [data-notice="orientation"]`).addClass ('modal--active');
+				if (Monogatari.setting ('Orientation') !== 'any') {
+					if (Platform.mobile () && Platform.orientation () !== Monogatari.setting ('Orientation')) {
+						$_(`${selector} [data-notice="orientation"]`).addClass ('modal--active');
+					}
 				}
+
 
 				// Set all the dynamic backgrounds of the data-background property
 				$_(`${selector} [data-background]`).each ((element) => {
