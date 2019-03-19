@@ -10,6 +10,7 @@
  * Français - BakaKiller
  * 日本語
  * Nederlands - Natsukeep
+ * Português - fsvieira
  **/
 
 "use strict";
@@ -78,6 +79,67 @@ const strings = {
 		"Voice": "Voice Volume",
 
 		"Windowed": "Windowed"
+	},
+	"Português": {
+		"AdvanceHelp": "Para avançar no jogo, pressione a barra de espaço ou clique no rato.",
+		"Audio": "Audio",
+		"AutoPlay": "Auto",
+		"AutoPlaySpeed": "Velocidade de Jogo Automático",
+
+		"Back": "Voltar",
+		"BackButton": "Voltar.",
+
+		"Cancel": "Cancelar",
+		"Close": "Fechar",
+		"Confirm": "Deseja sair?",
+
+		"FullScreen": "Ecrã Inteiro",
+
+		"Help": "Ajuda",
+		"Hide": "Esconder",
+		"HideButton": "Esconder Texto.",
+
+		"iOSAudioWarning": "Configurações de audio não são suportadas em iOS.",
+
+		"Language": "Língua",
+		"Load": "Carregar",
+		"LoadAutoSaveSlots": "Jogos automaticamente salvos.",
+		"LoadButton": "Consultar jogos salvos.",
+		"Loading": "A Carregar",
+		"LoadingMessage": "Aguarde enquanto os recursos são carregados.",
+		"LoadSlots": "Jogos Guardados",
+		"LocalStorageWarning": "O armazenamento local não está disponível para este navegador.",
+
+		"Music": "Volume de Música",
+
+		"NoSavedGames": "Sem jogos guardados.",
+		"NoAutoSavedGames": "Sem jogos guardados automaticamente.",
+
+		"Overwrite": "Substituir",
+
+		"QuickButtons": "Butões de Acesso Rápido",
+		"Quit": "Sair",
+		"QuitButton": "Sair do Jogo.",
+
+		"Resolution": "Resolução",
+
+		"Save": "Guardar",
+		"SaveButon": "Abrir opções de guardar.",
+		"SaveInSlot": "Guardar jogo",
+		"Settings": "Configurações",
+		"SettingsButton": "Abrir o painel de configurações.",
+		"Show": "Mostrar",
+		"SlotDeletion": "Tem a certeza que deseja apagar este jogo?",
+		"SlotOverwrite": "Tem a certeza que deseja substituir este jogo?",
+		"Sound": "Volume de Som",
+		"Start": "Inicio",
+		"Stop": "Parar",
+
+		"TextSpeed": "Velocidade de Texto",
+
+		"Voice": "Volume de Voz",
+
+		"Windowed": "Em Janela"
 	},
 
 	"Español": {
