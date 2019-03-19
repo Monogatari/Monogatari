@@ -33,7 +33,7 @@ class GameScreen extends Component {
 	}
 
 	static bind (selector) {
-		$_(`${selector} [data-screen="game"]`).click (function () {
+		$_(`${selector}`).on ('click', '[data-screen="game"] *', function () {
 			Monogatari.canProceed ().then (() => {
 				Monogatari.next ();
 			}).catch (() => {

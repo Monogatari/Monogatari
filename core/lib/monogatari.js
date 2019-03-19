@@ -779,6 +779,8 @@ class Monogatari {
 				}
 				statement = statement.replace (match, data);
 			}
+
+			return Monogatari.replaceVariables (statement);
 		}
 		return statement;
 	}
@@ -1752,8 +1754,12 @@ class Monogatari {
 				promises.push (Monogatari.assertAsync (listener.callback , Monogatari, [element, event]));
 			}
 		}
+
 		Promise.all (promises).catch (() => {
 			event.stopImmediatePropagation ();
+			event.stopPropagation ();
+			event.preventDefault ();
+
 			Monogatari.global ('block', false);
 		}).then (() => {
 			Monogatari.global ('block', false);

@@ -41,7 +41,7 @@ TextInput._html = message => `
 		<input type="text">
 		<small data-ui="warning" class="block"></small>
 		<div>
-			<button data-action="submit" type='submit'>Ok</button>
+			<button type='submit'>Ok</button>
 		</div>
 	<form>
 `;
