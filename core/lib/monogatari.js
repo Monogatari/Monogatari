@@ -1360,8 +1360,6 @@ class Monogatari {
 				});
 				actionToRevert = Monogatari.label ()[Monogatari.state ('step')];
 			}
-
-
 		}
 
 		if (actionToRevert !== null) {
@@ -1416,7 +1414,7 @@ class Monogatari {
 							// specifying if the game should go ahead and revert
 							// the previous statement as well or if it should
 							// wait instead
-							return act.didRevert (). then (({ advance, step }) => {
+							return act.didRevert ().then (({ advance, step }) => {
 
 								// Since we reverted correctly, the step should
 								// go back.
@@ -1751,7 +1749,10 @@ class Monogatari {
 		const promises = [];
 		for (const listener of Monogatari._listeners) {
 			if (listener.name === name) {
-				promises.push (Monogatari.assertAsync (listener.callback , Monogatari, [element, event]));
+				promises.push (Monogatari.assertAsync (listener.callback , Monogatari, [element, event]).finally (() => {
+					// Unblock the game so the player can continue
+					Monogatari.global ('block', false);
+				}));
 			}
 		}
 
@@ -1759,10 +1760,6 @@ class Monogatari {
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();
 			event.preventDefault ();
-
-			Monogatari.global ('block', false);
-		}).then (() => {
-			Monogatari.global ('block', false);
 		});
 	}
 
@@ -1834,15 +1831,6 @@ class Monogatari {
 				$_(`${selector} [data-screen="game"]`).show ();
 			}
 		});
-
-		Monogatari.keyboardShortcut ('left', () => {
-			Monogatari.revert ().catch (() => {
-				// The game could not be reverted, either because an
-				// action prevented it or because there are no statements
-				// left to revert to.
-			});
-		});
-
 
 		Monogatari.keyboardShortcut ('shift+s', () => {
 			if (Monogatari.global ('playing')) {

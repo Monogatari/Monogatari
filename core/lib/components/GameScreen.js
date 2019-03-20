@@ -42,15 +42,20 @@ class GameScreen extends Component {
 			});
 		});
 
-		$_(`${selector} [data-screen="game"] [data-action="back"], ${selector} [data-screen="game"] [data-action="back"] *`).click ((event) => {
-			event.stopPropagation ();
-			Monogatari.canRevert ().then (() => {
+		Monogatari.registerListener ('back', {
+			keys: 'left',
+			callback: () => {
 				Monogatari.previous ();
-			}).catch (() => {
-				// An action waiting for user interaction or something else
-				// is blocking the game.
-			});
+				Monogatari.global ('block', false);
+				Monogatari.canRevert ().then (() => {
+					Monogatari.previous ();
+				}).catch ((e) => {
+					// An action waiting for user interaction or something else
+					// is blocking the game.
+				});
+			}
 		});
+
 		return Promise.resolve ();
 	}
 

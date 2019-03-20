@@ -85,21 +85,19 @@ export class Jump extends Action {
 		if (Monogatari.history ('jump').length > 0) {
 			return Promise.resolve ();
 		}
-		return Promise.reject ();
+		return Promise.reject ('Jump: No elements in history available.');
 	}
 
 	revert () {
-		const last = Monogatari.history ('jump')[Monogatari.history ('jump') - 1];
+		const last = Monogatari.history ('jump')[Monogatari.history ('jump').length - 1];
 		if (typeof last !== 'undefined') {
 			Monogatari.state ({
 				step: last.source.step,
 				label: last.source.label
 			});
-			const action = Monogatari.label ()[Monogatari.state ('step')];
-			//return Monogatari.run (action);
 			return Promise.resolve ();
 		}
-		return Promise.reject ();
+		return Promise.reject ('Jump: No elements in history available. 2');
 	}
 
 	didRevert () {
