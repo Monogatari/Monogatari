@@ -27,7 +27,7 @@ class DialogLog extends Component {
 		}
 	}
 
-	static setup (selector) {
+	static setup () {
 		Monogatari.component ('QUICK_MENU').addAfter ('Hide', {
 			string: 'Log',
 			icon: 'far fa-comments',
@@ -39,8 +39,7 @@ class DialogLog extends Component {
 		$_(`${Monogatari.selector}`).append (this.html ());
 	}
 
-	static bind (selector) {
-
+	static bind () {
 		Monogatari.registerListener ('dialog-log', {
 			callback: () => {
 				if ($_('[data-ui="dialog-log"]').isVisible ()) {
@@ -54,20 +53,18 @@ class DialogLog extends Component {
 
 	static write ({ id, character, dialog }) {
 
-
-
 		$_('[data-string="NoDialogsAvailable"]').remove ();
 
-		if (id !== 'narrator') {
+		if (id !== 'narrator' && id !== 'centered') {
 			const { Name, Color } = character;
 			$_(`${Monogatari.selector} [data-content="log"]`).append (`
-				<div data-spoke="${id}" class="named row__column--12 row">
-					<span style="color:${Color};" class="row__column--4 row__column--phablet--3 row__column--tablet--2">${Monogatari.replaceVariables (Name)} </span>
-					<p class="row__column--8 row__column--phablet--9 row__column--tablet--10">${dialog}</p>
+				<div data-spoke="${id}" class="named">
+					<span style="color:${Color};">${Monogatari.replaceVariables (Name)} </span>
+					<p>${dialog}</p>
 				</div>
 			`);
 		} else {
-			$_(`${Monogatari.selector} [data-content="log"]`).append (`<div data-spoke="${id}" class="unnamed row__column--12 row padded"><p class="row__column--12 row__column--offset--4 row__column--offset--phablet--3 row__column--offset--tablet--2">${dialog}</p></div>`);
+			$_(`${Monogatari.selector} [data-content="log"]`).append (`<div data-spoke="${id}" class="unnamed"><p>${dialog}</p></div>`);
 		}
 
 		const element = $_(`${Monogatari.selector} [data-content="log"]`).get (0);
@@ -80,8 +77,8 @@ DialogLog._id = 'DIALOG_LOG';
 DialogLog._html = `
 	<div data-ui="dialog-log" class="modal">
 		<div class="modal__content">
-			<div data-content="log" class="row">
-				<div class="row__column--12 text--center padded" data-string="NoDialogsAvailable">No dialogs available. Dialogs will appear here as they show up.</div>
+			<div data-content="log">
+				<div class="text--center padded" data-string="NoDialogsAvailable">No dialogs available. Dialogs will appear here as they show up.</div>
 			</div>
 			<button data-action="dialog-log">Close</button>
 		</div>

@@ -51,19 +51,32 @@ export class Centered extends Action {
 
 	constructor ([ action, ...dialog ]) {
 		super ();
-		this.dialog = dialog.join (' ');
+		this.dialog = Monogatari.replaceVariables (dialog.join (' '));
 		this.animate = Monogatari.setting ('TypeAnimation') && Monogatari.setting ('CenteredTypeAnimation');
 	}
 
 	apply () {
 		$_(`${Monogatari.selector} [data-ui="text"]`).hide ();
-		$_(`${Monogatari.selector} [data-screen="game"]`).append ('<div class="middle align-center" data-ui="centered"></div>');
+		$_(`${Monogatari.selector} [data-screen="game"]`).append ('<div class="middle align-center" data-ui="centered"><div></div></div>');
 		if (this.animate) {
 			Monogatari.global ('typedConfiguration').strings = [this.dialog];
-			Monogatari.global ('textObject', new Typed (`${Monogatari.selector} [data-ui="centered"]`, Monogatari.global ('typedConfiguration')));
+			Monogatari.global ('textObject', new Typed (`${Monogatari.selector} [data-ui="centered"] div`, Monogatari.global ('typedConfiguration')));
 		} else {
-			$_(`${Monogatari.selector} [data-ui="centered"]`).html (this.dialog);
+			$_(`${Monogatari.selector} [data-ui="centered"] div`).html (this.dialog);
 		}
+
+		if (this._cycle === 'Application') {
+			const dialogLog = Monogatari.component ('DIALOG_LOG');
+
+			if (typeof dialogLog !== 'undefined') {
+				dialogLog.write ({
+					id: 'centered',
+					character: null,
+					dialog: this.dialog
+				});
+			}
+		}
+
 		return Promise.resolve ();
 	}
 

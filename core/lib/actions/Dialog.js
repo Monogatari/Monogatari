@@ -255,15 +255,18 @@ export class Dialog extends Action {
 
 		Dialog.checkUnread ();
 
-		const dialogLog = Monogatari.component ('DIALOG_LOG');
+		if (this._cycle === 'Application') {
+			const dialogLog = Monogatari.component ('DIALOG_LOG');
 
-		if (typeof dialogLog !== 'undefined') {
-			dialogLog.write ({
-				id: character,
-				character: this.character,
-				dialog
-			});
+			if (typeof dialogLog !== 'undefined') {
+				dialogLog.write ({
+					id: character,
+					character: this.character,
+					dialog
+				});
+			}
 		}
+
 
 		return Promise.resolve ();
 	}
