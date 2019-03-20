@@ -577,6 +577,14 @@ textarea {
 	width: 100%;
 }
 
+[data-ui='slots'] figure [data-content="background"] {
+	width: 100%;
+	height: 10rem;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	background-position: center;
+	background-size: cover;
+}
+
 [data-ui='slots'] figcaption {
 	padding: 1rem;
 }

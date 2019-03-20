@@ -862,7 +862,7 @@ class Monogatari {
 				return Monogatari.Storage.set (`${Monogatari.setting (prefix)}_${id}`, {
 					name,
 					date,
-					image: Monogatari.state ('scene').split (' ')[1],
+					image: Monogatari.state ('scene').split (' ')[2],
 					game: Monogatari.object ()
 				});
 			});
