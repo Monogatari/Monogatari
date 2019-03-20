@@ -452,7 +452,7 @@ textarea {
 	height: 0;
 	display: block;
 	background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.22) 85%);
-	position: absolute;
+	position: sticky;
 	bottom: 0;
 	transition: all ease 0.5s;
 }
