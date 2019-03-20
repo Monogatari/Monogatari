@@ -224,7 +224,7 @@ class Monogatari {
 			if (typeof object === 'string') {
 				return Monogatari._state[object];
 			} else {
-				Monogatari._state = Object.assign ({}, Monogatari._state, object);
+				Monogatari._state = merge (Monogatari._state, object);
 			}
 		} else {
 			return Monogatari._state;
@@ -359,7 +359,7 @@ class Monogatari {
 
 	static characters (object = null) {
 		if (object !== null) {
-			Monogatari._characters = Object.assign ({}, Monogatari._characters, object);
+			Monogatari._characters = merge (Monogatari._characters, object);
 		} else {
 			return Monogatari._characters;
 		}
@@ -368,7 +368,7 @@ class Monogatari {
 	static character (id, object = null) {
 		if (object !== null) {
 			if (typeof Monogatari._characters[id] !== 'undefined') {
-				Monogatari._characters[id] = Object.assign ({}, Monogatari._characters[id], object);
+				Monogatari._characters[id] = merge (Monogatari._characters[id], object);
 			} else {
 				Monogatari._characters[id] = object;
 			}
@@ -411,7 +411,7 @@ class Monogatari {
 
 	static settings (object = null) {
 		if (object !== null) {
-			Monogatari._settings = Object.assign ({}, Monogatari._settings, object);
+			Monogatari._settings = merge (Monogatari._settings, object);
 		} else {
 			return Monogatari._settings;
 		}
@@ -432,7 +432,7 @@ class Monogatari {
 
 	static preferences (object = null) {
 		if (object !== null) {
-			Monogatari._preferences = Object.assign ({}, Monogatari._preferences, object);
+			Monogatari._preferences = merge (Monogatari._preferences, object);
 			if (Monogatari.Storage.configuration ().name === '') {
 				Monogatari.setupStorage ();
 			}
@@ -566,7 +566,7 @@ class Monogatari {
 
 	static globals (object = null) {
 		if (object !== null) {
-			Monogatari._globals = Object.assign ({}, Monogatari._globals, object);
+			Monogatari._globals = merge (Monogatari._globals, object);
 		} else {
 			return Monogatari._globals;
 		}
@@ -1554,7 +1554,7 @@ class Monogatari {
 		// Set the initial settings if they don't exist or load them from the
 		// Storage if they do.
 		Monogatari.Storage.get ('Settings').then ((local_settings) => {
-			Monogatari._preferences = Object.assign ({}, Monogatari._preferences, local_settings);
+			Monogatari._preferences = merge (Monogatari._preferences, local_settings);
 		}).catch (() => {
 			Monogatari.Storage.set ('Settings', Monogatari._preferences);
 		});
