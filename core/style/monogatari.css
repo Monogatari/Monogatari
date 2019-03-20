@@ -1,23 +1,4 @@
 /**
- * ==============================================
- * I N D E X
- * ==============================================
- * 1) HTML Elements Initial Style
- * 2) Support Classes
- * 3) In-Game Elements Styling
- * 4) Data Notice Styling
- * 5) Data Components Styling
- * 6) Data UI Styling
- * 7) Data Menu Styling
- * 8) Inputs Styling
- * 9) Positioning and Distributing Classes
- * 10) CSS Fixes
- * 11) Media Queries
- * ==============================================
-**/
-
-
-/**
  * ===========================
  * HTML Elements Initial Style
  * ===========================
@@ -50,7 +31,7 @@ body {
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
-	color: rgba(0, 0, 0, 0.5);
+	color: rgba(66, 66, 66, 0.9);
 	background-color: #f7f7f7;
 }
 
