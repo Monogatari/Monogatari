@@ -94,6 +94,28 @@ select {
 
 /**
  * ===========================
+ * General Styling
+ * ===========================
+**/
+
+[data-screen] {
+	height: 100vh;
+	max-height: 100vh;
+	max-width: 100vw;
+	overflow-y: auto;
+	overflow-x: hidden;
+	width: 100vw;
+	display: none;
+	background-repeat: no-repeat;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	background-position: center;
+}
+
+/**
+ * ===========================
  * In-Game Elements Styling
  * ===========================
 **/
@@ -103,6 +125,7 @@ select {
 	max-height: 100%;
 	max-width: 100%;
 	overflow: hidden;
+	overflow-y: hidden;
 	width: 100%;
 	display: none;
 	position: relative;
@@ -279,9 +302,10 @@ select {
 	&.immersive {
 		height: 100%;
 		width: 100%;
-		object-fit: cover;
+		object-fit: contain;
 		position: relative;
 		z-index: 20;
+		background: #000;
 	}
 
 	&.displayable {
@@ -659,21 +683,7 @@ textarea {
  * ===========================
 **/
 
-[data-screen] {
-	height: 100vh;
-	max-height: 100vh;
-	max-width: 100vw;
-	overflow-y: auto;
-	overflow-x: hidden;
-	width: 100vw;
-	display: none;
-	background-repeat: no-repeat;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
-	background-position: center;
-}
+
 
 [data-screen='settings'] input,
 [data-screen='settings'] select {
