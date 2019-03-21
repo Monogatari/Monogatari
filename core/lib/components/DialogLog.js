@@ -72,9 +72,13 @@ class DialogLog extends Component {
 	}
 
 	static pop (id) {
-		$_(`${Monogatari.selector} [data-content="log"] [data-spoke=${id}]`).last ().remove ();
-		const element = $_(`${Monogatari.selector} [data-content="log"]`).get (0);
-		element.scrollTop = element.scrollHeight;
+		const last = $_(`${Monogatari.selector} [data-content="log"] [data-spoke=${id}]`).last ();
+		if (typeof last !== 'undefined') {
+			last.remove ();
+			const element = $_(`${Monogatari.selector} [data-content="log"]`).get (0);
+			element.scrollTop = element.scrollHeight;
+		}
+
 	}
 }
 
