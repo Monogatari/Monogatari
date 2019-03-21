@@ -30,6 +30,15 @@ export class Dialog extends Action {
 		return Promise.resolve (Monogatari.global ('finishedTyping'));
 	}
 
+	static canRevert () {
+		const dialogLog = Monogatari.component ('DIALOG_LOG');
+
+		if (typeof dialogLog !== 'undefined') {
+			dialogLog.pop ();
+		}
+		return Promise.resolve ();
+	}
+
 	/**
 	 * @static checkUnread - This function is used to add the unread class to the
 	 * text box if new contents (dialogs) were added to it causing it to overflow
@@ -264,7 +273,7 @@ export class Dialog extends Action {
 					dialog
 				});
 			} else {
-				dialogLog.pop (character);
+				dialogLog.pop ();
 			}
 		}
 
@@ -313,6 +322,9 @@ export class Dialog extends Action {
 
 	willRevert () {
 		this._action = 'revert';
+		$_(`${Monogatari.selector} [data-character]`).removeClass ('focus');
+		$_(`${Monogatari.selector} [data-ui="face"]`).hide ();
+		document.querySelector ('[data-ui="who"]').innerHTML = '';
 		return Promise.resolve ();
 	}
 

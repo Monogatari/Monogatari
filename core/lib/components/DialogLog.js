@@ -46,6 +46,10 @@ class DialogLog extends Component {
 					$_('[data-ui="dialog-log"]').removeClass ('modal--active');
 				} else {
 					$_('[data-ui="dialog-log"]').addClass ('modal--active');
+
+					// Make the log scroll to the last dialog available
+					const element = $_(`${Monogatari.selector} [data-content="log"]`).get (0);
+					element.scrollTop = element.scrollHeight;
 				}
 			}
 		});
@@ -66,19 +70,13 @@ class DialogLog extends Component {
 		} else {
 			$_(`${Monogatari.selector} [data-content="log"]`).append (`<div data-spoke="${id}" class="unnamed"><p>${dialog}</p></div>`);
 		}
-
-		const element = $_(`${Monogatari.selector} [data-content="log"]`).get (0);
-		element.scrollTop = element.scrollHeight;
 	}
 
-	static pop (id) {
-		const last = $_(`${Monogatari.selector} [data-content="log"] [data-spoke=${id}]`).last ();
+	static pop () {
+		const last = $_(`${Monogatari.selector} [data-content="log"] [data-spoke]`).last ();
 		if (typeof last !== 'undefined') {
 			last.remove ();
-			const element = $_(`${Monogatari.selector} [data-content="log"]`).get (0);
-			element.scrollTop = element.scrollHeight;
 		}
-
 	}
 }
 
