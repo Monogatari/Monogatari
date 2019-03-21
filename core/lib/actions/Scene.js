@@ -1,6 +1,6 @@
 import { Action } from '../Action';
 import { Monogatari } from '../monogatari';
-import { $_ } from '@aegis-framework/artemis';
+import { $_, Text } from '@aegis-framework/artemis';
 
 export class Scene extends Action {
 
@@ -37,17 +37,29 @@ export class Scene extends Action {
 		return show === 'show' && type === 'scene';
 	}
 
-	constructor ([ show, type, scene, separator, ...classes ]) {
+	constructor ([ show, type, scene, ...classes ]) {
 		super ();
 		this.scene = scene;
 		this.property = 'background-image';
 		if (typeof Monogatari.asset ('scenes', scene) !== 'undefined') {
 			this.value = `url(${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${Monogatari.asset ('scenes', scene)})`;
 		} else {
-			if (this.scene.indexOf ('.') === -1) {
+			const rest = [scene, ...classes].join (' ');
+			if (classes.indexOf ('with') > -1) {
+				this.value = Text.prefix ('with', rest);
+			} else {
+				this.value = rest;
+			}
+
+			const isColorProperty = ['#', 'rgb', 'hsl'].findIndex ((color) => {
+				return this.value.indexOf (color) === 0;
+			});
+
+			const isNamed = this.value.indexOf (' ') > -1 ? false : new RegExp('\w+').test (this.value);
+
+			if (isColorProperty > -1 || isNamed === true) {
 				this.property = 'background-color';
 			}
-			this.value = this.scene;
 		}
 
 		if (typeof classes !== 'undefined') {
