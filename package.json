@@ -41,7 +41,7 @@
     "stylelint-config-standard": "^18.2.0"
   },
   "dependencies": {
-    "@aegis-framework/artemis": "^0.3.13",
+    "@aegis-framework/artemis": "^0.3.14",
     "@aegis-framework/kayros.css": "^0.4.2",
     "@fortawesome/fontawesome-free": "^5.8.0",
     "animate.css": "^3.6.1",
