@@ -1,4 +1,4 @@
-import { $_, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, Text } from '@aegis-framework/artemis';
+import { $_, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, Text, Debug, DebugLevel } from '@aegis-framework/artemis';
 import moment from 'moment';
 import mousetrap from 'mousetrap';
 import { FancyError } from './FancyError';
@@ -105,6 +105,18 @@ class Monogatari {
 	 */
 	static height () {
 		return getComputedStyle($_(Monogatari.selector).get (0)).height.replace ('px', '');
+	}
+
+	static debug () {
+
+		return new Proxy (Debug, {
+			apply (target, receiver, args) {
+				console.log (target);
+				if (typeof MonogatariDebug === 'object') {
+					return Reflect.apply (target, receiver, args);
+				}
+			}
+		});
 	}
 
 	/**
@@ -1030,9 +1042,14 @@ class Monogatari {
 	static canProceed () {
 		const promises = [];
 
+		Monogatari.debug ().groupCollapsed ('canProceed Check');
 		// Check action by action if they will allow the game to proceed
 		for (const action of Monogatari.actions ()) {
-			promises.push (action.canProceed ());
+			promises.push (action.canProceed ().then (() => {
+				Monogatari.debug ().log (`OK ${action.id}`);
+			}).catch ((e) => {
+				Monogatari.debug ().log (`FAIL ${action.id}\nReason: ${e}`);
+			}));
 		}
 
 		// Check if the game is visible, if it's not, then it probably is not
@@ -1047,7 +1064,9 @@ class Monogatari {
 		} else {
 			promises.push (Promise.reject ());
 		}
-		return Promise.all (promises);
+		return Promise.all (promises).finally (() => {
+			Monogatari.debug ().groupEnd ();
+		});
 	}
 
 	/**
@@ -1059,9 +1078,14 @@ class Monogatari {
 	static canRevert () {
 		const promises = [];
 
+		Monogatari.debug ().groupCollapsed ('canRevert Check');
 		// Check action by action if they will allow the game to revert
 		for (const action of Monogatari.actions ()) {
-			promises.push (action.canRevert ());
+			promises.push (action.canRevert ().then (() => {
+				Monogatari.debug ().log (`OK ${action.id}`);
+			}).catch ((e) => {
+				Monogatari.debug ().log (`FAIL ${action.id}\nReason: ${e}`);
+			}));
 		}
 
 		// Check if the game is visible, if it's not, then it probably is not
@@ -1075,7 +1099,9 @@ class Monogatari {
 		} else {
 			promises.push (Promise.reject ());
 		}
-		return Promise.all (promises);
+		return Promise.all (promises).finally (() => {
+			Monogatari.debug ().groupEnd ();
+		});
 	}
 
 	/**
@@ -1548,7 +1574,6 @@ class Monogatari {
 	}
 
 	static setup (selector) {
-
 		// Set the initial settings if they don't exist or load them from the
 		// Storage if they do.
 		Monogatari.Storage.get ('Settings').then ((local_settings) => {

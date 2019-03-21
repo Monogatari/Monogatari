@@ -85,7 +85,7 @@ export class Jump extends Action {
 		if (Monogatari.history ('jump').length > 0) {
 			return Promise.resolve ();
 		}
-		return Promise.reject ('Jump: No elements in history available.');
+		return Promise.reject ('No elements in history available.');
 	}
 
 	revert () {
@@ -97,7 +97,7 @@ export class Jump extends Action {
 			});
 			return Promise.resolve ();
 		}
-		return Promise.reject ('Jump: No elements in history available. 2');
+		return Promise.reject ('No elements in history available.');
 	}
 
 	didRevert () {
