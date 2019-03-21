@@ -33,7 +33,8 @@ class GameScreen extends Component {
 	}
 
 	static bind (selector) {
-		$_(`${selector}`).on ('click', '[data-screen="game"] *', function () {
+		$_(`${selector}`).on ('click', '[data-screen="game"] *:not([data-choice])', function () {
+			Monogatari.debug ().debug ('Next Statement Listener');
 			Monogatari.canProceed ().then (() => {
 				Monogatari.next ();
 			}).catch (() => {
@@ -45,7 +46,6 @@ class GameScreen extends Component {
 		Monogatari.registerListener ('back', {
 			keys: 'left',
 			callback: () => {
-				Monogatari.previous ();
 				Monogatari.global ('block', false);
 				Monogatari.canRevert ().then (() => {
 					Monogatari.previous ();

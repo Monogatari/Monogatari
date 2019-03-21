@@ -102,7 +102,8 @@ export class Jump extends Action {
 
 	didRevert () {
 		Monogatari.history ('jump').pop ();
-		return Promise.resolve ({ advance: false, step: true });
+		Monogatari.history ('label').pop ();
+		return Promise.resolve ({ advance: true, step: false });
 	}
 }
 

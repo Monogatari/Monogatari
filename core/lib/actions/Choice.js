@@ -32,7 +32,10 @@ export class Choice extends Action {
 	static bind (selector) {
 		// Bind the click event on data-do elements. This property is used for
 		// every choice button.
-		$_(`${selector}`).on('click', '[data-choice]', function () {
+		$_(`${selector}`).on('click', '[data-choice]', function (event) {
+			event.stopImmediatePropagation ();
+			event.stopPropagation ();
+			event.preventDefault ();
 
 			// Check that the data property was not created with
 			// a null property
@@ -179,10 +182,10 @@ export class Choice extends Action {
 		return Monogatari.revert (this.statement[choice].Do, false).then (() => {
 			if (typeof this.statement[choice].onRevert === 'function') {
 				return Util.callAsync (this.statement[choice].onRevert, Monogatari).then (() => {
-					return Monogatari.run (this.statement, false);
+					return this.apply ();
 				});
 			}
-			return Monogatari.run (this.statement);
+			return this.apply ();
 		});
 	}
 

@@ -1049,6 +1049,7 @@ class Monogatari {
 				Monogatari.debug ().debug (`OK ${action.id}`);
 			}).catch ((e) => {
 				Monogatari.debug ().debug (`FAIL ${action.id}\nReason: ${e}`);
+				return Promise.reject (e);
 			}));
 		}
 
@@ -1085,6 +1086,7 @@ class Monogatari {
 				Monogatari.debug ().debug (`OK ${action.id}`);
 			}).catch ((e) => {
 				Monogatari.debug ().debug (`FAIL ${action.id}\nReason: ${e}`);
+				return Promise.reject (e);
 			}));
 		}
 
@@ -1491,6 +1493,7 @@ class Monogatari {
 			setTimeout (Monogatari.run, 0, Monogatari.label ()[Monogatari.state ('step')]);
 			Monogatari.debug ().trace ();
 			Monogatari.debug ().groupEnd ();
+
 			return Promise.resolve ();
 		}
 		Monogatari.debug ().trace ();
