@@ -53,11 +53,11 @@ export class Scene extends Action {
 
 			const isColorProperty = ['#', 'rgb', 'hsl'].findIndex ((color) => {
 				return this.value.indexOf (color) === 0;
-			});
+			}) > -1;
 
 			const isNamed = this.value.indexOf (' ') > -1 ? false : new RegExp('\w+').test (this.value);
 
-			if (isColorProperty > -1 || isNamed === true) {
+			if (isColorProperty === true || isNamed === true) {
 				this.property = 'background-color';
 			}
 		}

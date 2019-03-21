@@ -8,15 +8,18 @@ export class Centered extends Action {
 	static canProceed () {
 		if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
 			const str = Monogatari.global ('textObject').strings [0];
-			const element = $_(Monogatari.global ('textObject').el).data ('ui');
+			const target = $_(Monogatari.global ('textObject').el);
+			const parent = target.parent ();
 
-			if (element == 'centered') {
-				Monogatari.global ('textObject').destroy ();
-				$_(`${Monogatari.selector} [data-ui="centered"]`).html (str);
-				Monogatari.global ('finishedTyping', true);
+			if (typeof parent !== 'undefined') {
+				const element = parent.data ('ui');
+				if (element == 'centered') {
+					Monogatari.global ('textObject').destroy ();
+					$_(`${Monogatari.selector} [data-ui="centered"] div`).html (str);
+					Monogatari.global ('finishedTyping', true);
+					return Promise.reject ('TypeWriter effect has not finished. Skipping it.');
+				}
 			}
-
-			return Promise.reject ();
 		} else if (Monogatari.global ('finishedTyping') && $_(`${Monogatari.selector} [data-ui="centered"]`).isVisible ()) {
 			$_(`${Monogatari.selector} [data-ui="centered"]`).remove ();
 			$_(`${Monogatari.selector} [data-ui="text"]`).show ();

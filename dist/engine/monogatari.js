@@ -31389,17 +31389,22 @@ function (_Action) {
       if (!_monogatari.Monogatari.global('finishedTyping') && _monogatari.Monogatari.global('textObject') !== null) {
         var str = _monogatari.Monogatari.global('textObject').strings[0];
 
-        var element = (0, _artemis.$_)(_monogatari.Monogatari.global('textObject').el).data('ui');
+        var target = (0, _artemis.$_)(_monogatari.Monogatari.global('textObject').el);
+        var parent = target.parent();
 
-        if (element == 'centered') {
-          _monogatari.Monogatari.global('textObject').destroy();
+        if (typeof parent !== 'undefined') {
+          var element = parent.data('ui');
 
-          (0, _artemis.$_)("".concat(_monogatari.Monogatari.selector, " [data-ui=\"centered\"]")).html(str);
+          if (element == 'centered') {
+            _monogatari.Monogatari.global('textObject').destroy();
 
-          _monogatari.Monogatari.global('finishedTyping', true);
+            (0, _artemis.$_)("".concat(_monogatari.Monogatari.selector, " [data-ui=\"centered\"] div")).html(str);
+
+            _monogatari.Monogatari.global('finishedTyping', true);
+
+            return Promise.reject('TypeWriter effect has not finished. Skipping it.');
+          }
         }
-
-        return Promise.reject();
       } else if (_monogatari.Monogatari.global('finishedTyping') && (0, _artemis.$_)("".concat(_monogatari.Monogatari.selector, " [data-ui=\"centered\"]")).isVisible()) {
         (0, _artemis.$_)("".concat(_monogatari.Monogatari.selector, " [data-ui=\"centered\"]")).remove();
         (0, _artemis.$_)("".concat(_monogatari.Monogatari.selector, " [data-ui=\"text\"]")).show();
@@ -35072,10 +35077,10 @@ function (_Action) {
 
       var isColorProperty = ['#', 'rgb', 'hsl'].findIndex(function (color) {
         return _this.value.indexOf(color) === 0;
-      });
+      }) > -1;
       var isNamed = _this.value.indexOf(' ') > -1 ? false : new RegExp('\w+').test(_this.value);
 
-      if (isColorProperty > -1 || isNamed === true) {
+      if (isColorProperty === true || isNamed === true) {
         _this.property = 'background-color';
       }
     }
@@ -36805,7 +36810,9 @@ function (_Action) {
           (0, _artemis.$_)("".concat(_monogatari.Monogatari.selector, " [data-ui=\"say\"]")).html(str);
 
           _monogatari.Monogatari.global('finishedTyping', true);
-        } else if ((0, _artemis.$_)('[data-ui="text"]').hasClass('nvl')) {
+
+          return Promise.reject('TypeWriter effect has not finished. Skipping it.');
+        } else if (element !== 'centered' && (0, _artemis.$_)('[data-ui="text"]').hasClass('nvl')) {
           var last = (0, _artemis.$_)('[data-ui="say"] [data-spoke] p').last().get(0);
 
           _monogatari.Monogatari.global('textObject').destroy();
@@ -36813,9 +36820,9 @@ function (_Action) {
           (0, _artemis.$_)(last).html(str);
 
           _monogatari.Monogatari.global('finishedTyping', true);
-        }
 
-        return Promise.reject();
+          return Promise.reject('TypeWriter effect has not finished. Skipping it.');
+        }
       }
 
       return Promise.resolve(_monogatari.Monogatari.global('finishedTyping'));
@@ -37899,7 +37906,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34717" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35727" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

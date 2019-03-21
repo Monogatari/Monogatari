@@ -6,6 +6,7 @@ import { $_ } from '@aegis-framework/artemis';
 export class Dialog extends Action {
 
 	static canProceed () {
+
 		// Check if the type animation has finished and the Typed object still exists
 		if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
 			// Get the string it was typing
@@ -18,14 +19,14 @@ export class Dialog extends Action {
 				Monogatari.global ('textObject').destroy ();
 				$_(`${Monogatari.selector} [data-ui="say"]`).html (str);
 				Monogatari.global ('finishedTyping', true);
-			} else if ($_('[data-ui="text"]').hasClass ('nvl')) {
+				return Promise.reject ('TypeWriter effect has not finished. Skipping it.');
+			} else if (element !== 'centered' && $_('[data-ui="text"]').hasClass ('nvl')) {
 				const last = $_('[data-ui="say"] [data-spoke] p').last ().get (0);
 				Monogatari.global ('textObject').destroy ();
 				$_(last).html (str);
 				Monogatari.global ('finishedTyping', true);
+				return Promise.reject ('TypeWriter effect has not finished. Skipping it.');
 			}
-
-			return Promise.reject ();
 		}
 		return Promise.resolve (Monogatari.global ('finishedTyping'));
 	}
