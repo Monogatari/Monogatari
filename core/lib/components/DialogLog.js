@@ -70,6 +70,12 @@ class DialogLog extends Component {
 		const element = $_(`${Monogatari.selector} [data-content="log"]`).get (0);
 		element.scrollTop = element.scrollHeight;
 	}
+
+	static pop (id) {
+		$_(`${Monogatari.selector} [data-content="log"] [data-spoke=${id}]`).last ().remove ();
+		const element = $_(`${Monogatari.selector} [data-content="log"]`).get (0);
+		element.scrollTop = element.scrollHeight;
+	}
 }
 
 DialogLog._id = 'DIALOG_LOG';

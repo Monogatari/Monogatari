@@ -65,15 +65,16 @@ export class Centered extends Action {
 			$_(`${Monogatari.selector} [data-ui="centered"] div`).html (this.dialog);
 		}
 
-		if (this._cycle === 'Application') {
-			const dialogLog = Monogatari.component ('DIALOG_LOG');
-
-			if (typeof dialogLog !== 'undefined') {
+		const dialogLog = Monogatari.component ('DIALOG_LOG');
+		if (typeof dialogLog !== 'undefined') {
+			if (this._cycle === 'Application') {
 				dialogLog.write ({
 					id: 'centered',
 					character: null,
 					dialog: this.dialog
 				});
+			} else {
+				dialogLog.pop ('centered');
 			}
 		}
 
