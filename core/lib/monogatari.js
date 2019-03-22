@@ -1334,13 +1334,13 @@ class Monogatari {
 			// Check if the distraction free is currently enabled
 			if (Monogatari.global ('distraction-free') === true) {
 				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-string]`).text (Monogatari.string ('Hide'));
-				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye"></span>');
+				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye" data-action="distraction-free"></span>');
 				$_(`${Monogatari.selector} [data-ui="quick-menu"]`).removeClass ('transparent');
 				$_(`${Monogatari.selector} [data-ui="text"]`).show ();
 				Monogatari.global ('distraction-free', false);
 			} else {
 				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-string]`).text (Monogatari.string ('Show'));
-				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye-slash"></span>');
+				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye-slash" data-action="distraction-free"></span>');
 				$_(`${Monogatari.selector} [data-ui="quick-menu"]`).addClass ('transparent');
 				$_(`${Monogatari.selector} [data-ui="text"]`).hide();
 				Monogatari.global ('distraction-free', true);
@@ -1884,7 +1884,12 @@ class Monogatari {
 
 		// Add listeners for the data-action properties
 		$_(`${selector}`).on ('click', '[data-action], [data-action] *', function (event) {
-			const element = $_(this);
+			let element = $_(this);
+
+			if (element.matches ('path')) {
+				element = element.closest ('[data-action]');
+			}
+
 			const action = element.data ('action');
 
 			Monogatari.runListener (action, element, event);
