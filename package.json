@@ -29,7 +29,7 @@
     "@babel/core": "^7.4.0",
     "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
     "@babel/polyfill": "^7.4.0",
-    "@babel/preset-env": "^7.4.1",
+    "@babel/preset-env": "^7.4.2",
     "autoprefixer": "^9.5.0",
     "eslint": "^5.15.3",
     "htmlhint": "^0.11.0",
@@ -41,9 +41,9 @@
     "stylelint-config-standard": "^18.2.0"
   },
   "dependencies": {
-    "@aegis-framework/artemis": "^0.3.14",
+    "@aegis-framework/artemis": "^0.3.15",
     "@aegis-framework/kayros.css": "^0.4.2",
-    "@fortawesome/fontawesome-free": "^5.8.0",
+    "@fortawesome/fontawesome-free": "^5.8.1",
     "animate.css": "^3.6.1",
     "deeply": "^3.0.0",
     "electron": "^4.1.1",
