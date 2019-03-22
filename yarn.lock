@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@aegis-framework/artemis@^0.3.15":
-  version "0.3.15"
-  resolved "https://registry.yarnpkg.com/@aegis-framework/artemis/-/artemis-0.3.15.tgz#4c495f864fce0179abb16d3a1230657a1a7f823a"
-  integrity sha512-w4PMtKQ4Z4VNoFm3LfVcV24E8cORc08k4qydR9c81pdqQCnUDiGSDtDrIGjpJvXMDBbJbaaG2k7AIql070naHQ==
+"@aegis-framework/artemis@^0.3.17":
+  version "0.3.17"
+  resolved "https://registry.yarnpkg.com/@aegis-framework/artemis/-/artemis-0.3.17.tgz#e5225ab42ed6f0aadcb940bf47e97cfaac2c22d1"
+  integrity sha512-F/WYpb7zCWbhZyPDM9t/Tv4J8icqt7OVeA8guGvAGJ1cLSzPkDOG4DEuO+1fq9Xe7GONyMRUfCFkyjAPeJMqEQ==
 
 "@aegis-framework/kayros.css@^0.4.2":
   version "0.4.4"
@@ -1556,9 +1556,9 @@ chardet@^0.7.0:
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
 chokidar@^2.0.3:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-2.1.2.tgz#9c23ea40b01638439e0513864d362aeacc5ad058"
-  integrity sha512-IwXUx0FXc5ibYmPC2XeEj5mpXoV66sR+t3jqu2NS2GYwCktt3KF1/Qqjws/NkegajBA4RbZ5+DDwlOiJsxDHEg==
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-2.1.4.tgz#244a65d68beedf1078c2f193cf2735c2cfdc7da2"
+  integrity sha512-ZVuFiB9IGOHqu+Jh7B7fSTmzsfDmUtC6yqd/V72UPQeXbNHONbMV0chOXtLXjsP3NvdUsHTNMg02NtXPDaSmNQ==
   dependencies:
     anymatch "^2.0.0"
     async-each "^1.0.1"
@@ -1570,7 +1570,7 @@ chokidar@^2.0.3:
     normalize-path "^3.0.0"
     path-is-absolute "^1.0.0"
     readdirp "^2.2.1"
-    upath "^1.1.0"
+    upath "^1.1.1"
   optionalDependencies:
     fsevents "^1.2.7"
 
@@ -7368,7 +7368,7 @@ unset-value@^1.0.0:
     has-value "^0.3.1"
     isobject "^3.0.0"
 
-upath@^1.1.0:
+upath@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/upath/-/upath-1.1.2.tgz#3db658600edaeeccbe6db5e684d67ee8c2acd068"
   integrity sha512-kXpym8nmDmlCBr7nKdIx8P2jNBa+pBpIUFRnKJ4dr8htyYGJFokkr2ZvERRtUN+9SY+JqXouNgUPtv6JQva/2Q==
