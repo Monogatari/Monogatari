@@ -11,15 +11,15 @@
 import { Monogatari } from './../monogatari';
 
 Monogatari.translation ('English', {
-
-	'AdvanceHelp': 'To advance through the game, press the space key or click.',
+	'AdvanceHelp': 'To advance through the game, left-click or tap anywhere on the game screen or press the space key',
 	'AllowPlayback': 'Click here to allow audio playback',
 	'Audio': 'Audio',
 	'AutoPlay': 'Auto',
+	'AutoPlayButton': 'Enable auto play',
 	'AutoPlaySpeed': 'Autoplay Speed',
 
 	'Back': 'Back',
-	'BackButton': 'Back.',
+	'BackButton': 'Go back',
 
 	'Cancel': 'Cancel',
 	'Close': 'Close',
@@ -27,6 +27,7 @@ Monogatari.translation ('English', {
 	'Credits': 'Credits',
 
 	'Delete': 'Delete',
+	'DialogLogButton': 'Show the dialog log',
 
 	'FullScreen': 'Full Screen',
 
@@ -34,43 +35,47 @@ Monogatari.translation ('English', {
 
 	'Help': 'Help',
 	'Hide': 'Hide',
-	'HideButton': 'Hide Text.',
+	'HideButton': 'Hide the text box',
 
-	'iOSAudioWarning': 'Audio settings are not supported on iOS.',
+	'iOSAudioWarning': 'Audio settings are not supported on iOS',
+
+	'KeyboardShortcuts': 'Keyboard Shortcuts',
 
 	'Language': 'Language',
 	'Load': 'Load',
 	'LoadAutoSaveSlots': 'Auto Saved Games',
-	'LoadButton': 'Open the Load Screen.',
+	'LoadButton': 'Open the Load Screen',
 	'Loading': 'Loading',
-	'LoadingMessage': 'Wait while the assets are loaded.',
+	'LoadingMessage': 'Wait while the assets are loaded',
 	'LoadSlots': 'Saved Games',
-	'LocalStorageWarning': 'Local Storage is not available in this browser.',
+	'LocalStorageWarning': 'Local Storage is not available in this browser',
 	'Log': 'Log',
 
 	'Music': 'Music Volume',
 
-	'NoSavedGames': 'No saved games.',
-	'NoAutoSavedGames': 'No automatically saved games.',
-	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up.',
 	'NewContent': 'There is new content available, reload the page to get the latest version',
+	'NoSavedGames': 'No saved games',
+	'NoAutoSavedGames': 'No automatically saved games',
+	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up',
 
-	'OrientationWarning': 'Please rotate your device to play.',
+	'OrientationWarning': 'Please rotate your device to play',
 	'Overwrite': 'Overwrite',
 
 	'QuickButtons': 'Quick Menu Buttons',
+	'QuickMenu': 'Quick Menu',
 	'Quit': 'Quit',
-	'QuitButton': 'Quit Game.',
+	'QuitButton': 'Quit Game',
 
 	'Resolution': 'Resolution',
 
 	'Save': 'Save',
-	'SaveButon': 'Open the Save Screen.',
+	'SaveButton': 'Open the Save Screen',
 	'SaveInSlot': 'Save in slot',
 	'Settings': 'Settings',
-	'SettingsButton': 'Open the Settings Screen.',
+	'SettingsButton': 'Open the Settings Screen',
 	'Show': 'Show',
 	'Skip': 'Skip',
+	'SkipButton': 'Enter skip mode',
 	'SlotDeletion': 'Are you sure you want to delete this slot?',
 	'SlotOverwrite': 'Are you sure you want to overwrite this slot?',
 	'Sound': 'Sound Volume',

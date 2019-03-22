@@ -4,84 +4,87 @@
  * ============================================================
  *
  * Translators:
+ *
  * Sergey Kuznetsov <https://github.com/Amaimersion>
  */
 
 import { Monogatari } from './../monogatari';
 
 Monogatari.translation('Русский', {
-
-	/* Main menu. */
-
-	'Start': 'Начать игру', // Game menu.
-	'Load': 'Загрузить', // Load menu.
-	'Settings': 'Настройки', // Settings menu.
-	'Help': 'Помощь', // Help menu.
-
-	/* Game menu. */
-
-	'Back': 'Назад',
-	'Hide': 'Скрыть',
-	'Show': 'Показать',
-	'Log': 'Log',
-	'Skip': 'Skip',
-	'AutoPlay': 'Авто',
-	'Stop': 'Стоп',
-	'Save': 'Сохранить',
-	'Quit': 'Выйти',
-	'Confirm': 'Вы действительно хотите выйти?',
-	'Credits': 'Credits',
-	'Gallery': 'Gallery',
-
-	/* Load menu. */
-
-	'LoadSlots': 'Сохранённые игры',
-	'NoSavedGames': 'Нет сохранённых игр.',
-	'LoadAutoSaveSlots': 'Автосохранённые игры',
-	'NoAutoSavedGames': 'Нет автосохранённых игр.',
-
-	/* Settings menu. */
-
+	'AdvanceHelp': 'Чтобы играть, нажимайте на пробел или на левую кнопку мыши.',
+	'AllowPlayback': 'Click here to allow audio playback',
 	'Audio': 'Звук',
-	'Music': 'Громкость музыки',
-	'Sound': 'Громкость звука',
-	'Voice': 'Громкость голоса',
-	'TextSpeed': 'Скорость текста',
+	'AutoPlay': 'Авто',
+	'AutoPlayButton': 'Enable auto play',
 	'AutoPlaySpeed': 'Скорость авточтения',
 
-	/* Help menu. */
-
-	'AdvanceHelp': 'Чтобы играть, нажимайте на пробел или на левую кнопку мыши.',
-	'QuickButtons': 'Кнопки быстрого меню',
+	'Back': 'Назад',
 	'BackButton': 'Вернуться назад',
-	'HideButton': 'Скрыть текст',
-	'SaveButon': 'Открыть меню сохранения',
-	'LoadButton': 'Открыть меню загрузки',
-	'SettingsButton': 'Открыть меню настроек',
-	'QuitButton': 'Выйти из игры',
 
-	/* Buttons. */
-
-	'Close': 'Закрыть',
 	'Cancel': 'Отмена',
-	'Delete': 'Удалить',
-	'FullScreen': 'Полный экран',
-	'Language': 'Язык',
-	'Overwrite': 'Перезаписать',
+	'Close': 'Закрыть',
+	'Confirm': 'Вы действительно хотите выйти?',
+	'Credits': 'Credits',
 
-	/* Labels. */
+	'Delete': 'Удалить',
+	'DialogLogButton': 'Show the dialog log',
+
+	'FullScreen': 'Полный экран',
+
+	'Gallery': 'Gallery',
+
+	'Help': 'Помощь',
+	'Hide': 'Скрыть',
+	'HideButton': 'Скрыть текст',
 
 	'iOSAudioWarning': 'Настройки звука не поддерживаются на iOS.',
+
+	'KeyboardShortcuts': 'Keyboard Shortcuts',
+
+	'Language': 'Язык',
+	'Load': 'Загрузить',
+	'LoadAutoSaveSlots': 'Автосохранённые игры',
+	'LoadButton': 'Открыть меню загрузки',
 	'Loading': 'Загрузка',
 	'LoadingMessage': 'Подождите, пожалуйста, игровые файлы загружаются',
+	'LoadSlots': 'Сохранённые игры',
 	'LocalStorageWarning': 'Локальное хранилище не доступно в этом браузере.',
+	'Log': 'Log',
+
+	'Music': 'Громкость музыки',
+
+	'NewContent': 'There is new content available, reload the page to get the latest version',
+	'NoSavedGames': 'Нет сохранённых игр.',
+	'NoAutoSavedGames': 'Нет автосохранённых игр.',
+	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up',
+
 	'OrientationWarning': 'Чтобы играть, пожалуйста, поверните Ваше устройство',
+	'Overwrite': 'Перезаписать',
+
+	'QuickButtons': 'Кнопки быстрого меню',
+	'QuickMenu': 'Quick Menu',
+	'Quit': 'Выйти',
+	'QuitButton': 'Выйти из игры',
+
 	'Resolution': 'Разрешение',
+
+	'Save': 'Сохранить',
+	'SaveButton': 'Открыть меню сохранения',
 	'SaveInSlot': 'Сохранить в слот',
+	'Settings': 'Настройки',
+	'SettingsButton': 'Открыть меню настроек',
+	'Show': 'Показать',
+	'Skip': 'Skip',
+	'SkipButton': 'Enter skip mode',
 	'SlotDeletion': 'Вы действительно хотите удалить этот слот?',
 	'SlotOverwrite': 'Вы действительно хотите перезаписать этот слот?',
+	'Sound': 'Громкость звука',
+	'Start': 'Начать игру',
+	'Stop': 'Стоп',
+
+	'TextSpeed': 'Скорость текста',
+
+	'Voice': 'Громкость голоса',
+
 	'Windowed': 'Оконный режим',
-	'NewContent': 'There is new content available, reload the page to get the latest version',
-	'AllowPlayback': 'Click here to allow audio playback',
-	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up.',
 });

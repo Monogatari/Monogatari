@@ -11,14 +11,15 @@
 import { Monogatari } from './../monogatari';
 
 Monogatari.translation ('Español', {
-	'AdvanceHelp': 'Para avanzar en el juego, presiona espacio o haz click.',
+	'AdvanceHelp': 'Para avanzar en el juego, presiona espacio o haz click',
 	'AllowPlayback': 'Click here to allow audio playback',
 	'Audio': 'Audio',
 	'AutoPlay': 'Auto',
+	'AutoPlayButton': 'Activar juego automático',
 	'AutoPlaySpeed': 'Velocidad de Juego Automático',
 
 	'Back': 'Atrás',
-	'BackButton': 'Atrás.',
+	'BackButton': 'Atrás',
 
 	'Cancel': 'Cancelar',
 	'Close': 'Cerrar',
@@ -26,6 +27,7 @@ Monogatari.translation ('Español', {
 	'Credits': 'Créditos',
 
 	'Delete': 'Eliminar',
+	'DialogLogButton': 'Mostrar el historial de dialogos',
 
 	'FullScreen': 'Pantalla Completa',
 
@@ -33,43 +35,47 @@ Monogatari.translation ('Español', {
 
 	'Help': 'Ayuda',
 	'Hide': 'Ocultar',
-	'HideButton': 'Esconder el Texto.',
+	'HideButton': 'Esconder el Texto',
 
-	'iOSAudioWarning': 'Las configuraciones de Audio no están disponibles en iOS.',
+	'iOSAudioWarning': 'Las configuraciones de Audio no están disponibles en iOS',
+
+	'KeyboardShortcuts': 'Atajos de Teclado',
 
 	'Language': 'Lenguaje',
 	'Load': 'Cargar',
 	'LoadAutoSaveSlots': 'Juegos Guardados Automaticamente',
-	'LoadButton': 'Abrir la Pantalla de Cargar.',
+	'LoadButton': 'Abrir la Pantalla de Cargar',
 	'Loading': 'Cargando',
-	'LoadingMessage': 'Espere mientras se cargan los archivos.',
+	'LoadingMessage': 'Espere mientras se cargan los archivos',
 	'LoadSlots': 'Juegos Guardados',
-	'LocalStorageWarning': 'El Almacenaje Local no está disponible en este navegador.',
-	'Log': 'Log',
+	'LocalStorageWarning': 'El Almacenaje Local no está disponible en este navegador',
+	'Log': 'Historial',
 
 	'Music': 'Volumen de la Música',
 
-	'NewContent': 'There is new content available, reload the page to get the latest version',
-	'NoSavedGames': 'No hay juegos guardados.',
-	'NoAutoSavedGames': 'No hay juegos guardados automaticamente.',
-	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up.',
+	'NewContent': 'Un nuevo contenido está disponible, recarga la página para obtener la versión más nueva',
+	'NoSavedGames': 'No hay juegos guardados',
+	'NoAutoSavedGames': 'No hay juegos guardados automaticamente',
+	'NoDialogsAvailable': 'No hay dialogos disponibles. Los dialogos aparecerán aqui una vez que ocurran en el juego',
 
-	'OrientationWarning': 'Por favor rota tu dispositivo para jugar.',
+	'OrientationWarning': 'Por favor rota tu dispositivo para jugar',
 	'Overwrite': 'Sobreescribir',
 
 	'QuickButtons': 'Botones del Menú Rápido',
+	'QuickMenu': 'Menú Rápido',
 	'Quit': 'Salir',
-	'QuitButton': 'Salir del Juego.',
+	'QuitButton': 'Salir del Juego',
 
 	'Resolution': 'Resolución',
 
 	'Save': 'Guardar',
-	'SaveButon': 'Abrir la Pantalla de Guardar.',
+	'SaveButton': 'Abrir la Pantalla de Guardar',
 	'SaveInSlot': 'Guardar en ranura',
 	'Settings': 'Configuración',
-	'SettingsButton': 'Abrir la Pantalla de Configuración.',
+	'SettingsButton': 'Abrir la Pantalla de Configuración',
 	'Show': 'Mostrar',
-	'Skip': 'Skip',
+	'Skip': 'Saltar',
+	'SkipButton': 'Entrar al modo de salto',
 	'SlotDeletion': '¿Está seguro de querer eliminar este juego?',
 	'SlotOverwrite': '¿Está seguro de querer Sobreescribir este juego?',
 	'Sound': 'Volumen de los Sonidos',
