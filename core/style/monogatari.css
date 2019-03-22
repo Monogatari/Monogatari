@@ -386,15 +386,24 @@ select {
 	border-radius: 3px;
 }
 
-[data-ui='messages'] div {
-	width: auto;
-	padding: 1rem;
+[data-ui='messages'] {
+
+	& div {
+		width: auto;
+		padding: 1rem;
+	}
+
+	& a {
+		color: #00bcd4;
+	}
+
+	& [data-ui='message-content'] {
+		text-align: left;
+		max-width: 100%;
+	}
 }
 
-[data-ui='message-content'] {
-	text-align: left;
-	max-width: 100%;
-}
+
 
 [data-ui='input'] div {
 	width: auto;
@@ -571,6 +580,7 @@ textarea {
 		display: flex;
 		flex-flow: column;
 		justify-content: center;
+		color: #fff;
 
 		& .badge {
 			position: absolute;
@@ -612,6 +622,7 @@ textarea {
 
 	& figcaption {
 		padding: 1rem;
+		color: #fff;
 
 		& small {
 			display: block;
@@ -755,7 +766,7 @@ textarea {
 			width: 2rem;
 			height: 2rem;
 			display: block;
-			background-color: #424242;
+			background-color: var(--text-color);
 			text-align: center;
 			border-radius: 2px;
 			color: #fff;
