@@ -185,8 +185,11 @@ class LoadScreen extends Component {
 	}
 
 	static bind (selector) {
-		$_(`${selector} [data-screen="load"]`).on ('click', '[data-delete], [data-delete] *', function () {
-			Monogatari.global ('deleteSlot', $_(this).data ('delete'));
+		$_(`${selector} [data-screen="load"]`).on ('click', '[data-delete], [data-delete] *', function (event) {
+			event.stopImmediatePropagation ();
+			event.stopPropagation ();
+			event.preventDefault ();
+			Monogatari.global ('deleteSlot', $_(this).data ('delete'));;
 			Monogatari.Storage.get (Monogatari.global ('deleteSlot')).then ((data) => {
 				if (typeof data.name !== 'undefined') {
 					$_(`${selector} [data-notice="slot-deletion"] small`).text (data.name);

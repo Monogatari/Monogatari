@@ -59,7 +59,10 @@ class SaveScreen extends Component {
 	}
 
 	static bind (selector) {
-		$_(`${selector} [data-screen="save"]`).on ('click', '[data-delete], [data-delete] *', function () {
+		$_(`${selector} [data-screen="save"]`).on ('click', '[data-delete], [data-delete] *', function (event) {
+			event.stopImmediatePropagation ();
+			event.stopPropagation ();
+			event.preventDefault ();
 			Monogatari.global ('deleteSlot', $_(this).data ('delete'));
 			Monogatari.Storage.get (Monogatari.global ('deleteSlot')).then ((data) => {
 				if (typeof data.name !== 'undefined') {
@@ -85,9 +88,8 @@ class SaveScreen extends Component {
 			const customName = $_(`${selector} [data-notice="slot-overwrite"] input`).value ().trim ();
 			if (customName !== '') {
 				Monogatari.saveTo ('SaveLabel', Monogatari.global ('overwriteSlot'), customName).then (({ key, value }) => {
-					const id = key.split ('_').pop ();
-					$_(`${selector} [data-screen='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${id}'] small`).text (value.name);
-					$_(`${selector} [data-screen='save'] [data-ui='slots'] [data-save='${id}'] small`).text (value.name);
+					$_(`${selector} [data-screen='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${key}'] small`).text (value.name);
+					$_(`${selector} [data-screen='save'] [data-ui='slots'] [data-load-slot='${key}'] small`).text (value.name);
 				});
 				Monogatari.global ('overwriteSlot', null);
 				$_(`${selector} [data-notice="slot-overwrite"]`).removeClass ('modal--active');
@@ -102,8 +104,8 @@ class SaveScreen extends Component {
 		});
 
 		// Save to slot when a slot is pressed.
-		$_(`${selector} [data-screen="save"]`).on ('click', 'figcaption, img, small', function () {
-			Monogatari.global ('overwriteSlot', $_(this).parent ().data ('save').split ('_').pop ());
+		$_(`${selector} [data-screen="save"]`).on ('click', '[data-load-slot], [data-load-slot] *:not([data-delete])', function () {
+			Monogatari.global ('overwriteSlot', $_(this).parent ().data ('loadSlot').split ('_').pop ());
 			Monogatari.Storage.get (Monogatari.setting ('SaveLabel') + '_' + Monogatari.global ('overwriteSlot')).then ((data) => {
 				if (typeof data.name !== 'undefined') {
 					$_(`${selector} [data-notice="slot-overwrite"] input`).value (data.name);
