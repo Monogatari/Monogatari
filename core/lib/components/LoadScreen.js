@@ -46,7 +46,7 @@ class LoadScreen extends Component {
 				Monogatari.debug ().debug ('Saving data to slot', id);
 
 				Monogatari.saveTo ('AutoSaveLabel', id).then (({ key, value }) => {
-					$_(`${Monogatari.selector} [data-screen='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${key}'] small`).text (value.name);
+					$_(`${Monogatari.selector} [data-screen='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-slot='${key}'] small`).text (value.name);
 					$_(`${Monogatari.selector} [data-screen='save'] [data-ui='slots'] [data-save='${key}'] small`).text (value.name);
 					LoadScreen.setAutoSlots ();
 				});
@@ -189,7 +189,13 @@ class LoadScreen extends Component {
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();
 			event.preventDefault ();
-			Monogatari.global ('deleteSlot', $_(this).data ('delete'));;
+
+			let element = $_(this);
+			if (element.matches ('path')) {
+				element = element.closest ('[data-delete]');
+			}
+
+			Monogatari.global ('deleteSlot', element.data ('delete'));
 			Monogatari.Storage.get (Monogatari.global ('deleteSlot')).then ((data) => {
 				if (typeof data.name !== 'undefined') {
 					$_(`${selector} [data-notice="slot-deletion"] small`).text (data.name);
@@ -202,8 +208,8 @@ class LoadScreen extends Component {
 		});
 
 		// Load a saved game slot when it is pressed
-		$_(`${selector} [data-screen="load"]`).on ('click', '[data-load-slot], [data-load-slot] *:not([data-delete])', function () {
-			Monogatari.loadFromSlot ($_(this).closest ('[data-load-slot]').data('loadSlot'));
+		$_(`${selector} [data-screen="load"]`).on ('click', '[data-slot], [data-slot] *:not([data-delete])', function () {
+			Monogatari.loadFromSlot ($_(this).closest ('[data-slot]').data('slot'));
 		});
 		return Promise.resolve ();
 	}

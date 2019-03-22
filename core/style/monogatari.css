@@ -573,7 +573,7 @@ textarea {
 }
 
 [data-ui='slots'] {
-	& figure {
+	& [data-slot] {
 		width: 20rem;
 		height: auto;
 		background-color: var(--main-color);

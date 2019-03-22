@@ -63,7 +63,13 @@ class SaveScreen extends Component {
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();
 			event.preventDefault ();
-			Monogatari.global ('deleteSlot', $_(this).data ('delete'));
+
+			let element = $_(this);
+			if (element.matches ('path')) {
+				element = element.closest ('[data-delete]');
+			}
+
+			Monogatari.global ('deleteSlot', element.data ('delete'));
 			Monogatari.Storage.get (Monogatari.global ('deleteSlot')).then ((data) => {
 				if (typeof data.name !== 'undefined') {
 					$_(`${selector} [data-notice="slot-deletion"] small`).text (data.name);
@@ -88,8 +94,8 @@ class SaveScreen extends Component {
 			const customName = $_(`${selector} [data-notice="slot-overwrite"] input`).value ().trim ();
 			if (customName !== '') {
 				Monogatari.saveTo ('SaveLabel', Monogatari.global ('overwriteSlot'), customName).then (({ key, value }) => {
-					$_(`${selector} [data-screen='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${key}'] small`).text (value.name);
-					$_(`${selector} [data-screen='save'] [data-ui='slots'] [data-load-slot='${key}'] small`).text (value.name);
+					$_(`${selector} [data-screen='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-slot='${key}'] small`).text (value.name);
+					$_(`${selector} [data-screen='save'] [data-ui='slots'] [data-slot='${key}'] small`).text (value.name);
 				});
 				Monogatari.global ('overwriteSlot', null);
 				$_(`${selector} [data-notice="slot-overwrite"]`).removeClass ('modal--active');
@@ -98,14 +104,14 @@ class SaveScreen extends Component {
 
 		$_(`${selector} [data-action="delete-slot"], ${selector} [data-action="delete-slot"] *`).click(function () {
 			Monogatari.Storage.remove (Monogatari.global ('deleteSlot'));
-			$_(`${selector} [data-load-slot="${Monogatari.global ('deleteSlot')}"], ${selector} [data-save="${Monogatari.global ('deleteSlot')}"]`).remove ();
+			$_(`${selector} [data-slot="${Monogatari.global ('deleteSlot')}"], ${selector} [data-save="${Monogatari.global ('deleteSlot')}"]`).remove ();
 			Monogatari.global ('deleteSlot', null);
 			$_(`${selector} [data-notice="slot-deletion"]`).removeClass ('modal--active');
 		});
 
 		// Save to slot when a slot is pressed.
-		$_(`${selector} [data-screen="save"]`).on ('click', '[data-load-slot], [data-load-slot] *:not([data-delete])', function () {
-			Monogatari.global ('overwriteSlot', $_(this).parent ().data ('loadSlot').split ('_').pop ());
+		$_(`${selector} [data-screen="save"]`).on ('click', '[data-slot], [data-slot] *:not([data-delete])', function () {
+			Monogatari.global ('overwriteSlot', $_(this).parent ().data ('slot').split ('_').pop ());
 			Monogatari.Storage.get (Monogatari.setting ('SaveLabel') + '_' + Monogatari.global ('overwriteSlot')).then ((data) => {
 				if (typeof data.name !== 'undefined') {
 					$_(`${selector} [data-notice="slot-overwrite"] input`).value (data.name);
