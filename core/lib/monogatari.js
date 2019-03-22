@@ -1860,18 +1860,21 @@ class Monogatari {
 		// Add event listener for back buttons. If the player is playing, the back
 		// button will return to the game, if its not playing, then it'll return
 		// to the main menu.
-		$_(`${selector} [data-screen]`).on ('click', '[data-action="back"]:not([data-screen="game"]), [data-action="back"]:not([data-screen="game"]) *', (event) => {
-			event.stopImmediatePropagation();
-			event.stopPropagation();
-			event.preventDefault();
-			Monogatari.debug ().debug ('Registered Back Listener on Non-Game Screen');
-			$_(`${selector} [data-screen]`).hide ();
+		$_(`${selector}`).on ('click', '[data-screen] [data-action="back"]:not([data-screen="game"]), [data-screen] [data-action="back"]:not([data-screen="game"]) *', (event) => {
 
-			if (Monogatari.global ('playing')) {
-				$_(`${selector} [data-screen="game"]`).show ();
-			} else {
-				$_(`${selector} [data-screen="main"]`).show ();
+			if (!$_(`${selector} [data-screen="game"]`).isVisible ()) {
+				Monogatari.debug ().debug ('Registered Back Listener on Non-Game Screen');
+				event.stopImmediatePropagation();
+				event.stopPropagation();
+				event.preventDefault();
+				$_(`${selector} [data-screen]`).hide ();
+				if (Monogatari.global ('playing')) {
+					$_(`${selector} [data-screen="game"]`).show ();
+				} else {
+					$_(`${selector} [data-screen="main"]`).show ();
+				}
 			}
+
 		});
 
 		// Add listeners for the data-action properties
