@@ -199,10 +199,34 @@ Monogatari.component ('HELP_MENU').html (`
 				</div>
 				<div class="row__column--12 row">
 					<div class="row__column--2" data-content="symbols">
+						<span data-content="shortcut">⇧ S</span>
+					</div>
+					<div class="row__column--10" data-content="instruction">
+						<span data-string="SaveButton">Open the Save Screen</span>
+					</div>
+				</div>
+				<div class="row__column--12 row">
+					<div class="row__column--2" data-content="symbols">
+						<span data-content="shortcut">⇧ L</span>
+					</div>
+					<div class="row__column--10" data-content="instruction">
+						<span data-string="LoadButton">Open the Load Screen</span>
+					</div>
+				</div>
+				<div class="row__column--12 row">
+					<div class="row__column--2" data-content="symbols">
 						<span data-content="shortcut">ESC</span>
 					</div>
 					<div class="row__column--10" data-content="instruction">
 						<span data-string="SettingsButton">Open the Settings Screen.</span>
+					</div>
+				</div>
+				<div class="row__column--12 row">
+					<div class="row__column--2" data-content="symbols">
+						<span data-content="shortcut">⇧ Q</span>
+					</div>
+					<div class="row__column--10" data-content="instruction">
+						<span data-string="QuitButton">Quit Game</span>
 					</div>
 				</div>
 			</div>

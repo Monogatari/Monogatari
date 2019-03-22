@@ -102,6 +102,12 @@ select {
 	align-items: center;
 }
 
+audio,
+canvas,
+video {
+	display: block;
+}
+
 /**
  * ===========================
  * Support Classes
@@ -763,8 +769,9 @@ textarea {
 		justify-content: flex-start;
 
 		& [data-content='shortcut'] {
-			width: 2rem;
-			height: 2rem;
+			width: 1.5rem;
+			height:1.5rem;
+			min-width: 1.5rem;
 			display: block;
 			background-color: var(--text-color);
 			text-align: center;
@@ -878,6 +885,15 @@ input[type=range] {
 @media screen and (min-width: 48em) {
 	body {
 		font-size: 1.5rem;
+	}
+
+	[data-screen='help'] {
+		& [data-content='symbols'] {
+			& [data-content='shortcut'] {
+				width: 2rem;
+				height: 2rem;
+			}
+		}
 	}
 
 	[data-ui='choices'] {
