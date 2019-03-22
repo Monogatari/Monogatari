@@ -1207,6 +1207,11 @@ class Monogatari {
 		for (const action of Monogatari.actions ()) {
 			promises.push (action.reset ());
 		}
+
+		for (const component of Monogatari.components ()) {
+			promises.push (component.reset ());
+		}
+
 		return Promise.all (promises);
 	}
 

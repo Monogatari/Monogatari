@@ -122,6 +122,12 @@ export class Dialog extends Action {
 			Monogatari.global ('textObject').destroy ();
 		}
 
+		$_(`${Monogatari.selector} [data-ui="text"]`).removeClass ('nvl');
+
+		$_(`${Monogatari.selector} [data-ui="text"]`).data ('speaking', '');
+
+		$_(`${Monogatari.selector} [data-ui="who"]`).style ('color', '');
+
 		$_(`${Monogatari.selector} [data-ui="who"]`).html ('');
 		$_(`${Monogatari.selector} [data-ui="say"]`).html ('');
 		return Promise.resolve ();

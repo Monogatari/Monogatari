@@ -39,6 +39,10 @@ class DialogLog extends Component {
 		$_(`${Monogatari.selector}`).append (this.html ());
 	}
 
+	static reset () {
+		$_(`${Monogatari.selector} [data-content="log"]`).html ('<div class="text--center padded" data-string="NoDialogsAvailable">No dialogs available. Dialogs will appear here as they show up.</div>');
+	}
+
 	static bind () {
 		Monogatari.registerListener ('dialog-log', {
 			callback: () => {
