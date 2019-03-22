@@ -191,7 +191,7 @@ class LoadScreen extends Component {
 		});
 
 		// Load a saved game slot when it is pressed
-		$_(`${selector} [data-screen="load"]`).on ('click', '[data-load-slot], [data-load-slot] :not([data-delete])', function () {
+		$_(`${selector} [data-screen="load"]`).on ('click', '[data-load-slot], [data-load-slot] *:not([data-delete])', function () {
 			Monogatari.loadFromSlot ($_(this).closest ('[data-load-slot]').data('loadSlot'));
 		});
 		return Promise.resolve ();

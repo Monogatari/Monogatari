@@ -1804,6 +1804,19 @@ class Monogatari {
 
 	static runListener (name, element, event) {
 		const promises = [];
+
+		// Check if the click event happened on a path of an icon.
+		// This fixes a bug with font-awesome icons being clicked but the
+		// click being registered at an inner path instead of the svg element
+		// that holds the data information
+		if (element.matches ('path')) {
+			element = element.closest ('[data-action]');
+
+			if (element.length > 0) {
+				name = element.data ('action');
+			}
+		}
+
 		for (const listener of Monogatari._listeners) {
 			if (listener.name === name) {
 				promises.push (Monogatari.assertAsync (listener.callback , Monogatari, [element, event]).finally (() => {
