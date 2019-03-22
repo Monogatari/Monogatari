@@ -38,11 +38,17 @@ class LoadScreen extends Component {
 	 */
 	static onStart () {
 		if (Monogatari.setting ('AutoSave') != 0 && typeof Monogatari.setting ('AutoSave') === 'number') {
+			Monogatari.debug ().debug ('Automatic save is enabled, setting up timeout');
 			Monogatari.global ('_AutoSaveInterval', setInterval(function () {
+				Monogatari.debug ().groupCollapsed ('Automatic Save');
 				const id = Monogatari.global ('currentAutoSaveSlot');
+
+				Monogatari.debug ().debug ('Saving data to slot', id);
+
 				Monogatari.saveTo ('AutoSaveLabel', id).then (({ key, value }) => {
 					$_(`${Monogatari.selector} [data-screen='load'] [data-ui='saveSlots'] [data-ui='slots'] [data-load-slot='${key}'] small`).text (value.name);
 					$_(`${Monogatari.selector} [data-screen='save'] [data-ui='slots'] [data-save='${key}'] small`).text (value.name);
+					LoadScreen.setAutoSlots ();
 				});
 
 				if (Monogatari.global ('currentAutoSaveSlot') === Monogatari.setting ('Slots')) {
@@ -50,10 +56,12 @@ class LoadScreen extends Component {
 				} else {
 					Monogatari.global ('currentAutoSaveSlot', Monogatari.global ('currentAutoSaveSlot') + 1);
 				}
-				LoadScreen.setAutoSlots ();
+
+				Monogatari.debug ().groupEnd ('Automatic Save');
 
 			}, Monogatari.setting ('AutoSave') * 60000));
 		} else {
+			Monogatari.debug ().debug ('Automatic save is disabled. Section will be hidden from Load Screen');
 			$_(`${Monogatari.selector} [data-screen="load"] [data-ui="autoSaveSlots"]`).hide ();
 		}
 		return Promise.resolve ();
