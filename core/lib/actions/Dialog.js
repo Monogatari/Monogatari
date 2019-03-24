@@ -32,7 +32,7 @@ export class Dialog extends Action {
 	}
 
 	static canRevert () {
-		const dialogLog = Monogatari.component ('DIALOG_LOG');
+		const dialogLog = Monogatari.component ('dialog_log');
 
 		if (typeof dialogLog !== 'undefined') {
 			dialogLog.pop ();
@@ -154,19 +154,19 @@ export class Dialog extends Action {
 			}
 
 			if (typeof expression !== 'undefined') {
-				if (typeof this.character.Side !== 'undefined') {
-					if (typeof this.character.Directory !== 'undefined') {
-						this.image = `${this.character.directory}/${this.character.Side[expression]}`;
+				if (typeof this.character.expressions !== 'undefined') {
+					if (typeof this.character.directory !== 'undefined') {
+						this.image = `${this.character.directory}/${this.character.expressions[expression]}`;
 					} else {
-						this.image = this.character.Side[expression];
+						this.image = this.character.expressions[expression];
 					}
 				}
 
-			} else if (typeof this.character.Face !== 'undefined') {
-				if (typeof this.character.Directory !== 'undefined') {
-					this.image = `${this.character.directory}/${this.character.Face}`;
+			} else if (typeof this.character.default_expression !== 'undefined') {
+				if (typeof this.character.directory !== 'undefined') {
+					this.image = `${this.character.directory}/${this.character.default_expression}`;
 				} else {
-					this.image = this.character.Face;
+					this.image = this.character.default_expression;
 				}
 			}
 		} else {
@@ -206,7 +206,7 @@ export class Dialog extends Action {
 			// no animation will be shown in the game.
 			if (character !== 'narrator') {
 				if (previous !== character) {
-					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}" class='named'><span style='color:${Monogatari.character (character).Color};'>${Monogatari.replaceVariables (Monogatari.character (character).Name)}: </span><p></p></div>`);
+					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}" class='named'><span style='color:${Monogatari.character (character).color};'>${Monogatari.replaceVariables (Monogatari.character (character).name)}: </span><p></p></div>`);
 				} else {
 					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}"><p></p></div>`);
 				}
@@ -224,7 +224,7 @@ export class Dialog extends Action {
 		} else {
 			if (character !== 'narrator') {
 				if (previous !== character) {
-					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}" class='named'><span style='color:${Monogatari.character (character).Color};'>${Monogatari.replaceVariables (Monogatari.character (character).Name)}: </span><p>${dialog}</p></div>`);
+					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}" class='named'><span style='color:${Monogatari.character (character).color};'>${Monogatari.replaceVariables (Monogatari.character (character).name)}: </span><p>${dialog}</p></div>`);
 				} else {
 					$_(`${Monogatari.selector} [data-ui="say"]`).append (`<div data-spoke="${character}"><p>${dialog}</p></div>`);
 				}
@@ -270,19 +270,24 @@ export class Dialog extends Action {
 		}
 
 		Dialog.checkUnread ();
-		const dialogLog = Monogatari.component ('DIALOG_LOG');
 
-		if (typeof dialogLog !== 'undefined') {
-			if (this._cycle === 'Application') {
-				dialogLog.write ({
-					id: character,
-					character: this.character,
-					dialog
-				});
-			} else {
-				dialogLog.pop ();
+		try {
+			const dialogLog = Monogatari.component ('dialog_log');
+			if (typeof dialogLog !== 'undefined') {
+				if (this._cycle === 'Application') {
+					dialogLog.write ({
+						id: character,
+						character: this.character,
+						dialog
+					});
+				} else {
+					dialogLog.pop ();
+				}
 			}
+		} catch (e) {
+			Monogatari.debug ().error (e);
 		}
+
 
 
 		return Promise.resolve ();
@@ -294,14 +299,14 @@ export class Dialog extends Action {
 
 	characterDialog () {
 		// Check if the character has a name to show
-		if (typeof this.character.Name !== 'undefined' && !this.nvl) {
-			$_(`${Monogatari.selector} [data-ui="who"]`).html (Monogatari.replaceVariables (this.character.Name));
+		if (typeof this.character.name !== 'undefined' && !this.nvl) {
+			$_(`${Monogatari.selector} [data-ui="who"]`).html (Monogatari.replaceVariables (this.character.name));
 		}
 
 		// Focus the character's sprite and colorize it's name with the defined
 		// color on its declaration
 		$_(`${Monogatari.selector} [data-character="${this.id}"]`).addClass ('focus');
-		$_(`${Monogatari.selector} [data-ui="who"]`).style ('color', this.character.Color);
+		$_(`${Monogatari.selector} [data-ui="who"]`).style ('color', this.character.color);
 
 		// Check if an expression or face image was used and if it exists and
 		// display it
@@ -311,8 +316,8 @@ export class Dialog extends Action {
 		}
 
 		// Check if the character object defines if the type animation should be used.
-		if (typeof this.character.TypeAnimation !== 'undefined') {
-			return this.displayDialog (this.dialog, this.id, this.character.TypeAnimation);
+		if (typeof this.character.type_animation !== 'undefined') {
+			return this.displayDialog (this.dialog, this.id, this.character.type_animation);
 		} else {
 			return this.displayDialog (this.dialog, this.id, true);
 		}

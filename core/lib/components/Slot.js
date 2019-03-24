@@ -33,7 +33,7 @@ class Slot extends Component {
 	}
 }
 
-Slot._id = 'SLOT';
+Slot._id = 'slot';
 
 Slot._html = (slot, name, image, data) => {
 	let background = '';
@@ -49,7 +49,7 @@ Slot._html = (slot, name, image, data) => {
 	}
 
 	return `
-		<figure data-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
+		<figure data-component="slot" data-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
 			<button class='fas fa-times' data-delete='${slot}'></button>
 			<small class='badge'>${name}</small>
 			<div data-content="background" style="${image ? 'background-image' : 'background'}: ${background}"></div>

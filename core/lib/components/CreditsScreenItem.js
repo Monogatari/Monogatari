@@ -31,7 +31,7 @@ class CreditsScreenItem extends Component {
 	}
 }
 
-CreditsScreenItem._id = 'CREDITS_MENU_ITEM';
+CreditsScreenItem._id = 'credits_screen::item';
 
 CreditsScreenItem._html = (section, content) => {
 	let html = `<h3>${section}</h3><div>`;

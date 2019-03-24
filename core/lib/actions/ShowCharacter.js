@@ -47,7 +47,7 @@ export class ShowCharacter extends Action {
 			this.sprite = sprite;
 
 			this.character = Monogatari.character (asset);
-			this.image = this.character.Images[this.sprite];
+			this.image = this.character.sprites[this.sprite];
 
 			if (typeof classes !== 'undefined') {
 				this.classes = ['animated', ...classes.filter ((item) => item !== 'at' && item !== 'with')];
@@ -72,7 +72,7 @@ export class ShowCharacter extends Action {
 		//   0      1             2
 
 
-		let directory = this.character.Directory;
+		let directory = this.character.directory;
 
 		if (typeof directory == 'undefined') {
 			directory = '';

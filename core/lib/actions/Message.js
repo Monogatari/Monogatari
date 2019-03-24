@@ -106,7 +106,7 @@ export class Message extends Action {
 	}
 
 	apply () {
-		$_(`${Monogatari.selector} [data-screen="game"] #components`).append (Monogatari.component ('MESSAGE').render (this.message.title, this.message.subtitle, this.message.body));
+		$_(`${Monogatari.selector} [data-screen="game"]`).append (Monogatari.component ('message').render (this.message.title, this.message.subtitle, this.message.body));
 
 		$_(`${Monogatari.selector} [data-ui="messages"]`).addClass ('animated');
 

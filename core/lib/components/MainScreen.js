@@ -33,10 +33,10 @@ class MainScreen extends Component {
 	}
 }
 
-MainScreen._id = 'MAIN_MENU';
+MainScreen._id = 'main_screen';
 
 MainScreen._html = `
-	<section data-screen="main">
+	<section data-component="main_screen" data-screen="main">
 		<audio type="audio/mpeg" data-component="ambient"></audio>
 
 		<div class="vertical vertical--right text--right bottom animated bounceIn" data-ui="inner-menu">

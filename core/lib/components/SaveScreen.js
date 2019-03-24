@@ -140,10 +140,10 @@ class SaveScreen extends Component {
 
 SaveScreen._configuration = {};
 SaveScreen._state = {};
-SaveScreen._id = 'SAVE_MENU';
+SaveScreen._id = 'save_screen';
 
 SaveScreen._html = `
-	<section data-screen="save">
+	<section data-component="save_screen" data-screen="save">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<div class="horizontal horizontal--center">
 			<input type="text" placeholder="Save Slot Name" data-input="slotName" required>

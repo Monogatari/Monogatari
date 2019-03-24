@@ -196,7 +196,7 @@ export class ImageGallery extends Component {
 	}
 }
 
-ImageGallery._id = 'GALLERY';
+ImageGallery._id = 'gallery_screen';
 ImageGallery._configuration = {
 	directory: 'gallery',
 	images: {}
@@ -207,7 +207,7 @@ ImageGallery._state = {
 };
 
 ImageGallery._html = `
-	<section data-screen="gallery">
+	<section data-component="gallery_screen" data-screen="gallery">
 		<div class='modal' data-ui="image-viewer">
 			<figure></figure>
 		</div>

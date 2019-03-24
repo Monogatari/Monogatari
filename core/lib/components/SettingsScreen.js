@@ -163,10 +163,10 @@ class SettingsScreen extends Component {
 
 SettingsScreen._configuration = {};
 SettingsScreen._state = {};
-SettingsScreen._id = 'SETTINGS_MENU';
+SettingsScreen._id = 'settings_screen';
 
 SettingsScreen._html = `
-	<section data-screen="settings" class="text--center">
+	<section data-component="settings_screen" data-screen="settings" class="text--center">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Settings">Settings</h2>
 		<div class="row row--spaced padded text---center">
@@ -193,6 +193,7 @@ SettingsScreen._html = `
 					<h3 data-string="AutoPlaySpeed">Auto Play Speed</h3>
 					<input type="range" min="0" max="60" step="1" data-action="set-auto-play-speed">
 				</div>
+
 				<div data-settings="language">
 					<h3 data-string="Language">Language</h3>
 					<div class="horizontal horizontal--center"></div>

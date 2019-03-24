@@ -33,10 +33,10 @@ class SlotDeletionWarning extends Component {
 	}
 }
 
-SlotDeletionWarning._id = 'SLOT_DELETION_WARNING';
+SlotDeletionWarning._id = 'slot_deletion_warning';
 
 SlotDeletionWarning._html = `
-	<div data-notice="slot-deletion" class="modal">
+	<div data-component="slot_deletion_warning" data-notice="slot-deletion" class="modal">
 		<div class="modal__content">
 			<p data-string="SlotDeletion">Are you sure you want to delete this slot?</p>
 			<p><small></small></p>

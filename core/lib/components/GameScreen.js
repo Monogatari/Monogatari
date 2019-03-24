@@ -63,26 +63,19 @@ class GameScreen extends Component {
 
 GameScreen._configuration = {};
 GameScreen._state = {};
-GameScreen._id = 'GAME';
+GameScreen._id = 'game_screen';
 
 GameScreen._html = `
-	<section data-screen="game" id="game" class="unselectable">
+	<section data-component="game_screen" data-screen="game" id="game" class="unselectable">
 		<div id="particles-js" data-ui="particles"></div>
 		<div id="background" data-ui="background"></div>
-		<div id='components'>
-			<div class="video-wrapper text--center vertical middle" data-component="video" data-ui="video-player">
-				<video type="video/mp4" data-ui="player" controls="true"></video>
-				<button data-action="close-video" data-string="Close">Close</button>
-			</div>
+		<div id='components'></div>
+		<div data-component="text_box" data-ui="text">
+			<img data-ui="face" alt="" data-content="character_expresion">
+			<span data-ui="who" data-content="character_name"></span>
+			<p data-ui="say" data_content="dialog"></p>
 		</div>
-
-
-		<div data-ui="text">
-			<img data-ui="face" alt="">
-			<span data-ui="who"></span>
-			<p data-ui="say"></p>
-		</div>
-		<div data-ui="quick-menu" class="text--right"></div>
+		<div data-ui="quick-menu" data-component="quick-menu" class="text--right"></div>
 	</section>
 `;
 

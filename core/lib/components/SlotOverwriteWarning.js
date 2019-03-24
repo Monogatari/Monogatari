@@ -33,7 +33,7 @@ class SlotOverwriteWarning extends Component {
 	}
 }
 
-SlotOverwriteWarning._id = 'SLOT_OVERWRITE_WARNING';
+SlotOverwriteWarning._id = 'slot_overwrite_warning';
 
 SlotOverwriteWarning._html = `
 	<div data-notice="slot-overwrite" class="modal">

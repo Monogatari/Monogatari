@@ -33,10 +33,10 @@ class QuitWarning extends Component {
 	}
 }
 
-QuitWarning._id = 'QUIT_WARNING';
+QuitWarning._id = 'quit_warning';
 
 QuitWarning._html = `
-	<div data-notice="exit" class="modal">
+	<div data-component="quit_warning" data-notice="exit" class="modal">
 		<div class="modal__content">
 			<p data-string="Confirm">Do you want to quit</p>
 			<div>

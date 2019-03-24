@@ -232,10 +232,10 @@ class LoadScreen extends Component {
 
 LoadScreen._configuration = {};
 LoadScreen._state = {};
-LoadScreen._id = 'LOAD_MENU';
+LoadScreen._id = 'load_screen';
 
 LoadScreen._html = `
-	<section data-screen="load">
+	<section data-component="load_screen" data-screen="load">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Load">Load</h2>
 		<div data-ui="saveSlots">

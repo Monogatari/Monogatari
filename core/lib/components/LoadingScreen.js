@@ -35,10 +35,10 @@ class LoadingScreen extends Component {
 
 LoadingScreen._configuration = {};
 LoadingScreen._state = {};
-LoadingScreen._id = 'LOAD_SCREEN';
+LoadingScreen._id = 'loading_screen';
 
 LoadingScreen._html = `
-	<section data-screen="loading">
+	<section data-component="loading_screen" data-screen="loading">
 		<div class="middle">
 			<h2 data-string="Loading">Loading</h2>
 			<progress data-ui="load-progress" value="0" max="100"></progress>

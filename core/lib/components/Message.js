@@ -33,17 +33,19 @@ class Message extends Component {
 
 Message._configuration = {};
 Message._state = {};
-Message._id = 'MESSAGE';
+Message._id = 'message';
 
 Message._html = (title, subtitle, body) => `
-	<div data-component="modal" data-ui="messages" class="middle active">
-		<div data-ui="message-content">
-			<h3>${title}</h3>
-			<p>${subtitle}</p>
-			<p>${body}</p>
-		</div>
-		<div class="horizontal horizontal--center" data-ui="inner-menu">
-			<button data-action="close" data-close="messages" data-string="Close">Close</button>
+	<div data-component="message" data-ui="messages" class="modal  modal--active">
+		<div class="modal__content">
+			<div data-ui="message-content" >
+				<h3 data-content="title">${title}</h3>
+				<p data-content="subtitle">${subtitle}</p>
+				<p data-content="body">${body}</p>
+			</div>
+			<div class="horizontal horizontal--center" data-ui="inner-menu">
+				<button data-action="close" data-close="messages" data-string="Close">Close</button>
+			</div>
 		</div>
 	</div>
 `;

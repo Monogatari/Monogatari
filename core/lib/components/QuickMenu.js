@@ -94,8 +94,8 @@ class QuickMenu extends Component {
 	}
 
 	static render () {
-		$_(`${Monogatari.selector} [data-screen="game"] [data-ui="quick-menu"]`).html ('');
-		$_(`${Monogatari.selector} [data-screen="game"] [data-ui="quick-menu"]`).html (QuickMenu._configuration.buttons.map ((button) => {
+		$_(`${Monogatari.selector} [data-screen="game"] [data-component="quick-menu"]`).html ('');
+		$_(`${Monogatari.selector} [data-screen="game"] [data-component="quick-menu"]`).html (QuickMenu._configuration.buttons.map ((button) => {
 			const data = Object.keys (button.data).map ((key) => `data-${key}="${button.data[key]}"`).join (' ');
 
 			return `<button ${data}>
@@ -170,7 +170,7 @@ QuickMenu._configuration = {
 	]
 };
 QuickMenu._state = {};
-QuickMenu._id = 'QUICK_MENU';
+QuickMenu._id = 'quick_menu';
 
 QuickMenu._html = '';
 

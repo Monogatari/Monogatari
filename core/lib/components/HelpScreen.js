@@ -35,10 +35,10 @@ class HelpScreen extends Component {
 
 HelpScreen._configuration = {};
 HelpScreen._state = {};
-HelpScreen._id = 'HELP_MENU';
+HelpScreen._id = 'help_screen';
 
 HelpScreen._html = `
-	<section data-screen="help">
+	<section data-component="help_screen" data-screen="help">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Help">Help</h2>
 		<div class="row row--spaced" data-content="help">

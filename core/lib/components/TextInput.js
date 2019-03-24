@@ -33,17 +33,19 @@ class TextInput extends Component {
 
 TextInput._configuration = {};
 TextInput._state = {};
-TextInput._id = 'TEXT_INPUT';
+TextInput._id = 'text_input';
 
 TextInput._html = message => `
-	<form data-component="modal" data-ui="input" class="middle active">
-		<p data-ui="input-message" class="block">${message}</p>
-		<input type="text">
-		<small data-ui="warning" class="block"></small>
-		<div>
-			<button type='submit'>Ok</button>
-		</div>
-	<form>
+	<div data-component="text_input" data-ui="input" class="modal modal--active">
+		<form  class="modal__content">
+			<p data-ui="input-message" >${message}</p>
+			<input type="text">
+			<small data-ui="warning" class="block"></small>
+			<div>
+				<button type='submit'>Ok</button>
+			</div>
+		<form>
+	</div>
 `;
 
 Monogatari.registerComponent (TextInput);

@@ -35,10 +35,10 @@ class OrientationWarning extends Component {
 
 OrientationWarning._configuration = {};
 OrientationWarning._state = {};
-OrientationWarning._id = 'ORIENTATION_WARNING';
+OrientationWarning._id = 'orientation_warning';
 
 OrientationWarning._html = `
-	<div data-notice="orientation" class="modal">
+	<div data-component="orientation_warning" data-notice="orientation" class="modal">
 		<div class="modal__content">
 			<p data-string="OrientationWarning">Please rotate your device to play.</p>
 		</div>

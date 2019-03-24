@@ -127,6 +127,14 @@ video {
 	display: block;
 }
 
+.modal {
+	top: 0;
+
+	&  .modal__content {
+		border-radius: 4px;
+	}
+}
+
 /**
  * ===========================
  * General Styling
@@ -243,31 +251,11 @@ video {
 
 /**
  * ===========================
- * Data Notice Styling
- * ===========================
-**/
-
-.modal {
-	&  > div {
-		border-radius: 4px;
-	}
-
-	& > * {
-		padding: 1rem;
-	}
-
-	& p {
-		font-size: 1rem;
-	}
-}
-/**
- * ===========================
  * Data Components Styling
  * ===========================
 **/
 
 [data-component] {
-	display: none;
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -277,39 +265,6 @@ video {
 		background-repeat: no-repeat;
 		background-position: center;
 	}
-}
-
-[data-component='modal'] {
-	height: auto;
-	max-height: 70%;
-	width: 100%;
-	margin: 0 auto;
-	background-color: #fff;
-	z-index: 15;
-	-webkit-transition: all 0.5s;
-	-moz-transition: all 0.5s;
-	-ms-transition: all 0.5s;
-	transition: all 0.5s;
-	overflow-y: auto;
-	padding: 2rem;
-	color: var(--text-color);
-}
-
-[data-component='video'] {
-	height: auto;
-	margin: 0 auto;
-	z-index: 15;
-}
-
-[data-component='modal'] img,
-[data-component='modal'] video {
-	max-width: 100%;
-	position: initial !important;
-}
-
-[data-component='modal'].active,
-[data-component='video'].active {
-	display: block;
 }
 
 [data-notice] p {
@@ -837,10 +792,6 @@ input[type=range] {
 		bottom: 2.5rem;
 	}
 
-	[data-component='modal'] {
-		width: 80%;
-	}
-
 	.modal > * {
 		width: 70%;
 	}
@@ -919,10 +870,6 @@ input[type=range] {
 	.modal > * {
 		width: 60%;
 	}
-
-	[data-component='modal'] {
-		width: 70%;
-	}
 }
 
 /** Medium Devices, Desktops (992px)**/
@@ -940,9 +887,6 @@ input[type=range] {
 		width: 50%;
 	}
 
-	[data-component='modal'] {
-		width: 60%;
-	}
 }
 
 /** HD Screen, Large Devices, Wide Screens (1200px) **/
@@ -956,9 +900,6 @@ input[type=range] {
 		width: 40%;
 	}
 
-	[data-component='modal'] {
-		width: 50%;
-	}
 }
 
 /** Full HD Screen, Large Devices, Wide Screens (1920px) **/

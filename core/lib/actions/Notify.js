@@ -121,7 +121,6 @@ export class Notify extends Action {
 				} else {
 					reject ();
 				}
-
 			});
 		}
 

@@ -1,7 +1,7 @@
 import { Monogatari } from './../monogatari';
 import moment from 'moment';
 
-Monogatari.component ('MAIN_MENU').html (`
+Monogatari.component ('main_screen').html (`
 	<section data-screen="main">
 		<audio type="audio/mpeg" data-component="ambient"></audio>
 
@@ -14,7 +14,7 @@ Monogatari.component ('MAIN_MENU').html (`
 	</section>
 `);
 
-Monogatari.component ('ORIENTATION_WARNING').html (`
+Monogatari.component ('orientation_warning').html (`
 	<div data-notice="orientation" class="modal">
 		<div class="modal__content">
 			<p data-string="OrientationWarning">Please rotate your device to play.</p>
@@ -22,7 +22,7 @@ Monogatari.component ('ORIENTATION_WARNING').html (`
 	</div>
 `);
 
-Monogatari.component ('CREDITS_MENU').html (`
+Monogatari.component ('credits_screen').html (`
 	<section data-screen="credits">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 			<h2 data-string="Credits">Credits</h2>
@@ -30,7 +30,7 @@ Monogatari.component ('CREDITS_MENU').html (`
 	</section>
 `);
 
-Monogatari.component ('CREDITS_MENU_ITEM').html ((section, content) => {
+Monogatari.component ('credits_screen::item').html ((section, content) => {
 	let html = `<h3>${section}</h3><div>`;
 
 	if (typeof content === 'string') {
@@ -57,7 +57,7 @@ Monogatari.component ('CREDITS_MENU_ITEM').html ((section, content) => {
 	return html;
 });
 
-Monogatari.component ('GAME').html (`
+Monogatari.component ('game_screen').html (`
 	<section id="game" class="unselectable">
 		<div id="particles-js" data-ui="particles"></div>
 		<div id="background" data-ui="background"></div>
@@ -78,7 +78,7 @@ Monogatari.component ('GAME').html (`
 	</section>
 `);
 
-Monogatari.component ('HELP_MENU').html (`
+Monogatari.component ('help_screen').html (`
 	<section data-screen="help">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Help">Help</h2>
@@ -234,7 +234,7 @@ Monogatari.component ('HELP_MENU').html (`
 	</section>
 `);
 
-Monogatari.component ('GALLERY').html (`
+Monogatari.component ('gallery_screen').html (`
 	<section data-screen="gallery">
 		<div class='modal' data-ui="image-viewer">
 			<figure></figure>
@@ -245,17 +245,17 @@ Monogatari.component ('GALLERY').html (`
 	</section>
 `);
 
-Monogatari.component ('GALLERY_ITEM').html (image => {
+Monogatari.component ('gallery_screen::item').html (image => {
 	// Check if the image has been unlocked or not, if it hasn't then a
 	// lock will be shown instead of the image.
-	if (Monogatari.component ('GALLERY').state ('unlocked').includes (image)) {
-		return `<figure class='md-depth-2 col xs6 s6 m4 l3 xl3' data-image='${image}' style='background-image: url('./img/gallery/${Monogatari.component ('GALLERY').images (image)}')'></figure>`;
+	if (Monogatari.component ('gallery_screen').state ('unlocked').includes (image)) {
+		return `<figure class='md-depth-2 col xs6 s6 m4 l3 xl3' data-image='${image}' style='background-image: url('./img/gallery/${Monogatari.component ('gallery_screen').images (image)}')'></figure>`;
 	} else {
 		return '<figure class="md-depth-2 column column--col xs6 s6 m4 l3 xl3"><span class="fa fa-lock"></span></figure>';
 	}
 });
 
-Monogatari.component ('LOAD_MENU').html (`
+Monogatari.component ('load_screen').html (`
 	<section data-screen="load">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Load">Load</h2>
@@ -270,7 +270,7 @@ Monogatari.component ('LOAD_MENU').html (`
 	</section>
 `);
 
-Monogatari.component ('SLOT').html ((slot, name, image, data) => {
+Monogatari.component ('slot').html ((slot, name, image, data) => {
 	let background = '';
 
 	if (image) {
@@ -293,7 +293,7 @@ Monogatari.component ('SLOT').html ((slot, name, image, data) => {
 	`;
 });
 
-Monogatari.component ('LOAD_SCREEN').html (`
+Monogatari.component ('loading_screen').html (`
 	<section data-screen="loading">
 		<div class="middle">
 			<h2 data-string="Loading">Loading</h2>
@@ -303,7 +303,7 @@ Monogatari.component ('LOAD_SCREEN').html (`
 	</section>
 `);
 
-Monogatari.component ('SAVE_MENU').html (`
+Monogatari.component ('save_screen').html (`
 	<section data-screen="save">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<div class="horizontal horizontal--center">
@@ -314,7 +314,7 @@ Monogatari.component ('SAVE_MENU').html (`
 	</section>
 `);
 
-Monogatari.component ('SETTINGS_MENU').html (`
+Monogatari.component ('settings_screen').html (`
 	<section data-screen="settings" class="text--center">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Settings">Settings</h2>
@@ -358,7 +358,7 @@ Monogatari.component ('SETTINGS_MENU').html (`
 	</section>
 `);
 
-Monogatari.component ('MESSAGE').html ((title, subtitle, message) => `
+Monogatari.component ('message').html ((title, subtitle, message) => `
 	<div data-component="modal" data-ui="messages" class="middle">
 		<div data-ui="message-content">
 			<h3>${title}</h3>
@@ -371,7 +371,7 @@ Monogatari.component ('MESSAGE').html ((title, subtitle, message) => `
 	</div>
 `);
 
-Monogatari.component ('QUIT_WARNING').html (`
+Monogatari.component ('quit_warning').html (`
 	<div data-notice="exit" class="modal">
 		<div class="modal__content">
 			<p data-string="Confirm">Do you want to quit</p>
@@ -383,7 +383,7 @@ Monogatari.component ('QUIT_WARNING').html (`
 	</div>
 `);
 
-Monogatari.component ('TEXT_INPUT').html (message => `
+Monogatari.component ('text_input').html (message => `
 	<form data-component="modal" data-ui="input" class="middle active">
 		<p data-ui="input-message" class="block">${message}</p>
 		<input type="text">

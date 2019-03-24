@@ -67,7 +67,7 @@ class CreditsScreen extends Component {
 
 	static render () {
 		const items = Object.keys (this.credits ()).map ((section) => {
-			return Monogatari.component ('CREDITS_MENU_ITEM').render (section, this.credits (section));
+			return Monogatari.component ('credits_screen::item').render (section, this.credits (section));
 		});
 
 		$_(`${Monogatari.selector} [data-screen="credits"] [data-ui="credits"]`).html (items);
@@ -75,10 +75,10 @@ class CreditsScreen extends Component {
 }
 
 CreditsScreen._state = {};
-CreditsScreen._id = 'CREDITS_MENU';
+CreditsScreen._id = 'credits_screen';
 
 CreditsScreen._html = `
-	<section data-screen="credits">
+	<section data-screen="credits" data-component="credits_screen">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Credits">Credits</h2>
 		<div class="text--center padded" data-ui="credits"></div>

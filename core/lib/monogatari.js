@@ -326,7 +326,7 @@ class Monogatari {
 	 * @return {Component} - Returns the component that matches the given ID
 	 */
 	static component (id) {
-		return Monogatari._components.find ((a) => a._id === id);
+		return Monogatari._components.find ((a) => a._id.toLowerCase () === id.toLowerCase ());
 	}
 
 	/**
@@ -371,6 +371,10 @@ class Monogatari {
 
 	static characters (object = null) {
 		if (object !== null) {
+			// const identifiers = Object.keys (object);
+			// for (const id of identifiers) {
+			// 	Monogatari.character (id, object[id]);
+			// }
 			Monogatari._characters = merge (Monogatari._characters, object);
 		} else {
 			return Monogatari._characters;
@@ -385,7 +389,47 @@ class Monogatari {
 				Monogatari._characters[id] = object;
 			}
 		} else {
-			return Monogatari._characters[id];
+			const character = Monogatari._characters[id];
+
+			// Translate the old character properties into the new ones
+			if (typeof character !== 'undefined') {
+				if (typeof character.Images === 'object') {
+					character.sprites = merge ({}, character.Images);
+					delete character.Images;
+				}
+
+				if (typeof character.Directory === 'string') {
+					character.directory = character.Directory;
+					delete character.Directory;
+				}
+
+				if (typeof character.Color === 'string') {
+					character.color = character.Color;
+					delete character.Color;
+				}
+
+				if (typeof character.Name === 'string') {
+					character.name = character.Name;
+					delete character.Nme;
+				}
+
+				if (typeof character.Face === 'string') {
+					character.default_expression = character.Face;
+					delete character.Face;
+				}
+
+				if (typeof character.Side === 'object') {
+					character.expressions = character.Side;
+					delete character.Side;
+				}
+
+				if (typeof character.TypeAnimation === 'object') {
+					character.type_animation = character.TypeAnimation;
+					delete character.TypeAnimation;
+				}
+			}
+
+			return character;
 		}
 	}
 
@@ -706,13 +750,22 @@ class Monogatari {
 
 				// Check if the character has a directory defined where its images
 				// are located
-				if (typeof character.Directory !== 'undefined') {
-					directory = character.Directory + '/';
+				if (typeof character.directory !== 'undefined') {
+					directory = character.directory + '/';
 				}
 				directory = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}`;
 
-				if (typeof character.Images !== 'undefined') {
-					for (const image of Object.values (character.Images)) {
+				if (typeof character.sprites !== 'undefined') {
+					for (const image of Object.values (character.sprites)) {
+						promises.push (Preload.image (`${directory}${image}`).finally (() => {
+							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
+						}));
+					}character.
+					assetCount += 1;
+				}
+
+				if (typeof character.expressions !== 'undefined') {
+					for (const image of Object.values (character.expressions)) {
 						promises.push (Preload.image (`${directory}${image}`).finally (() => {
 							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
 						}));
@@ -720,17 +773,8 @@ class Monogatari {
 					assetCount += 1;
 				}
 
-				if (typeof character.Side !== 'undefined') {
-					for (const image of Object.values (character.Side)) {
-						promises.push (Preload.image (`${directory}${image}`).finally (() => {
-							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
-						}));
-					}
-					assetCount += 1;
-				}
-
-				if (typeof character.Face !== 'undefined') {
-					promises.push (Preload.image (`${directory}${character.Face}`).finally (() => {
+				if (typeof character.default_expression !== 'undefined') {
+					promises.push (Preload.image (`${directory}${character.default_expression}`).finally (() => {
 						$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
 					}));
 					assetCount += 1;
@@ -816,8 +860,8 @@ class Monogatari {
 		$_('[data-screen="load"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
 		$_('[data-screen="save"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
 
-		$_('[data-screen="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
-		$_('[data-screen="save"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
+		$_('[data-screen="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (Monogatari.component ('slot').render (slot, name, image, data));
+		$_('[data-screen="save"] [data-ui="slots"]').append (Monogatari.component ('slot').render (slot, name, image, data));
 	}
 
 	static addAutoSlot (i, data) {
@@ -835,7 +879,7 @@ class Monogatari {
 		const name = data.name ? data.name : data.date;
 
 		$_('[data-screen="load"] [data-ui="slots"] [data-string="NoAutoSavedGames"]').remove ();
-		$_('[data-screen="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (Monogatari.component ('SLOT').render (slot, name, image, data));
+		$_('[data-screen="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (Monogatari.component ('slot').render (slot, name, image, data));
 	}
 
 	// Gets the highest number currently available as a slot id (Save_{?})
@@ -1598,7 +1642,13 @@ class Monogatari {
 							}
 							Monogatari.debug ().trace ();
 							Monogatari.debug ().groupEnd ();
-						});
+						}).catch ((e) => {
+							Monogatari.debug ().debug (`Did Apply Failed.\nReason: ${e}`);
+							return Promise.reject (e);
+						});;
+					}).catch ((e) => {
+						Monogatari.debug ().debug (`Application Failed.\nReason: ${e}`);
+						return Promise.reject (e);
 					});
 				}).catch (() => {
 					Monogatari.debug ().trace ();
@@ -1706,7 +1756,7 @@ class Monogatari {
 		// points to.
 		Monogatari.registerListener ('close', {
 			callback: (element) => {
-				$_(`${Monogatari.selector} [data-ui="${element.data('close')}"]`).removeClass('active');
+				$_(`${Monogatari.selector} [data-ui="${element.data('close')}"]`).removeClass('modal--active');
 				return true;
 			}
 		});
@@ -2062,7 +2112,7 @@ class Monogatari {
 				});
 
 				if (!(Monogatari.setting ('Skip') > 0)) {
-					Monogatari.component ('QUICK_MENU').remove ('Skip');
+					Monogatari.component ('quick_menu').remove ('Skip');
 				}
 
 				for (const component of Monogatari.components ()) {
