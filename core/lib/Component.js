@@ -94,11 +94,11 @@ class Component extends HTMLElement {
 	 * @returns {void|string} - Void or the HTML structure in a string
 	 */
 	static html (html = null, ...params) {
-		if (html !== null && typeof params === 'undefined') {
+		if (html !== null && params.length === 0) {
 			this._html = html;
 		} else {
 			// Check if additional parameters have been sent to a rendering function
-			if (typeof params !== 'undefined' && typeof this._html === 'function') {
+			if (params.length > 0 && typeof this._html === 'function') {
 				if (html === null) {
 					return this._html.call (this, ...params);
 				} else {
@@ -107,7 +107,7 @@ class Component extends HTMLElement {
 			}
 
 			// Check if no parameters were set but the HTML is still a function to be called
-			if (typeof params === 'undefined' && html === null && typeof this._html === 'function') {
+			if (params.length === 0 && html === null && typeof this._html === 'function') {
 				return this._html.call (this);
 			}
 
@@ -260,7 +260,7 @@ class Component extends HTMLElement {
  * Each component can define its initial HTML structure, which should be used on
  * the setup or rendering functions of the cycle, adding to the DOM.
 */
-Component.html = '';
+Component._html = '';
 
 /**
  * If needed, every component should declare its configuration as follows. This
