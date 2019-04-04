@@ -32,6 +32,20 @@ class GameScreen extends Component {
 		return Promise.resolve ();
 	}
 
+	static resize () {
+		// TODO: get ratio from options,
+		const h = Math.floor (window.innerWidth * (9/16));
+		const mh = Math.floor ((window.innerHeight - h)/2);
+
+		$_('#game_visuals').style ({
+			width: '100%',
+			height: h + 'px',
+			marginTop: mh + 'px',
+			backgroundSize: 'contains',
+			position: 'absolute'
+		});
+	}
+
 	static bind (selector) {
 		$_(`${selector}`).on ('click', '[data-screen="game"] *:not([data-choice])', function () {
 			Monogatari.debug ().debug ('Next Statement Listener');
@@ -42,6 +56,9 @@ class GameScreen extends Component {
 				// is blocking the game.
 			});
 		});
+
+		GameScreen.resize();
+		$_(window).on('resize', GameScreen.resize);
 
 		Monogatari.registerListener ('back', {
 			keys: 'left',
@@ -67,9 +84,11 @@ GameScreen._id = 'game_screen';
 
 GameScreen._html = `
 	<section data-component="game_screen" data-screen="game" id="game" class="unselectable">
-		<div id="particles-js" data-ui="particles"></div>
-		<div id="background" data-ui="background"></div>
-		<div id='components'></div>
+		<div id='game_visuals'>
+			<div id="particles-js" data-ui="particles"></div>
+			<div id="background" data-ui="background"></div>
+			<div id='components'></div>
+		</div>
 		<div data-component="text_box" data-ui="text">
 			<img data-ui="face" alt="" data-content="character_expresion">
 			<span data-ui="who" data-content="character_name"></span>

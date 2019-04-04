@@ -112,7 +112,7 @@ export class ShowCharacter extends Action {
 				$_(image).style ('animation-duration', this.classes[durationPosition + 1]);
 			}
 			$_(`${Monogatari.selector} [data-character="${this.asset}"]`).remove ();
-			$_(`${Monogatari.selector} [data-screen="game"]`).append (image);
+			$_(`${Monogatari.selector} [data-screen="game"] #game_visuals`).append (image);
 		}
 		return Promise.resolve ();
 	}
