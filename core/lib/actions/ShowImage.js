@@ -65,7 +65,7 @@ export class ShowImage extends Action {
 			$_(image).style ('animation-duration', this.classes[durationPosition + 1]);
 		}
 
-		$_(`${Monogatari.selector} [data-screen="game"] #game_visuals`).append (image.outerHTML);
+		$_(`${Monogatari.selector} [data-screen="game"] [data-content="visuals"]`).append (image.outerHTML);
 		return Promise.resolve ();
 	}
 

@@ -29,12 +29,12 @@ class GameScreen extends Component {
 
 	static setup (selector) {
 		$_(selector).append (GameScreen.html ());
+
 		return Promise.resolve ();
 	}
 
-	static resize () {
-		// TODO: get ratio from options,
-		const h = Math.floor (window.innerWidth * (9/16));
+	static resize (proportionWidth, proportionHeight) {
+		const h = Math.floor (window.innerWidth * (proportionHeight/proportionWidth));
 		let widthCss = '100%';
 		let heightCss = '100%';
 		let marginTopCss = 0;
@@ -46,18 +46,14 @@ class GameScreen extends Component {
 
 		}
 		else {
-			const w = Math.floor (window.innerHeight * (16/9));
+			const w = Math.floor (window.innerHeight * (proportionWidth/proportionHeight));
 			widthCss = w + 'px';
 		}
 
-		$_('#game_visuals').style ({
+		$_('.forceAspectRatio').style ({
 			width: widthCss,
 			height: heightCss,
-			marginTop: marginTopCss,
-			marginLeft: 'auto',
-			marginRight: 'auto',
-			backgroundSize: 'contain',
-			position: 'relative'
+			marginTop: marginTopCss
 		});
 	}
 
@@ -72,8 +68,17 @@ class GameScreen extends Component {
 			});
 		});
 
-		GameScreen.resize();
-		$_(window).on('resize', GameScreen.resize);
+		const forceAspectRatio = Monogatari.setting ('ForceAspectRatio');
+
+		if (forceAspectRatio) {
+			const [w, h] = Monogatari.setting ('AspectRatio').split (':');
+			const proportionWidth = +w;
+			const proportionHeight = +h;
+
+			$_('[data-content="visuals"]').addClass('forceAspectRatio');
+			GameScreen.resize(proportionWidth, proportionHeight);
+			$_(window).on('resize', () => GameScreen.resize(proportionWidth, proportionHeight));
+		}
 
 		Monogatari.registerListener ('back', {
 			keys: 'left',
@@ -99,7 +104,7 @@ GameScreen._id = 'game_screen';
 
 GameScreen._html = `
 	<section data-component="game_screen" data-screen="game" id="game" class="unselectable">
-		<div id='game_visuals'>
+		<div data-content="visuals">
 			<div id="particles-js" data-ui="particles"></div>
 			<div id="background" data-ui="background"></div>
 			<div id='components'></div>
