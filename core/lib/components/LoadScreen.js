@@ -4,32 +4,6 @@ import { $_ } from '@aegis-framework/artemis';
 
 class LoadScreen extends Component {
 
-	static configuration (object = null) {
-		if (object !== null) {
-			if (typeof object === 'string') {
-				return LoadScreen._configuration[object];
-			} else {
-				LoadScreen._configuration = Object.assign ({}, LoadScreen._configuration, object);
-				LoadScreen.onUpdate ();
-			}
-		} else {
-			return LoadScreen._configuration;
-		}
-	}
-
-	static state (object = null) {
-		if (object !== null) {
-			if (typeof object === 'string') {
-				return LoadScreen._state[object];
-			} else {
-				LoadScreen._state = Object.assign ({}, LoadScreen._state, object);
-				LoadScreen.onUpdate ();
-			}
-		} else {
-			return LoadScreen._state;
-		}
-	}
-
 	/**
 	 * @static onStart - This function acts as an event listener for when the game
 	 * starts.
@@ -162,32 +136,15 @@ class LoadScreen extends Component {
 	}
 
 	static bind (selector) {
-		$_(`${selector} [data-screen="load"]`).on ('click', '[data-delete], [data-delete] *', function (event) {
-			event.stopImmediatePropagation ();
-			event.stopPropagation ();
-			event.preventDefault ();
-
-			let element = $_(this);
-			if (element.matches ('path')) {
-				element = element.closest ('[data-delete]');
-			}
-
-			Monogatari.global ('deleteSlot', element.data ('delete'));
-			Monogatari.Storage.get (Monogatari.global ('deleteSlot')).then ((data) => {
-				if (typeof data.name !== 'undefined') {
-					$_(`${selector} [data-notice="slot-deletion"] small`).text (data.name);
-				} else {
-					$_(`${selector} [data-notice="slot-deletion"] small`).text (data.date);
-				}
-
-				$_(`${selector} [data-notice="slot-deletion"]`).addClass ('modal--active');
-			});
-		});
 
 		// Load a saved game slot when it is pressed
-		$_(`${selector} [data-screen="load"]`).on ('click', '[data-slot], [data-slot] *:not([data-delete])', function () {
-			Monogatari.loadFromSlot ($_(this).closest ('[data-slot]').data('slot'));
+		$_(`${selector}`).on ('click', '[data-screen="load"] [data-slot], [data-screen="load"] [data-slot] *', function () {
+			const isDeleteButton = $_(this).matches ('[data-delete], [data-delete] *');
+			if (!isDeleteButton) {
+				Monogatari.loadFromSlot ($_(this).closest ('[data-slot]').data('slot'));
+			}
 		});
+
 		return Promise.resolve ();
 	}
 
@@ -209,10 +166,10 @@ class LoadScreen extends Component {
 
 LoadScreen._configuration = {};
 LoadScreen._state = {};
-LoadScreen._id = 'load_screen';
+LoadScreen._id = 'load-screen';
 
 LoadScreen._html = `
-	<section data-component="load_screen" data-screen="load">
+	<section data-component="load-screen" data-screen="load">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Load">Load</h2>
 		<div data-ui="saveSlots">

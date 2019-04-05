@@ -32,7 +32,7 @@ export class Dialog extends Action {
 	}
 
 	static canRevert () {
-		const dialogLog = Monogatari.component ('dialog_log');
+		const dialogLog = Monogatari.component ('dialog-log');
 
 		if (typeof dialogLog !== 'undefined') {
 			dialogLog.pop ();
@@ -272,7 +272,7 @@ export class Dialog extends Action {
 		Dialog.checkUnread ();
 
 		try {
-			const dialogLog = Monogatari.component ('dialog_log');
+			const dialogLog = Monogatari.component ('dialog-log');
 			if (typeof dialogLog !== 'undefined') {
 				if (this._cycle === 'Application') {
 					dialogLog.write ({

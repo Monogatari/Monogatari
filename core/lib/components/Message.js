@@ -8,8 +8,6 @@ class Message extends Component {
 	}
 }
 
-Message._configuration = {};
-Message._state = {};
 Message._id = 'message';
 
 Message._html = (title, subtitle, body) => `

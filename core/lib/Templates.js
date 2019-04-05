@@ -1,7 +1,7 @@
 import { Monogatari } from './../monogatari';
 import moment from 'moment';
 
-Monogatari.component ('main_screen').html (`
+Monogatari.component ('main-screen').html (`
 	<section data-screen="main">
 		<audio type="audio/mpeg" data-component="ambient"></audio>
 
@@ -22,7 +22,7 @@ Monogatari.component ('orientation_warning').html (`
 	</div>
 `);
 
-Monogatari.component ('credits_screen').html (`
+Monogatari.component ('credits-screen').html (`
 	<section data-screen="credits">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 			<h2 data-string="Credits">Credits</h2>
@@ -30,7 +30,7 @@ Monogatari.component ('credits_screen').html (`
 	</section>
 `);
 
-Monogatari.component ('credits_screen::item').html ((section, content) => {
+Monogatari.component ('credits-screen__item').html ((section, content) => {
 	let html = `<h3>${section}</h3><div>`;
 
 	if (typeof content === 'string') {
@@ -57,17 +57,10 @@ Monogatari.component ('credits_screen::item').html ((section, content) => {
 	return html;
 });
 
-Monogatari.component ('game_screen').html (`
+Monogatari.component ('game-screen').html (`
 	<section id="game" class="unselectable">
 		<div id="particles-js" data-ui="particles"></div>
 		<div id="background" data-ui="background"></div>
-		<div id='components'>
-			<div class="video-wrapper text--center vertical middle" data-component="video" data-ui="video-player">
-				<video type="video/mp4" data-ui="player" controls="true"></video>
-				<button data-action="close-video" data-string="Close">Close</button>
-			</div>
-		</div>
-
 
 		<div data-ui="text">
 			<img data-ui="face" alt="">
@@ -78,7 +71,7 @@ Monogatari.component ('game_screen').html (`
 	</section>
 `);
 
-Monogatari.component ('help_screen').html (`
+Monogatari.component ('help-screen').html (`
 	<section data-screen="help">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Help">Help</h2>
@@ -234,7 +227,7 @@ Monogatari.component ('help_screen').html (`
 	</section>
 `);
 
-Monogatari.component ('gallery_screen').html (`
+Monogatari.component ('gallery-screen').html (`
 	<section data-screen="gallery">
 		<div class='modal' data-ui="image-viewer">
 			<figure></figure>
@@ -245,17 +238,17 @@ Monogatari.component ('gallery_screen').html (`
 	</section>
 `);
 
-Monogatari.component ('gallery_screen::item').html (image => {
+Monogatari.component ('gallery-screen__item').html (image => {
 	// Check if the image has been unlocked or not, if it hasn't then a
 	// lock will be shown instead of the image.
-	if (Monogatari.component ('gallery_screen').state ('unlocked').includes (image)) {
-		return `<figure class='md-depth-2 col xs6 s6 m4 l3 xl3' data-image='${image}' style='background-image: url('./img/gallery/${Monogatari.component ('gallery_screen').images (image)}')'></figure>`;
+	if (Monogatari.component ('gallery-screen').state ('unlocked').includes (image)) {
+		return `<figure class='md-depth-2 col xs6 s6 m4 l3 xl3' data-image='${image}' style='background-image: url('./img/gallery/${Monogatari.component ('gallery-screen').images (image)}')'></figure>`;
 	} else {
 		return '<figure class="md-depth-2 column column--col xs6 s6 m4 l3 xl3"><span class="fa fa-lock"></span></figure>';
 	}
 });
 
-Monogatari.component ('load_screen').html (`
+Monogatari.component ('load-screen').html (`
 	<section data-screen="load">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Load">Load</h2>
@@ -293,7 +286,7 @@ Monogatari.component ('slot').html ((slot, name, image, data) => {
 	`;
 });
 
-Monogatari.component ('loading_screen').html (`
+Monogatari.component ('loading-screen').html (`
 	<section data-screen="loading">
 		<div class="middle">
 			<h2 data-string="Loading">Loading</h2>
@@ -303,7 +296,7 @@ Monogatari.component ('loading_screen').html (`
 	</section>
 `);
 
-Monogatari.component ('save_screen').html (`
+Monogatari.component ('save-screen').html (`
 	<section data-screen="save">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<div class="horizontal horizontal--center">
@@ -314,7 +307,7 @@ Monogatari.component ('save_screen').html (`
 	</section>
 `);
 
-Monogatari.component ('settings_screen').html (`
+Monogatari.component ('settings-screen').html (`
 	<section data-screen="settings" class="text--center">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Settings">Settings</h2>
@@ -377,7 +370,7 @@ Monogatari.component ('quit_warning').html (`
 			<p data-string="Confirm">Do you want to quit</p>
 			<div>
 				<button data-action="quit" data-string="Quit">Quit</button>
-				<button data-action="dismiss-notice" data-string="Cancel">Cancel</button>
+				<button data-action="dismiss-alert" data-string="Cancel">Cancel</button>
 			</div>
 		</div>
 	</div>

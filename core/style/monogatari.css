@@ -2,7 +2,7 @@
  * ===========================
  * General Variables
  * ===========================
-**/
+ */
 
 :root {
 	--main-color: rgba(0, 0, 0, 0.5);
@@ -14,7 +14,7 @@
  * ===========================
  * Mixins
  * ===========================
-**/
+ */
 
 @mixin background-image {
 	-webkit-background-size: cover;
@@ -41,22 +41,11 @@
  * ===========================
  * HTML Elements Initial Style
  * ===========================
-**/
+ */
 
 html {
 	width: auto;
 	@include full-viewport;
-}
-
-h1,
-h2 {
-	padding: 0.03em;
-	font-size: 3rem;
-}
-
-h3 {
-	padding: 0.03em;
-	font-size: 2rem;
 }
 
 body {
@@ -69,8 +58,15 @@ body {
 	@include full-viewport;
 }
 
-#monogatari {
-	@include full-size;
+h1,
+h2 {
+	padding: 0.03em;
+	font-size: 3rem;
+}
+
+h3 {
+	padding: 0.03em;
+	font-size: 2rem;
 }
 
 li {
@@ -98,8 +94,13 @@ select {
 	color: inherit;
 }
 
-.horizontal {
-	align-items: center;
+input[type=range] {
+	width: 60%;
+}
+
+textarea {
+	background-color: #eee;
+	min-width: 50%;
 }
 
 audio,
@@ -110,9 +111,13 @@ video {
 
 /**
  * ===========================
- * Support Classes
+ * Support Classes and IDs
  * ===========================
-**/
+ */
+
+#monogatari {
+	@include full-size;
+}
 
 .background-image {
 	@include background-image;
@@ -130,77 +135,48 @@ video {
 .modal {
 	top: 0;
 
-	&  .modal__content {
+	.modal__content {
 		border-radius: 4px;
 	}
+}
+
+.horizontal {
+	align-items: center;
 }
 
 /**
  * ===========================
  * General Styling
  * ===========================
-**/
+ */
 
 [data-screen] {
 	overflow-y: auto;
 	overflow-x: hidden;
 	display: none;
+	align-items: stretch;
+	flex-direction: column;
 	@include full-viewport;
 	@include background-image;
 }
 
+[data-component] {
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+
+	&::before {
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+}
+
 /**
  * ===========================
- * In-Game Elements Styling
+ * Debug Tools Styling
  * ===========================
-**/
-
-[data-screen='game'] {
-	@include full-size;
-	max-height: 100%;
-	max-width: 100%;
-	overflow: hidden;
-	overflow-y: hidden;
-	display: none;
-	position: relative;
-	background-color: #000000;
-
-	& img {
-		position: absolute;
-		max-height: 90%;
-	}
-
-	&  [data-image] {
-		top: 0;
-		bottom: 0;
-		margin: auto;
-		max-width: 100%;
-		max-height: 100%;
-	}
-
-	& [data-character] {
-		bottom: 0;
-		position: absolute;
-		max-width: 100%;
-		max-height: 80vh;
-	}
-}
-
-[data-sprite] {
-	margin: 0 auto;
-	left: 0;
-	right: 0;
-
-	&.right {
-		left: initial;
-		right: 0;
-	}
-
-	&.left {
-		left: 0;
-		right: initial;
-	}
-}
+ */
 
 [data-error] {
 	.modal__content {
@@ -235,37 +211,131 @@ video {
 	}
 }
 
-[data-canvas] {
-	&.character {
-		@extend [data-screen='game'] [data-character];
-	}
 
-	&.immersive {
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 0;
-		bottom: 0;
+/**
+ * =============================================================================
+ * Loading Screen
+ * =============================================================================
+ * The loading screen is the first one to be shown if asset preloading is
+ * enabled.
+ *
+ * Contents:
+ * progress_bar: The bar showing the load progress
+ *
+ * ===========================
+ */
+
+[data-component="loading-screen"] {
+	align-items: center;
+
+	[data-content="progress_bar"] {
+		appearance: none;
+		border: none;
+		margin: 1em auto;
+		display: block;
+		border-radius: 3px;
+		box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2) inset;
+		background: transparent;
+		width: 50%;
+
+		&::-webkit-progress-bar {
+			background: transparent;
+			box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2) inset;
+			border-radius: 3px;
+		}
+
+		&::-webkit-progress-value,
+		&::-moz-progress-bar {
+			background-color: #f16272;
+			border-radius: 3px;
+		}
 	}
 }
+
+/**
+ * ===========================
+ * Main Screen
+ * ===========================
+ */
+
+/**
+ * ===========================
+ * Game Screen
+ * ===========================
+**/
+
+[data-component='game-screen'] {
+	@include full-size;
+	max-height: 100%;
+	max-width: 100%;
+	overflow: hidden;
+	overflow-y: hidden;
+	display: none;
+	position: relative;
+	background-color: #000000;
+
+	img {
+		position: absolute;
+		max-height: 90%;
+	}
+
+	[data-image] {
+		top: 0;
+		bottom: 0;
+		margin: auto;
+		max-width: 100%;
+		max-height: 100%;
+	}
+
+	[data-character] {
+		bottom: 0;
+		position: absolute;
+		max-width: 100%;
+		max-height: 80vh;
+	}
+
+	[data-sprite] {
+		margin: 0 auto;
+		left: 0;
+		right: 0;
+
+		&.right {
+			left: initial;
+			right: 0;
+		}
+
+		&.left {
+			left: 0;
+			right: initial;
+		}
+	}
+
+	[data-canvas] {
+		&.character {
+			@extend [data-screen='game'] [data-character];
+		}
+
+		&.immersive {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+		}
+	}
+}
+
+
+
+
+
+
 
 /**
  * ===========================
  * Data Components Styling
  * ===========================
 **/
-
-[data-component] {
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-position: center;
-
-	&::before {
-		background-size: contain;
-		background-repeat: no-repeat;
-		background-position: center;
-	}
-}
 
 [data-notice] p {
 	font-size: 1.5rem;
@@ -319,32 +389,7 @@ video {
 **/
 
 [data-ui='load-progress'] {
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
-	border: none;
-	margin: 1em auto;
-	display: block;
-	border-radius: 3px;
-	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2) inset;
-	background: transparent;
-	width: 50vw;
-}
 
-[data-ui='load-progress']::-webkit-progress-bar {
-	background: transparent;
-	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2) inset;
-	border-radius: 3px;
-}
-
-[data-ui='load-progress']::-webkit-progress-value {
-	background-color: #f16272;
-	border-radius: 3px;
-}
-
-[data-ui='load-progress']::-moz-progress-bar {
-	background-color: #f16272;
-	border-radius: 3px;
 }
 
 [data-ui='messages'] {
@@ -366,36 +411,31 @@ video {
 
 
 
-[data-ui='input'] div {
-	width: auto;
-	padding: 1rem;
-}
+[data-ui='input'] {
+	div {
+		width: auto;
+		padding: 1rem;
+	}
 
-[data-ui='input'] small {
-	margin: 0.5rem auto;
-}
+	small {
+		margin: 0.5rem auto;
+	}
 
-[data-ui='input-message'] {
-	font-size: 1rem;
-}
+	[data-ui='input-message'] {
+		font-size: 1rem;
+	}
 
-[data-ui='input'] input,
-textarea {
-	background-color: #eee;
-	min-width: 50%;
-}
+	button {
+		width: 3.5rem;
+		height: 2rem;
+		font-size: 1rem;
+		padding: 0;
+	}
 
-[data-ui='input'] button {
-	width: 3.5rem;
-	height: 2rem;
-	font-size: 1rem;
-	padding: 0;
-}
-
-[data-ui='player'] {
-	max-height: 50vh;
-	max-width: 50vw;
-	z-index: 2;
+	input {
+		background-color: #eee;
+		min-width: 50%;
+	}
 }
 
 [data-ui='choices'] {
@@ -407,7 +447,7 @@ textarea {
 	justify-content: center;
 	margin: 0 auto;
 
-	& button {
+	button {
 		margin: 1em;
 		padding: 0.5em;
 		border-radius: 0.5em;
@@ -455,14 +495,14 @@ textarea {
 		height: 100%;
 	}
 
-	& p {
+	p {
 		display: block;
 		width: 100%;
 		padding: 1rem;
 		margin: 0;
 	}
 
-	& .fa {
+	.fa {
 		width: auto;
 		display: inline-block;
 	}
@@ -484,7 +524,7 @@ textarea {
 	margin: 0;
 }
 
-[data-ui='quick-menu'] {
+[data-component='quick-menu'] {
 	top: 0;
 	background-color: transparent;
 	width: 100%;
@@ -496,13 +536,13 @@ textarea {
 	&.transparent {
 		background-color: transparent;
 
-		& button:hover {
+		button:hover {
 			color: var(--main-color);
 			cursor: pointer;
 		}
 	}
 
-	& button {
+	button {
 		display: inline-block;
 		width: auto;
 		font-size: 1rem;
@@ -528,7 +568,7 @@ textarea {
 }
 
 [data-ui='slots'] {
-	& [data-slot] {
+	[data-slot] {
 		width: 20rem;
 		height: auto;
 		background-color: var(--main-color);
@@ -543,7 +583,7 @@ textarea {
 		justify-content: center;
 		color: #fff;
 
-		& .badge {
+		.badge {
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -555,7 +595,7 @@ textarea {
 			font-weight: bold;
 		}
 
-		& [data-delete] {
+		[data-delete] {
 			top: -1rem;
 			border-radius: 100%;
 			width: 2rem;
@@ -569,11 +609,11 @@ textarea {
 			color: #f7f7f7;
 		}
 
-		& img {
+		img {
 			width: 100%;
 		}
 
-		& [data-content="background"] {
+		[data-content="background"] {
 			width: 100%;
 			height: 10rem;
 			border: 1px solid rgba(0, 0, 0, 0.2);
@@ -581,14 +621,32 @@ textarea {
 		}
 	}
 
-	& figcaption {
+	figcaption {
 		padding: 1rem;
 		color: #fff;
 
-		& small {
+		small {
 			display: block;
 		}
 	}
+}
+
+
+/**
+ * ===========================
+ * Main Menu
+ * ===========================
+ * The following style belongs to the main menu, shown on the main screen.
+ * By default we'll show the menu at the bottom right portion of the screen
+ * ===========================
+ */
+[data-component="main_menu"] {
+	display: flex;
+	align-self: flex-end;
+	flex-direction: column;
+	align-items: flex-end;
+	position: absolute;
+	bottom: 0;
 }
 
 [data-notice='slot-overwrite'] input {
@@ -611,11 +669,16 @@ textarea {
 	@include full-size;
 }
 
-[data-ui='inner-menu'] {
-	width: 100%;
-}
+/**
+ * ===========================
+ * Main Menu
+ * ===========================
+ * The following style belongs to the main menu, shown on the main screen.
+ * By default we'll show the menu at the bottom right portion of the screen
+ * ===========================
+ */
 
-[data-ui="dialog-log"] {
+[data-component="dialog-log"] {
 
 	& .modal__content {
 		width: 95%;
@@ -704,9 +767,9 @@ textarea {
 	width: 90%;
 }
 
-[data-screen='help'] {
+[data-component='help-screen'] {
 
-	& [data-content='help'] {
+	[data-content='help'] {
 		max-width: 1000px;
 		margin: 0 auto;
 
@@ -714,16 +777,16 @@ textarea {
 			align-self: flex-start;
 		}
 
-		& h3 {
+		h3 {
 			margin-bottom: 1rem;
 		}
 	}
 
-	& [data-content='symbols'] {
+	[data-content='symbols'] {
 		align-items: center;
 		justify-content: flex-start;
 
-		& [data-content='shortcut'] {
+		[data-content='shortcut'] {
 			width: 1.5rem;
 			height:1.5rem;
 			min-width: 1.5rem;
@@ -740,8 +803,6 @@ textarea {
 			justify-content: center;
 		}
 	}
-
-
 }
 
 /**
@@ -750,9 +811,7 @@ textarea {
  * ====================================
 **/
 
-input[type=range] {
-	width: 60%;
-}
+
 
 /**
  * ====================================
@@ -779,13 +838,16 @@ input[type=range] {
 /** Medium Screens, Tablets (601px) **/
 @media screen and (min-width: 37.56255em) {
 
-	[data-ui='input'] button {
-		width: 5rem;
-		height: 3rem;
-	}
+	[data-ui='input'] {
 
-	[data-ui='input-message'] {
-		font-size: 1.5rem;
+		button {
+			width: 5rem;
+			height: 3rem;
+		}
+
+		[data-ui='input-message'] {
+			font-size: 1.5rem;
+		}
 	}
 
 	[data-ui='text'] {

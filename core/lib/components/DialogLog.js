@@ -5,7 +5,7 @@ import { $_ } from '@aegis-framework/artemis';
 class DialogLog extends Component {
 
 	static setup () {
-		Monogatari.component ('quick_menu').addAfter ('Hide', {
+		Monogatari.component ('quick-menu').addAfter ('Hide', {
 			string: 'Log',
 			icon: 'far fa-comments',
 			data: {
@@ -41,7 +41,6 @@ class DialogLog extends Component {
 
 		if (id !== 'narrator' && id !== 'centered') {
 			const { name, color } = character;
-			console.log (id, character, dialog, `${Monogatari.selector} [data-content="log"]`);
 			$_(`${Monogatari.selector} [data-content="log"]`).append (`
 				<div data-spoke="${id}" class="named">
 					<span style="color:${color};">${Monogatari.replaceVariables (name)} </span>
@@ -61,10 +60,10 @@ class DialogLog extends Component {
 	}
 }
 
-DialogLog._id = 'dialog_log';
+DialogLog._id = 'dialog-log';
 
 DialogLog._html = `
-	<div data-component="dialog_log" data-ui="dialog-log" class="modal">
+	<div data-component="dialog-log" data-ui="dialog-log" class="modal">
 		<div class="modal__content">
 			<div data-content="log">
 				<div class="text--center padded" data-string="NoDialogsAvailable">No dialogs available. Dialogs will appear here as they show up.</div>

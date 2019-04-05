@@ -8,8 +8,6 @@ class TextInput extends Component {
 	}
 }
 
-TextInput._configuration = {};
-TextInput._state = {};
 TextInput._id = 'text_input';
 
 TextInput._html = message => `
