@@ -35,14 +35,29 @@ class GameScreen extends Component {
 	static resize () {
 		// TODO: get ratio from options,
 		const h = Math.floor (window.innerWidth * (9/16));
-		const mh = Math.floor ((window.innerHeight - h)/2);
+		let widthCss = '100%';
+		let heightCss = '100%';
+		let marginTopCss = 0;
+
+		if (h <= window.innerHeight) {
+			const marginTop = Math.floor ((window.innerHeight - h)/2);
+			marginTopCss = marginTop + 'px';
+			heightCss = h + 'px';
+
+		}
+		else {
+			const w = Math.floor (window.innerHeight * (16/9));
+			widthCss = w + 'px';
+		}
 
 		$_('#game_visuals').style ({
-			width: '100%',
-			height: h + 'px',
-			marginTop: mh + 'px',
-			backgroundSize: 'contains',
-			position: 'absolute'
+			width: widthCss,
+			height: heightCss,
+			marginTop: marginTopCss,
+			marginLeft: 'auto',
+			marginRight: 'auto',
+			backgroundSize: 'contain',
+			position: 'relative'
 		});
 	}
 
