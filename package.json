@@ -26,12 +26,12 @@
     "watch:css": "parcel watch ./core/index.css --out-file monogatari.css --out-dir dist/engine --no-cache --no-source-maps"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.0",
+    "@babel/core": "^7.4.3",
     "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
-    "@babel/polyfill": "^7.4.0",
-    "@babel/preset-env": "^7.4.2",
+    "@babel/polyfill": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
     "autoprefixer": "^9.5.0",
-    "eslint": "^5.15.3",
+    "eslint": "^5.16.0",
     "htmlhint": "^0.11.0",
     "jsdoc": "^3.5.5",
     "parcel": "^1.12.3",
@@ -41,12 +41,12 @@
     "stylelint-config-standard": "^18.2.0"
   },
   "dependencies": {
-    "@aegis-framework/artemis": "^0.3.17",
+    "@aegis-framework/artemis": "^0.3.18",
     "@aegis-framework/kayros.css": "^0.4.2",
     "@fortawesome/fontawesome-free": "^5.8.1",
     "animate.css": "^3.6.1",
     "deeply": "^3.0.0",
-    "electron": "^4.1.1",
+    "electron": "^4.1.4",
     "moment": "^2.24.0",
     "mousetrap": "^1.6.3",
     "particles.js": "^2.0.0",

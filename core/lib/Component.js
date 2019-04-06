@@ -1,3 +1,5 @@
+import { $_ } from '@aegis-framework/artemis';
+
 /**
  * A component represents an object or content in the game such as screens, menus
  * and all other visual or structural elements.
@@ -12,7 +14,7 @@
  *            configuration or state variables.
  *
  * 2. Bind - Once the component has been setup, its time to bind all the necessary
- *           event listeners or perfom more operations on the DOM once all elements
+ *           event listeners or perform more operations on the DOM once all elements
  *           have been setup. Components will generally bind all the listeners needed
  *           for their inner elements to work correctly.
  *
@@ -245,7 +247,7 @@ class Component extends HTMLElement {
 	}
 
 	/**
-	 * @static render - Elements requireing dynamic rendering, should be updated
+	 * @static render - Elements requiring dynamic rendering, should be updated
 	 * in this method. The way they modify the HTML contents is entirely up to the
 	 * component's implementation.
 	 *
@@ -253,6 +255,48 @@ class Component extends HTMLElement {
 	 */
 	static render () {
 		return Promise.resolve ();
+	}
+
+	/**
+	 * @static element - Returns this component's element as an Artemis DOM
+	 * instance, using the result of the `selector ()` function as the selector
+	 *
+	 * @returns {DOM} - Artemis DOM instance
+	 */
+	static element () {
+		return $_(this.selector ());
+	}
+
+	/**
+	 * @static content - Attempts to find a content element inside of this
+	 * component or its children
+	 *
+	 * @param {string} name - Name of the content element to find
+	 *
+	 * @returns {DOM} - An Artemis DOM instance with the found elements
+	 */
+	static content (name) {
+		return this.element ().find (`[data-content="${name}"]`);
+	}
+
+	/**
+	 * @static child - Attempts to find a child component of this one by its id
+	 *
+	 * @param {string} id - ID of the component to find
+	 *
+	 * @returns {DOM} - An Artemis DOM instance with the found elements
+	 */
+	static child (id) {
+		return this.element ().find (`[data-component="${id}"]`);
+	}
+
+	/**
+	 * @static selector - Returns the CSS selector that identifies this component
+	 *
+	 * @returns {string} - CSS selector for this component
+	 */
+	static selector () {
+		return `[data-component="${this._id}"]`;
 	}
 }
 
@@ -266,7 +310,7 @@ Component._html = '';
  * If needed, every component should declare its configuration as follows. This
  * configuration object should be used to store component-specific settings as well
  * as other objects/assets used by the component. If any specific object needs
- * recurrent access such as the declarations in the script.js file, provinding
+ * recurrent access such as the declarations in the script.js file, providing
  * a static function for that specific object could be great.
  */
 Component._configuration = {};
@@ -274,7 +318,7 @@ Component._configuration = {};
 /**
  * If needed, every component should declare its state as follows. This
  * state object should be used to store state variables used by the component.
- * If any specific variable recurrent access or modifications, provinding
+ * If any specific variable recurrent access or modifications, providing
  * a static function for that specific variable could be great.
  */
 Component._state = {};

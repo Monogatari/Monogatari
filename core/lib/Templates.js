@@ -376,7 +376,7 @@ Monogatari.component ('quit_warning').html (`
 	</div>
 `);
 
-Monogatari.component ('text_input').html (message => `
+Monogatari.component ('text-input').html (message => `
 	<form data-component="modal" data-ui="input" class="middle active">
 		<p data-ui="input-message" class="block">${message}</p>
 		<input type="text">

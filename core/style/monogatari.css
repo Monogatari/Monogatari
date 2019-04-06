@@ -257,13 +257,32 @@ video {
  * Main Screen
  * ===========================
  */
+[data-component="main-screen"] {
+
+}
+
+/**
+ * ===========================
+ * Main Menu
+ * ===========================
+ * The following style belongs to the main menu, shown on the main screen.
+ * By default we'll show the menu at the bottom right portion of the screen
+ * ===========================
+ */
+[data-component="main_menu"] {
+	display: flex;
+	align-self: flex-end;
+	flex-direction: column;
+	align-items: flex-end;
+	position: absolute;
+	bottom: 0;
+}
 
 /**
  * ===========================
  * Game Screen
  * ===========================
-**/
-
+ */
 [data-component='game-screen'] {
 	@include full-size;
 	max-height: 100%;
@@ -387,10 +406,6 @@ video {
  * Data UI Styling
  * ===========================
 **/
-
-[data-ui='load-progress'] {
-
-}
 
 [data-ui='messages'] {
 
@@ -632,22 +647,7 @@ video {
 }
 
 
-/**
- * ===========================
- * Main Menu
- * ===========================
- * The following style belongs to the main menu, shown on the main screen.
- * By default we'll show the menu at the bottom right portion of the screen
- * ===========================
- */
-[data-component="main_menu"] {
-	display: flex;
-	align-self: flex-end;
-	flex-direction: column;
-	align-items: flex-end;
-	position: absolute;
-	bottom: 0;
-}
+
 
 [data-notice='slot-overwrite'] input {
 	text-align: center;
