@@ -989,7 +989,7 @@ video {
 	margin-left: auto;
 	margin-right: auto;
 	background-size: contain;
-	position: absolute;
+	position: relative;
 }
 
 .forceAspectRatio [data-ui=background],
