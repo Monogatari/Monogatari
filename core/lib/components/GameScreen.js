@@ -75,9 +75,7 @@ class GameScreen extends Component {
 
 }
 
-GameScreen._configuration = {};
-GameScreen._state = {};
-GameScreen._id = 'game_screen';
+GameScreen._id = 'game-screen';
 
 GameScreen._html = `
 	<section data-component="game_screen" data-screen="game" id="game" class="unselectable">
@@ -87,7 +85,7 @@ GameScreen._html = `
 			<div id='components'></div>
 		</div>
 		<div data-component="text_box" data-ui="text">
-			<img data-ui="face" alt="" data-content="character_expresion">
+			<img data-ui="face" alt="" data-content="character_expression">
 			<span data-ui="who" data-content="character_name"></span>
 			<p data-ui="say" data_content="dialog"></p>
 		</div>

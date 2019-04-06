@@ -1,3 +1,4 @@
+export * from './Alert';
 export * from './CreditsScreen';
 export * from './CreditsScreenItem';
 export * from './DialogLog';
@@ -9,12 +10,8 @@ export * from './LoadScreen';
 export * from './LoadingScreen';
 export * from './MainScreen';
 export * from './Message';
-export * from './OrientationWarning';
 export * from './SaveScreen';
 export * from './SettingsScreen';
 export * from './QuickMenu';
-export * from './QuitWarning';
 export * from './Slot';
-export * from './SlotDeletionWarning';
-export * from './SlotOverwriteWarning';
 export * from './TextInput';

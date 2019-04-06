@@ -10,13 +10,13 @@ class MainScreen extends Component {
 	}
 }
 
-MainScreen._id = 'main_screen';
+MainScreen._id = 'main-screen';
 
 MainScreen._html = `
-	<section data-component="main_screen" data-screen="main">
+	<section data-component="main-screen" data-screen="main">
 		<audio type="audio/mpeg" data-component="ambient"></audio>
 
-		<div class="vertical vertical--right text--right bottom animated bounceIn" data-ui="inner-menu">
+		<div data-component="main_menu" data-ui="inner-menu">
 			<button data-action="start" data-string="Start">Start</button>
 			<button data-action="open-screen" data-open="load" data-string="Load">Load</button>
 			<button data-action="open-screen" data-open="settings" data-string="Settings">Settings</button>

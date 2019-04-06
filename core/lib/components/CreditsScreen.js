@@ -4,18 +4,6 @@ import { $_ } from '@aegis-framework/artemis';
 
 class CreditsScreen extends Component {
 
-	static configuration (object = null) {
-		if (object !== null) {
-			if (typeof object === 'string') {
-				return this._configuration[object];
-			} else {
-				this._configuration = Object.assign ({}, this._configuration, object);
-			}
-		} else {
-			return this._configuration;
-		}
-	}
-
 	static credits (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
@@ -44,18 +32,17 @@ class CreditsScreen extends Component {
 
 	static render () {
 		const items = Object.keys (this.credits ()).map ((section) => {
-			return Monogatari.component ('credits_screen::item').render (section, this.credits (section));
+			return Monogatari.component ('credits-screen__item').render (section, this.credits (section));
 		});
 
 		$_(`${Monogatari.selector} [data-screen="credits"] [data-ui="credits"]`).html (items);
 	}
 }
 
-CreditsScreen._state = {};
-CreditsScreen._id = 'credits_screen';
+CreditsScreen._id = 'credits-screen';
 
 CreditsScreen._html = `
-	<section data-screen="credits" data-component="credits_screen">
+	<section data-screen="credits" data-component="credits-screen">
 		<button class="fas fa-arrow-left top left" data-action="back"></button>
 		<h2 data-string="Credits">Credits</h2>
 		<div class="text--center padded" data-ui="credits"></div>

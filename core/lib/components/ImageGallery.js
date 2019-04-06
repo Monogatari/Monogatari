@@ -21,32 +21,6 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class ImageGallery extends Component {
 
-	static configuration (object = null) {
-		if (object !== null) {
-			if (typeof object === 'string') {
-				return ImageGallery._configuration[object];
-			} else {
-				ImageGallery._configuration = Object.assign ({}, ImageGallery._configuration, object);
-				ImageGallery.onUpdate ();
-			}
-		} else {
-			return ImageGallery._configuration;
-		}
-	}
-
-	static state (object = null) {
-		if (object !== null) {
-			if (typeof object === 'string') {
-				return ImageGallery._state[object];
-			} else {
-				ImageGallery._state = Object.assign ({}, ImageGallery._state, object);
-				ImageGallery.onUpdate ();
-			}
-		} else {
-			return ImageGallery._state;
-		}
-	}
-
 	// We'll set up all needed variables in here
 	static setup (selector) {
 
@@ -173,7 +147,7 @@ export class ImageGallery extends Component {
 	}
 }
 
-ImageGallery._id = 'gallery_screen';
+ImageGallery._id = 'gallery-screen';
 ImageGallery._configuration = {
 	directory: 'gallery',
 	images: {}
@@ -184,7 +158,7 @@ ImageGallery._state = {
 };
 
 ImageGallery._html = `
-	<section data-component="gallery_screen" data-screen="gallery">
+	<section data-component="gallery-screen" data-screen="gallery">
 		<div class='modal' data-ui="image-viewer">
 			<figure></figure>
 		</div>

@@ -518,6 +518,18 @@ class Monogatari {
 		}
 	}
 
+	static alert (id, options) {
+		$_(Monogatari.selector).prepend (Monogatari.component ('alert').render (id, options));
+	}
+
+	static dismissAlert (id = null) {
+		if (typeof id === 'string') {
+			$_(`${Monogatari.selector} [data-component="alert"][data-alert="${id}"]`).remove ();
+		} else {
+			$_(`${Monogatari.selector} [data-component="alert"]`).remove ();
+		}
+	}
+
 	static script (object = null) {
 
 		if (typeof object === 'object' && object !== null) {
@@ -1290,7 +1302,7 @@ class Monogatari {
 		} else {
 			// Play the main menu song
 			Monogatari.playAmbient ();
-			$_('[data-screen="main"]').show ();
+			$_('[data-screen="main"]').show ('flex');
 		}
 	}
 
@@ -1316,6 +1328,7 @@ class Monogatari {
 	}
 
 	static keyboardShortcut (shortcut, callback) {
+		console.log (shortcut);
 		mousetrap.bind (shortcut, (event) => {
 			if (event.target.tagName.toLowerCase () != 'input') {
 				event.preventDefault ();
@@ -1726,7 +1739,7 @@ class Monogatari {
 				if (element.data ('open') == 'save') {
 					$_(`${Monogatari.selector} [data-screen="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
 				}
-				$_(`${Monogatari.selector} [data-screen="${element.data('open')}"]`).show ();
+				$_(`${Monogatari.selector} [data-screen="${element.data('open')}"]`).show ('flex');
 			}
 		});
 
@@ -1745,8 +1758,6 @@ class Monogatari {
 					// Check if the initial label exists
 					if (Monogatari.label ()) {
 						Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
-					} else {
-
 					}
 				});
 			}
@@ -1761,9 +1772,9 @@ class Monogatari {
 			}
 		});
 
-		Monogatari.registerListener ('dismiss-notice', {
+		Monogatari.registerListener ('dismiss-alert', {
 			callback: () => {
-				$_(`${Monogatari.selector} [data-notice]`).removeClass('modal--active');
+				Monogatari.dismissAlert ();
 			}
 		});
 
@@ -1905,9 +1916,11 @@ class Monogatari {
 				// Display or remove the device orientation notice depending on the
 				// current device orientation
 				if (Platform.orientation () !== Monogatari.setting ('Orientation')) {
-					$_(`${selector} [data-notice="orientation"]`).addClass ('modal--active');
+					Monogatari.alert ('orientation-warning', {
+						message: 'OrientationWarning'
+					});
 				} else {
-					$_(`${selector} [data-notice="orientation"]`).removeClass ('modal--active');
+					Monogatari.dismissAlert ('orientation-warning');
 				}
 			}, false);
 		}
@@ -1926,7 +1939,7 @@ class Monogatari {
 				if (Monogatari.global ('playing')) {
 					$_(`${selector} [data-screen="game"]`).show ();
 				} else {
-					$_(`${selector} [data-screen="main"]`).show ();
+					$_(`${selector} [data-screen="main"]`).show ('flex');
 				}
 			}
 
@@ -1944,13 +1957,6 @@ class Monogatari {
 
 			Monogatari.runListener (action, element, event);
 		});
-
-		for (const listener of Monogatari._listeners) {
-			const { keys, callback } = listener;
-			if (typeof keys !== 'undefined') {
-				Monogatari.keyboardShortcut (keys, callback);
-			}
-		}
 
 		Monogatari.keyboardShortcut (['right', 'space'], () => {
 			Monogatari.canProceed ().then (() => {
@@ -1987,12 +1993,6 @@ class Monogatari {
 			}
 		});
 
-		Monogatari.keyboardShortcut ('shift+q', () => {
-			if (Monogatari.global ('playing')) {
-				$_(`${Monogatari.selector} [data-notice="exit"]`).addClass ('modal--active');
-			}
-		});
-
 		const promises = [];
 
 		for (const component of Monogatari.components ()) {
@@ -2002,7 +2002,15 @@ class Monogatari {
 		for (const action of Monogatari.actions ()) {
 			promises.push (action.bind (selector));
 		}
-		return Promise.all (promises);
+		return Promise.all (promises).then (() => {
+			for (const listener of Monogatari._listeners) {
+				const { keys, callback } = listener;
+				if (typeof keys !== 'undefined') {
+					Monogatari.keyboardShortcut (keys, callback);
+				}
+			}
+			return Promise.resolve ();
+		});
 	}
 
 	static upgrade (oldVersion, newVersion, callbacks) {
@@ -2081,7 +2089,9 @@ class Monogatari {
 				// message so the player will rotate its device.
 				if (Monogatari.setting ('Orientation') !== 'any') {
 					if (Platform.mobile () && Platform.orientation () !== Monogatari.setting ('Orientation')) {
-						$_(`${selector} [data-notice="orientation"]`).addClass ('modal--active');
+						Monogatari.alert ('orientation-warning', {
+							message: 'OrientationWarning'
+						});
 					}
 				}
 
@@ -2106,13 +2116,11 @@ class Monogatari {
 				}).finally (() => {
 					if (Monogatari.label ()) {
 						Monogatari.showSplashScreen ();
-					} else {
-
 					}
 				});
 
 				if (!(Monogatari.setting ('Skip') > 0)) {
-					Monogatari.component ('quick_menu').remove ('Skip');
+					Monogatari.component ('quick-menu').remove ('Skip');
 				}
 
 				for (const component of Monogatari.components ()) {

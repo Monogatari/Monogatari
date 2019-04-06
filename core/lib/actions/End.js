@@ -7,14 +7,30 @@ export class End extends Action {
 	static bind (selector) {
 
 		Monogatari.registerListener ('end', {
+			keys: 'shift+q',
 			callback: () => {
 				$_(`${selector} [data-notice="exit"]`).addClass ('modal--active');
+				if (Monogatari.global ('playing')) {
+					Monogatari.alert ('quit-warning', {
+						message: 'Confirm',
+						actions: [
+							{
+								label: 'Quit',
+								listener: 'quit'
+							},
+							{
+								label: 'Cancel',
+								listener: 'dismiss-alert'
+							}
+						]
+					});
+				}
 			}
 		});
 
 		Monogatari.registerListener ('quit', {
 			callback: () => {
-				$_(`${selector} [data-notice="exit"]`).removeClass ('modal--active');
+				Monogatari.dismissAlert ('quit-warning');
 				Monogatari.run ('end');
 			}
 		});

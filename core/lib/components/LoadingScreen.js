@@ -10,16 +10,14 @@ class LoadingScreen extends Component {
 	}
 }
 
-LoadingScreen._configuration = {};
-LoadingScreen._state = {};
-LoadingScreen._id = 'loading_screen';
+LoadingScreen._id = 'loading-screen';
 
 LoadingScreen._html = `
-	<section data-component="loading_screen" data-screen="loading">
-		<div class="middle">
-			<h2 data-string="Loading">Loading</h2>
-			<progress data-ui="load-progress" value="0" max="100"></progress>
-			<small data-string="LoadingMessage">Wait while the assets are loaded.</small>
+	<section data-component="loading-screen" data-screen="loading">
+		<div data-content="wrapper">
+			<h2 data-string="Loading" data-content="title">Loading</h2>
+			<progress data-ui="load-progress" value="0" max="100" data-content="progress_bar"></progress>
+			<small data-string="LoadingMessage" data-content="message">Wait while the assets are loaded.</small>
 		</div>
 	</section>
 `;
