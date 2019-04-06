@@ -1798,7 +1798,7 @@ class Monogatari {
 		// points to.
 		this.registerListener ('close', {
 			callback: (element) => {
-				$_(`${this.selector} [data-ui="${element.data('close')}"]`).removeClass('modal--active');
+				$_(`${this.selector} [data-component="${element.data('close')}"]`).removeClass('modal--active');
 				return true;
 			}
 		});

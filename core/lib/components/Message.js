@@ -19,7 +19,7 @@ Message._html = (title, subtitle, body) => `
 				<p data-content="body">${body}</p>
 			</div>
 			<div class="horizontal horizontal--center" data-ui="inner-menu">
-				<button data-action="close" data-close="messages" data-string="Close">Close</button>
+				<button data-action="close" data-close="message" data-string="Close">Close</button>
 			</div>
 		</div>
 	</div>

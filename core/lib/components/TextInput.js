@@ -6,6 +6,7 @@ class TextInput extends Component {
 	static render (message) {
 		return this.html (null, message);
 	}
+
 }
 
 TextInput._id = 'text-input';
