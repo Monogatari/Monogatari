@@ -19,20 +19,20 @@ export class Message extends Action {
 	}
 
 	static reset () {
-		$_(`${Monogatari.selector} [data-ui="messages"]`).remove ();
+		$_(`${Monogatari.selector} [data-component="message"]`).remove ();
 		return Promise.resolve ();
 	}
 
 	static canProceed () {
-		if ($_(`${Monogatari.selector} [data-ui="messages"]`).isVisible ()) {
+		if ($_(`${Monogatari.selector} [data-component="message"]`).isVisible ()) {
 			return Promise.reject ();
 		}
 		return Promise.resolve ();
 	}
 
 	static canRevert () {
-		if ($_(`${Monogatari.selector} [data-ui="messages"]`).isVisible ()) {
-			$_(`${Monogatari.selector} [data-ui="messages"]`).remove ();
+		if ($_(`${Monogatari.selector} [data-component="message"]`).isVisible ()) {
+			$_(`${Monogatari.selector} [data-component="message"]`).remove ();
 			Monogatari.global ('block', false);
 		}
 		return Promise.resolve ();
@@ -111,17 +111,17 @@ export class Message extends Action {
 			Monogatari.replaceVariables(Monogatari.component ('message').render (this.message.title, this.message.subtitle, this.message.body))
 		);
 
-		$_(`${Monogatari.selector} [data-ui="messages"]`).addClass ('animated');
+		$_(`${Monogatari.selector} [data-component="message"]`).addClass ('animated');
 
 		for (const newClass of this.classes) {
-			$_(`${Monogatari.selector} [data-ui="messages"]`).addClass (newClass);
+			$_(`${Monogatari.selector} [data-component="message"]`).addClass (newClass);
 		}
 
 		return Promise.resolve ();
 	}
 
 	revert () {
-		$_(`${Monogatari.selector} [data-ui="messages"]`).remove ();
+		$_(`${Monogatari.selector} [data-component="message"]`).remove ();
 		return this.apply ();
 	}
 

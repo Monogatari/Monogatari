@@ -21,7 +21,7 @@ import merge  from 'deeply';
  * Assets: The list of different assets declared by the developer to use in throughout
  * 		   the game.
  *
- * Script: All the labels and statements that make up the story and gameplay.
+ * Script: All the labels and statements that make up the story and game play.
  *
  * Characters: The list of characters that participate in the script of the game.
  *
@@ -55,11 +55,11 @@ class Monogatari {
 	static onStart () {
 		const promises = [];
 
-		for (const component of Monogatari.components ()) {
+		for (const component of this.components ()) {
 			promises.push (component.onStart ());
 		}
 
-		for (const action of Monogatari.actions ()) {
+		for (const action of this.actions ()) {
 			promises.push (action.onStart ());
 		}
 		return Promise.all (promises);
@@ -77,11 +77,11 @@ class Monogatari {
 	static onLoad () {
 		const promises = [];
 
-		for (const component of Monogatari.components ()) {
+		for (const component of this.components ()) {
 			promises.push (component.onLoad ());
 		}
 
-		for (const action of Monogatari.actions ()) {
+		for (const action of this.actions ()) {
 			promises.push (action.onLoad ());
 		}
 		return Promise.all (promises);
@@ -94,7 +94,7 @@ class Monogatari {
 	 * @return {number} - Computed Width of the element
 	 */
 	static width () {
-		return  parseInt (getComputedStyle($_(Monogatari.selector).get (0)).width.replace ('px', ''));
+		return  parseInt (getComputedStyle($_(this.selector).get (0)).width.replace ('px', ''));
 	}
 
 	/**
@@ -104,14 +104,12 @@ class Monogatari {
 	 * @return {number} - Computed Width of the element
 	 */
 	static height () {
-		return getComputedStyle($_(Monogatari.selector).get (0)).height.replace ('px', '');
+		return getComputedStyle($_(this.selector).get (0)).height.replace ('px', '');
 	}
 
 	static debug () {
-
 		return new Proxy (Debug, {
 			apply (target, receiver, args) {
-				console.log (target);
 				if (typeof MonogatariDebug === 'object') {
 					return Reflect.apply (target, receiver, args);
 				}
@@ -129,31 +127,31 @@ class Monogatari {
 	 * user's preferences.
 	 */
 	static string (key) {
-		if (typeof Monogatari._translations[Monogatari.preference ('Language')] !== 'undefined') {
-			if (typeof Monogatari._translations[Monogatari.preference ('Language')][key] !== 'undefined') {
-				return Monogatari._translations[Monogatari.preference ('Language')][key];
+		if (typeof this._translations[this.preference ('Language')] !== 'undefined') {
+			if (typeof this._translations[this.preference ('Language')][key] !== 'undefined') {
+				return this._translations[this.preference ('Language')][key];
 			} else {
 				FancyError.show (
 					`Translation for string "${key}" could not be found`,
 					'Monogatari attempted to find a translation for the current language set in the preferences but there was none.',
 					{
 						'String Not Found': key,
-						'Language': Monogatari.preference ('Language'),
+						'Language': this.preference ('Language'),
 						'Found in these elements': $_(`[data-string="${key}"]`).collection,
-						'You may have meant one of these': Object.keys (Monogatari._translations[Monogatari.preference ('Language')]),
+						'You may have meant one of these': Object.keys (this._translations[this.preference ('Language')]),
 						'Help': {
 							'_': 'Please check that this string has been correctly defined in your translations. A translation is defined as follows:',
 							'_1': `
 								<pre>
 									<code class='language-javascript'>
-									Monogatari.translation ("YourLanguage", {
+									this.translation ("YourLanguage", {
 										"SomeString": "Your Translation"
 									});
 									</code>
 								</pre>
 							`,
 							'_2': 'You may also want to check if the [data-string] property of the HTML elements above is correct or if they have a typo.',
-							'Documentation': '<a href="https://monogatari.io/documentation/configuration/internationalization/" target="_blank">Internationalization</a>'
+							'Documentation': '<a href="https://this.io/documentation/configuration/internationalization/" target="_blank">Internationalization</a>'
 						}
 					}
 				);
@@ -164,14 +162,14 @@ class Monogatari {
 				`Monogatari attempted to translate the UI using the current language set in the preferences but no translations could be found
 				for it.`,
 				{
-					'Problematic Language': Monogatari.preference ('Language'),
-					'You may have meant one of these': Object.keys (Monogatari._translations),
+					'Problematic Language': this.preference ('Language'),
+					'You may have meant one of these': Object.keys (this._translations),
 					'Help': {
 						'_': 'Please check if you have defined correctly the translations for this language, translations are defined as follows:',
 						'_1': `
 							<pre>
 								<code class='language-javascript'>
-								Monogatari.translation ("YourLanguage", {
+								this.translation ("YourLanguage", {
 									"SomeString": "Your Translation"
 								});
 								</code>
@@ -185,7 +183,7 @@ class Monogatari {
 								</code>
 							</pre>
 						`,
-						'Documentation': '<a href="https://monogatari.io/documentation/configuration/internationalization/" target="_blank">Internationalization</a>'
+						'Documentation': '<a href="https://this.io/documentation/configuration/internationalization/" target="_blank">Internationalization</a>'
 					}
 				}
 			);
@@ -208,15 +206,15 @@ class Monogatari {
 	static history (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				if (typeof Monogatari._history[object] === 'undefined') {
-					Monogatari._history[object] = [];
+				if (typeof this._history[object] === 'undefined') {
+					this._history[object] = [];
 				}
-				return Monogatari._history[object];
+				return this._history[object];
 			} else {
-				Monogatari._history = Object.assign ({}, Monogatari._history, object);
+				this._history = Object.assign ({}, this._history, object);
 			}
 		} else {
-			return Monogatari._history;
+			return this._history;
 		}
 	}
 
@@ -234,12 +232,12 @@ class Monogatari {
 	static state (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return Monogatari._state[object];
+				return this._state[object];
 			} else {
-				Monogatari._state = merge (Monogatari._state, object);
+				this._state = merge (this._state, object);
 			}
 		} else {
-			return Monogatari._state;
+			return this._state;
 		}
 	}
 
@@ -252,7 +250,7 @@ class Monogatari {
 	 * have an unique ID.
 	 */
 	static registerAction (action) {
-		Monogatari._actions.push (action);
+		this._actions.push (action);
 	}
 
 	/**
@@ -264,7 +262,7 @@ class Monogatari {
 	 * have an unique ID.
 	 */
 	static unregisterAction (action) {
-		Monogatari._actions = Monogatari._actions.filter ((a) => !(a instanceof action));
+		this._actions = this._actions.filter ((a) => !(a instanceof action));
 	}
 
 	/**
@@ -273,7 +271,7 @@ class Monogatari {
 	 * @return {Action[]} - List of registered Actions
 	 */
 	static actions () {
-		return Monogatari._actions;
+		return this._actions;
 	}
 
 	/**
@@ -283,7 +281,7 @@ class Monogatari {
 	 * @return {Action} - Returns the action that matches the given ID
 	 */
 	static action (id) {
-		return Monogatari._actions.find ((a) => a.id === id);
+		return this._actions.find ((a) => a.id === id);
 	}
 
 	/**
@@ -295,7 +293,7 @@ class Monogatari {
 	 * component must have an unique ID.
 	 */
 	static registerComponent (component) {
-		Monogatari._components.push (component);
+		this._components.push (component);
 	}
 
 	/**
@@ -307,7 +305,7 @@ class Monogatari {
 	 * each component must have an unique ID.
 	 */
 	static unregisterComponent (component) {
-		Monogatari._components = Monogatari._actions.filter ((c) => !(c instanceof component));
+		this._components = this._actions.filter ((c) => !(c instanceof component));
 	}
 
 	/**
@@ -316,7 +314,7 @@ class Monogatari {
 	 * @return {Component[]} - List of registered Components
 	 */
 	static components () {
-		return Monogatari._components;
+		return this._components;
 	}
 
 	/**
@@ -326,7 +324,7 @@ class Monogatari {
 	 * @return {Component} - Returns the component that matches the given ID
 	 */
 	static component (id) {
-		return Monogatari._components.find ((a) => a._id.toLowerCase () === id.toLowerCase ());
+		return this._components.find ((a) => a._id.toLowerCase () === id.toLowerCase ());
 	}
 
 	/**
@@ -341,28 +339,28 @@ class Monogatari {
 	 */
 	static assets (type = null, object = null) {
 		if (type !== null && object !== null) {
-			if (typeof Monogatari._assets[type] !== 'undefined') {
-				Monogatari._assets[type] = Object.assign ({}, Monogatari._assets[type], object);
+			if (typeof this._assets[type] !== 'undefined') {
+				this._assets[type] = Object.assign ({}, this._assets[type], object);
 			} else {
-				Monogatari._assets[type] = object;
+				this._assets[type] = object;
 			}
 		} else if (type !== null) {
 			if (typeof type === 'string') {
-				return Monogatari._assets[type];
+				return this._assets[type];
 			} else if (typeof type === 'object') {
-				Monogatari._assets = Object.assign ({}, Monogatari._assets, object);
+				this._assets = Object.assign ({}, this._assets, object);
 			}
 		} else {
-			return Monogatari._assets;
+			return this._assets;
 		}
 	}
 
 	static asset (type, name, value = null) {
-		if (typeof Monogatari._assets[type] !== 'undefined') {
+		if (typeof this._assets[type] !== 'undefined') {
 			if (value !== null) {
-				Monogatari._assets[type][name] = value;
+				this._assets[type][name] = value;
 			} else {
-				return Monogatari._assets[type][name];
+				return this._assets[type][name];
 			}
 		} else {
 			console.error (`Tried to interact with a non-existing asset type ${type}.`);
@@ -373,23 +371,23 @@ class Monogatari {
 		if (object !== null) {
 			// const identifiers = Object.keys (object);
 			// for (const id of identifiers) {
-			// 	Monogatari.character (id, object[id]);
+			// 	this.character (id, object[id]);
 			// }
-			Monogatari._characters = merge (Monogatari._characters, object);
+			this._characters = merge (this._characters, object);
 		} else {
-			return Monogatari._characters;
+			return this._characters;
 		}
 	}
 
 	static character (id, object = null) {
 		if (object !== null) {
-			if (typeof Monogatari._characters[id] !== 'undefined') {
-				Monogatari._characters[id] = merge (Monogatari._characters[id], object);
+			if (typeof this._characters[id] !== 'undefined') {
+				this._characters[id] = merge (this._characters[id], object);
 			} else {
-				Monogatari._characters[id] = object;
+				this._characters[id] = object;
 			}
 		} else {
-			const character = Monogatari._characters[id];
+			const character = this._characters[id];
 
 			// Translate the old character properties into the new ones
 			if (typeof character !== 'undefined') {
@@ -436,29 +434,29 @@ class Monogatari {
 	static translations (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return Monogatari._translations[object];
+				return this._translations[object];
 			} else {
-				Monogatari._translations = Object.assign ({}, Monogatari._translations, object);
+				this._translations = Object.assign ({}, this._translations, object);
 			}
 		} else {
-			return Monogatari._translations;
+			return this._translations;
 		}
 	}
 
 	static translation (language, strings) {
-		if (typeof Monogatari._translations[language] !== 'undefined') {
-			Monogatari._translations[language] = Object.assign ({}, Monogatari._translations[language], strings);
+		if (typeof this._translations[language] !== 'undefined') {
+			this._translations[language] = Object.assign ({}, this._translations[language], strings);
 		} else {
-			Monogatari._translations[language] = strings;
+			this._translations[language] = strings;
 		}
 	}
 
 	static setting (key, value = null) {
 		if (value !== null) {
-			Monogatari._settings[key] = value;
+			this._settings[key] = value;
 		} else {
-			if (typeof Monogatari._settings[key] !== 'undefined') {
-				return Monogatari._settings[key];
+			if (typeof this._settings[key] !== 'undefined') {
+				return this._settings[key];
 			} else {
 				console.error (`Tried to access non existent setting with name '${key}'.`);
 			}
@@ -467,19 +465,19 @@ class Monogatari {
 
 	static settings (object = null) {
 		if (object !== null) {
-			Monogatari._settings = merge (Monogatari._settings, object);
+			this._settings = merge (this._settings, object);
 		} else {
-			return Monogatari._settings;
+			return this._settings;
 		}
 	}
 
 	static preference (key, value = null) {
 		if (value !== null) {
-			Monogatari._preferences[key] = value;
-			Monogatari.Storage.update ('Settings', Monogatari._preferences);
+			this._preferences[key] = value;
+			this.Storage.update ('Settings', this._preferences);
 		} else {
-			if (typeof Monogatari._preferences[key] !== 'undefined') {
-				return Monogatari._preferences[key];
+			if (typeof this._preferences[key] !== 'undefined') {
+				return this._preferences[key];
 			} else {
 				console.error (`Tried to access non existent preference with name '${key}'.`);
 			}
@@ -488,64 +486,64 @@ class Monogatari {
 
 	static preferences (object = null) {
 		if (object !== null) {
-			Monogatari._preferences = merge (Monogatari._preferences, object);
-			if (Monogatari.Storage.configuration ().name === '') {
-				Monogatari.setupStorage ();
+			this._preferences = merge (this._preferences, object);
+			if (this.Storage.configuration ().name === '') {
+				this.setupStorage ();
 			}
-			Monogatari.Storage.update ('Settings', Monogatari._preferences);
+			this.Storage.update ('Settings', this._preferences);
 		} else {
-			return Monogatari._preferences;
+			return this._preferences;
 		}
 	}
 
 	static status (object = null) {
 		if (object !== null) {
-			Monogatari._status = Object.assign ({}, Monogatari._status, object);
+			this._status = Object.assign ({}, this._status, object);
 		} else {
-			return Monogatari._status;
+			return this._status;
 		}
 	}
 
 	static storage (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return Monogatari._storage[object];
+				return this._storage[object];
 			} else {
-				Monogatari._storage = merge (Monogatari._storage, object);
+				this._storage = merge (this._storage, object);
 			}
 		} else {
-			return Monogatari._storage;
+			return this._storage;
 		}
 	}
 
 	static alert (id, options) {
-		$_(Monogatari.selector).prepend (Monogatari.component ('alert').render (id, options));
+		$_(this.selector).prepend (this.component ('alert').render (id, options));
 	}
 
 	static dismissAlert (id = null) {
 		if (typeof id === 'string') {
-			$_(`${Monogatari.selector} [data-component="alert"][data-alert="${id}"]`).remove ();
+			$_(`${this.selector} [data-component="alert"][data-alert="${id}"]`).remove ();
 		} else {
-			$_(`${Monogatari.selector} [data-component="alert"]`).remove ();
+			$_(`${this.selector} [data-component="alert"]`).remove ();
 		}
 	}
 
 	static script (object = null) {
 
 		if (typeof object === 'object' && object !== null) {
-			Monogatari._script = Object.assign ({}, Monogatari._script, object);
+			this._script = Object.assign ({}, this._script, object);
 		} else {
-			let script = Monogatari._script;
+			let script = this._script;
 
-			if (Monogatari.setting ('MultiLanguage') === true) {
-				if (!Object.keys (script).includes (Monogatari.preference ('Language'))) {
+			if (this.setting ('MultiLanguage') === true) {
+				if (!Object.keys (script).includes (this.preference ('Language'))) {
 					// First check if the label exists in the current script
 					FancyError.show (
-						`Script Language "${Monogatari.preference ('Language')}" Was Not Found`,
+						`Script Language "${this.preference ('Language')}" Was Not Found`,
 						'Monogatari attempted to retrieve the script for this language but it does not exists',
 						{
-							'Language Not Found': Monogatari.preference ('Language'),
-							'MultiLanguage Setting': 'The Multilanguage Setting is set to '+ Monogatari.setting ('MultiLanguage'),
+							'Language Not Found': this.preference ('Language'),
+							'MultiLanguage Setting': 'The Multilanguage Setting is set to '+ this.setting ('MultiLanguage'),
 							'You may have meant one of these': Object.keys (script),
 							'Help': {
 								'_': 'If your game is not a multilanguage game, change the setting on your options.js file',
@@ -560,23 +558,23 @@ class Monogatari {
 								'_3': `
 									<pre>
 										<code class='language-javascript'>
-										Monogatari.script ({
+										this.script ({
 											'English': {
 												'Start': [
-													'Hi, welcome to your first Visual Novel with Monogatari.'
+													'Hi, welcome to your first Visual Novel with this.'
 												]
 											},
 											'Español': {
 												'Start': [
-													'Hola, bienvenido a tu primer Novela Visual con Monogatari.'
+													'Hola, bienvenido a tu primer Novela Visual con this.'
 												]
 											}
 										});
 										</code>
 									</pre>
 								`,
-								'Documentation': '<a href="https://monogatari.io/documentation/configuration/internationalization/" target="_blank">Internationalization</a>',
-								'_4': `If ${Monogatari.preference ('Language')} should not be the default language, you can change that preference on your options.js file.`,
+								'Documentation': '<a href="https://this.io/documentation/configuration/internationalization/" target="_blank">Internationalization</a>',
+								'_4': `If ${this.preference ('Language')} should not be the default language, you can change that preference on your options.js file.`,
 								'_5': `
 									<pre>
 										<code class='language-javascript'>
@@ -589,7 +587,7 @@ class Monogatari {
 						}
 					);
 				} else {
-					script = script[Monogatari.preference ('Language')];
+					script = script[this.preference ('Language')];
 				}
 			}
 
@@ -603,29 +601,29 @@ class Monogatari {
 
 	static label (key = null, language = null, value = null) {
 		if (typeof language === 'string' && value !== null) {
-			if (typeof Monogatari._script[language] !== 'object') {
-				Monogatari._script[language] = {};
+			if (typeof this._script[language] !== 'object') {
+				this._script[language] = {};
 			}
-			Monogatari._script[language][key] = value;
+			this._script[language][key] = value;
 		} else if (typeof language === 'object' && language !== null && value === null) {
-			if (typeof Monogatari._script[key] !== 'object') {
-				Monogatari._script[key] = [];
+			if (typeof this._script[key] !== 'object') {
+				this._script[key] = [];
 			}
-			Monogatari._script[key] = language;
+			this._script[key] = language;
 		} else if (typeof language === 'string' && value === null) {
-			return Monogatari._script[language][key];
+			return this._script[language][key];
 		} else if (key !== null) {
-			return Monogatari.script (key);
+			return this.script (key);
 		} else {
-			return Monogatari.script (Monogatari.state ('label'));
+			return this.script (this.state ('label'));
 		}
 	}
 
 	static fn (name, { apply = () => true, revert = () => true }) {
 		if (typeof apply !== 'function' && typeof revert !== 'function') {
-			return Monogatari._functions [name];
+			return this._functions [name];
 		} else {
-			Monogatari._functions [name] = {
+			this._functions [name] = {
 				apply,
 				revert
 			};
@@ -634,64 +632,64 @@ class Monogatari {
 
 	static globals (object = null) {
 		if (object !== null) {
-			Monogatari._globals = merge (Monogatari._globals, object);
+			this._globals = merge (this._globals, object);
 		} else {
-			return Monogatari._globals;
+			return this._globals;
 		}
 	}
 
 	static global (key, value) {
 		if (typeof value !== 'undefined') {
-			Monogatari._globals[key] = value;
+			this._globals[key] = value;
 		} else {
-			return Monogatari._globals[key];
+			return this._globals[key];
 		}
 	}
 
 	static template (key, value) {
 		if (typeof value !== 'undefined') {
-			Monogatari._templates[key] = value;
+			this._templates[key] = value;
 		} else {
-			return Monogatari._templates[key];
+			return this._templates[key];
 		}
 	}
 
 	static mediaPlayers (key, object = false) {
 		if (typeof key === 'string') {
 			if (object) {
-				return Monogatari._mediaPlayers[key];
+				return this._mediaPlayers[key];
 			} else {
-				return Object.values (Monogatari._mediaPlayers[key]);
+				return Object.values (this._mediaPlayers[key]);
 			}
 		}
-		return Monogatari._mediaPlayers;
+		return this._mediaPlayers;
 	}
 
 	static mediaPlayer (type, key, value) {
 		if (typeof value === 'undefined') {
-			return Monogatari.mediaPlayers (type, true)[key];
+			return this.mediaPlayers (type, true)[key];
 		} else {
 			value.dataset.type = type;
 			value.dataset.key = key;
-			Monogatari._mediaPlayers[type][key] = value;
-			return Monogatari._mediaPlayers[type][key];
+			this._mediaPlayers[type][key] = value;
+			return this._mediaPlayers[type][key];
 		}
 	}
 
 	static removeMediaPlayer (type, key) {
 		if (typeof key === 'undefined') {
-			for (const mediaKey of Object.keys (Monogatari.mediaPlayers (type, true))) {
-				Monogatari._mediaPlayers[type][mediaKey].pause ();
-				Monogatari._mediaPlayers[type][mediaKey].setAttribute ('src', '');
-				Monogatari._mediaPlayers[type][mediaKey].currentTime = 0;
-				delete Monogatari._mediaPlayers[type][mediaKey];
+			for (const mediaKey of Object.keys (this.mediaPlayers (type, true))) {
+				this._mediaPlayers[type][mediaKey].pause ();
+				this._mediaPlayers[type][mediaKey].setAttribute ('src', '');
+				this._mediaPlayers[type][mediaKey].currentTime = 0;
+				delete this._mediaPlayers[type][mediaKey];
 			}
 		} else {
-			if (typeof Monogatari._mediaPlayers[type][key] !== 'undefined') {
-				Monogatari._mediaPlayers[type][key].pause ();
-				Monogatari._mediaPlayers[type][key].setAttribute ('src', '');
-				Monogatari._mediaPlayers[type][key].currentTime = 0;
-				delete Monogatari._mediaPlayers[type][key];
+			if (typeof this._mediaPlayers[type][key] !== 'undefined') {
+				this._mediaPlayers[type][key].pause ();
+				this._mediaPlayers[type][key].setAttribute ('src', '');
+				this._mediaPlayers[type][key].currentTime = 0;
+				delete this._mediaPlayers[type][key];
 			}
 
 		}
@@ -699,10 +697,10 @@ class Monogatari {
 
 	static temp (key, value) {
 		if (typeof value !== 'undefined') {
-			Monogatari._temp[key] = value;
+			this._temp[key] = value;
 		} else {
-			const value = Monogatari._temp[key];
-			delete Monogatari._temp[key];
+			const value = this._temp[key];
+			delete this._temp[key];
 			return value;
 		}
 	}
@@ -714,8 +712,8 @@ class Monogatari {
 	 */
 	static localize () {
 
-		$_(`${Monogatari.selector} [data-string]`).each ((element) => {
-			const string_translation = Monogatari.string ($_(element).data ('string'));
+		$_(`${this.selector} [data-string]`).each ((element) => {
+			const string_translation = this.string ($_(element).data ('string'));
 
 			// Check if the translation actually exists and is not empty before
 			// replacing the text.
@@ -723,6 +721,10 @@ class Monogatari {
 				$_(element).text (string_translation);
 			}
 		});
+	}
+
+	static element () {
+		return $_(this.selector);
 	}
 
 	/**
@@ -735,29 +737,41 @@ class Monogatari {
 		// Check if asset preloading is enabled. Preloading will not be done in
 		// electron or cordova since the assets are expected to be available
 		// locally.
-		if (Monogatari.setting ('Preload') && !Platform.electron () && !Platform.cordova () && location.protocol.indexOf ('file') < 0) {
+		if (this.setting ('Preload') && !Platform.electron () && !Platform.cordova () && location.protocol.indexOf ('file') < 0) {
+			const loadingScreen = this.component ('loading-screen');
 
 			// Show loading screen
-			$_('[data-screen="loading"]').show ();
+			loadingScreen.element ().show ('flex');
 
-			for (const category of Object.keys (Monogatari.assets ())) {
-				for (const asset of Object.values (Monogatari.assets (category))) {
-					const directory = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath')[category]}`;
+			// Iterate over every asset category: music, videos, scenes etc.
+			for (const category of Object.keys (this.assets ())) {
+				// Iterate over every key on each category
+				for (const asset of Object.values (this.assets (category))) {
+					// Get the directory from where to load this asset
+					const directory = `${this.setting ('AssetsPath').root}/${this.setting ('AssetsPath')[category]}`;
+
+					// Get the current progress
+					const currentProgress = loadingScreen.state ('progress');
+
 					if (FileSystem.isImage (asset)) {
 
 						promises.push (Preload.image (`${directory}/${asset}`).finally (() => {
-							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
+							loadingScreen.state ({
+								progress: currentProgress + 1
+							});
 						}));
 					} else {
 						promises.push (Preload.file (`${directory}/${asset}`).finally (() => {
-							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
+							loadingScreen.state ({
+								progress: currentProgress + 1
+							});
 						}));
 					}
 					assetCount += 1;
 				}
 			}
 
-			for (const character in Monogatari.characters ()) {
+			for (const character in this.characters ()) {
 				let directory = '';
 
 				// Check if the character has a directory defined where its images
@@ -765,21 +779,28 @@ class Monogatari {
 				if (typeof character.directory !== 'undefined') {
 					directory = character.directory + '/';
 				}
-				directory = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}`;
+				directory = `${this.setting ('AssetsPath').root}/${this.setting ('AssetsPath').characters}/${directory}`;
+
+				// Get the current progress
+				const currentProgress = loadingScreen.state ('progress');
 
 				if (typeof character.sprites !== 'undefined') {
 					for (const image of Object.values (character.sprites)) {
 						promises.push (Preload.image (`${directory}${image}`).finally (() => {
-							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
+							loadingScreen.state ({
+								progress: currentProgress + 1
+							});
 						}));
-					}character.
+					}
 					assetCount += 1;
 				}
 
 				if (typeof character.expressions !== 'undefined') {
 					for (const image of Object.values (character.expressions)) {
 						promises.push (Preload.image (`${directory}${image}`).finally (() => {
-							$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
+							loadingScreen.state ({
+								progress: currentProgress + 1
+							});
 						}));
 					}
 					assetCount += 1;
@@ -787,13 +808,16 @@ class Monogatari {
 
 				if (typeof character.default_expression !== 'undefined') {
 					promises.push (Preload.image (`${directory}${character.default_expression}`).finally (() => {
-						$_('[data-ui="load-progress"]').value (parseInt($_('[data-ui="load-progress"]').value ()) + 1);
+						loadingScreen.state ({
+							progress: currentProgress + 1
+						});
 					}));
 					assetCount += 1;
 				}
 			}
 
-			$_('[data-ui="load-progress"]').attribute ('max', assetCount);
+			loadingScreen.content ('progress').attribute ('max', assetCount);
+
 			return Promise.all (promises);
 		} else {
 			return Promise.resolve ();
@@ -822,7 +846,7 @@ class Monogatari {
 				const path = match.replace ('_(', '').replace (')', '').split ('.');
 
 				// Retrieve the string from the translations using the given key
-				let data = Monogatari.translations (Monogatari.preference ('Language'))[path[0]];
+				let data = this.translations (this.preference ('Language'))[path[0]];
 
 				for (let j = 1; j < path.length; j++) {
 					data = data[path[j]];
@@ -834,13 +858,13 @@ class Monogatari {
 	}
 
 	static replaceVariables (statement) {
-		statement = Monogatari.translate (statement);
+		statement = this.translate (statement);
 		const matches = statement.match (/{{\S+?}}/g);
 		if (matches !== null) {
 			for (const match of matches) {
 				const path = match.replace ('{{', '').replace ('}}', '').split ('.');
 
-				let data = Monogatari.storage (path[0]);
+				let data = this.storage (path[0]);
 
 				for (let j = 1; j < path.length; j++) {
 					data = data[path[j]];
@@ -848,7 +872,7 @@ class Monogatari {
 				statement = statement.replace (match, data);
 			}
 
-			return Monogatari.replaceVariables (statement);
+			return this.replaceVariables (statement);
 		}
 		return statement;
 	}
@@ -863,8 +887,8 @@ class Monogatari {
 			data.image = data.Engine.Scene;
 		}
 
-		const slot = `${Monogatari.setting ('SaveLabel')}_${i}`;
-		const image  = Monogatari.asset ('scenes', data.image);
+		const slot = `${this.setting ('SaveLabel')}_${i}`;
+		const image  = this.asset ('scenes', data.image);
 
 
 		const name = data.name ? data.name : data.date;
@@ -872,8 +896,8 @@ class Monogatari {
 		$_('[data-screen="load"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
 		$_('[data-screen="save"] [data-ui="slots"] [data-string="NoSavedGames"]').remove ();
 
-		$_('[data-screen="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (Monogatari.component ('slot').render (slot, name, image, data));
-		$_('[data-screen="save"] [data-ui="slots"]').append (Monogatari.component ('slot').render (slot, name, image, data));
+		$_('[data-screen="load"] [data-ui="saveSlots"] [data-ui="slots"]').append (this.component ('slot').render (slot, name, image, data));
+		$_('[data-screen="save"] [data-ui="slots"]').append (this.component ('slot').render (slot, name, image, data));
 	}
 
 	static addAutoSlot (i, data) {
@@ -884,23 +908,23 @@ class Monogatari {
 			data.image = data.Engine.Scene;
 		}
 
-		const slot = `${Monogatari.setting ('AutoSaveLabel')}_${i}`;
-		const image  = Monogatari.asset ('scenes', data.image);
+		const slot = `${this.setting ('AutoSaveLabel')}_${i}`;
+		const image  = this.asset ('scenes', data.image);
 
 
 		const name = data.name ? data.name : data.date;
 
 		$_('[data-screen="load"] [data-ui="slots"] [data-string="NoAutoSavedGames"]').remove ();
-		$_('[data-screen="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (Monogatari.component ('slot').render (slot, name, image, data));
+		$_('[data-screen="load"] [data-ui="autoSaveSlots"] [data-ui="slots"]').append (this.component ('slot').render (slot, name, image, data));
 	}
 
 	// Gets the highest number currently available as a slot id (Save_{?})
 	static getMaxSlotId (prefix = 'SaveLabel') {
-		return Monogatari.Storage.keys ().then ((keys) => {
+		return this.Storage.keys ().then ((keys) => {
 			let max = 1;
 			for (const saveKey of keys) {
-				if (saveKey.indexOf (Monogatari.setting (prefix)) === 0) {
-					const number = parseInt(saveKey.split (Monogatari.setting (prefix) + '_')[1]);
+				if (saveKey.indexOf (this.setting (prefix)) === 0) {
+					const number = parseInt(saveKey.split (this.setting (prefix) + '_')[1]);
 					if (number > max) {
 						max = number;
 					}
@@ -912,7 +936,7 @@ class Monogatari {
 
 	static saveTo (prefix = 'SaveLabel', id = null, name = null) {
 		// Check if the player is actually playing
-		if (Monogatari.global ('playing')) {
+		if (this.global ('playing')) {
 			const date = moment ().format ();
 
 			if (name === null || name.trim () === '') {
@@ -920,18 +944,18 @@ class Monogatari {
 			}
 
 			// We have to get the last ID available for the slots
-			return Monogatari.getMaxSlotId (prefix).then ((max) => {
+			return this.getMaxSlotId (prefix).then ((max) => {
 
 				// Make it the next one to the max
 				if (id === null) {
 					id = max + 1;
 				}
 
-				return Monogatari.Storage.set (`${Monogatari.setting (prefix)}_${id}`, {
+				return this.Storage.set (`${this.setting (prefix)}_${id}`, {
 					name,
 					date,
-					image: Monogatari.state ('scene').split (' ')[2],
-					game: Monogatari.object ()
+					image: this.state ('scene').split (' ')[2],
+					game: this.object ()
 				});
 			});
 		}
@@ -945,19 +969,19 @@ class Monogatari {
 	 */
 	static loadFromSlot (slot) {
 		document.body.style.cursor = 'wait';
-		Monogatari.global ('playing', true);
+		this.global ('playing', true);
 
-		Monogatari.resetGame ().then (() => {
-			$_(`${Monogatari.selector} [data-screen]`).hide();
-			$_(`${Monogatari.selector} [data-screen="game"]`).show();
+		this.resetGame ().then (() => {
+			$_(`${this.selector} [data-screen]`).hide();
+			$_(`${this.selector} [data-screen="game"]`).show();
 
-			Monogatari.Storage.get (slot).then ((data) => {
+			this.Storage.get (slot).then ((data) => {
 				// Check if an older save format was used so we can transform
 				// that information into the new format
 				if (typeof data.Engine !== 'undefined') {
 
 					// Set the game state
-					Monogatari.state ({
+					this.state ({
 						step: data.Engine.Step,
 						label: data.Engine.Label,
 						scene: `show scene ${data.Engine.Scene}`,
@@ -965,21 +989,21 @@ class Monogatari {
 
 					// Retrieve if a song was playing so we can set it to the state
 					if (data.Engine.Song !== '' && typeof data.Engine.Song !== 'undefined') {
-						Monogatari.state ({
+						this.state ({
 							music: [data.Engine.Song],
 						});
 					}
 
 					// Retrieve if a sound was playing so we can set it to the state
 					if (data.Engine.Sound !== '' && typeof data.Engine.Sound !== 'undefined') {
-						Monogatari.state ({
+						this.state ({
 							sound: [data.Engine.Sound],
 						});
 					}
 
 					// Retrieve if particles were shown so we can set it to the state
 					if (data.Engine.Particles !== '' && typeof data.Engine.Particles !== 'undefined') {
-						Monogatari.state ({
+						this.state ({
 							particles: `show particles ${data.Engine.Particles}`
 						});
 					}
@@ -995,9 +1019,9 @@ class Monogatari {
 								div.innerHTML =  element;
 								const item = $_(div.firstChild);
 								if (element.indexOf ('data-character') > -1) {
-									Monogatari.state ('characters').push (`show character ${item.data ('character')} ${item.data ('sprite')} ${item.get (0).className}`);
+									this.state ('characters').push (`show character ${item.data ('character')} ${item.data ('sprite')} ${item.get (0).className}`);
 								} else if (element.indexOf ('data-image') > -1) {
-									Monogatari.state ('characters').push (`show image ${item.data ('image')} ${item.get (0).className}`);
+									this.state ('characters').push (`show image ${item.data ('image')} ${item.get (0).className}`);
 								}
 							}
 
@@ -1006,7 +1030,7 @@ class Monogatari {
 
 					// Set all the history variables with the ones from the old
 					// format
-					Monogatari.history ({
+					this.history ({
 						music: data.Engine.MusicHistory,
 						sound: data.Engine.SoundHistory,
 						image: data.Engine.ImageHistory,
@@ -1019,26 +1043,26 @@ class Monogatari {
 							return `show particles ${particles}`;
 						}),
 					});
-					Monogatari.storage (data.Storage);
+					this.storage (data.Storage);
 
 				} else {
 					// If the new format is being used, things are a lot more simple
 					const { state, history, storage } = data.game;
-					Monogatari.state (state);
-					Monogatari.history (history);
-					Monogatari.storage (storage);
+					this.state (state);
+					this.history (history);
+					this.storage (storage);
 				}
 
 				// Run the onLoad event of all the actions
 				const promises = [];
-				for (const action of Monogatari.actions ()) {
+				for (const action of this.actions ()) {
 					promises.push (action.onLoad ());
 				}
 
 				Promise.all (promises).then (() => {
 					// Finally show the game and start playing
 					$_('[data-screen="game"]').show ();
-					Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+					this.run (this.label ()[this.state ('step')]);
 					document.body.style.cursor = 'auto';
 				});
 			});
@@ -1056,7 +1080,7 @@ class Monogatari {
 	 * the function returned false.
 	 */
 	static assertAsync (callable, self = null, args = null) {
-		Monogatari.global ('block', true);
+		this.global ('block', true);
 		return new Promise (function (resolve, reject) {
 			const result = callable.apply(self, args);
 			// Check if the function returned a simple boolean
@@ -1098,13 +1122,13 @@ class Monogatari {
 	static canProceed () {
 		const promises = [];
 
-		Monogatari.debug ().groupCollapsed ('canProceed Check');
+		this.debug ().groupCollapsed ('canProceed Check');
 		// Check action by action if they will allow the game to proceed
-		for (const action of Monogatari.actions ()) {
+		for (const action of this.actions ()) {
 			promises.push (action.canProceed ().then (() => {
-				Monogatari.debug ().debug (`OK ${action.id}`);
+				this.debug ().debug (`OK ${action.id}`);
 			}).catch ((e) => {
-				Monogatari.debug ().debug (`FAIL ${action.id}\nReason: ${e}`);
+				this.debug ().debug (`FAIL ${action.id}\nReason: ${e}`);
 				return Promise.reject (e);
 			}));
 		}
@@ -1115,14 +1139,14 @@ class Monogatari {
 		// free mode is enabled.
 		if ($_('[data-screen="game"]').isVisible ()
 			&& !$_('[data-component="modal"]').isVisible ()
-			&& !Monogatari.global ('distraction-free')
-			&& !Monogatari.global ('block')) {
+			&& !this.global ('distraction-free')
+			&& !this.global ('block')) {
 			promises.push (Promise.resolve ());
 		} else {
 			promises.push (Promise.reject ());
 		}
 		return Promise.all (promises).finally (() => {
-			Monogatari.debug ().groupEnd ();
+			this.debug ().groupEnd ();
 		});
 	}
 
@@ -1135,13 +1159,13 @@ class Monogatari {
 	static canRevert () {
 		const promises = [];
 
-		Monogatari.debug ().groupCollapsed ('canRevert Check');
+		this.debug ().groupCollapsed ('canRevert Check');
 		// Check action by action if they will allow the game to revert
-		for (const action of Monogatari.actions ()) {
+		for (const action of this.actions ()) {
 			promises.push (action.canRevert ().then (() => {
-				Monogatari.debug ().debug (`OK ${action.id}`);
+				this.debug ().debug (`OK ${action.id}`);
 			}).catch ((e) => {
-				Monogatari.debug ().debug (`FAIL ${action.id}\nReason: ${e}`);
+				this.debug ().debug (`FAIL ${action.id}\nReason: ${e}`);
 				return Promise.reject (e);
 			}));
 		}
@@ -1151,14 +1175,14 @@ class Monogatari {
 		// revert. The game will not revert if it's blocked or if the distraction
 		// free mode is enabled.
 		if ($_('[data-screen="game"]').isVisible ()
-			&& !Monogatari.global ('distraction-free')
-			&& !Monogatari.global ('block')) {
+			&& !this.global ('distraction-free')
+			&& !this.global ('block')) {
 			promises.push (Promise.resolve ());
 		} else {
 			promises.push (Promise.reject ());
 		}
 		return Promise.all (promises).finally (() => {
-			Monogatari.debug ().groupEnd ();
+			this.debug ().groupEnd ();
 		});
 	}
 
@@ -1168,49 +1192,49 @@ class Monogatari {
 	 */
 	static playAmbient () {
 		// Check if a menu music was defined
-		if (Monogatari.setting ('MainScreenMusic') !== '') {
+		if (this.setting ('MainScreenMusic') !== '') {
 
 			// Make the ambient player loop
-			Monogatari.ambientPlayer.setAttribute ('loop', '');
+			this.ambientPlayer.setAttribute ('loop', '');
 
 			// Check if the music was defined in the music assets object
-			if (typeof Monogatari.asset ('music', Monogatari.setting ('MainScreenMusic')) !== 'undefined') {
+			if (typeof this.asset ('music', this.setting ('MainScreenMusic')) !== 'undefined') {
 
 				// Get the full path to the asset and set the src to the ambient player
-				Monogatari.ambientPlayer.setAttribute('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').music}/${Monogatari.asset ('music', Monogatari.setting ('MainScreenMusic'))}`);
+				this.ambientPlayer.setAttribute('src', `${this.setting ('AssetsPath').root}/${this.setting ('AssetsPath').music}/${this.asset ('music', this.setting ('MainScreenMusic'))}`);
 
 				// Play the music but catch any errors. Error catching is necessary
 				// since some browsers like chrome, have added some protections to
 				// avoid media from being autoplayed. Because of these protections,
 				// the user needs to interact with the page first before the media
 				// is able to play.
-				Monogatari.ambientPlayer.play ().catch (() => {
+				this.ambientPlayer.play ().catch (() => {
 
 					// Create a broadcast message
 					const element = `
 						<div data-ui="broadcast">
-							<p data-string="AllowPlayback">${Monogatari.string ('AllowPlayback')}.</p>
+							<p data-string="AllowPlayback">${this.string ('AllowPlayback')}.</p>
 						</div>
 					`;
 
 					// Add it to the main menu and game screens
-					$_(`${Monogatari.selector} [data-screen='main']`).prepend (element);
-					$_(`${Monogatari.selector} [data-screen="game"]`).prepend (element);
+					$_(`${this.selector} [data-screen='main']`).prepend (element);
+					$_(`${this.selector} [data-screen="game"]`).prepend (element);
 
 					// Try to play the media again once the element has been clicked
 					// and remove it.
-					$_(`${Monogatari.selector} [data-ui="broadcast"]`).click (() => {
+					$_(`${this.selector} [data-ui="broadcast"]`).click (() => {
 						this.playAmbient ();
-						$_(`${Monogatari.selector} [data-ui="broadcast"]`).remove ();
+						$_(`${this.selector} [data-ui="broadcast"]`).remove ();
 					});
 				});
 			} else {
 				FancyError.show (
-					`The music "${Monogatari.setting ('MainScreenMusic')}" is not defined.`,
+					`The music "${this.setting ('MainScreenMusic')}" is not defined.`,
 					'Monogatari attempted to find a definition of a music asset but there was none.',
 					{
-						'Music Not Found': Monogatari.setting ('MainScreenMusic'),
-						'You may have meant one of these': Object.keys (Monogatari.assets ('music')),
+						'Music Not Found': this.setting ('MainScreenMusic'),
+						'You may have meant one of these': Object.keys (this.assets ('music')),
 						'Help': {
 							'_': 'Please check that you have correctly defined this music asset and wrote its name correctly in the `MainScreenMusic` variable',
 							'_1': `
@@ -1229,8 +1253,8 @@ class Monogatari {
 
 	// Stop the main menu's music
 	static stopAmbient () {
-		if (!Monogatari.ambientPlayer.paused) {
-			Monogatari.ambientPlayer.pause ();
+		if (!this.ambientPlayer.paused) {
+			this.ambientPlayer.pause ();
 		}
 	}
 
@@ -1239,32 +1263,32 @@ class Monogatari {
 		$_('[data-component="modal"]').removeClass ('modal--active');
 
 		// Stop autoplay
-		Monogatari.autoPlay (false);
+		this.autoPlay (false);
 
 		// Reset Storage
-		Monogatari.storage (JSON.parse(Monogatari.global ('storageStructure')));
+		this.storage (JSON.parse(this.global ('storageStructure')));
 
 		// Reset Conditions
-		Monogatari.state ({
+		this.state ({
 			step: 0,
-			label: Monogatari.setting ('Label')
+			label: this.setting ('Label')
 		});
 
-		Monogatari.global ('block', false);
+		this.global ('block', false);
 
 		// Reset History
-		for (const history of Object.keys (Monogatari._history)) {
-			Monogatari._history[history] = [];
+		for (const history of Object.keys (this._history)) {
+			this._history[history] = [];
 		}
 
 		// Run the reset method of all the actions so each of them can reset
 		// their own elements correctly
 		const promises = [];
-		for (const action of Monogatari.actions ()) {
+		for (const action of this.actions ()) {
 			promises.push (action.reset ());
 		}
 
-		for (const component of Monogatari.components ()) {
+		for (const component of this.components ()) {
 			promises.push (component.reset ());
 		}
 
@@ -1273,17 +1297,19 @@ class Monogatari {
 
 	static next () {
 		// Advance 1 step
-		Monogatari.state ({
-			step: Monogatari.state ('step') + 1
+		this.state ({
+			step: this.state ('step') + 1
 		});
 
 		// Clear the Stack using a Time Out instead of calling the function
 		// directly, preventing an Overflow
-		setTimeout (Monogatari.run, 0, Monogatari.label ()[Monogatari.state ('step')]);
+		setTimeout ((...params) => {
+			this.run.call (Monogatari, ...params);
+		}, 0, this.label ()[this.state ('step')]);
 	}
 
 	static previous () {
-		Monogatari.revert ().catch (() => {
+		this.revert ().catch (() => {
 			// The game could not be reverted, either because an
 			// action prevented it or because there are no statements
 			// left to revert to.
@@ -1293,42 +1319,41 @@ class Monogatari {
 
 	// Start game automatically without going trough the main menu
 	static showMainScreen () {
-		if (!Monogatari.setting ('ShowMainScreen')) {
-			Monogatari.stopAmbient ();
-			Monogatari.global ('playing', true);
-			$_(`${Monogatari.selector} [data-screen]`).hide ();
-			$_(`${Monogatari.selector} [data-screen="game"]`).show ();
-			Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+		if (!this.setting ('ShowMainScreen')) {
+			this.stopAmbient ();
+			this.global ('playing', true);
+			$_(`${this.selector} [data-screen]`).hide ();
+			$_(`${this.selector} [data-screen="game"]`).show ();
+			this.run (this.label ()[this.state ('step')]);
 		} else {
 			// Play the main menu song
-			Monogatari.playAmbient ();
+			this.playAmbient ();
 			$_('[data-screen="main"]').show ('flex');
 		}
 	}
 
 	static showSplashScreen () {
-		const labelName = Monogatari.setting ('SplashScreenLabel');
+		const labelName = this.setting ('SplashScreenLabel');
 		if (typeof labelName === 'string' && labelName !== '') {
-			const label = Monogatari.label (labelName);
+			const label = this.label (labelName);
 			if (typeof label !== 'undefined') {
-				Monogatari.state ({
+				this.state ({
 					label: labelName
 				});
 
 				$_('[data-ui="quick-menu"]').hide ();
-				$_(`${Monogatari.selector} [data-screen]`).hide ();
-				$_(`${Monogatari.selector} [data-screen="game"]`).show ();
-				Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+				$_(`${this.selector} [data-screen]`).hide ();
+				$_(`${this.selector} [data-screen="game"]`).show ();
+				this.run (this.label ()[this.state ('step')]);
 			} else {
-				Monogatari.showMainScreen ();
+				this.showMainScreen ();
 			}
 		} else {
-			Monogatari.showMainScreen ();
+			this.showMainScreen ();
 		}
 	}
 
 	static keyboardShortcut (shortcut, callback) {
-		console.log (shortcut);
 		mousetrap.bind (shortcut, (event) => {
 			if (event.target.tagName.toLowerCase () != 'input') {
 				event.preventDefault ();
@@ -1351,32 +1376,32 @@ class Monogatari {
 	static autoPlay (enable) {
 		if (enable === true) {
 			// The interval for autoplay speed is measured in minutes
-			const interval = Monogatari.preference ('AutoPlaySpeed') * 1000;
+			const interval = this.preference ('AutoPlaySpeed') * 1000;
 			let expected = Date.now () + interval;
 
-			Monogatari.global ('_AutoPlayTimer', () => {
+			this.global ('_AutoPlayTimer', () => {
 				const now = Date.now () - expected; // the drift (positive for overshooting)
 				if (now > interval) {
 					// something really bad happened. Maybe the browser (tab) was inactive?
 					// possibly special handling to avoid futile "catch up" run
 				}
-				Monogatari.canProceed ().then (() => {
-					Monogatari.next ();
+				this.canProceed ().then (() => {
+					this.next ();
 					expected += interval;
-					setTimeout (Monogatari.global ('_AutoPlayTimer'), Math.max (0, interval - now)); // take into account drift
+					setTimeout (this.global ('_AutoPlayTimer'), Math.max (0, interval - now)); // take into account drift
 				}).catch (() => {
 					// An action waiting for user interaction or something else
 					// is blocking the game.
 				});
 			});
-			setTimeout (Monogatari.global ('_AutoPlayTimer'), interval);
-			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-string]`).text (Monogatari.string ('Stop'));
-			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-icon]`).replaceWith ('<span class="fas fa-stop-circle"></span>');
+			setTimeout (this.global ('_AutoPlayTimer'), interval);
+			$_(`${this.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-string]`).text (this.string ('Stop'));
+			$_(`${this.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-icon]`).replaceWith ('<span class="fas fa-stop-circle"></span>');
 		} else {
-			clearTimeout (Monogatari.global ('_AutoPlayTimer'));
-			Monogatari.global ('_AutoPlayTimer', null);
-			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-string]`).text (Monogatari.string ('AutoPlay'));
-			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-icon]`).replaceWith ('<span class="fas fa-play-circle"></span>');
+			clearTimeout (this.global ('_AutoPlayTimer'));
+			this.global ('_AutoPlayTimer', null);
+			$_(`${this.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-string]`).text (this.string ('AutoPlay'));
+			$_(`${this.selector} [data-ui="quick-menu"] [data-action="auto-play"] [data-icon]`).replaceWith ('<span class="fas fa-play-circle"></span>');
 		}
 	}
 
@@ -1387,20 +1412,20 @@ class Monogatari {
 	 * is added to the quick menu when this mode is enabled.
 	 */
 	static distractionFree () {
-		if (Monogatari.global ('playing')) {
+		if (this.global ('playing')) {
 			// Check if the distraction free is currently enabled
-			if (Monogatari.global ('distraction-free') === true) {
-				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-string]`).text (Monogatari.string ('Hide'));
-				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye" data-action="distraction-free"></span>');
-				$_(`${Monogatari.selector} [data-ui="quick-menu"]`).removeClass ('transparent');
-				$_(`${Monogatari.selector} [data-ui="text"]`).show ();
-				Monogatari.global ('distraction-free', false);
+			if (this.global ('distraction-free') === true) {
+				$_(`${this.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-string]`).text (this.string ('Hide'));
+				$_(`${this.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye" data-action="distraction-free"></span>');
+				$_(`${this.selector} [data-ui="quick-menu"]`).removeClass ('transparent');
+				$_(`${this.selector} [data-ui="text"]`).show ();
+				this.global ('distraction-free', false);
 			} else {
-				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-string]`).text (Monogatari.string ('Show'));
-				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye-slash" data-action="distraction-free"></span>');
-				$_(`${Monogatari.selector} [data-ui="quick-menu"]`).addClass ('transparent');
-				$_(`${Monogatari.selector} [data-ui="text"]`).hide();
-				Monogatari.global ('distraction-free', true);
+				$_(`${this.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-string]`).text (this.string ('Show'));
+				$_(`${this.selector} [data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]`).replaceWith ('<span class="fas fa-eye-slash" data-action="distraction-free"></span>');
+				$_(`${this.selector} [data-ui="quick-menu"]`).addClass ('transparent');
+				$_(`${this.selector} [data-ui="text"]`).hide();
+				this.global ('distraction-free', true);
 			}
 		}
 	}
@@ -1416,9 +1441,9 @@ class Monogatari {
 	 */
 	static object () {
 		return {
-			history: Monogatari.history (),
-			state: Monogatari.state (),
-			storage: Monogatari.storage ()
+			history: this.history (),
+			state: this.state (),
+			storage: this.storage ()
 		};
 	}
 
@@ -1430,7 +1455,7 @@ class Monogatari {
 	 */
 	static revert (statement = null, shouldAdvance = true) {
 
-		Monogatari.debug ().groupCollapsed ('Revert Cycle');
+		this.debug ().groupCollapsed ('Revert Cycle');
 
 		// Check if we have steps behind us to revert to. If there aren't, then
 		// we can't revert since we are already at the first statement.
@@ -1438,29 +1463,29 @@ class Monogatari {
 
 		if (statement !== null) {
 			actionToRevert = statement;
-		} else if (Monogatari.state ('step') >= 1) {
-			actionToRevert = Monogatari.label ()[Monogatari.state ('step') - 1];
+		} else if (this.state ('step') >= 1) {
+			actionToRevert = this.label ()[this.state ('step') - 1];
 		} else {
-			const jump = Monogatari.history ('jump').reverse ().find (o => {
-				return o.destination.label === Monogatari.state ('label') && o.destination.step === 0;
+			const jump = this.history ('jump').reverse ().find (o => {
+				return o.destination.label === this.state ('label') && o.destination.step === 0;
 			});
 
 			if (typeof jump !== 'undefined') {
-				Monogatari.state ({
+				this.state ({
 					label: jump.source.label,
 					step: jump.source.step
 				});
-				actionToRevert = Monogatari.label ()[Monogatari.state ('step')];
+				actionToRevert = this.label ()[this.state ('step')];
 			}
 		}
 
-		Monogatari.debug ().debug ('Reverting Action', actionToRevert);
+		this.debug ().debug ('Reverting Action', actionToRevert);
 
 		if (actionToRevert !== null) {
 
 			// Iterate over all the registered actions to find one that matches with
 			// the statement to revert.
-			for (const action of Monogatari.actions ()) {
+			for (const action of this.actions ()) {
 				let actionStatement = actionToRevert;
 				let matches = false;
 
@@ -1501,22 +1526,22 @@ class Monogatari {
 					// is usually used to tell whether an action can be reverted
 					// or not.
 					return act.willRevert ().then (() => {
-						Monogatari.debug ().debug ('Action Will Revert');
+						this.debug ().debug ('Action Will Revert');
 						// If it can be reverted, then run the revert method
 						return act.revert ().then (() => {
-							Monogatari.debug ().debug ('Action Reverting');
+							this.debug ().debug ('Action Reverting');
 							// If the reversion was successful, run the didRevert
 							// function. The action will return a boolean (shouldContinue)
 							// specifying if the game should go ahead and revert
 							// the previous statement as well or if it should
 							// wait instead
 							return act.didRevert ().then (({ advance, step }) => {
-								Monogatari.debug ().debug ('Action Did Revert');
+								this.debug ().debug ('Action Did Revert');
 								// Since we reverted correctly, the step should
 								// go back.
 								if (step === true) {
-									Monogatari.state ({
-										step: Monogatari.state ('step') - 1
+									this.state ({
+										step: this.state ('step') - 1
 									});
 								}
 
@@ -1526,11 +1551,13 @@ class Monogatari {
 									// Clear the Stack using a Time Out instead
 									// of calling the function directly, preventing
 									// an Overflow
-									setTimeout (Monogatari.revert, 0);
+									setTimeout ((...params) => {
+										this.revert.call (Monogatari, ...params);
+									}, 0);
 								}
 
-								Monogatari.debug ().trace ();
-								Monogatari.debug ().groupEnd ();
+								this.debug ().trace ();
+								this.debug ().groupEnd ();
 
 							});
 						});
@@ -1540,10 +1567,12 @@ class Monogatari {
 						}
 						// Clear the Stack using a Time Out instead of calling
 						// the function directly, preventing an Overflow
-						setTimeout (Monogatari.run, 0, Monogatari.label ()[Monogatari.state ('step')]);
+						setTimeout ((...params) => {
+							this.run.call (Monogatari, ...params);
+						}, 0, this.label ()[this.state ('step')]);
 
-						Monogatari.debug ().trace ();
-						Monogatari.debug ().groupEnd ();
+						this.debug ().trace ();
+						this.debug ().groupEnd ();
 
 						return Promise.resolve ();
 					});
@@ -1552,14 +1581,16 @@ class Monogatari {
 		} else {
 			// Clear the Stack using a Time Out instead of calling
 			// the function directly, preventing an Overflow
-			setTimeout (Monogatari.run, 0, Monogatari.label ()[Monogatari.state ('step')]);
-			Monogatari.debug ().trace ();
-			Monogatari.debug ().groupEnd ();
+			setTimeout ((...params) => {
+				this.run.call (Monogatari, ...params);
+			}, 0, this.label ()[this.state ('step')]);
+			this.debug ().trace ();
+			this.debug ().groupEnd ();
 
 			return Promise.resolve ();
 		}
-		Monogatari.debug ().trace ();
-		Monogatari.debug ().groupEnd ();
+		this.debug ().trace ();
+		this.debug ().groupEnd ();
 		return Promise.reject ();
 	}
 
@@ -1576,18 +1607,18 @@ class Monogatari {
 	 * if it couldn't be run correctly.
 	 */
 	static run (statement, shouldAdvance = true) {
-		Monogatari.debug ().groupCollapsed ('Run Cycle');
+		this.debug ().groupCollapsed ('Run Cycle');
 
 		// Don't allow null as a valid statement
 		if (statement === null) {
 			return Promise.reject ();
 		}
 
-		Monogatari.debug ().debug ('Running Action', statement);
+		this.debug ().debug ('Running Action', statement);
 
 		// Iterate over all the registered actions to find one that matches with
 		// the statement to run.
-		for (const action of Monogatari.actions ()) {
+		for (const action of this.actions ()) {
 			let actionStatement = statement;
 			let matches = false;
 
@@ -1596,7 +1627,7 @@ class Monogatari {
 			// is a function, it will simply be run.
 			if (typeof statement === 'string') {
 				// Split the statement into an array using the space separations
-				actionStatement = Monogatari.replaceVariables (statement).split (' ');
+				actionStatement = this.replaceVariables (statement).split (' ');
 
 				// Check if it matches using the matchString method
 				matches = action.matchString (actionStatement);
@@ -1605,14 +1636,14 @@ class Monogatari {
 				matches = action.matchObject (statement);
 			} else if (typeof actionStatement === 'function') {
 				// Block the game while the function is being run
-				Monogatari.global ('block', true);
+				this.global ('block', true);
 
 				// Run the function asynchronously and after it has run, unblock
 				// the game so it can continue.
 				return Util.callAsync (actionStatement, Monogatari).finally (() => {
-					Monogatari.global ('block', false);
+					this.global ('block', false);
 					if (shouldAdvance) {
-						return Monogatari.next ();
+						return this.next ();
 					}
 				});
 			}
@@ -1637,49 +1668,49 @@ class Monogatari {
 
 				// Run the willApply method of the action first
 				return act.willApply ().then (() => {
-					Monogatari.debug ().debug ('Action Will Apply');
+					this.debug ().debug ('Action Will Apply');
 
 					// Run the apply method
 					return act.apply (shouldAdvance).then (() => {
-						Monogatari.debug ().debug ('Action Applying');
+						this.debug ().debug ('Action Applying');
 
 						// If everything has been run correctly, then run the
 						// didApply method. The action will return a boolean
 						// (shouldContinue) specifying if the game should run the
 						// next statement right away or if it should wait instead
 						return act.didApply ().then (({ advance }) => {
-							Monogatari.debug ().debug ('Action Did Apply');
+							this.debug ().debug ('Action Did Apply');
 							if (advance === true && shouldAdvance === true) {
-								Monogatari.debug ().debug ('Next action will be run right away');
-								Monogatari.next ();
+								this.debug ().debug ('Next action will be run right away');
+								this.next ();
 							}
-							Monogatari.debug ().trace ();
-							Monogatari.debug ().groupEnd ();
+							this.debug ().trace ();
+							this.debug ().groupEnd ();
 						}).catch ((e) => {
-							Monogatari.debug ().debug (`Did Apply Failed.\nReason: ${e}`);
+							this.debug ().debug (`Did Apply Failed.\nReason: ${e}`);
 							return Promise.reject (e);
-						});;
+						});
 					}).catch ((e) => {
-						Monogatari.debug ().debug (`Application Failed.\nReason: ${e}`);
+						this.debug ().debug (`Application Failed.\nReason: ${e}`);
 						return Promise.reject (e);
 					});
 				}).catch (() => {
-					Monogatari.debug ().trace ();
-					Monogatari.debug ().groupEnd ();
+					this.debug ().trace ();
+					this.debug ().groupEnd ();
 				});
 			}
 		}
-		Monogatari.debug ().trace ();
-		Monogatari.debug ().groupEnd ();
+		this.debug ().trace ();
+		this.debug ().groupEnd ();
 	}
 
 	static setup (selector) {
 		// Set the initial settings if they don't exist or load them from the
 		// Storage if they do.
-		Monogatari.Storage.get ('Settings').then ((local_settings) => {
-			Monogatari._preferences = merge (Monogatari._preferences, local_settings);
+		this.Storage.get ('Settings').then ((local_settings) => {
+			this._preferences = merge (this._preferences, local_settings);
 		}).catch (() => {
-			Monogatari.Storage.set ('Settings', Monogatari._preferences);
+			this.Storage.set ('Settings', this._preferences);
 		});
 
 		// Register service worker. The service worker will save all requests into
@@ -1688,7 +1719,7 @@ class Monogatari {
 		// if we are not running in a local platform such as electron or cordova
 		// where the assets are expected to be available locally and thus don't
 		// require being cached.
-		if (Monogatari.setting ('ServiceWorkers')) {
+		if (this.setting ('ServiceWorkers')) {
 			if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
 				// TODO: There's a place in hell for this quick fix, the splitting
 				// of the sw file is just preventing parcel from trying to bundle it
@@ -1706,7 +1737,7 @@ class Monogatari {
 								if (navigator.serviceWorker.controller) {
 									const element = `
 										<div data-ui="broadcast">
-											<p data-string="NewContent">${Monogatari.string ('NewContent')}.</p>
+											<p data-string="NewContent">${this.string ('NewContent')}.</p>
 										</div>
 									`;
 									$_(`${selector} [data-screen='main']`).prepend (element);
@@ -1727,37 +1758,37 @@ class Monogatari {
 		// Save the structure of the storage variable. The structure is saved as
 		// a string so that we have a reference to how the storage was originally
 		// and we can reset the storage when the game ends.
-		Monogatari.global ('storageStructure', JSON.stringify(Monogatari.storage ()));
+		this.global ('storageStructure', JSON.stringify(this.storage ()));
 
 		// The open-screen action does exactly what it says, it takes the
 		// data-screen property of the object it's in and then opens that
 		// menu, meaning it hides everything else and shows that one.
-		Monogatari.registerListener ('open-screen', {
+		this.registerListener ('open-screen', {
 			callback: (element) => {
-				$_(`${Monogatari.selector} [data-screen]`).hide();
+				$_(`${this.selector} [data-screen]`).hide();
 
 				if (element.data ('open') == 'save') {
-					$_(`${Monogatari.selector} [data-screen="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
+					$_(`${this.selector} [data-screen="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
 				}
-				$_(`${Monogatari.selector} [data-screen="${element.data('open')}"]`).show ('flex');
+				$_(`${this.selector} [data-screen="${element.data('open')}"]`).show ('flex');
 			}
 		});
 
 		// The start action starts the game so it shows the game screen
 		// and the game starts
-		Monogatari.registerListener ('start', {
+		this.registerListener ('start', {
 			callback: () => {
-				Monogatari.stopAmbient();
-				Monogatari.global ('playing', true);
+				this.stopAmbient();
+				this.global ('playing', true);
 
-				Monogatari.onStart ().then (() => {
-					$_(`${Monogatari.selector} [data-screen]`).hide ();
+				this.onStart ().then (() => {
+					$_(`${this.selector} [data-screen]`).hide ();
 					$_('[data-ui="quick-menu"]').show ();
-					$_(`${Monogatari.selector} [data-screen="game"]`).show ();
+					$_(`${this.selector} [data-screen="game"]`).show ();
 
 					// Check if the initial label exists
-					if (Monogatari.label ()) {
-						Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
+					if (this.label ()) {
+						this.run (this.label ()[this.state ('step')]);
 					}
 				});
 			}
@@ -1765,34 +1796,34 @@ class Monogatari {
 
 		// The close action removes the active class from the element it
 		// points to.
-		Monogatari.registerListener ('close', {
+		this.registerListener ('close', {
 			callback: (element) => {
-				$_(`${Monogatari.selector} [data-ui="${element.data('close')}"]`).removeClass('modal--active');
+				$_(`${this.selector} [data-component="${element.data('close')}"]`).removeClass('modal--active');
 				return true;
 			}
 		});
 
-		Monogatari.registerListener ('dismiss-alert', {
+		this.registerListener ('dismiss-alert', {
 			callback: () => {
-				Monogatari.dismissAlert ();
+				this.dismissAlert ();
 			}
 		});
 
-		Monogatari.registerListener ('distraction-free', {
+		this.registerListener ('distraction-free', {
 			keys: 'h',
 			callback: () => {
-				Monogatari.distractionFree ();
+				this.distractionFree ();
 			}
 		});
 
-		Monogatari.registerListener ('skip', {
+		this.registerListener ('skip', {
 			keys: 's',
 			callback: () => {
-				if (Monogatari.global ('playing')) {
-					if (Monogatari.global ('skip') !== null) {
-						Monogatari.skip (false);
+				if (this.global ('playing')) {
+					if (this.global ('skip') !== null) {
+						this.skip (false);
 					} else {
-						Monogatari.skip (true);
+						this.skip (true);
 					}
 				}
 			}
@@ -1800,19 +1831,19 @@ class Monogatari {
 
 		// Add listener to the auto-play buttons, activating or deactivating the
 		// auto-play feature
-		Monogatari.registerListener ('auto-play', {
+		this.registerListener ('auto-play', {
 			callback: () => {
-				Monogatari.autoPlay (Monogatari.global ('_AutoPlayTimer') === null);
+				this.autoPlay (this.global ('_AutoPlayTimer') === null);
 			}
 		});
 
 		const promises = [];
 
-		for (const component of Monogatari.components ()) {
+		for (const component of this.components ()) {
 			promises.push (component.setup (selector));
 		}
 
-		for (const action of Monogatari.actions ()) {
+		for (const action of this.actions ()) {
 			promises.push (action.setup (selector));
 		}
 		return Promise.all (promises);
@@ -1828,43 +1859,43 @@ class Monogatari {
 			// Check if Skip was enabled on the settings, if it has a value greater
 			// than 0, it represents the speed with which the game will skip through
 			// statements. If it's lesser or equal to 0 then it's disabled.
-			if (Monogatari.setting ('Skip') > 0) {
+			if (this.setting ('Skip') > 0) {
 
-				$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="skip"] [data-icon]`).replaceWith ('<span class="far fa-play-circle"></span>');
+				$_(`${this.selector} [data-ui="quick-menu"] [data-action="skip"] [data-icon]`).replaceWith ('<span class="far fa-play-circle"></span>');
 
 				// Start the timeout with the time specified on the settings. We
 				// save it on a global variable so that we can disable later.
-				Monogatari.global ('skip', setTimeout (() => {
-					Monogatari.canProceed ().then (() => {
-						Monogatari.next ();
+				this.global ('skip', setTimeout (() => {
+					this.canProceed ().then (() => {
+						this.next ();
 					}).catch (() => {
 						// An action waiting for user interaction or something else
 						// is blocking the game.
 					});
 
 					// Start all over again
-					Monogatari.skip (true);
-				}, Monogatari.setting ('Skip')));
+					this.skip (true);
+				}, this.setting ('Skip')));
 			}
 		} else {
-			clearTimeout (Monogatari.global ('skip'));
-			Monogatari.global ('skip', null);
-			$_(`${Monogatari.selector} [data-ui="quick-menu"] [data-action="skip"] [data-icon]`).replaceWith ('<span class="fas fa-fast-forward"></span>');
+			clearTimeout (this.global ('skip'));
+			this.global ('skip', null);
+			$_(`${this.selector} [data-ui="quick-menu"] [data-action="skip"] [data-icon]`).replaceWith ('<span class="fas fa-fast-forward"></span>');
 		}
 	}
 
 	static registerListener (name, listener, replace = false) {
 		listener.name = name;
 		if (replace === true) {
-			const index = Monogatari._listeners.findIndex (listener => listener.name === name);
+			const index = this._listeners.findIndex (listener => listener.name === name);
 
 			if (index > -1) {
-				Monogatari._listeners[index] = listener;
+				this._listeners[index] = listener;
 			} else {
-				Monogatari._listeners.push (listener);
+				this._listeners.push (listener);
 			}
 		} else {
-			Monogatari._listeners.push (listener);
+			this._listeners.push (listener);
 		}
 	}
 
@@ -1883,13 +1914,13 @@ class Monogatari {
 			}
 		}
 
-		for (const listener of Monogatari._listeners) {
+		for (const listener of this._listeners) {
 			if (listener.name === name) {
-				promises.push (Monogatari.assertAsync (listener.callback , Monogatari, [element, event]).finally (() => {
+				promises.push (this.assertAsync (listener.callback , Monogatari, [element, event]).finally (() => {
 					// Unblock the game so the player can continue
-					Monogatari.global ('block', false);
+					this.global ('block', false);
 				}));
-				Monogatari.debug ().debug ('Running Listener', name);
+				this.debug ().debug ('Running Listener', name);
 			}
 		}
 
@@ -1897,7 +1928,7 @@ class Monogatari {
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();
 			event.preventDefault ();
-			Monogatari.debug ().debug ('Listener Event Propagation Stopped');
+			this.debug ().debug ('Listener Event Propagation Stopped');
 		});
 	}
 
@@ -1908,19 +1939,19 @@ class Monogatari {
 
 		// Add the orientation checker in case that a specific orientation was
 		// defined.
-		if (Monogatari.setting ('Orientation') !== 'any' && Platform.mobile ()) {
+		if (this.setting ('Orientation') !== 'any' && Platform.mobile ()) {
 
 			// Set the event listener for device orientation so we can display a message
 			window.addEventListener ('orientationchange', () => {
 
 				// Display or remove the device orientation notice depending on the
 				// current device orientation
-				if (Platform.orientation () !== Monogatari.setting ('Orientation')) {
-					Monogatari.alert ('orientation-warning', {
+				if (Platform.orientation () !== this.setting ('Orientation')) {
+					this.alert ('orientation-warning', {
 						message: 'OrientationWarning'
 					});
 				} else {
-					Monogatari.dismissAlert ('orientation-warning');
+					this.dismissAlert ('orientation-warning');
 				}
 			}, false);
 		}
@@ -1931,12 +1962,12 @@ class Monogatari {
 		$_(`${selector}`).on ('click', '[data-screen] [data-action="back"]:not([data-screen="game"]), [data-screen] [data-action="back"]:not([data-screen="game"]) *', (event) => {
 
 			if (!$_(`${selector} [data-screen="game"]`).isVisible ()) {
-				Monogatari.debug ().debug ('Registered Back Listener on Non-Game Screen');
+				this.debug ().debug ('Registered Back Listener on Non-Game Screen');
 				event.stopImmediatePropagation();
 				event.stopPropagation();
 				event.preventDefault();
 				$_(`${selector} [data-screen]`).hide ();
-				if (Monogatari.global ('playing')) {
+				if (this.global ('playing')) {
 					$_(`${selector} [data-screen="game"]`).show ();
 				} else {
 					$_(`${selector} [data-screen="main"]`).show ('flex');
@@ -1958,55 +1989,55 @@ class Monogatari {
 			Monogatari.runListener (action, element, event);
 		});
 
-		Monogatari.keyboardShortcut (['right', 'space'], () => {
-			Monogatari.canProceed ().then (() => {
-				Monogatari.next ();
+		this.keyboardShortcut (['right', 'space'], () => {
+			this.canProceed ().then (() => {
+				this.next ();
 			}).catch (() => {
 				// An action waiting for user interaction or something else
 				// is blocking the game.
 			});
 		});
 
-		Monogatari.keyboardShortcut ('esc', () => {
-			if ($_(`${selector} [data-screen="game"]`).isVisible () && Monogatari.global ('playing')) {
+		this.keyboardShortcut ('esc', () => {
+			if ($_(`${selector} [data-screen="game"]`).isVisible () && this.global ('playing')) {
 				$_(`${selector} [data-screen="game"]`).hide ();
 				$_(`${selector} [data-screen="settings"]`).show();
-			} else if ($_(`${selector} [data-screen="settings"]`).isVisible () && Monogatari.global ('playing')) {
+			} else if ($_(`${selector} [data-screen="settings"]`).isVisible () && this.global ('playing')) {
 				$_(`${selector} [data-screen="settings"]`).hide ();
 				$_(`${selector} [data-screen="game"]`).show ();
 			}
 		});
 
-		Monogatari.keyboardShortcut ('shift+s', () => {
-			if (Monogatari.global ('playing')) {
-				$_(`${Monogatari.selector} [data-screen]`).hide();
+		this.keyboardShortcut ('shift+s', () => {
+			if (this.global ('playing')) {
+				$_(`${this.selector} [data-screen]`).hide();
 
-				$_(`${Monogatari.selector} [data-screen="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
-				$_(`${Monogatari.selector} [data-screen="save"]`).show();
+				$_(`${this.selector} [data-screen="save"] [data-input="slotName"]`).value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
+				$_(`${this.selector} [data-screen="save"]`).show();
 			}
 		});
 
-		Monogatari.keyboardShortcut ('shift+l', () => {
-			if (Monogatari.global ('playing')) {
-				$_(`${Monogatari.selector} [data-screen]`).hide();
-				$_(`${Monogatari.selector} [data-screen="load"]`).show();
+		this.keyboardShortcut ('shift+l', () => {
+			if (this.global ('playing')) {
+				$_(`${this.selector} [data-screen]`).hide();
+				$_(`${this.selector} [data-screen="load"]`).show();
 			}
 		});
 
 		const promises = [];
 
-		for (const component of Monogatari.components ()) {
+		for (const component of this.components ()) {
 			promises.push (component.bind (selector));
 		}
 
-		for (const action of Monogatari.actions ()) {
+		for (const action of this.actions ()) {
 			promises.push (action.bind (selector));
 		}
 		return Promise.all (promises).then (() => {
-			for (const listener of Monogatari._listeners) {
+			for (const listener of this._listeners) {
 				const { keys, callback } = listener;
 				if (typeof keys !== 'undefined') {
-					Monogatari.keyboardShortcut (keys, callback);
+					this.keyboardShortcut (keys, callback);
 				}
 			}
 			return Promise.resolve ();
@@ -2014,16 +2045,16 @@ class Monogatari {
 	}
 
 	static upgrade (oldVersion, newVersion, callbacks) {
-		Monogatari._upgrade[`${oldVersion}::${newVersion}`] = callbacks;
+		this._upgrade[`${oldVersion}::${newVersion}`] = callbacks;
 	}
 
 	static setupStorage () {
 		// Check if an Adapter has been set or else, the global local storage
 		// object will be used
-		if (Monogatari.setting ('Storage').Adapter.trim () !== '') {
+		if (this.setting ('Storage').Adapter.trim () !== '') {
 			let adapter;
 
-			switch (Monogatari.setting ('Storage').Adapter) {
+			switch (this.setting ('Storage').Adapter) {
 				case 'LocalStorage':
 					adapter = SpaceAdapter.LocalStorage;
 					break;
@@ -2045,11 +2076,11 @@ class Monogatari {
 					break;
 			}
 
-			Monogatari.Storage = new Space (adapter, {
-				name: Text.friendly (Monogatari.setting ('Name')),
-				version: Monogatari.setting ('Version'),
-				store:  Monogatari.setting ('Storage').Store,
-				endpoint: Monogatari.setting ('Storage').Endpoint,
+			this.Storage = new Space (adapter, {
+				name: Text.friendly (this.setting ('Name')),
+				version: this.setting ('Version'),
+				store:  this.setting ('Storage').Store,
+				endpoint: this.setting ('Storage').Endpoint,
 				props: {
 					keyPath: 'id'
 				}
@@ -2057,39 +2088,39 @@ class Monogatari {
 		}
 
 		// Setup all the upgrade functions
-		for (const upgrade of Object.keys (Monogatari._upgrade)) {
+		for (const upgrade of Object.keys (this._upgrade)) {
 			const [oldVersion, newVersion] = upgrade.split ('::');
-			const callback = Monogatari._upgrade[upgrade].storage;
+			const callback = this._upgrade[upgrade].storage;
 
-			Monogatari.Storage.upgrade (oldVersion, newVersion, callback);
+			this.Storage.upgrade (oldVersion, newVersion, callback);
 		}
 	}
 
 	static init (selector = '#monogatari') {
 
-		if (Monogatari.Storage.configuration ().name === '') {
-			Monogatari.setupStorage ();
+		if (this.Storage.configuration ().name === '') {
+			this.setupStorage ();
 		}
 
-		Monogatari.selector = selector;
+		this.selector = selector;
 		FancyError.init ();
 
-		Monogatari.setup (selector).then (() => {
-			Monogatari.bind (selector).then (() => {
+		this.setup (selector).then (() => {
+			this.bind (selector).then (() => {
 
 				// Set the initial language translations
-				Monogatari.localize ();
+				this.localize ();
 
 				// Set the label in which the game will start
-				Monogatari.state ({
-					label: Monogatari.setting ('Label')
+				this.state ({
+					label: this.setting ('Label')
 				});
 
 				// Check if the orientation is correct, if it's not, show the warning
 				// message so the player will rotate its device.
-				if (Monogatari.setting ('Orientation') !== 'any') {
-					if (Platform.mobile () && Platform.orientation () !== Monogatari.setting ('Orientation')) {
-						Monogatari.alert ('orientation-warning', {
+				if (this.setting ('Orientation') !== 'any') {
+					if (Platform.mobile () && Platform.orientation () !== this.setting ('Orientation')) {
+						this.alert ('orientation-warning', {
 							message: 'OrientationWarning'
 						});
 					}
@@ -2107,27 +2138,27 @@ class Monogatari {
 				});
 
 				// Preload all the game assets
-				Monogatari.preload ().then(() => {
+				this.preload ().then(() => {
 					$_(`${selector} [data-screen="loading"]`).fadeOut (400, () => {
 						$_(`${selector} [data-screen="loading"]`).hide ();
 					});
 				}).catch ((e) => {
 					console.error (e);
 				}).finally (() => {
-					if (Monogatari.label ()) {
-						Monogatari.showSplashScreen ();
+					if (this.label ()) {
+						this.showSplashScreen ();
 					}
 				});
 
-				if (!(Monogatari.setting ('Skip') > 0)) {
-					Monogatari.component ('quick-menu').remove ('Skip');
+				if (!(this.setting ('Skip') > 0)) {
+					this.component ('quick-menu').remove ('Skip');
 				}
 
-				for (const component of Monogatari.components ()) {
+				for (const component of this.components ()) {
 					component.init (selector);
 				}
 
-				for (const action of Monogatari.actions ()) {
+				for (const action of this.actions ()) {
 					action.init (selector);
 				}
 			});

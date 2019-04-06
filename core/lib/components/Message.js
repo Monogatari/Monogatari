@@ -11,7 +11,7 @@ class Message extends Component {
 Message._id = 'message';
 
 Message._html = (title, subtitle, body) => `
-	<div data-component="message" data-ui="messages" class="modal  modal--active">
+	<div data-component="message" class="modal  modal--active">
 		<div class="modal__content">
 			<div data-ui="message-content" >
 				<h3 data-content="title">${title}</h3>
@@ -19,7 +19,7 @@ Message._html = (title, subtitle, body) => `
 				<p data-content="body">${body}</p>
 			</div>
 			<div class="horizontal horizontal--center" data-ui="inner-menu">
-				<button data-action="close" data-close="messages" data-string="Close">Close</button>
+				<button data-action="close" data-close="message" data-string="Close">Close</button>
 			</div>
 		</div>
 	</div>

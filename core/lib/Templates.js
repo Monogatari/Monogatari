@@ -352,14 +352,14 @@ Monogatari.component ('settings-screen').html (`
 `);
 
 Monogatari.component ('message').html ((title, subtitle, message) => `
-	<div data-component="modal" data-ui="messages" class="middle">
+	<div data-component="modal" data-component="message" class="middle">
 		<div data-ui="message-content">
 			<h3>${title}</h3>
 			<p>${subtitle}</p>
 			<p>${message}</p>
 		</div>
 		<div class="horizontal horizontal--center" data-ui="inner-menu">
-			<button data-action="close" data-close="messages" data-string="Close">Close</button>
+			<button data-action="close" data-close="message" data-string="Close">Close</button>
 		</div>
 	</div>
 `);
@@ -376,7 +376,7 @@ Monogatari.component ('quit_warning').html (`
 	</div>
 `);
 
-Monogatari.component ('text_input').html (message => `
+Monogatari.component ('text-input').html (message => `
 	<form data-component="modal" data-ui="input" class="middle active">
 		<p data-ui="input-message" class="block">${message}</p>
 		<input type="text">
