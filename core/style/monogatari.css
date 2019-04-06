@@ -985,6 +985,12 @@ video {
 /** 5k Screens, Large Devices, Wide Screens (5120px) **/
 @media screen and (min-width: 320em) {}
 
+[data-content="visuals"] {
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
 .forceAspectRatio {
 	margin-left: auto;
 	margin-right: auto;
