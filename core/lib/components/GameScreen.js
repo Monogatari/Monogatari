@@ -11,19 +11,26 @@ class GameScreen extends Component {
 	}
 
 	static resize (proportionWidth, proportionHeight) {
-		const h = Math.floor (window.innerWidth * (proportionHeight/proportionWidth));
+		// const [outWidth, outerHeight] = $_(Monogatari.selector).get (0);
+
+		const mainElement = $_(Monogatari.selector).get (0);
+
+		const mainWidth = mainElement.offsetWidth;
+		const mainHeight = mainElement.offsetHeight;
+
+		const h = Math.floor (mainWidth * (proportionHeight/proportionWidth));
 		let widthCss = '100%';
 		let heightCss = '100%';
 		let marginTopCss = 0;
 
-		if (h <= window.innerHeight) {
-			const marginTop = Math.floor ((window.innerHeight - h)/2);
+		if (h <= mainHeight) {
+			const marginTop = Math.floor ((mainHeight - h)/2);
 			marginTopCss = marginTop + 'px';
 			heightCss = h + 'px';
 
 		}
 		else {
-			const w = Math.floor (window.innerHeight * (proportionWidth/proportionHeight));
+			const w = Math.floor (mainHeight * (proportionWidth/proportionHeight));
 			widthCss = w + 'px';
 		}
 
@@ -49,8 +56,8 @@ class GameScreen extends Component {
 
 		if (forceAspectRatio) {
 			const [w, h] = Monogatari.setting ('AspectRatio').split (':');
-			const proportionWidth = +w;
-			const proportionHeight = +h;
+			const proportionWidth = parseInt(w);
+			const proportionHeight = parseInt(h);
 
 			$_('[data-content="visuals"]').addClass('forceAspectRatio');
 			GameScreen.resize(proportionWidth, proportionHeight);
