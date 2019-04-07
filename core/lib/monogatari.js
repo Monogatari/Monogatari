@@ -771,7 +771,8 @@ class Monogatari {
 				}
 			}
 
-			for (const character in this.characters ()) {
+			for (const key in this.characters ()) {
+				const character = this.character (key);
 				let directory = '';
 
 				// Check if the character has a directory defined where its images

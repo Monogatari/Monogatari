@@ -117,6 +117,7 @@ video {
 
 #monogatari {
 	@include full-size;
+	position: relative;
 }
 
 .background-image {
@@ -156,7 +157,7 @@ video {
 	display: none;
 	align-items: stretch;
 	flex-direction: column;
-	@include full-viewport;
+	@include full-size;
 	@include background-image;
 }
 
@@ -227,8 +228,14 @@ video {
 
 [data-component="loading-screen"] {
 	align-items: center;
+	justify-content: center;
 
-	[data-content="progress_bar"] {
+	[data-content="wrapper"] {
+		display: flex;
+		flex-direction: column;
+	}
+
+	[data-content="progress"] {
 		appearance: none;
 		border: none;
 		margin: 1em auto;
@@ -244,7 +251,11 @@ video {
 			border-radius: 3px;
 		}
 
-		&::-webkit-progress-value,
+		&::-webkit-progress-value {
+			background-color: #f16272;
+			border-radius: 3px;
+		}
+
 		&::-moz-progress-bar {
 			background-color: #f16272;
 			border-radius: 3px;
