@@ -11,8 +11,6 @@ class GameScreen extends Component {
 	}
 
 	static resize (proportionWidth, proportionHeight) {
-		// const [outWidth, outerHeight] = $_(Monogatari.selector).get (0);
-
 		const mainElement = $_(Monogatari.selector).get (0);
 
 		const mainWidth = mainElement.offsetWidth;
