@@ -50,9 +50,12 @@ monogatari.settings({
 	// Enable service workers; Default: true *
 	'ServiceWorkers': true,
 
-	// The Aspect Ratio your background images are on. This has no effect on
-	// web deployed novels.
+	// The Aspect Ratio your background images are on. This only has effect on
+	// web deployed novels if forceAspectRatio flag is on.
 	'AspectRatio': '16:9',
+
+	// Force aspect ratio, it will make all images to comply with aspect ratio.
+	'ForceAspectRatio': false,
 
 	// Enables or disables the typing text animation for the whole game.
 	'TypeAnimation': true,
