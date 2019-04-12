@@ -11,7 +11,6 @@ class GameScreen extends Component {
 	}
 
 	static resize (proportionWidth, proportionHeight) {
-		// const mainElement = $_(Monogatari.selector).get (0);
 		const mainElement = $_('body').get (0);
 
 		const mainWidth = mainElement.offsetWidth;
@@ -66,7 +65,6 @@ class GameScreen extends Component {
 			default:
 				forceAspectRatioFlag = false;
 		}
-		
 		
 		if (forceAspectRatioFlag) {
 			const [w, h] = Monogatari.setting ('AspectRatio').split (':');
