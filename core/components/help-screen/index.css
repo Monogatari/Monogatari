@@ -1,0 +1,42 @@
+/**
+ * ===========================
+ * Help Screen Component
+ * ===========================
+ */
+
+help-screen {
+	[data-content='help'] {
+		max-width: 1000px;
+		margin: 0 auto;
+
+		& > .row {
+			align-self: flex-start;
+		}
+
+		h3 {
+			margin-bottom: 1rem;
+		}
+	}
+
+	[data-content='symbols'] {
+		align-items: center;
+		justify-content: flex-start;
+
+		[data-content='shortcut'] {
+			width: 1.5rem;
+			height:1.5rem;
+			min-width: 1.5rem;
+			display: block;
+			background-color: var(--text-color);
+			text-align: center;
+			border-radius: 2px;
+			color: #fff;
+			display: inline-block;
+			font-size: 0.8rem;
+			margin-right: 1rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+}

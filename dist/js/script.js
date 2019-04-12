@@ -59,8 +59,13 @@ monogatari.assets ('scenes', {
 // Define the Characters
 monogatari.characters ({
 	'y': {
-		'Name': 'Yui',
-		'Color': '#5bcaff'
+		name: 'Yui',
+		color: '#5bcaff',
+		directory: 'Yui',
+		sprites: {
+			'normal': 'normal.png',
+			'happy': 'happy.png'
+		}
 	}
 });
 
@@ -93,7 +98,9 @@ monogatari.script ({
 				'Warning': 'You must enter a name!'
 			}
 		},
+		'show character y happy with fadeIn',
 		'y Hi {{player.name}} Welcome to Monogatari!',
+		'show character y normal',
 		{
 			'Choice': {
 				'Dialog': 'y Have you already read some documentation?',

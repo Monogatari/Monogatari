@@ -1,0 +1,12 @@
+/**
+ * ===========================
+ * Alert Dialog Component
+ * ===========================
+ */
+
+alert-dialog {
+	[data-content="wrapper"] {
+		overflow: auto;
+		overflow-x: hidden;
+	}
+}

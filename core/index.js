@@ -26,14 +26,14 @@ import 'particles.js';
  * Import Monogatari extra files such as actions, translations and all the functionality
  * apart from the core engine.
  */
-import './lib/translations/index.js';
-import './lib/components/index.js';
-import './lib/actions/index.js';
+import './translations';
+import './components';
+import './actions';
 
 /**
  * Export Monogatari Core
  */
-export * from './lib/Action.js';
-export * from './lib/Component.js';
-export * from './lib/FancyError.js';
-export * from './lib/monogatari';
+export * from './lib/Action';
+export * from './lib/Component';
+export * from './lib/FancyError';
+export * from './monogatari';

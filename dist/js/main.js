@@ -10,6 +10,8 @@
 
 const { $_ready } = Monogatari;
 
+monogatari.debug ().level (5);
+
 $_ready (() => {
 	monogatari.init ('#monogatari');
 });

@@ -1,4 +1,4 @@
-import { $_ } from '@aegis-framework/artemis';
+import { $_, Util } from '@aegis-framework/artemis';
 
 /**
  * A component represents an object or content in the game such as screens, menus
@@ -55,67 +55,8 @@ class Component extends HTMLElement {
 		}
 	}
 
-	/**
-	 * @static state - A simple function providing access to the state
-	 * object of the function. If the component has a state object it must
-	 * also include this method.
-	 *
-	 * @param  {Object|string} [object = null] - Object with which current
-	 * state will be updated with (i.e. Object.assign) or a string to access
-	 * a specific variable.
-	 *
-	 * @return {any} - If the parameter sent was a string, the function will
-	 * return the value of the property whose name matches the parameter. If no
-	 * parameter was sent, then the function will return the whole state object.
-	 */
-	static state (object = null) {
-		if (object !== null) {
-			if (typeof object === 'string') {
-				return this._state[object];
-			} else {
-				this._state = Object.assign ({}, this._state, object);
-				this.onStateUpdate ().then (() => {
-					this.onUpdate ();
-				});
-			}
-		} else {
-			return this._state;
-		}
-	}
-
-
-	/**
-	 * @static html - A simple function providing access to the basic HTML
-	 * structure of the component.
-	 *
-	 * @param {function|string} html - A string or function that renders the
-	 * component into a valid HTML structure.
-	 * @param {*} params - Any additional params that should be used when calling
-	 * the rendering function
-	 *
-	 * @returns {void|string} - Void or the HTML structure in a string
-	 */
-	static html (html = null, ...params) {
-		if (html !== null && params.length === 0) {
-			this._html = html;
-		} else {
-			// Check if additional parameters have been sent to a rendering function
-			if (params.length > 0 && typeof this._html === 'function') {
-				if (html === null) {
-					return this._html.call (this, ...params);
-				} else {
-					return this._html.call (html, ...params);
-				}
-			}
-
-			// Check if no parameters were set but the HTML is still a function to be called
-			if (params.length === 0 && html === null && typeof this._html === 'function') {
-				return this._html.call (this);
-			}
-
-			// If this is reached, the HTML was just a string
-			return this._html;
-		}
+	static instances () {
+		return $_(this._id);
 	}
 
 	/**
@@ -144,14 +85,48 @@ class Component extends HTMLElement {
 	}
 
 	/**
-	 * @static onUpdate - Every time either the configuration object or state object
-	 * is changed through their respective methods, this function will be called
-	 * after the specific onUpdate listener for each object is performed.
+	 * @static setup - The setup is the first step of the Mounting cycle, all
+	 * operations required for the component's setup should be implemented here.
 	 *
-	 * @return {Promise} - Result of the onUpdate operation.
+	 * @param  {string} selector - The CSS selector with which Monogatari has been
+	 *                             initialized
+	 * @return {Promise} - Result of the setup operation
 	 */
-	static onUpdate () {
-		this.render ();
+	static setup () {
+		for (const child of this._children) {
+			child.setup ();
+		}
+		return Promise.resolve ();
+	}
+
+	/**
+	 * @static bind - The binding is the second step of the Mounting cycle, all
+	 * operations related to event bindings or other sort of binding with the
+	 * HTML content generated in the setup phase should be implemented here.
+	 *
+	 * @param  {string} selector - The CSS selector with which Monogatari has been
+	 *                             initialized
+	 * @return {Promise} - Result of the binding operation
+	 */
+	static bind () {
+		for (const child of this._children) {
+			child.bind ();
+		}
+		return Promise.resolve ();
+	}
+
+	/**
+	 * @static init - The initialization is the last step of the Mounting cycle,
+	 * all final operations should be implemented here.
+	 *
+	 * @param  {string} selector - The CSS selector with which Monogatari has been
+	 *                             initialized
+	 * @return {Promise} - Result of the initialization operation
+	 */
+	static init () {
+		for (const child of this._children) {
+			child.init ();
+		}
 		return Promise.resolve ();
 	}
 
@@ -164,19 +139,6 @@ class Component extends HTMLElement {
 	 * @return {Promise} - Result of the onConfigurationUpdate operation.
 	 */
 	static onConfigurationUpdate () {
-		this.render ();
-		return Promise.resolve ();
-	}
-
-	/**
-	 * @static onStateUpdate - Every time the state object is changed through the
-	 * state () method, this function will be called. Ideal for components that
-	 * need to update their UI or perform other operations when their state changes.
-	 *
-	 * @return {Promise} - Result of the onStateUpdate operation.
-	 */
-	static onStateUpdate () {
-		this.render ();
 		return Promise.resolve ();
 	}
 
@@ -210,61 +172,21 @@ class Component extends HTMLElement {
 	}
 
 	/**
-	 * @static setup - The setup is the first step of the Mounting cycle, all
-	 * operations required for the component's setup should be implemented here.
-	 *
-	 * @param  {string} selector - The CSS selector with which Monogatari has been
-	 *                             initialized
-	 * @return {Promise} - Result of the setup operation
-	 */
-	static setup () {
-		return Promise.resolve ();
-	}
-
-	/**
-	 * @static bind - The binding is the second step of the Mounting cycle, all
-	 * operations related to event bindings or other sort of binding with the
-	 * HTML content generated in the setup phase should be implemented here.
-	 *
-	 * @param  {string} selector - The CSS selector with which Monogatari has been
-	 *                             initialized
-	 * @return {Promise} - Result of the binding operation
-	 */
-	static bind () {
-		return Promise.resolve ();
-	}
-
-	/**
-	 * @static init - The initialization is the last step of the Mounting cycle,
-	 * all final operations should be implemented here.
-	 *
-	 * @param  {string} selector - The CSS selector with which Monogatari has been
-	 *                             initialized
-	 * @return {Promise} - Result of the initialization operation
-	 */
-	static init () {
-		return Promise.resolve ();
-	}
-
-	/**
-	 * @static render - Elements requiring dynamic rendering, should be updated
-	 * in this method. The way they modify the HTML contents is entirely up to the
-	 * component's implementation.
-	 *
-	 * @return {Promise} - Result of the render operation
-	 */
-	static render () {
-		return Promise.resolve ();
-	}
-
-	/**
 	 * @static element - Returns this component's element as an Artemis DOM
 	 * instance, using the result of the `selector ()` function as the selector
 	 *
 	 * @returns {DOM} - Artemis DOM instance
 	 */
-	static element () {
-		return $_(this.selector ());
+	element () {
+		return $_(this.constructor._id);
+	}
+
+	instanceSelector () {
+		return $_(`${this.constructor._id}[data-${this.constructor.name.toLowerCase ()}`);
+	}
+
+	instance (id) {
+		return $_(`${this.constructor._id}[data-${this.constructor.name.toLowerCase ()}="${id}"`);
 	}
 
 	/**
@@ -275,7 +197,7 @@ class Component extends HTMLElement {
 	 *
 	 * @returns {DOM} - An Artemis DOM instance with the found elements
 	 */
-	static content (name) {
+	content (name) {
 		return this.element ().find (`[data-content="${name}"]`);
 	}
 
@@ -286,19 +208,226 @@ class Component extends HTMLElement {
 	 *
 	 * @returns {DOM} - An Artemis DOM instance with the found elements
 	 */
-	static child (id) {
-		return this.element ().find (`[data-component="${id}"]`);
+	child (id) {
+		return this.element ().find (id);
 	}
 
-	/**
-	 * @static selector - Returns the CSS selector that identifies this component
-	 *
-	 * @returns {string} - CSS selector for this component
-	 */
-	static selector () {
-		return `[data-component="${this._id}"]`;
+	addChild (component) {
+		component.parent (this);
+
+		const index = this._children.findIndex (c => c._priority > component._priority);
+		this._children = this._children.splice (index, 0, component);
+	}
+
+	removeChild (id) {
+		this._children = this._children.filter (c => c._id !== id);
+	}
+
+	parent (component) {
+		if (typeof component !== 'undefined') {
+			this._parent = component;
+		} else {
+			return this._parent;
+		}
+	}
+
+	static register () {
+		window.customElements.define (this._id, this);
+		this._registered = true;
+	}
+
+	static instantiate (props) {
+		if (this._registered === false) {
+			this.register ();
+		}
+
+		const element = document.createElement (this._id);
+		element._setProps (props);
+
+		return element;
+	}
+
+	constructor () {
+		super ();
+
+		this._state = {};
+		this._props = {};
+	}
+
+	// /**
+	//  * @static html - A simple function providing access to the basic HTML
+	//  * structure of the component.
+	//  *
+	//  * @param {function|string} html - A string or function that renders the
+	//  * component into a valid HTML structure.
+	//  * @param {*} params - Any additional params that should be used when calling
+	//  * the rendering function
+	//  *
+	//  * @returns {void|string} - Void or the HTML structure in a string
+	//  */
+	// template (html = null) {
+	// 	if (html !== null) {
+	// 		this._template = html;
+	// 	} else {
+	// 		// Check if additional parameters have been sent to a rendering function
+	// 		if (params.length > 0 && typeof this._html === 'function') {
+	// 			if (html === null) {
+	// 				return this._html.call (this, ...params);
+	// 			} else {
+	// 				return this._html.call (html, ...params);
+	// 			}
+	// 		}
+
+	// 		// Check if no parameters were set but the HTML is still a function to be called
+	// 		if (params.length === 0 && html === null && typeof this._html === 'function') {
+	// 			return this._html.call (this);
+	// 		}
+
+	// 		// If this is reached, the HTML was just a string
+	// 		return this._html;
+	// 	}
+	// }
+
+	setState (state) {
+		if (typeof state !== 'undefined') {
+			const oldState = Object.assign ({}, this._state);
+
+			this._state = Object.assign ({}, this._state, state);
+
+			for (const key of Object.keys (state)) {
+				this.attributeChangedCallback (key, oldState[key], this._state[key], 'state');
+			}
+		}
+	}
+
+	_setProps (props) {
+		if (typeof props === 'object') {
+			console.log ('props', props);
+			this._props = Object.assign ({}, this._props, props);
+		}
+	}
+
+	willUpdate (origin, property, oldValue, newValue) {
+		return Promise.resolve ();
+	}
+
+	update (origin, property, oldValue, newValue) {
+		console.log ('update');
+		return Promise.resolve ();
+	}
+
+	didUpdate (origin, property, oldValue, newValue) {
+		return Promise.resolve ();
+	}
+
+	onStateUpdate () {
+		return this.render ();
+	}
+
+	willMount () {
+		return Promise.resolve ();
+	}
+
+	didMount () {
+		return Promise.resolve ();
+	}
+
+	willUnmount () {
+		return Promise.resolve ();
+	}
+
+	unmount () {
+		return Promise.resolve ();
+	}
+
+	didUnmount () {
+		return Promise.resolve ();
+	}
+
+	forceRender () {
+		return this._render ();
+	}
+
+	render () {
+		return '';
+	}
+
+	_render () {
+		return Util.callAsync (this.render, this).then ((html) => {
+			this.innerHTML = html;
+		});
+	}
+
+	connectedCallback () {
+		this.state = new Proxy (this._state, {
+			get: (target, key) => {
+				return target[key];
+			},
+			set: (target, key, value) => {
+				throw 'Component state should be set using the `setState` function.';
+			}
+		});
+
+		this.props = new Proxy (this, {
+			get: (target, key) => {
+				if (this.hasAttribute (key)) {
+					return this.getAttribute (key);
+				}
+				return null;
+			},
+			set: (target, key, value) => {
+				if (this.hasAttribute (key)) {
+					this.setAttribute (key, value);
+					return value;
+				}
+				return null;
+			}
+		});
+
+		this.dataset.component = this.constructor._id;
+
+		for (const key of Object.keys (this._props)) {
+			this.setAttribute (key, this._props[key]);
+		}
+
+		return this.willMount ().then (() => {
+			return this._render ().then (() => {
+				return this.didMount ();
+			});
+		});
+	}
+
+	disconnectedCallback () {
+		return this.willUnmount ().then (() => {
+			return this.unmount ().then (() => {
+				return this.didUnmount ();
+			});
+		});
+	}
+
+	attributeChangedCallback (property, oldValue, newValue, origin) {
+		if (typeof origin === 'undefined') {
+			origin = 'props';
+		}
+		console.log ('Change');
+
+		return this.willUpdate (origin, property, oldValue, newValue).then (() => {
+			return this.update (origin, property, oldValue, newValue).then (() => {
+				return this.didUpdate (origin, property, oldValue, newValue);
+			});
+		}).catch (() => {
+			// Component should not update
+		});
 	}
 }
+
+Component._registered = false;
+
+Component._priority = 0;
+
+Component._parent = null;
+
+Component._children = [];
 
 /**
  * Each component can define its initial HTML structure, which should be used on
@@ -315,18 +444,4 @@ Component._html = '';
  */
 Component._configuration = {};
 
-/**
- * If needed, every component should declare its state as follows. This
- * state object should be used to store state variables used by the component.
- * If any specific variable recurrent access or modifications, providing
- * a static function for that specific variable could be great.
- */
-Component._state = {};
-
-/**
- * All components must have an unique ID, with this ID the developers will be
- * able to access the component classes, remove components or register new ones.
- */
-Component._id = '';
-
-export { Component };
+export default Component;
