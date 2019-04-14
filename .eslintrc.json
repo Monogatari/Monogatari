@@ -43,6 +43,7 @@
 	"parserOptions": {
        "ecmaVersion": 8,
        "sourceType": "module"
-    },
+	},
+	"parser": "babel-eslint",
     "extends": "eslint:recommended"
 }

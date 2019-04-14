@@ -1,0 +1,13 @@
+/**
+ * ===========================
+ * Settings Screen Component
+ * ===========================
+ */
+
+settings-screen {
+	input,
+	select {
+		margin: 2rem;
+		background-color: transparent;
+	}
+}

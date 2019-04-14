@@ -27,10 +27,12 @@
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
     "@babel/polyfill": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "autoprefixer": "^9.5.1",
+    "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "htmlhint": "^0.11.0",
     "jsdoc": "^3.5.5",

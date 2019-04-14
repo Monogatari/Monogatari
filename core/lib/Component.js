@@ -26,6 +26,30 @@ import { $_, Util } from '@aegis-framework/artemis';
  */
 class Component extends HTMLElement {
 
+
+	static _registered = false;
+
+	static _priority = 0;
+
+	static _children = [];
+
+	static _explicitPropTypes = ['boolean', 'string', 'number'];
+
+	/**
+	 * Each component can define its initial HTML structure, which should be used on
+	 * the setup or rendering functions of the cycle, adding to the DOM.
+	*/
+	static _html = '';
+
+	/**
+	 * If needed, every component should declare its configuration as follows. This
+	 * configuration object should be used to store component-specific settings as well
+	 * as other objects/assets used by the component. If any specific object needs
+	 * recurrent access such as the declarations in the script.js file, providing
+	 * a static function for that specific object could be great.
+	 */
+	static _configuration = {};
+
 	/**
 	 * @static configuration - A simple function providing access to the configuration
 	 * object of the function. If the component has a configuration object it must
@@ -252,6 +276,72 @@ class Component extends HTMLElement {
 
 		this._state = {};
 		this._props = {};
+
+		this._connected = false;
+	}
+
+	get engine () {
+		return this.constructor.engine;
+	}
+
+	set engine (value) {
+		throw new Error ('Component engine reference is hold at static level and cannot be modified.');
+	}
+
+	get static () {
+		return new Proxy (this.constructor, {});
+	}
+
+	set static (value) {
+		throw new Error ('Component static property cannot be reassigned.');
+	}
+
+	get props () {
+		return new Proxy (this, {
+			get: (target, key) => {
+				if (this.hasAttribute (key)) {
+					return this.getAttribute (key);
+				} else if (key in this._props) {
+					return this._props[key];
+				}
+				return null;
+			},
+			set: (target, key, value) => {
+				throw new Error ('Component props should be set using the `setProps` function.');
+			}
+		});
+	}
+
+	set props (value) {
+		if (this._connected === false) {
+			this._props = Object.assign ({}, this._props, value);
+		} else {
+			throw new Error ('Component props cannot be directly assigned. Use the `setProps` function instead.');
+		}
+	}
+
+	get state () {
+		return new Proxy (this._state, {
+			get: (target, key) => {
+				return target[key];
+			},
+			set: (target, key, value) => {
+				if (this._connected === false) {
+					return target[key] = value;
+				} else {
+					throw new Error ('Component state should be set using the `setState`.');
+				}
+
+			}
+		});
+	}
+
+	set state (value) {
+		if (this._connected === false) {
+			this._state = Object.assign ({}, this._state, value);
+		} else {
+			throw new Error ('Component state should be set using the `setState` function.');
+		}
 	}
 
 	// /**
@@ -289,39 +379,58 @@ class Component extends HTMLElement {
 	// }
 
 	setState (state) {
-		if (typeof state !== 'undefined') {
+		if (typeof state === 'object') {
 			const oldState = Object.assign ({}, this._state);
 
 			this._state = Object.assign ({}, this._state, state);
 
 			for (const key of Object.keys (state)) {
-				this.attributeChangedCallback (key, oldState[key], this._state[key], 'state');
+				this.updateCallback (key, oldState[key], this._state[key], 'state', oldState, this._state);
 			}
 		}
 	}
 
-	_setProps (props) {
+	setProps (props) {
 		if (typeof props === 'object') {
-			console.log ('props', props);
+			const oldProps = Object.assign ({}, this._props);
+
 			this._props = Object.assign ({}, this._props, props);
+
+			for (const key of Object.keys (props)) {
+				this.updateCallback (key, oldProps[key], this._props[key], 'props', oldProps, this._props);
+			}
+			this._setPropAttributes ();
 		}
 	}
 
-	willUpdate (origin, property, oldValue, newValue) {
+	_setPropAttributes () {
+		for (const key of Object.keys (this.props)) {
+			const value = this.props[key];
+
+			if (this.static._explicitPropTypes.indexOf (typeof value) > -1) {
+				this.setAttribute (key, this.props[key]);
+			}
+		}
+	}
+
+	willUpdate (origin, property, oldValue, newValue, oldObject, newObject) {
 		return Promise.resolve ();
 	}
 
-	update (origin, property, oldValue, newValue) {
-		console.log ('update');
+	update (origin, property, oldValue, newValue, oldObject, newObject) {
 		return Promise.resolve ();
 	}
 
-	didUpdate (origin, property, oldValue, newValue) {
+	didUpdate (origin, property, oldValue, newValue, oldObject, newObject) {
 		return Promise.resolve ();
 	}
 
-	onStateUpdate () {
-		return this.render ();
+	onStateUpdate (property, oldValue, newValue, oldObject, newObject) {
+		return Promise.resolve ();
+	}
+
+	onPropsUpdate (property, oldValue, newValue, oldObject, newObject) {
+		return Promise.resolve ();
 	}
 
 	willMount () {
@@ -359,36 +468,10 @@ class Component extends HTMLElement {
 	}
 
 	connectedCallback () {
-		this.state = new Proxy (this._state, {
-			get: (target, key) => {
-				return target[key];
-			},
-			set: (target, key, value) => {
-				throw 'Component state should be set using the `setState` function.';
-			}
-		});
+		this._connected = true;
+		this.dataset.component = this.static._id;
 
-		this.props = new Proxy (this, {
-			get: (target, key) => {
-				if (this.hasAttribute (key)) {
-					return this.getAttribute (key);
-				}
-				return null;
-			},
-			set: (target, key, value) => {
-				if (this.hasAttribute (key)) {
-					this.setAttribute (key, value);
-					return value;
-				}
-				return null;
-			}
-		});
-
-		this.dataset.component = this.constructor._id;
-
-		for (const key of Object.keys (this._props)) {
-			this.setAttribute (key, this._props[key]);
-		}
+		this._setPropAttributes ();
 
 		return this.willMount ().then (() => {
 			return this._render ().then (() => {
@@ -405,43 +488,28 @@ class Component extends HTMLElement {
 		});
 	}
 
-	attributeChangedCallback (property, oldValue, newValue, origin) {
-		if (typeof origin === 'undefined') {
-			origin = 'props';
-		}
-		console.log ('Change');
-
-		return this.willUpdate (origin, property, oldValue, newValue).then (() => {
-			return this.update (origin, property, oldValue, newValue).then (() => {
-				return this.didUpdate (origin, property, oldValue, newValue);
+	updateCallback (property, oldValue, newValue, origin = 'props', oldObject = {}, newObject = {}) {
+		return this.willUpdate (origin, property, oldValue, newValue, oldObject, newObject).then (() => {
+			return this.update (origin, property, oldValue, newValue, oldObject, newObject).then (() => {
+				let promise;
+				if (origin === 'state') {
+					promise = this.onStateUpdate (property, oldValue, newValue, oldObject, newObject);
+				} else {
+					promise = this.onPropsUpdate (property, oldValue, newValue, oldObject, newObject);
+				}
+				return promise.then (() => {
+					return this.didUpdate (origin, property, oldValue, newValue, oldObject, newObject);
+				});
 			});
-		}).catch (() => {
+		}).catch ((e) => {
+			console.error (e);
 			// Component should not update
 		});
 	}
+
+	attributeChangedCallback (property, oldValue, newValue) {
+
+	}
 }
-
-Component._registered = false;
-
-Component._priority = 0;
-
-Component._parent = null;
-
-Component._children = [];
-
-/**
- * Each component can define its initial HTML structure, which should be used on
- * the setup or rendering functions of the cycle, adding to the DOM.
-*/
-Component._html = '';
-
-/**
- * If needed, every component should declare its configuration as follows. This
- * configuration object should be used to store component-specific settings as well
- * as other objects/assets used by the component. If any specific object needs
- * recurrent access such as the declarations in the script.js file, providing
- * a static function for that specific object could be great.
- */
-Component._configuration = {};
 
 export default Component;

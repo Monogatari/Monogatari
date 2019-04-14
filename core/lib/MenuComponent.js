@@ -47,7 +47,7 @@ class MenuComponent extends Component {
 	}
 
 	render () {
-		return this.constructor.buttons ().map ((button) => this.createButton (button).outerHTML).join (' ');
+		return this.static.buttons ().map ((button) => this.createButton (button).outerHTML).join (' ');
 	}
 
 	createButton (button) {

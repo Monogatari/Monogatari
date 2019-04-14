@@ -475,6 +475,7 @@ class Monogatari {
 	static preference (key, value = null) {
 		if (value !== null) {
 			this._preferences[key] = value;
+			console.trace ();
 			this.Storage.update ('Settings', this._preferences);
 		} else {
 			if (typeof this._preferences[key] !== 'undefined') {
@@ -491,6 +492,7 @@ class Monogatari {
 			if (this.Storage.configuration ().name === '') {
 				this.setupStorage ();
 			}
+			console.trace ();
 			this.Storage.update ('Settings', this._preferences);
 		} else {
 			return this._preferences;
@@ -715,7 +717,7 @@ class Monogatari {
 	 * text of the element will be kept.
 	 */
 	static localize () {
-
+		this.trigger ('willLocalize');
 		this.element ().find ('[data-string]').each ((element) => {
 			const string_translation = this.string ($_(element).data ('string'));
 
@@ -725,6 +727,7 @@ class Monogatari {
 				$_(element).text (string_translation);
 			}
 		});
+		this.trigger ('didLocalize');
 	}
 
 
@@ -738,11 +741,7 @@ class Monogatari {
 		// electron or cordova since the assets are expected to be available
 		// locally.
 		if (this.setting ('Preload') && !Platform.electron () && !Platform.cordova () && location.protocol.indexOf ('file') < 0) {
-			const loadingScreen = this.component ('loading-screen');
-
-			loadingScreen.get (0).setState ({
-				open: true
-			});
+			this.trigger ('willPreloadAssets');
 
 			// Iterate over every asset category: music, videos, scenes etc.
 			for (const category of Object.keys (this.assets ())) {
@@ -818,7 +817,10 @@ class Monogatari {
 				}
 			}
 
-			return Promise.all (promises);
+			return Promise.all (promises).then (() => {
+				this.trigger ('didPreloadAssets');
+				return Promise.resolve ();
+			});
 		} else {
 			return Promise.resolve ();
 		}
@@ -971,6 +973,7 @@ class Monogatari {
 		document.body.style.cursor = 'wait';
 		this.global ('playing', true);
 
+		this.trigger ('willLoadGame');
 		this.resetGame ().then (() => {
 			this.element ().find ('[data-screen]').hide();
 			this.element ().find ('[data-screen="game"]').show();
@@ -1064,6 +1067,7 @@ class Monogatari {
 					$_('[data-screen="game"]').show ();
 					this.run (this.label ()[this.state ('step')]);
 					document.body.style.cursor = 'auto';
+					this.trigger ('didLoadGame');
 				});
 			});
 		});
@@ -1326,7 +1330,7 @@ class Monogatari {
 		} else {
 			// Play the main menu song
 			this.playAmbient ();
-			$_('[data-screen="main"]').show ('flex');
+			//$_('[data-screen="main"]').show ('flex');
 		}
 	}
 
@@ -1711,86 +1715,85 @@ class Monogatari {
 			this.Storage.set ('Settings', this._preferences);
 		});
 
-		// // Register service worker. The service worker will save all requests into
-		// // the cache so the game loads more quickly and we can play offline. The
-		// // service worker will only be used if it was allowed by the settings and
-		// // if we are not running in a local platform such as electron or cordova
-		// // where the assets are expected to be available locally and thus don't
-		// // require being cached.
-		// if (this.setting ('ServiceWorkers')) {
-		// 	if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
-		// 		// TODO: There's a place in hell for this quick fix, the splitting
-		// 		// of the sw file is just preventing parcel from trying to bundle it
-		// 		// when building the core libraries.
-		// 		navigator.serviceWorker.register ('./../service-worker' + '.js').then ((registration) => {
+		// Register service worker. The service worker will save all requests into
+		// the cache so the game loads more quickly and we can play offline. The
+		// service worker will only be used if it was allowed by the settings and
+		// if we are not running in a local platform such as electron or cordova
+		// where the assets are expected to be available locally and thus don't
+		// require being cached.
+		if (this.setting ('ServiceWorkers')) {
+			if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
+				// TODO: There's a place in hell for this quick fix, the splitting
+				// of the sw file is just preventing parcel from trying to bundle it
+				// when building the core libraries.
+				navigator.serviceWorker.register ('./../service-worker' + '.js').then ((registration) => {
 
-		// 			// Check if an update to the service worker was found
-		// 			registration.onupdatefound = () => {
-		// 				const worker = registration.installing;
-		// 				worker.onstatechange = () => {
-		// 					// Once the updated service worker has been installed,
-		// 					// show a notice to the players so that they reload the
-		// 					// page and get the latest content.
-		// 					if (worker.state === 'installed') {
-		// 						if (navigator.serviceWorker.controller) {
-		// 							const element = `
-		// 								<div data-ui="broadcast">
-		// 									<p data-string="NewContent">${this.string ('NewContent')}.</p>
-		// 								</div>
-		// 							`;
-		// 							$_(`${selector} [data-screen='main']`).prepend (element);
-		// 							$_(`${selector} [data-screen="game"]`).prepend (element);
-		// 							$_(`${selector} [data-ui="broadcast"]`).click (() => {
-		// 								$_(`${selector} [data-ui="broadcast"]`).remove ();
-		// 							});
-		// 						}
-		// 					}
-		// 				};
-		// 			};
-		// 		});
-		// 	} else {
-		// 		console.warn ('Service Workers are not available in this browser or have been disabled in the engine configuration. Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/');
-		// 	}
-		// }
+					// Check if an update to the service worker was found
+					registration.onupdatefound = () => {
+						const worker = registration.installing;
+						worker.onstatechange = () => {
+							// Once the updated service worker has been installed,
+							// show a notice to the players so that they reload the
+							// page and get the latest content.
+							if (worker.state === 'installed') {
+								if (navigator.serviceWorker.controller) {
+									const element = `
+										<div data-ui="broadcast">
+											<p data-string="NewContent">${this.string ('NewContent')}.</p>
+										</div>
+									`;
+									this.element ().prepend (element);
+									$_(`${selector} [data-ui="broadcast"]`).click (() => {
+										$_(`${selector} [data-ui="broadcast"]`).remove ();
+									});
+								}
+							}
+						};
+					};
+				});
+			} else {
+				console.warn ('Service Workers are not available in this browser or have been disabled in the engine configuration. Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/');
+			}
+		}
 
-		// // Save the structure of the storage variable. The structure is saved as
-		// // a string so that we have a reference to how the storage was originally
-		// // and we can reset the storage when the game ends.
-		// this.global ('storageStructure', JSON.stringify(this.storage ()));
+		// Save the structure of the storage variable. The structure is saved as
+		// a string so that we have a reference to how the storage was originally
+		// and we can reset the storage when the game ends.
+		this.global ('storageStructure', JSON.stringify(this.storage ()));
 
-		// // The open-screen action does exactly what it says, it takes the
-		// // data-screen property of the object it's in and then opens that
-		// // menu, meaning it hides everything else and shows that one.
-		// this.registerListener ('open-screen', {
-		// 	callback: (element) => {
-		// 		this.element ().find ('[data-screen]').hide();
+		// The open-screen action does exactly what it says, it takes the
+		// data-screen property of the object it's in and then opens that
+		// menu, meaning it hides everything else and shows that one.
+		this.registerListener ('open-screen', {
+			callback: (element) => {
+				this.element ().find ('[data-screen]').each ((screen) => {
+					screen.setState ({ open: false });
+				});
+				this.element ().find (`[data-screen="${element.data('open')}"]`).get (0).setState ({ open: true });
+			}
+		});
 
-		// 		if (element.data ('open') == 'save') {
-		// 			this.element ().find ('[data-screen="save"] [data-input="slotName"]').value (moment ().format ('MMMM Do YYYY, h:mm:ss a'));
-		// 		}
-		// 		this.element ().find (`[data-screen="${element.data('open')}"]`).show ('flex');
-		// 	}
-		// });
+		// The start action starts the game so it shows the game screen
+		// and the game starts
+		this.registerListener ('start', {
+			callback: () => {
+				//this.stopAmbient();
+				this.global ('playing', true);
 
-		// // The start action starts the game so it shows the game screen
-		// // and the game starts
-		// this.registerListener ('start', {
-		// 	callback: () => {
-		// 		this.stopAmbient();
-		// 		this.global ('playing', true);
+				this.onStart ().then (() => {
+					this.element ().find ('[data-screen]').each ((screen) => {
+						screen.setState ({ open: false });
+					});
 
-		// 		this.onStart ().then (() => {
-		// 			this.element ().find ('[data-screen]').hide ();
-		// 			$_('[data-ui="quick-menu"]').show ();
-		// 			this.element ().find ('[data-screen="game"]').show ();
+					this.element ().find ('[data-screen="game"]').get (0).setState ({ open: true });
 
-		// 			// Check if the initial label exists
-		// 			if (this.label ()) {
-		// 				this.run (this.label ()[this.state ('step')]);
-		// 			}
-		// 		});
-		// 	}
-		// });
+					// Check if the initial label exists
+					if (this.label ()) {
+						this.run (this.label ()[this.state ('step')]);
+					}
+				});
+			}
+		});
 
 		// // The close action removes the active class from the element it
 		// // points to.
@@ -1957,34 +1960,37 @@ class Monogatari {
 		// Add event listener for back buttons. If the player is playing, the back
 		// button will return to the game, if its not playing, then it'll return
 		// to the main menu.
-		$_(`${selector}`).on ('click', '[data-screen] [data-action="back"]:not([data-screen="game"]), [data-screen] [data-action="back"]:not([data-screen="game"]) *', (event) => {
+		this.element ().on ('click', '[data-screen]:not([data-screen="game"]) [data-action="back"]', (event) => {
 
 			if (!$_(`${selector} [data-screen="game"]`).isVisible ()) {
 				this.debug ().debug ('Registered Back Listener on Non-Game Screen');
 				event.stopImmediatePropagation();
 				event.stopPropagation();
 				event.preventDefault();
-				$_(`${selector} [data-screen]`).hide ();
+				this.element ().find ('[data-screen]').each ((screen) => {
+					screen.setState ({ open: false });
+				});
+
 				if (this.global ('playing')) {
-					$_(`${selector} [data-screen="game"]`).show ();
+					this.element ().find ('[data-screen="game"]').get (0).setState ({ open: true });
 				} else {
-					$_(`${selector} [data-screen="main"]`).show ('flex');
+					this.element ().find ('[data-screen="main"]').get (0).setState ({ open: true });
 				}
 			}
 
 		});
 
 		// Add listeners for the data-action properties
-		$_(`${selector}`).on ('click', '[data-action], [data-action] *', function (event) {
-			let element = $_(this);
-
-			if (element.matches ('path')) {
-				element = element.closest ('[data-action]');
-			}
+		this.element().on ('click', '[data-action]', function (event) {
+			const element = $_(this);
 
 			const action = element.data ('action');
 
-			Monogatari.runListener (action, element, event);
+			if (action) {
+				Monogatari.runListener (action, element, event);
+			}
+
+			return false;
 		});
 
 		this.keyboardShortcut (['right', 'space'], () => {
@@ -2098,6 +2104,10 @@ class Monogatari {
 		return $_('visual-novel');
 	}
 
+	static on (event, callback) {
+		return this.element ().on (event, callback);
+	}
+
 	static parentElement () {
 		return $_(this._selector);
 	}
@@ -2109,6 +2119,8 @@ class Monogatari {
 
 	static init (selector = '#monogatari') {
 
+		this.trigger ('willInit');
+
 		this._selector = selector;
 
 		if (this.Storage.configuration ().name === '') {
@@ -2116,11 +2128,12 @@ class Monogatari {
 		}
 
 		FancyError.init ();
-
+		this.trigger ('willSetup');
 		this.setup (selector).then (() => {
-			this.trigger ('setup');
+			this.trigger ('didSetup');
+			this.trigger ('willBind');
 			this.bind (selector).then (() => {
-				this.trigger ('bind');
+				this.trigger ('didBind');
 				// Set the initial language translations
 				this.localize ();
 
@@ -2141,9 +2154,7 @@ class Monogatari {
 
 				// Preload all the game assets
 				this.preload ().then(() => {
-					$_('loading-screen').fadeOut (10400, () => {
-						//$_('loading-screen').attribute ('open', false);
-					});
+
 				}).catch ((e) => {
 					console.error (e);
 				}).finally (() => {
@@ -2161,8 +2172,9 @@ class Monogatari {
 				}
 
 				for (const action of this.actions ()) {
-					//action.init (selector);
+					action.init (selector);
 				}
+				this.trigger ('didInit');
 			});
 		});
 	}

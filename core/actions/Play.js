@@ -5,22 +5,12 @@ import { $_, Text } from '@aegis-framework/artemis';
 export class Play extends Action {
 
 	static canProceed () {
-		if (Monogatari.element ().find (`[data-component="video"]`).isVisible ()) {
-			return Promise.reject ();
-		}
-
 		Play.shutUp ();
-
 		return Promise.resolve ();
 	}
 
 	static canRevert () {
-		if (Monogatari.element ().find (`[data-component="video"]`).isVisible ()) {
-			Play.stopVideo ();
-		}
-
 		Play.shutUp ();
-
 		return Promise.resolve ();
 	}
 

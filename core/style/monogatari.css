@@ -174,6 +174,10 @@ video {
 	@include background-image;
 }
 
+[data-screen].active {
+	display: flex;
+}
+
 
 
 /**
@@ -214,72 +218,6 @@ video {
 		padding-left: 1rem;
 	}
 }
-
-/**
- * ===========================
- * Game Screen
- * ===========================
- */
-[data-component='game-screen'] {
-	@include full-size;
-	max-height: 100%;
-	max-width: 100%;
-	overflow: hidden;
-	overflow-y: hidden;
-	position: relative;
-	background-color: #000000;
-
-	img {
-		position: absolute;
-		max-height: 90%;
-	}
-
-	[data-image] {
-		top: 0;
-		bottom: 0;
-		margin: auto;
-		max-width: 100%;
-		max-height: 100%;
-	}
-
-	[data-character] {
-		bottom: 0;
-		position: absolute;
-		max-width: 100%;
-		max-height: 80vh;
-	}
-
-	[data-sprite] {
-		margin: 0 auto;
-		left: 0;
-		right: 0;
-
-		&.right {
-			left: initial;
-			right: 0;
-		}
-
-		&.left {
-			left: 0;
-			right: initial;
-		}
-	}
-
-	[data-canvas] {
-		&.character {
-			@extend [data-screen='game'] [data-character];
-		}
-
-		&.immersive {
-			position: absolute;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
-		}
-	}
-}
-
 /**
  * ===========================
  * Data Components Styling
@@ -409,51 +347,6 @@ video {
 	position: initial !important;
 }
 
-[data-ui='text'] {
-	background-color: var(--main-color);
-	min-height: 20%;
-	max-height: 25%;
-	overflow-y: auto;
-	width: 100%;
-	z-index: 10;
-	text-align: left;
-	position: absolute;
-	bottom: 0;
-	color: rgb(255, 255, 255);
-
-	&::after {
-		content: ' ';
-		width: 100%;
-		height: 0;
-		display: block;
-		background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.22) 85%);
-		position: sticky;
-		bottom: 0;
-		transition: all ease 0.5s;
-	}
-
-	&.unread::after {
-		height: 2rem;
-	}
-
-	&.nvl {
-		max-height: 100%;
-		height: 100%;
-	}
-
-	p {
-		display: block;
-		width: 100%;
-		padding: 1rem;
-		margin: 0;
-	}
-
-	.fa {
-		width: auto;
-		display: inline-block;
-	}
-}
-
 [data-spoke='narrator'] p {
 	padding-left: 0;
 }
@@ -470,102 +363,7 @@ video {
 	margin: 0;
 }
 
-[data-component='quick-menu'] {
-	top: 0;
-	background-color: transparent;
-	width: 100%;
-	z-index: 3;
-	position: absolute;
-	height: 2.5rem;
-	max-height: 2.5rem;
-
-	&.transparent {
-		background-color: transparent;
-
-		button:hover {
-			color: var(--main-color);
-			cursor: pointer;
-		}
-	}
-
-	button {
-		display: inline-block;
-		width: auto;
-		font-size: 1rem;
-		margin: 0 0.25rem;
-		background: transparent;
-		color: rgba(125, 125, 125, 0.5);
-
-		&:hover {
-			color: rgba(125, 125, 125, 0.5);
-			background: transparent;
-			cursor: pointer;
-		}
-
-		& > [data-string] {
-			display: none;
-		}
-
-		& > .fas {
-			display: inline-block;
-			font-size: 1.5rem;
-		}
-	}
-}
-
 [data-ui='slots'] {
-	[data-slot] {
-		width: 20rem;
-		height: auto;
-		background-color: var(--main-color);
-		border-radius: 3px;
-		vertical-align: middle;
-		cursor: pointer;
-		position: relative;
-		min-height: 10rem;
-		font-size: 1rem;
-		display: flex;
-		flex-flow: column;
-		justify-content: center;
-		color: #fff;
-
-		.badge {
-			position: absolute;
-			top: 0;
-			left: 0;
-			padding: 0.5rem;
-			font-size: 0.7rem;
-			background: inherit;
-			color: inherit;
-			font-style: italic;
-			font-weight: bold;
-		}
-
-		[data-delete] {
-			top: -1rem;
-			border-radius: 100%;
-			width: 2rem;
-			height: 2rem;
-			position: absolute;
-			right: -1rem;
-			margin: 0;
-			font-size: 0.5rem;
-			padding: 0.5rem;
-			background-color: var(--main-color);
-			color: #f7f7f7;
-		}
-
-		img {
-			width: 100%;
-		}
-
-		[data-content="background"] {
-			width: 100%;
-			height: 10rem;
-			border: 1px solid rgba(0, 0, 0, 0.2);
-			@include background-image;
-		}
-	}
 
 	figcaption {
 		padding: 1rem;
@@ -662,11 +460,7 @@ video {
  * ===========================
 **/
 
-[data-screen='settings'] input,
-[data-screen='settings'] select {
-	margin: 2rem;
-	background-color: transparent;
-}
+
 
 [data-screen='save'] input {
 	background-color: #fff;
@@ -751,37 +545,6 @@ video {
 		width: 70%;
 	}
 
-
-	[data-ui='quick-menu'] {
-		bottom: 0;
-		top: auto;
-		background-color: var(--main-color);
-
-		&.transparent {
-			color: var(--main-color);
-		}
-
-		& button {
-			color: #f7f7f7;
-
-			&:hover {
-				color: rgba(255, 255, 255, 0.8);
-				background: transparent;
-			}
-		}
-
-		& > button {
-
-			& > [data-string] {
-				display: inline-block;
-			}
-
-			& > .fas {
-				display: none;
-			}
-		}
-	}
-
 	[data-ui='load-progress'] {
 		width: 80%;
 	}
@@ -815,11 +578,6 @@ video {
 		width: 8rem;
 		height: 2.5rem;
 		font-size: 1rem;
-	}
-
-	[data-ui='quick-menu'] > button {
-		width: auto;
-		height: auto;
 	}
 
 	.modal > * {

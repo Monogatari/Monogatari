@@ -1,6 +1,14 @@
 @import './alert-dialog/index.css';
+@import './game-screen/index.css';
 @import './help-screen/index.css';
+@import './load-screen/index.css';
 @import './loading-screen/index.css';
 @import './main-menu/index.css';
 @import './main-screen/index.css';
+@import './quick-menu/index.css';
+@import './save-screen/index.css';
+@import './save-slot/index.css';
+@import './settings-screen/index.css';
+@import './slot-list/index.css';
+@import './text-box/index.css';
 @import './visual-novel/index.css';

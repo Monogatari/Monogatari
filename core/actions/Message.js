@@ -95,7 +95,7 @@ export class Message extends Action {
 
 	apply () {
 
-		Monogatari.element ().find (`[data-screen="game"]`).append (
+		Monogatari.element ().find ('[data-screen="game"]').append (
 			Monogatari.replaceVariables(Monogatari.component ('mesage-dialog').render (this.message.title, this.message.subtitle, this.message.body))
 		);
 

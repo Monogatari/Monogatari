@@ -4,5 +4,5 @@
 			"targets": "> 5%"
 		}]
 	],
-	"plugins": ["@babel/plugin-syntax-object-rest-spread"]
+	"plugins": ["@babel/plugin-syntax-object-rest-spread", "@babel/plugin-proposal-class-properties"]
 }

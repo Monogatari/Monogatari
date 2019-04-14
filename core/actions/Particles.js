@@ -1,22 +1,9 @@
 import { Action } from './../lib/Action';
 import { Monogatari } from '../monogatari';
-import { $_ } from '@aegis-framework/artemis';
 
 /* global particlesJS, pJSDom */
 
 export class Particles extends Action {
-
-	static configuration (object = null) {
-		if (object !== null) {
-			if (typeof object === 'string') {
-				return Particles._configuration[object];
-			} else {
-				Particles._configuration = Object.assign ({}, Particles._configuration, object);
-			}
-		} else {
-			return Particles._configuration;
-		}
-	}
 
 	static stop () {
 		try {
@@ -40,7 +27,7 @@ export class Particles extends Action {
 		Monogatari.state ({
 			particles: ''
 		});
-		Monogatari.element ().find (`#particles-js`).html ('');
+		Monogatari.element ().find ('#particles-js').html ('');
 	}
 
 

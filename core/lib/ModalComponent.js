@@ -5,15 +5,13 @@ class ModalComponent extends ShadowComponent {
 	constructor () {
 		super();
 
-		this._state = {
+		this.state = {
 			open: false
 		};
 	}
 
-	update (origin, property, oldValue, newValue) {
-		super.update (origin, property, oldValue, newValue);
-
-		if (origin === 'state' && property === 'open') {
+	onStateUpdate (property, oldValue, newValue) {
+		if (property === 'open') {
 			this.classList.toggle ('modal--active');
 		}
 	}

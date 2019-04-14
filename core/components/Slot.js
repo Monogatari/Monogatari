@@ -25,6 +25,7 @@ class Slot extends Component {
 		});
 
 		$_(`${selector}`).on ('click', '[data-component="slot"] [data-delete], [data-component="slot"] [data-delete] *', function (event) {
+			Monogatari.debug ().debug ('Registered Click on Slot Delete Button');
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();
 			event.preventDefault ();
@@ -77,14 +78,6 @@ Slot._html = (slot, name, image, data) => {
 		}
 	}
 
-	return `
-		<figure data-component="slot" data-slot='${slot}' class='row__column row_column--6 row__column--tablet--4 row__column--desktop--3 row__column--desktop-large--2 animated flipInX'>
-			<button class='fas fa-times' data-delete='${slot}'></button>
-			<small class='badge'>${name}</small>
-			<div data-content="background" style="${image ? 'background-image' : 'background'}: ${background}"></div>
-			<figcaption>${moment (data.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
-		</figure>
-	`;
 };
 
 Monogatari.registerComponent (Slot);

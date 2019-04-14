@@ -1,0 +1,96 @@
+/**
+ * ===========================
+ * Quick Menu Component
+ * ===========================
+ */
+
+quick-menu {
+	top: 0;
+	background-color: transparent;
+	width: 100%;
+	z-index: 3;
+	position: absolute;
+	height: 2.5rem;
+	max-height: 2.5rem;
+
+	&.transparent {
+		background-color: transparent;
+
+		button:hover {
+			color: var(--main-color);
+			cursor: pointer;
+		}
+	}
+
+	button {
+		display: inline-block;
+		width: auto;
+		font-size: 1rem;
+		margin: 0 0.25rem;
+		background: transparent;
+		color: rgba(125, 125, 125, 0.5);
+
+		&:hover {
+			color: rgba(125, 125, 125, 0.5);
+			background: transparent;
+			cursor: pointer;
+		}
+
+		& > [data-string] {
+			display: none;
+		}
+
+		& > .fas {
+			display: inline-block;
+			font-size: 1.5rem;
+		}
+	}
+}
+
+/** Default Style. Don't change. (320px) **/
+@media screen and  (max-width: 20em) {}
+
+/** Extra Small Devices, Phones (480px) **/
+@media screen and (min-width : 30em) {}
+
+/** Medium Screens, Tablets (601px) **/
+@media screen and (min-width: 37.56255em) {
+
+	quick-menu {
+		bottom: 0;
+		top: auto;
+		background-color: var(--main-color);
+
+		&.transparent {
+			color: var(--main-color);
+		}
+
+		& button {
+			color: #f7f7f7;
+
+			&:hover {
+				color: rgba(255, 255, 255, 0.8);
+				background: transparent;
+			}
+		}
+
+		& > button {
+
+			& > [data-string] {
+				display: inline-block;
+			}
+
+			& > .fas {
+				display: none;
+			}
+		}
+	}
+}
+
+/** Medium Devices, Desktops (768px)**/
+@media screen and (min-width: 48em) {
+	quick-menu > button {
+		width: auto;
+		height: auto;
+	}
+}

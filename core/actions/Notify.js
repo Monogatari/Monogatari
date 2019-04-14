@@ -4,18 +4,6 @@ import { FancyError } from './../lib/FancyError';
 
 export class Notify extends Action {
 
-	static configuration (object = null) {
-		if (object !== null) {
-			if (typeof object === 'string') {
-				return Notify._configuration[object];
-			} else {
-				Notify._configuration = Object.assign ({}, Notify._configuration, object);
-			}
-		} else {
-			return Notify._configuration;
-		}
-	}
-
 	static matchString ([ show, type ]) {
 		return show === 'show' && type === 'notification';
 	}

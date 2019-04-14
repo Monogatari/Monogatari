@@ -5,26 +5,25 @@ class ScreenComponent extends Component {
 	constructor () {
 		super();
 
-		this._state = {
+		this.state = {
 			open: false
 		};
 	}
 
-	connectedCallback () {
-		super.connectedCallback ();
+	willMount () {
 		this.dataset.screen = this.constructor._id.replace ('-screen', '');
+		return Promise.resolve ();
 	}
 
-	update (origin, property, oldValue, newValue) {
-		super.update (origin, property, oldValue, newValue);
-		console.log (origin, property);
-		if (origin === 'state' && property === 'open') {
-			if (newValue) {
-				this.style.display = 'flex';
+	onStateUpdate (property, oldValue, newValue) {
+		if (property === 'open') {
+			if (newValue === true) {
+				this.classList.add ('active');
 			} else {
-				this.style.display = 'none';
+				this.classList.remove ('active');
 			}
 		}
+		return Promise.resolve ();
 	}
 
 	render () {

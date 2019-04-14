@@ -6,13 +6,25 @@ class LoadingScreen extends ScreenComponent {
 	constructor () {
 		super ();
 
-		this._state = {
+		this.state = {
 			progress: 0
 		};
 	}
 
 	didMount () {
-		this.constructor.engine.element ().on ('asset-loaded', (event) => {
+		this.engine.on ('willPreloadAssets', () => {
+			this.setState ({
+				open: true
+			});
+		});
+
+		this.engine.on ('didPreloadAssets', () => {
+			this.setState ({
+				open: false
+			});
+		});
+
+		this.engine.on ('asset-loaded', (event) => {
 			const progress = this.state.progress;
 			this.setState ({
 				progress: progress + 1
@@ -22,11 +34,13 @@ class LoadingScreen extends ScreenComponent {
 		return Promise.resolve ();
 	}
 
-	update (origin, property, oldValue, newValue) {
+	onStateUpdate (property, oldValue, newValue) {
+		super.onStateUpdate (property, oldValue, newValue);
 		if (property === 'progress') {
 			this.content ('progress').attribute ('max', newValue);
 			this.content ('progress').value (newValue);
 		}
+		return Promise.resolve ();
 	}
 
 	render () {
