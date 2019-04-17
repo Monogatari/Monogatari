@@ -44,6 +44,7 @@ class MenuComponent extends Component {
 		for (const element of elements) {
 			element.innerHTML = element.render ();
 		}
+		return Promise.resolve ();
 	}
 
 	render () {

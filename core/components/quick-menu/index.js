@@ -3,6 +3,13 @@ import { Monogatari } from './../../monogatari';
 
 class QuickMenu extends MenuComponent {
 
+	static init () {
+		// Remove the Skip text button if it has been disabled on the game settings
+		if (!(this.engine.setting ('Skip') > 0)) {
+			this.removeButton ('Skip');
+		}
+	}
+
 	createButton (button) {
 		const element = super.createButton (button);
 		element.innerHTML = `

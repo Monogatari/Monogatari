@@ -31,7 +31,7 @@ class Component extends HTMLElement {
 
 	static _priority = 0;
 
-	static _children = [];
+	//static _children = [];
 
 	static _explicitPropTypes = ['boolean', 'string', 'number'];
 
@@ -79,8 +79,12 @@ class Component extends HTMLElement {
 		}
 	}
 
-	static instances () {
+	static all () {
 		return $_(this._id);
+	}
+
+	static get (id) {
+		return $_(`${this._id} [data-instance="${id}"]`);
 	}
 
 	/**
@@ -117,9 +121,9 @@ class Component extends HTMLElement {
 	 * @return {Promise} - Result of the setup operation
 	 */
 	static setup () {
-		for (const child of this._children) {
-			child.setup ();
-		}
+		// for (const child of this._children) {
+		// 	child.setup ();
+		// }
 		return Promise.resolve ();
 	}
 
@@ -133,9 +137,9 @@ class Component extends HTMLElement {
 	 * @return {Promise} - Result of the binding operation
 	 */
 	static bind () {
-		for (const child of this._children) {
-			child.bind ();
-		}
+		// for (const child of this._children) {
+		// 	child.bind ();
+		// }
 		return Promise.resolve ();
 	}
 
@@ -148,9 +152,9 @@ class Component extends HTMLElement {
 	 * @return {Promise} - Result of the initialization operation
 	 */
 	static init () {
-		for (const child of this._children) {
-			child.init ();
-		}
+		// for (const child of this._children) {
+		// 	child.init ();
+		// }
 		return Promise.resolve ();
 	}
 
@@ -202,12 +206,27 @@ class Component extends HTMLElement {
 	 * @returns {DOM} - Artemis DOM instance
 	 */
 	element () {
-		return $_(this.constructor._id);
+		return $_(this);
+	}
+
+	remove () {
+		this.parentNode.removeChild (this);
 	}
 
 	instanceSelector () {
 		return $_(`${this.constructor._id}[data-${this.constructor.name.toLowerCase ()}`);
 	}
+
+	static instances (callback = null) {
+		if (typeof callback === 'function') {
+			return $_(this._id).each (callback);
+		}
+		return $_(this._id);
+	}
+
+	// static instance (id) {
+
+	// }
 
 	instance (id) {
 		return $_(`${this.constructor._id}[data-${this.constructor.name.toLowerCase ()}="${id}"`);
@@ -223,28 +242,6 @@ class Component extends HTMLElement {
 	 */
 	content (name) {
 		return this.element ().find (`[data-content="${name}"]`);
-	}
-
-	/**
-	 * @static child - Attempts to find a child component of this one by its id
-	 *
-	 * @param {string} id - ID of the component to find
-	 *
-	 * @returns {DOM} - An Artemis DOM instance with the found elements
-	 */
-	child (id) {
-		return this.element ().find (id);
-	}
-
-	addChild (component) {
-		component.parent (this);
-
-		const index = this._children.findIndex (c => c._priority > component._priority);
-		this._children = this._children.splice (index, 0, component);
-	}
-
-	removeChild (id) {
-		this._children = this._children.filter (c => c._id !== id);
 	}
 
 	parent (component) {
@@ -278,6 +275,32 @@ class Component extends HTMLElement {
 		this._props = {};
 
 		this._connected = false;
+	}
+
+	/**
+	 * width - Determines the real (computed) width of the element
+	 *
+	 * @return {int} - Computed Width of the element on pixels
+	 */
+	get width () {
+		return parseInt (getComputedStyle(this).width.replace ('px', ''));
+	}
+
+	set width (value) {
+		this.style.width = value;
+	}
+
+	/**
+	 * height - Determines the real (computed) height of the element
+	 *
+	 * @return {int} - Computed height of the element on pixels
+	 */
+	get height () {
+		return parseInt (getComputedStyle(this).height.replace ('px', ''));
+	}
+
+	set height (value) {
+		this.style.height = value;
 	}
 
 	get engine () {

@@ -15,12 +15,13 @@ class AlertDialog extends Component {
 		};
 	}
 
-	update (origin, property, oldValue, newValue) {
-		if (origin === 'props' && property === 'active') {
+	onPropsUpdate (property, oldValue, newValue) {
+		if (property === 'active') {
 			if (newValue === true) {
 				this.classList.toggle ('modal--active');
 			}
 		}
+		return Promise.resolve ();
 	}
 
 	willMount () {

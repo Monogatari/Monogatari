@@ -14,6 +14,7 @@ class ModalComponent extends ShadowComponent {
 		if (property === 'open') {
 			this.classList.toggle ('modal--active');
 		}
+		return Promise.resolve ();
 	}
 
 	render () {

@@ -1,4 +1,5 @@
 @import './alert-dialog/index.css';
+@import './dialog-log/index.css';
 @import './game-screen/index.css';
 @import './help-screen/index.css';
 @import './load-screen/index.css';
@@ -11,4 +12,5 @@
 @import './settings-screen/index.css';
 @import './slot-list/index.css';
 @import './text-box/index.css';
+@import './text-input/index.css';
 @import './visual-novel/index.css';

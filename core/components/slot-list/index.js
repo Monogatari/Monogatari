@@ -12,6 +12,7 @@ class SlotList extends Component {
 	}
 
 	willMount () {
+		this.classList.add ('row', 'row--spaced');
 		return this.engine.Storage.keys ().then ((keys) => {
 			const savedData = keys.filter ((key) => {
 				return key.indexOf (this.props.label) === 0;
@@ -42,6 +43,7 @@ class SlotList extends Component {
 		// 		Monogatari.loadFromSlot ($_(this).closest ('[data-slot]').data('slot'));
 		// 	}
 		// });
+		return Promise.resolve ();
 	}
 
 	render () {

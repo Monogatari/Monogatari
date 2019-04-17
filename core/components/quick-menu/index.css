@@ -12,6 +12,7 @@ quick-menu {
 	position: absolute;
 	height: 2.5rem;
 	max-height: 2.5rem;
+	justify-content: flex-end;
 
 	&.transparent {
 		background-color: transparent;
@@ -46,12 +47,6 @@ quick-menu {
 		}
 	}
 }
-
-/** Default Style. Don't change. (320px) **/
-@media screen and  (max-width: 20em) {}
-
-/** Extra Small Devices, Phones (480px) **/
-@media screen and (min-width : 30em) {}
 
 /** Medium Screens, Tablets (601px) **/
 @media screen and (min-width: 37.56255em) {

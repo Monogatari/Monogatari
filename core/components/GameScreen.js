@@ -41,7 +41,7 @@ class GameScreen extends Component {
 
 	static bind (selector) {
 		$_(`${selector}`).on ('click', '[data-screen="game"] *:not([data-choice])', function () {
-			Monogatari.debug ().debug ('Next Statement Listener');
+			Monogatari.debug.debug ('Next Statement Listener');
 			Monogatari.canProceed ().then (() => {
 				Monogatari.next ();
 			}).catch (() => {

@@ -24,7 +24,7 @@ class SaveSlot extends Component {
 		});
 
 		$_(`${selector}`).on ('click', '[data-component="slot"] [data-delete], [data-component="slot"] [data-delete] *', function (event) {
-			Monogatari.debug ().debug ('Registered Click on Slot Delete Button');
+			Monogatari.debug.debug ('Registered Click on Slot Delete Button');
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();
 			event.preventDefault ();
@@ -74,6 +74,12 @@ class SaveSlot extends Component {
 
 		return this.engine.Storage.get (this.slot).then ((data) => {
 			this.data = data;
+
+			if (typeof data.Engine !== 'undefined') {
+				data.name = data.Name;
+				data.date = data.Date;
+				data.image = data.Engine.Scene;
+			}
 
 			this.setProps ({
 				name: data.name,

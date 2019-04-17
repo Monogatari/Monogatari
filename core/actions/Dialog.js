@@ -15,12 +15,12 @@ export class Dialog extends Action {
 			// Get the element it was typing to
 			const element = $_(Monogatari.global ('textObject').el).data ('ui');
 
-			if (element !== 'centered' && !$_('[data-ui="text"]').hasClass ('nvl')) {
+			if (element !== 'centered' && !$_('text-box').hasClass ('nvl')) {
 				Monogatari.global ('textObject').destroy ();
-				Monogatari.element ().find (`[data-ui="say"]`).html (str);
+				Monogatari.element ().find ('[data-ui="say"]').html (str);
 				Monogatari.global ('finishedTyping', true);
 				return Promise.reject ('TypeWriter effect has not finished. Skipping it.');
-			} else if (element !== 'centered' && $_('[data-ui="text"]').hasClass ('nvl')) {
+			} else if (element !== 'centered' && $_('text-box').hasClass ('nvl')) {
 				const last = $_('[data-ui="say"] [data-spoke] p').last ().get (0);
 				Monogatari.global ('textObject').destroy ();
 				$_(last).html (str);
@@ -35,25 +35,9 @@ export class Dialog extends Action {
 		const dialogLog = Monogatari.component ('dialog-log');
 
 		if (typeof dialogLog !== 'undefined') {
-			dialogLog.pop ();
+			dialogLog.instances (instance => instance.pop ());
 		}
 		return Promise.resolve ();
-	}
-
-	/**
-	 * @static checkUnread - This function is used to add the unread class to the
-	 * text box if new contents (dialogs) were added to it causing it to overflow
-	 * but are not visible on screen right now so the player knows there is more
-	 * and scrolls the element.
-	 */
-	static checkUnread () {
-		const height = Monogatari.element ().find (`[data-ui="text"]`).get (0).clientHeight;
-		const scrollHeight = Monogatari.element ().find (`[data-ui="text"]`).get (0).scrollHeight;
-		if (height < scrollHeight) {
-			Monogatari.element ().find (`[data-ui="text"]`).addClass ('unread');
-		} else {
-			Monogatari.element ().find (`[data-ui="text"]`).removeClass ('unread');
-		}
 	}
 
 	static setup () {
@@ -97,8 +81,8 @@ export class Dialog extends Action {
 
 		// Detect scroll on the text element to remove the unread class used when
 		// there's text not being shown in NVL mode.
-		$_(`${selector} [data-ui="text"]`).on ('scroll', () => {
-			Monogatari.element ().find (`[data-ui="text"]`).removeClass ('unread');
+		$_(`${selector} text-box`).on ('scroll', () => {
+			Monogatari.element ().find ('text-box').removeClass ('unread');
 		});
 		return Promise.resolve ();
 	}
@@ -122,14 +106,14 @@ export class Dialog extends Action {
 			Monogatari.global ('textObject').destroy ();
 		}
 
-		Monogatari.element ().find (`[data-ui="text"]`).removeClass ('nvl');
+		Monogatari.element ().find ('text-box').removeClass ('nvl');
 
-		Monogatari.element ().find (`[data-ui="text"]`).data ('speaking', '');
+		Monogatari.element ().find ('text-box').data ('speaking', '');
 
-		Monogatari.element ().find (`[data-ui="who"]`).style ('color', '');
+		Monogatari.element ().find ('[data-ui="who"]').style ('color', '');
 
-		Monogatari.element ().find (`[data-ui="who"]`).html ('');
-		Monogatari.element ().find (`[data-ui="say"]`).html ('');
+		Monogatari.element ().find ('[data-ui="who"]').html ('');
+		Monogatari.element ().find ('[data-ui="say"]').html ('');
 		return Promise.resolve ();
 	}
 
@@ -182,21 +166,21 @@ export class Dialog extends Action {
 	}
 
 	willApply () {
-		Monogatari.element ().find (`[data-character]`).removeClass ('focus');
-		Monogatari.element ().find (`[data-ui="face"]`).hide ();
+		Monogatari.element ().find ('[data-character]').removeClass ('focus');
+		Monogatari.element ().find ('[data-ui="face"]').hide ();
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
 		return Promise.resolve ();
 	}
 
 	displayNvlDialog (dialog, character, animation) {
-		if (!Monogatari.element ().find (`[data-ui="text"]`).hasClass ('nvl')) {
+		if (!Monogatari.element ().find ('text-box').hasClass ('nvl')) {
 			Dialog.reset ();
-			Monogatari.element ().find (`[data-ui="text"]`).addClass ('nvl');
+			Monogatari.element ().find ('text-box').addClass ('nvl');
 		}
 
 		// Remove contents from the dialog area.
-		const previous = Monogatari.element ().find (`[data-ui="text"]`).data ('speaking');
-		Monogatari.element ().find (`[data-ui="text"]`).data ('speaking', character);
+		const previous = Monogatari.element ().find ('text-box').data ('speaking');
+		Monogatari.element ().find ('text-box').data ('speaking', character);
 
 		// Check if the typing animation flag is set to true in order to show it
 		if (animation === true && Monogatari.setting ('TypeAnimation') === true && Monogatari.setting ('NVLTypeAnimation') === true) {
@@ -206,13 +190,13 @@ export class Dialog extends Action {
 			// no animation will be shown in the game.
 			if (character !== 'narrator') {
 				if (previous !== character) {
-					Monogatari.element ().find (`[data-ui="say"]`).append (`<div data-spoke="${character}" class='named'><span style='color:${Monogatari.character (character).color};'>${Monogatari.replaceVariables (Monogatari.character (character).name)}: </span><p></p></div>`);
+					Monogatari.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='named'><span style='color:${Monogatari.character (character).color};'>${Monogatari.replaceVariables (Monogatari.character (character).name)}: </span><p></p></div>`);
 				} else {
-					Monogatari.element ().find (`[data-ui="say"]`).append (`<div data-spoke="${character}"><p></p></div>`);
+					Monogatari.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}"><p></p></div>`);
 				}
 
 			} else {
-				Monogatari.element ().find (`[data-ui="say"]`).append (`<div data-spoke="${character}" class='unnamed'><p></p></div>`);
+				Monogatari.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='unnamed'><p></p></div>`);
 			}
 
 			const elements = $_('[data-ui="say"] [data-spoke] p');
@@ -224,13 +208,13 @@ export class Dialog extends Action {
 		} else {
 			if (character !== 'narrator') {
 				if (previous !== character) {
-					Monogatari.element ().find (`[data-ui="say"]`).append (`<div data-spoke="${character}" class='named'><span style='color:${Monogatari.character (character).color};'>${Monogatari.replaceVariables (Monogatari.character (character).name)}: </span><p>${dialog}</p></div>`);
+					Monogatari.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='named'><span style='color:${Monogatari.character (character).color};'>${Monogatari.replaceVariables (Monogatari.character (character).name)}: </span><p>${dialog}</p></div>`);
 				} else {
-					Monogatari.element ().find (`[data-ui="say"]`).append (`<div data-spoke="${character}"><p>${dialog}</p></div>`);
+					Monogatari.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}"><p>${dialog}</p></div>`);
 				}
 
 			} else {
-				Monogatari.element ().find (`[data-ui="say"]`).append (`<div data-spoke="${character}" class='unnamed'><p>${dialog}</p></div>`);
+				Monogatari.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='unnamed'><p>${dialog}</p></div>`);
 			}
 			Monogatari.global ('finishedTyping', true);
 		}
@@ -238,10 +222,10 @@ export class Dialog extends Action {
 
 	displayDialog (dialog, character, animation) {
 		if (this.nvl === false) {
-			if (Monogatari.element ().find (`[data-ui="text"]`).hasClass ('nvl') && this._cycle === 'Application') {
-				Monogatari.history ('nvl').push (Monogatari.element ().find (`[data-ui="text"] [data-ui="say"]`).html ());
+			if (Monogatari.element ().find ('text-box').hasClass ('nvl') && this._cycle === 'Application') {
+				Monogatari.history ('nvl').push (Monogatari.element ().find ('text-box [data-ui="say"]').html ());
 			}
-			Monogatari.element ().find (`[data-ui="text"]`).removeClass ('nvl');
+			Monogatari.element ().find ('text-box').removeClass ('nvl');
 
 			// Destroy the previous textObject so the text is rewritten.
 			// If not destroyed, the text would be appended instead of replaced.
@@ -250,8 +234,8 @@ export class Dialog extends Action {
 			}
 
 			// Remove contents from the dialog area.
-			Monogatari.element ().find (`[data-ui="say"]`).html ('');
-			Monogatari.element ().find (`[data-ui="text"]`).data ('speaking', character);
+			Monogatari.element ().find ('[data-ui="say"]').html ('');
+			Monogatari.element ().find ('text-box').data ('speaking', character);
 
 			// Check if the typing animation flag is set to true in order to show it
 			if (animation === true && Monogatari.setting ('TypeAnimation') === true) {
@@ -262,30 +246,28 @@ export class Dialog extends Action {
 				Monogatari.global ('typedConfiguration').strings = [Monogatari.replaceVariables (dialog)];
 				Monogatari.global ('textObject', new Typed ('[data-ui="say"]', Monogatari.global ('typedConfiguration')));
 			} else {
-				Monogatari.element ().find (`[data-ui="say"]`).html (Monogatari.replaceVariables (dialog));
+				Monogatari.element ().find ('[data-ui="say"]').html (Monogatari.replaceVariables (dialog));
 				Monogatari.global ('finishedTyping', true);
 			}
 		} else {
 			this.displayNvlDialog (dialog, character, animation);
 		}
 
-		Dialog.checkUnread ();
-
 		try {
 			const dialogLog = Monogatari.component ('dialog-log');
 			if (typeof dialogLog !== 'undefined') {
 				if (this._cycle === 'Application') {
-					dialogLog.write ({
+					dialogLog.instances (instance => instance.write ({
 						id: character,
 						character: this.character,
 						dialog
-					});
+					}));
 				} else {
-					dialogLog.pop ();
+					dialogLog.instances (instance => instance.pop ());
 				}
 			}
 		} catch (e) {
-			Monogatari.debug ().error (e);
+			Monogatari.debug.error (e);
 		}
 
 
@@ -300,19 +282,19 @@ export class Dialog extends Action {
 	characterDialog () {
 		// Check if the character has a name to show
 		if (typeof this.character.name !== 'undefined' && !this.nvl) {
-			Monogatari.element ().find (`[data-ui="who"]`).html (Monogatari.replaceVariables (this.character.name));
+			Monogatari.element ().find ('[data-ui="who"]').html (Monogatari.replaceVariables (this.character.name));
 		}
 
 		// Focus the character's sprite and colorize it's name with the defined
 		// color on its declaration
 		Monogatari.element ().find (`[data-character="${this.id}"]`).addClass ('focus');
-		Monogatari.element ().find (`[data-ui="who"]`).style ('color', this.character.color);
+		Monogatari.element ().find ('[data-ui="who"]').style ('color', this.character.color);
 
 		// Check if an expression or face image was used and if it exists and
 		// display it
 		if (typeof this.image !== 'undefined' && !this.nvl) {
-			Monogatari.element ().find (`[data-ui="face"]`).attribute ('src', 'img/characters/' + this.image);
-			Monogatari.element ().find (`[data-ui="face"]`).show ();
+			Monogatari.element ().find ('[data-ui="face"]').attribute ('src', 'img/characters/' + this.image);
+			Monogatari.element ().find ('[data-ui="face"]').show ();
 		}
 
 		// Check if the character object defines if the type animation should be used.
@@ -333,9 +315,8 @@ export class Dialog extends Action {
 	}
 
 	willRevert () {
-		this._action = 'revert';
-		Monogatari.element ().find (`[data-character]`).removeClass ('focus');
-		Monogatari.element ().find (`[data-ui="face"]`).hide ();
+		Monogatari.element ().find ('[data-character]').removeClass ('focus');
+		Monogatari.element ().find ('[data-ui="face"]').hide ();
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
 		return Promise.resolve ();
 	}
@@ -344,16 +325,16 @@ export class Dialog extends Action {
 		// Check if the dialog to replay is a NVL one or not
 		if (this.nvl === true) {
 			//  Check if the NVL screen is currently being shown
-			if (Monogatari.element ().find (`[data-ui="text"]`).hasClass ('nvl')) {
+			if (Monogatari.element ().find ('text-box').hasClass ('nvl')) {
 				// If it is being shown, then to go back, we need to remove the last dialog from it
-				Monogatari.element ().find (`[data-ui="text"] [data-ui="say"] [data-spoke]`).last ().remove ();
+				Monogatari.element ().find ('text-box [data-ui="say"] [data-spoke]').last ().remove ();
 				return Promise.resolve ();
 			} else {
 				// If it is not shown right now, then we need to recover the dialogs
 				// that were being shown the last time we hid it
 				if (Monogatari.history ('nvl').length > 0) {
-					Monogatari.element ().find (`[data-ui="text"]`).addClass ('nvl');
-					Monogatari.element ().find (`[data-ui="text"] [data-ui="say"]`).html (Monogatari.history ('nvl').pop ());
+					Monogatari.element ().find ('text-box').addClass ('nvl');
+					Monogatari.element ().find ('text-box [data-ui="say"]').html (Monogatari.history ('nvl').pop ());
 					return Promise.resolve ();
 				}
 				return Promise.reject ();

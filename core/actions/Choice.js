@@ -33,7 +33,7 @@ export class Choice extends Action {
 		// Bind the click event on data-do elements. This property is used for
 		// every choice button.
 		$_(`${selector}`).on('click', '[data-choice]', function (event) {
-			Monogatari.debug ().debug ('Registered Click on Choice Button');
+			Monogatari.debug.debug ('Registered Click on Choice Button');
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();
 			event.preventDefault ();

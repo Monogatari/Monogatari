@@ -136,6 +136,7 @@ class SettingsScreen extends ScreenComponent {
 
 		this.engine.setting ('maxAutoPlaySpeed', parseInt (this.content ('auto-play-speed-controller').property ('max')));
 		this.content ('auto-play-speed-controller').value (this.engine.preference ('AutoPlaySpeed'));
+		return Promise.resolve ();
 	}
 
 	render () {

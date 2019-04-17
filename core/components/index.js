@@ -1,7 +1,7 @@
 export * from './alert-dialog';
 // export * from './CreditsScreen';
 // export * from './CreditsScreenItem';
-// export * from './DialogLog';
+export * from './dialog-log';
 export * from './game-screen';
 export * from './help-screen';
 // export * from './ImageGallery';
@@ -19,4 +19,4 @@ export * from './slot-list';
 export * from './quick-menu';
 // export * from './Slot';
 export * from './text-box';
-// export * from './TextInput';
+export * from './text-input';

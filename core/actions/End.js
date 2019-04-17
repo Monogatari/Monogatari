@@ -1,16 +1,15 @@
 import { Action } from './../lib/Action';
 import { Monogatari } from '../monogatari';
-import { $_ } from '@aegis-framework/artemis';
 
 export class End extends Action {
 
 	static bind (selector) {
 
-		Monogatari.registerListener ('end', {
+		this.engine.registerListener ('end', {
 			keys: 'shift+q',
 			callback: () => {
-				if (Monogatari.global ('playing')) {
-					Monogatari.alert ('quit-warning', {
+				if (this.engine.global ('playing')) {
+					this.engine.alert ('quit-warning', {
 						message: 'Confirm',
 						actions: [
 							{
@@ -27,10 +26,10 @@ export class End extends Action {
 			}
 		});
 
-		Monogatari.registerListener ('quit', {
+		this.engine.registerListener ('quit', {
 			callback: () => {
-				Monogatari.dismissAlertDialog ('quit-warning');
-				Monogatari.run ('end');
+				this.engine.dismissAlertDialog ('quit-warning');
+				this.engine.run ('end');
 			}
 		});
 
@@ -46,14 +45,14 @@ export class End extends Action {
 	}
 
 	willApply () {
-		Monogatari.element ().find ('[data-screen]').hide ();
+		//this.engine.element ().find ('[data-screen]').hide ();
 		return Promise.resolve ();
 	}
 
 	apply () {
-		Monogatari.global ('playing', false);
-		Monogatari.resetGame ();
-		Monogatari.showMainScreen ();
+		this.engine.global ('playing', false);
+		this.engine.resetGame ();
+		//this.engine.showMainScreen ();
 		return Promise.resolve ();
 	}
 
