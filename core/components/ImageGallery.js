@@ -35,7 +35,7 @@ export class ImageGallery extends Component {
 
 			// Now that the images have been added in the render, we can finally
 			// show it
-			$_(`${selector} [data-screen="gallery"]`).show ();
+			$_(`${selector} [data-screen="gallery"]`).show ('flex');
 		});
 
 		// Now lets make it so that when a player clicks on one of the Images

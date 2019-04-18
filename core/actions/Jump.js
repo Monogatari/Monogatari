@@ -31,8 +31,7 @@ export class Jump extends Action {
 	willApply () {
 		if (typeof Monogatari.script (this.label) !== 'undefined') {
 			//Monogatari.stopAmbient ();
-			Monogatari.element ().find (`[data-screen]`).hide ();
-			Monogatari.element ().find (`[data-screen="game"]`).show ();
+			this.engine.showScreen ('game');
 			return Promise.resolve ();
 		} else {
 			FancyError.show (

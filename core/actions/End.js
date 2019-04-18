@@ -41,14 +41,14 @@ export class End extends Action {
 	}
 
 	willApply () {
-		this.engine.element ().find ('[data-screen]').hide ();
+		this.engine.hideScreens ();
 		return Promise.resolve ();
 	}
 
 	apply () {
 		this.engine.global ('playing', false);
 		this.engine.resetGame ();
-		//this.engine.showMainScreen ();
+		this.engine.showMainScreen ();
 		return Promise.resolve ();
 	}
 

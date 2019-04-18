@@ -1584,7 +1584,7 @@ class Monogatari {
 
 				Promise.all (promises).then (() => {
 					// Finally show the game and start playing
-					$_('[data-screen="game"]').show ();
+					this.showScreen ('game');
 					this.run (this.label ()[this.state ('step')]);
 					document.body.style.cursor = 'auto';
 					this.trigger ('didLoadGame');
@@ -1655,7 +1655,7 @@ class Monogatari {
 			promises.push (Promise.reject ());
 		}
 
-		console.log (promises);
+		//console.log (promises);
 		return Promise.all (promises).then ((...args) => {
 			this.debug.groupEnd ();
 			return Promise.resolve (...args);
@@ -1841,13 +1841,13 @@ class Monogatari {
 	// Start game automatically without going trough the main menu
 	static showMainScreen () {
 		if (!this.setting ('ShowMainScreen')) {
-			this.stopAmbient ();
+			//this.stopAmbient ();
 			this.global ('playing', true);
 			this.showScreen ('game');
 			this.run (this.label ()[this.state ('step')]);
 		} else {
 			// Play the main menu song
-			this.playAmbient ();
+			//this.playAmbient ();
 			this.showScreen ('main');
 		}
 	}
@@ -1862,8 +1862,7 @@ class Monogatari {
 				});
 
 				$_('[data-ui="quick-menu"]').hide ();
-				this.element ().find ('[data-screen]').hide ();
-				this.element ().find ('[data-screen="game"]').show ();
+				this.showScreen ('game');
 				this.run (this.label ()[this.state ('step')]);
 			} else {
 				this.showMainScreen ();
@@ -2121,12 +2120,16 @@ class Monogatari {
 	}
 
 	static showScreen (screen) {
-		this.element ().find ('[data-screen]').each ((screen) => {
-			screen.setState ({ open: false });
-		});
+		this.hideScreens ();
 
 		this.element ().find (`[data-screen="${screen}"]`).get (0).setState ({
 			open: true
+		});
+	}
+
+	static hideScreens () {
+		this.element ().find ('[data-screen]').each ((screen) => {
+			screen.setState ({ open: false });
 		});
 	}
 

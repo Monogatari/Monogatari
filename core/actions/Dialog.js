@@ -38,7 +38,7 @@ export class Dialog extends Action {
 		Monogatari.global ('textObject').destroy ();
 		Monogatari.global ('finishedTyping', true);
 		Monogatari.global ('_CurrentChoice', null);
-		Monogatari.element ().find ('[data-component="text-box"]').show ();
+		Monogatari.element ().find ('[data-component="text-box"]').show ('flex');
 
 		const dialogLog = Monogatari.component ('dialog-log');
 
