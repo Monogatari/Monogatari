@@ -2130,10 +2130,40 @@ class Monogatari {
 		});
 	}
 
+	static resize (element, proportionWidth, proportionHeight) {
+		const mainElement = $_('body').get (0);
+
+		const mainWidth = mainElement.offsetWidth;
+		const mainHeight = mainElement.offsetHeight;
+
+		const h = Math.floor (mainWidth * (proportionHeight/proportionWidth));
+		let widthCss = '100%';
+		let heightCss = '100%';
+		let marginTopCss = 0;
+
+		if (h <= mainHeight) {
+			const marginTop = Math.floor ((mainHeight - h)/2);
+			marginTopCss = marginTop + 'px';
+			heightCss = h + 'px';
+
+		}
+		else {
+			const w = Math.floor (mainHeight * (proportionWidth/proportionHeight));
+			widthCss = w + 'px';
+		}
+
+		$_('.forceAspectRatio').style ({
+			width: widthCss,
+			height: heightCss,
+			marginTop: marginTopCss
+		});
+	}
+
 	/**
 	 * Every event listener should be binded in this function.
 	 */
 	static bind (selector) {
+
 
 		// Add the orientation checker in case that a specific orientation was
 		// defined.
@@ -2218,6 +2248,31 @@ class Monogatari {
 				this.showScreen ('load');
 			}
 		});
+
+		const forceAspectRatio = Monogatari.setting ('ForceAspectRatio');
+		let forceAspectRatioFlag = true;
+
+		switch (forceAspectRatio) {
+			case 'Visuals':
+				$_('[data-content="visuals"]').addClass('forceAspectRatio');
+				break;
+
+			case 'Global':
+				this.element ().parent ().addClass('forceAspectRatio');
+				break;
+
+			default:
+				forceAspectRatioFlag = false;
+		}
+
+		if (forceAspectRatioFlag) {
+			const [w, h] = Monogatari.setting ('AspectRatio').split (':');
+			const proportionWidth = parseInt(w);
+			const proportionHeight = parseInt(h);
+
+			this.resize(proportionWidth, proportionHeight);
+			$_(window).on ('resize', () => this.resize(proportionWidth, proportionHeight));
+		}
 
 		const promises = [];
 

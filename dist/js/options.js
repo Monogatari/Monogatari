@@ -55,7 +55,9 @@ monogatari.settings({
 	'AspectRatio': '16:9',
 
 	// Force aspect ratio, it will make all images to comply with aspect ratio.
-	'ForceAspectRatio': false,
+	// Values: 'None' (don't force), 'Visuals' (force only visuals) 
+	// or 'Global' (force all game)
+	'ForceAspectRatio': 'None',
 
 	// Enables or disables the typing text animation for the whole game.
 	'TypeAnimation': true,
