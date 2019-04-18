@@ -5,29 +5,8 @@ import { FancyError } from './../lib/FancyError';
 
 export class Message extends Action {
 
-	static reset () {
-		Monogatari.component ('mesage-dialog').element ().remove ();
-		return Promise.resolve ();
-	}
-
-	static canProceed () {
-		if (Monogatari.component ('mesage-dialog').element ().isVisible ()) {
-			return Promise.reject ();
-		}
-		return Promise.resolve ();
-	}
-
-	static canRevert () {
-		if (Monogatari.component ('mesage-dialog').element ().isVisible ()) {
-			Monogatari.component ('mesage-dialog').element ().remove ();
-			Monogatari.global ('block', false);
-		}
-
-		return Promise.resolve ();
-	}
-
 	static matchString ([ show, type ]) {
-		return show === 'show' && type === 'mesage-dialog';
+		return show === 'show' && type === 'message';
 	}
 
 	static messages (object = null) {
@@ -45,7 +24,7 @@ export class Message extends Action {
 	constructor ([ show, type, message, ...classes ]) {
 		super ();
 		this.id = message;
-		this.message = Message.messages (message);
+		this.message = this.constructor.messages (message);
 		this.classes = classes;
 	}
 
@@ -95,21 +74,25 @@ export class Message extends Action {
 
 	apply () {
 
-		Monogatari.element ().find ('[data-screen="game"]').append (
-			Monogatari.replaceVariables(Monogatari.component ('mesage-dialog').render (this.message.title, this.message.subtitle, this.message.body))
-		);
+		const element = document.createElement ('message-modal');
 
-		Monogatari.component ('mesage-dialog').element ().addClass ('animated');
+		element.setProps ({
+			title: this.engine.replaceVariables (this.message.title),
+			subtitle: this.engine.replaceVariables (this.message.subtitle),
+			body: this.engine.replaceVariables (this.message.body),
+		});
+
+		this.engine.element ().find ('[data-screen="game"]').append (element);
 
 		for (const newClass of this.classes) {
-			Monogatari.component ('mesage-dialog').element ().addClass (newClass);
+			element.classList.add (newClass);
 		}
 
 		return Promise.resolve ();
 	}
 
 	revert () {
-		Monogatari.component ('mesage-dialog').element ().remove ();
+		// Monogatari.component ('mesage-dialog').element ().remove ();
 		return this.apply ();
 	}
 

@@ -1,4 +1,6 @@
-@import './alert-dialog/index.css';
+@import './alert-modal/index.css';
+@import './choice-container/index.css';
+@import './centered-dialog/index.css';
 @import './dialog-log/index.css';
 @import './game-screen/index.css';
 @import './help-screen/index.css';
@@ -6,6 +8,7 @@
 @import './loading-screen/index.css';
 @import './main-menu/index.css';
 @import './main-screen/index.css';
+@import './message-modal/index.css';
 @import './quick-menu/index.css';
 @import './save-screen/index.css';
 @import './save-slot/index.css';

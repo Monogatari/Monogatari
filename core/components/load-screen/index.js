@@ -39,7 +39,7 @@ class LoadScreen extends ScreenComponent {
 		return Promise.resolve ();
 	}
 
-	static reset () {
+	static onReset () {
 		clearInterval (this.engine.global ('_AutoSaveInterval'));
 		return Promise.resolve ();
 	}

@@ -1,16 +1,16 @@
 /* global monogatari */
 
 // Define the messages used in the game.
-// monogatari.action ('Message').messages ({
-// 	'Help': {
-// 		title: 'Help',
-// 		subtitle: 'Some useful Links',
-// 		body: `
-// 			<p><a href='https://monogatari.io/documentation/'>Documentation</a> - Everything you need to know.</p>
-// 			<p><a href='https://monogatari.io/demo/'>Demo</a> - A simple Demo.</p>
-// 		`
-// 	}
-// });
+monogatari.action ('Message').messages ({
+	'Help': {
+		title: 'Help',
+		subtitle: 'Some useful Links',
+		body: `
+			<p><a href='https://monogatari.io/documentation/'>Documentation</a> - Everything you need to know.</p>
+			<p><a href='https://monogatari.io/demo/'>Demo</a> - A simple Demo.</p>
+		`
+	}
+});
 
 // Define the notifications used in the game
 monogatari.action ('Notification').notifications ({

@@ -11152,6 +11152,12 @@ class DOM {
    * @return {DOM} - New instance of DOM
    */
   constructor(selector) {
+    if (selector === null) {
+      this.collection = [];
+      this.length = 0;
+      return;
+    }
+
     if (typeof selector == 'string') {
       this.collection = document.querySelectorAll(selector);
       this.length = this.collection.length;
@@ -11162,8 +11168,12 @@ class DOM {
       this._selector = selector;
     } else if (selector instanceof DOM) {
       this.collection = selector.collection;
-      this.length = selector.length;
+      this.length = this.collection.length;
       this._selector = selector._selector;
+    } else if (selector instanceof HTMLElement) {
+      this.collection = [selector];
+      this.length = this.collection.length;
+      this._selector = selector;
     } else if (typeof selector == 'object') {
       if (selector.length >= 1) {
         this.collection = selector;
@@ -11174,7 +11184,7 @@ class DOM {
       this.length = this.collection.length;
       this._selector = selector;
     } else {
-      return null;
+      return undefined;
     }
   }
   /**
@@ -11280,7 +11290,7 @@ class DOM {
         element.value = value;
       }
     } else {
-      if (this.collection[0]) {
+      if (this.length > 0) {
         return this.collection[0].value;
       }
     }
@@ -11392,8 +11402,8 @@ class DOM {
 
             const targetElement = $_(e.target).closestParent(target, this._selector);
 
-            if (targetElement !== null) {
-              callback.call(targetElement, e);
+            if (typeof targetElement !== 'undefined') {
+              callback.call(targetElement.get(0), e);
             } else {
               return;
             }
@@ -11430,7 +11440,7 @@ class DOM {
         element.dataset[name] = value;
       }
     } else {
-      if (this.collection[0]) {
+      if (this.length > 0) {
         return this.collection[0].dataset[name];
       }
     }
@@ -11450,7 +11460,7 @@ class DOM {
         element.textContent = value;
       }
     } else {
-      if (this.collection[0]) {
+      if (this.length > 0) {
         return this.collection[0].textContent;
       }
     }
@@ -11470,7 +11480,7 @@ class DOM {
         element.innerHTML = value;
       }
     } else {
-      if (this.collection[0]) {
+      if (this.length > 0) {
         return this.collection[0].innerHTML;
       }
     }
@@ -11603,7 +11613,7 @@ class DOM {
 
 
   parent() {
-    if (this.collection[0]) {
+    if (this.length > 0) {
       return new DOM(this.collection[0].parentElement);
     }
   }
@@ -11616,7 +11626,7 @@ class DOM {
 
 
   find(selector) {
-    if (this.collection[0]) {
+    if (this.length > 0) {
       return new DOM(this.collection[0].querySelectorAll(selector));
     }
   }
@@ -11628,7 +11638,7 @@ class DOM {
 
 
   offset() {
-    if (this.collection[0]) {
+    if (this.length > 0) {
       const rect = this.collection[0].getBoundingClientRect();
       return {
         top: rect.top + document.body.scrollTop,
@@ -11649,7 +11659,7 @@ class DOM {
     let found = null;
     let element = this;
 
-    while (typeof element.get(0) !== 'undefined' && found === null) {
+    while (typeof element !== 'undefined' && found === null) {
       // Check if the current element matches the selector
       const matches = element.matches(selector);
 
@@ -11676,7 +11686,7 @@ class DOM {
   closestParent(selector, limit) {
     let element = this;
 
-    while (typeof element.get(0) !== 'undefined') {
+    while (typeof element !== 'undefined') {
       // Check if the current element matches the selector
       const matches = element.matches(selector);
 
@@ -11692,8 +11702,6 @@ class DOM {
 
       element = element.parent();
     }
-
-    return null;
   }
   /**
    * Get or set the value of a given attribute
@@ -11711,7 +11719,7 @@ class DOM {
         element.setAttribute(attribute, value);
       }
     } else {
-      if (this.collection[0]) {
+      if (this.length > 0) {
         return this.collection[0].getAttribute(attribute);
       }
     }
@@ -11836,7 +11844,7 @@ class DOM {
 
 
   fadeIn(time = 400, callback) {
-    if (this.collection[0]) {
+    if (this.length > 0) {
       const element = this.collection[0];
       element.style.opacity = 0;
       let last = +new Date();
@@ -11866,7 +11874,7 @@ class DOM {
 
 
   fadeOut(time = 400, callback) {
-    if (this.collection[0]) {
+    if (this.length > 0) {
       let last = +new Date();
       const element = this.collection[0];
 
@@ -11900,7 +11908,11 @@ class DOM {
       return [].indexOf.call(document.querySelectorAll(selector), this) !== -1;
     };
 
-    return polyfill.call(this.collection[0], selector);
+    if (this.length > 0) {
+      return polyfill.call(this.collection[0], selector);
+    }
+
+    return false;
   }
   /**
    * Remove all elements in the collection
@@ -11956,7 +11968,7 @@ class DOM {
         element[property] = value;
       }
     } else {
-      if (this.collection[0]) {
+      if (this.length > 0) {
         return this.collection[0][property];
       }
     }
@@ -24907,7 +24919,7 @@ function () {
       try {
         for (var _iterator9 = this.components()[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
           var component = _step9.value;
-          promises.push(component.reset());
+          promises.push(component.onReset());
         }
       } catch (err) {
         _didIteratorError9 = true;
@@ -25417,10 +25429,14 @@ function () {
 
                     return Promise.reject(e);
                   });
-                }).catch(function () {
+                }).catch(function (e) {
+                  _this8.debug.debug("Will Apply Failed.\nReason: ".concat(e));
+
                   _this8.debug.trace();
 
                   _this8.debug.groupEnd();
+
+                  return Promise.reject(e);
                 })
               };
             }();
@@ -25452,7 +25468,7 @@ function () {
   }, {
     key: "alert",
     value: function alert(id, options) {
-      var alert = document.createElement('alert-dialog');
+      var alert = document.createElement('alert-modal');
       alert.setProps(options);
       this.element().prepend(alert);
     }
@@ -25462,10 +25478,10 @@ function () {
       var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       // console.log (id);
       // if (typeof id === 'string') {
-      // 	this.component ('alert-dialog').instance (id).remove ();
+      // 	this.component ('alert-modal').instance (id).remove ();
       // } else {
-      //console.log (this.element ().find ('alert-dialog'));
-      this.element().find('alert-dialog').remove(); // }
+      //console.log (this.element ().find ('alert-modal'));
+      this.element().find('alert-modal').remove(); // }
     }
     /**
      * @static loadFromSlot - Load a slot from the storage. This will recover the
@@ -25629,20 +25645,39 @@ function () {
         });
       });
     }
+  }, {
+    key: "proceed",
+    value: function proceed() {
+      var _this10 = this;
+
+      return this.shouldProceed().then(function () {
+        return _this10.willProceed();
+      });
+    }
+  }, {
+    key: "rollback",
+    value: function rollback() {
+      var _this11 = this;
+
+      return this.shouldRollback().then(function () {
+        return _this11.willRollback();
+      });
+    }
     /**
-     * @static canProceed - Check if the game can proceed
+     * @static shouldProceed - Check if the game can proceed
      *
      * @returns {Promise} - Resolves if the game can proceed or reject if it
      * can't proceed right now.
      */
 
   }, {
-    key: "canProceed",
-    value: function canProceed() {
-      var _this10 = this;
+    key: "shouldProceed",
+    value: function shouldProceed() {
+      var _this12 = this;
 
       var promises = [];
-      this.debug.groupCollapsed('canProceed Check'); // Check action by action if they will allow the game to proceed
+      this.debug.groupCollapsed('shouldProceed Check');
+      this.debug.debug('Checking Actions'); // Check action by action if they will allow the game to proceed
 
       var _iteratorNormalCompletion15 = true;
       var _didIteratorError15 = false;
@@ -25651,10 +25686,10 @@ function () {
       try {
         var _loop6 = function _loop6() {
           var action = _step15.value;
-          promises.push(action.canProceed().then(function () {
-            _this10.debug.debug("OK ".concat(action.id));
+          promises.push(action.shouldProceed().then(function () {
+            _this12.debug.debug("OK ".concat(action.id));
           }).catch(function (e) {
-            _this10.debug.debug("FAIL ".concat(action.id, "\nReason: ").concat(e));
+            _this12.debug.debug("FAIL ".concat(action.id, "\nReason: ").concat(e));
 
             return Promise.reject(e);
           }));
@@ -25662,8 +25697,7 @@ function () {
 
         for (var _iterator15 = this.actions()[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
           _loop6();
-        } // Check component by component if they will allow the game to proceed
-
+        }
       } catch (err) {
         _didIteratorError15 = true;
         _iteratorError15 = err;
@@ -25679,6 +25713,8 @@ function () {
         }
       }
 
+      this.debug.debug('Checking Components'); // Check component by component if they will allow the game to proceed
+
       var _iteratorNormalCompletion16 = true;
       var _didIteratorError16 = false;
       var _iteratorError16 = undefined;
@@ -25686,10 +25722,10 @@ function () {
       try {
         var _loop7 = function _loop7() {
           var component = _step16.value;
-          promises.push(component.canProceed().then(function () {
-            _this10.debug.debug("OK ".concat(component._id));
+          promises.push(component.shouldProceed().then(function () {
+            _this12.debug.debug("OK ".concat(component._id));
           }).catch(function (e) {
-            _this10.debug.debug("FAIL ".concat(component._id, "\nReason: ").concat(e));
+            _this12.debug.debug("FAIL ".concat(component._id, "\nReason: ").concat(e));
 
             return Promise.reject(e);
           }));
@@ -25697,11 +25733,7 @@ function () {
 
         for (var _iterator16 = this.components()[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
           _loop7();
-        } // Check if the game is visible, if it's not, then it probably is not
-        // playing or is looking at some menu and thus the game should not
-        // proceed. The game will not proceed if it's blocked or if the distraction
-        // free mode is enabled.
-
+        }
       } catch (err) {
         _didIteratorError16 = true;
         _iteratorError16 = err;
@@ -25717,30 +25749,35 @@ function () {
         }
       }
 
+      this.debug.debug('Checking Extra Conditions'); // Check if the game is visible, if it's not, then it probably is not
+      // playing or is looking at some menu and thus the game should not
+      // proceed. The game will not proceed if it's blocked or if the distraction
+      // free mode is enabled.
+
       if ((0, _artemis.$_)('[data-screen="game"]').isVisible() && !(0, _artemis.$_)('.modal').isVisible() && !this.global('distraction-free') && !this.global('block')) {
         promises.push(Promise.resolve());
       } else {
         promises.push(Promise.reject());
       }
 
-      return Promise.all(promises).finally(function () {
-        _this10.debug.groupEnd();
+      console.log(promises);
+      return Promise.all(promises).then(function () {
+        _this12.debug.groupEnd();
+
+        return Promise.resolve.apply(Promise, arguments);
+      }).catch(function (e) {
+        _this12.debug.groupEnd();
+
+        return Promise.reject(e);
       });
     }
-    /**
-     * @static canRevert - Check if the game can revert
-     *
-     * @returns {Promise} - Resolves if the game can be reverted or reject if it
-     * can't be reverted right now.
-     */
-
   }, {
-    key: "canRevert",
-    value: function canRevert() {
-      var _this11 = this;
+    key: "willProceed",
+    value: function willProceed() {
+      var _this13 = this;
 
       var promises = [];
-      this.debug.groupCollapsed('canRevert Check'); // Check action by action if they will allow the game to revert
+      this.debug.groupCollapsed('Can proceed check passed, game will proceed.'); // Check action by action if they will allow the game to proceed
 
       var _iteratorNormalCompletion17 = true;
       var _didIteratorError17 = false;
@@ -25749,10 +25786,10 @@ function () {
       try {
         var _loop8 = function _loop8() {
           var action = _step17.value;
-          promises.push(action.canRevert().then(function () {
-            _this11.debug.debug("OK ".concat(action.id));
+          promises.push(action.willProceed().then(function () {
+            _this13.debug.debug("OK ".concat(action.id));
           }).catch(function (e) {
-            _this11.debug.debug("FAIL ".concat(action.id, "\nReason: ").concat(e));
+            _this13.debug.debug("FAIL ".concat(action.id, "\nReason: ").concat(e));
 
             return Promise.reject(e);
           }));
@@ -25760,10 +25797,7 @@ function () {
 
         for (var _iterator17 = this.actions()[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
           _loop8();
-        } // Check if the game is visible, if it's not, then it probably is not
-        // playing or is looking at some menu and thus the game should not
-        // revert. The game will not revert if it's blocked or if the distraction
-        // free mode is enabled.
+        } // Check component by component if they will allow the game to proceed
 
       } catch (err) {
         _didIteratorError17 = true;
@@ -25780,6 +25814,132 @@ function () {
         }
       }
 
+      var _iteratorNormalCompletion18 = true;
+      var _didIteratorError18 = false;
+      var _iteratorError18 = undefined;
+
+      try {
+        var _loop9 = function _loop9() {
+          var component = _step18.value;
+          promises.push(component.willProceed().then(function () {
+            _this13.debug.debug("OK ".concat(component._id));
+          }).catch(function (e) {
+            _this13.debug.debug("FAIL ".concat(component._id, "\nReason: ").concat(e));
+
+            return Promise.reject(e);
+          }));
+        };
+
+        for (var _iterator18 = this.components()[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
+          _loop9();
+        }
+      } catch (err) {
+        _didIteratorError18 = true;
+        _iteratorError18 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion18 && _iterator18.return != null) {
+            _iterator18.return();
+          }
+        } finally {
+          if (_didIteratorError18) {
+            throw _iteratorError18;
+          }
+        }
+      }
+
+      return Promise.all(promises).finally(function () {
+        _this13.debug.groupEnd();
+      });
+    }
+    /**
+     * @static shouldRollback - Check if the game can revert
+     *
+     * @returns {Promise} - Resolves if the game can be reverted or reject if it
+     * can't be reverted right now.
+     */
+
+  }, {
+    key: "shouldRollback",
+    value: function shouldRollback() {
+      var _this14 = this;
+
+      var promises = [];
+      this.debug.groupCollapsed('shouldRollback Check'); // Check action by action if they will allow the game to revert
+
+      var _iteratorNormalCompletion19 = true;
+      var _didIteratorError19 = false;
+      var _iteratorError19 = undefined;
+
+      try {
+        var _loop10 = function _loop10() {
+          var action = _step19.value;
+          promises.push(action.shouldRollback().then(function () {
+            _this14.debug.debug("OK ".concat(action.id));
+          }).catch(function (e) {
+            _this14.debug.debug("FAIL ".concat(action.id, "\nReason: ").concat(e));
+
+            return Promise.reject(e);
+          }));
+        };
+
+        for (var _iterator19 = this.actions()[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
+          _loop10();
+        } // Check component by component if they will allow the game to revert
+
+      } catch (err) {
+        _didIteratorError19 = true;
+        _iteratorError19 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion19 && _iterator19.return != null) {
+            _iterator19.return();
+          }
+        } finally {
+          if (_didIteratorError19) {
+            throw _iteratorError19;
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion20 = true;
+      var _didIteratorError20 = false;
+      var _iteratorError20 = undefined;
+
+      try {
+        var _loop11 = function _loop11() {
+          var component = _step20.value;
+          promises.push(component.shouldRollback().then(function () {
+            _this14.debug.debug("OK ".concat(component._id));
+          }).catch(function (e) {
+            _this14.debug.debug("FAIL ".concat(component._id, "\nReason: ").concat(e));
+
+            return Promise.reject(e);
+          }));
+        };
+
+        for (var _iterator20 = this.components()[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
+          _loop11();
+        } // Check if the game is visible, if it's not, then it probably is not
+        // playing or is looking at some menu and thus the game should not
+        // revert. The game will not revert if it's blocked or if the distraction
+        // free mode is enabled.
+
+      } catch (err) {
+        _didIteratorError20 = true;
+        _iteratorError20 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion20 && _iterator20.return != null) {
+            _iterator20.return();
+          }
+        } finally {
+          if (_didIteratorError20) {
+            throw _iteratorError20;
+          }
+        }
+      }
+
       if ((0, _artemis.$_)('[data-screen="game"]').isVisible() && !this.global('distraction-free') && !this.global('block')) {
         promises.push(Promise.resolve());
       } else {
@@ -25787,8 +25947,85 @@ function () {
       }
 
       return Promise.all(promises).finally(function () {
-        _this11.debug.groupEnd();
+        _this14.debug.groupEnd();
       });
+    }
+  }, {
+    key: "willRollback",
+    value: function willRollback() {
+      var _this15 = this;
+
+      var promises = [];
+      this.debug.groupCollapsed('shouldRollback Check'); // Check action by action if they will allow the game to revert
+
+      var _iteratorNormalCompletion21 = true;
+      var _didIteratorError21 = false;
+      var _iteratorError21 = undefined;
+
+      try {
+        var _loop12 = function _loop12() {
+          var action = _step21.value;
+          promises.push(action.willRollback().then(function () {
+            _this15.debug.debug("OK ".concat(action.id));
+          }).catch(function (e) {
+            _this15.debug.debug("FAIL ".concat(action.id, "\nReason: ").concat(e));
+
+            return Promise.reject(e);
+          }));
+        };
+
+        for (var _iterator21 = this.actions()[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
+          _loop12();
+        } // Check component by component if they will allow the game to revert
+
+      } catch (err) {
+        _didIteratorError21 = true;
+        _iteratorError21 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion21 && _iterator21.return != null) {
+            _iterator21.return();
+          }
+        } finally {
+          if (_didIteratorError21) {
+            throw _iteratorError21;
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion22 = true;
+      var _didIteratorError22 = false;
+      var _iteratorError22 = undefined;
+
+      try {
+        var _loop13 = function _loop13() {
+          var component = _step22.value;
+          promises.push(component.willRollback().then(function () {
+            _this15.debug.debug("OK ".concat(component._id));
+          }).catch(function (e) {
+            _this15.debug.debug("FAIL ".concat(component._id, "\nReason: ").concat(e));
+
+            return Promise.reject(e);
+          }));
+        };
+
+        for (var _iterator22 = this.components()[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
+          _loop13();
+        }
+      } catch (err) {
+        _didIteratorError22 = true;
+        _iteratorError22 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion22 && _iterator22.return != null) {
+            _iterator22.return();
+          }
+        } finally {
+          if (_didIteratorError22) {
+            throw _iteratorError22;
+          }
+        }
+      }
     }
     /**
      * @static playAmbient - Play the main menu music using the key defined in the
@@ -25798,7 +26035,7 @@ function () {
   }, {
     key: "playAmbient",
     value: function playAmbient() {
-      var _this12 = this;
+      var _this16 = this;
 
       // Check if a menu music was defined
       if (this.setting('MainScreenMusic') !== '') {
@@ -25815,18 +26052,18 @@ function () {
 
           this.ambientPlayer.play().catch(function () {
             // Create a broadcast message
-            var element = "\n\t\t\t\t\t\t<div data-ui=\"broadcast\">\n\t\t\t\t\t\t\t<p data-string=\"AllowPlayback\">".concat(_this12.string('AllowPlayback'), ".</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t"); // Add it to the main menu and game screens
+            var element = "\n\t\t\t\t\t\t<div data-ui=\"broadcast\">\n\t\t\t\t\t\t\t<p data-string=\"AllowPlayback\">".concat(_this16.string('AllowPlayback'), ".</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t"); // Add it to the main menu and game screens
 
-            _this12.element().find('[data-screen="main"]').prepend(element);
+            _this16.element().find('[data-screen="main"]').prepend(element);
 
-            _this12.element().find('[data-screen="game"]').prepend(element); // Try to play the media again once the element has been clicked
+            _this16.element().find('[data-screen="game"]').prepend(element); // Try to play the media again once the element has been clicked
             // and remove it.
 
 
-            _this12.element().find('[data-ui="broadcast"]').click(function () {
-              _this12.playAmbient();
+            _this16.element().find('[data-ui="broadcast"]').click(function () {
+              _this16.playAmbient();
 
-              _this12.element().find('[data-ui="broadcast"]').remove();
+              _this16.element().find('[data-ui="broadcast"]').remove();
             });
           });
         } else {
@@ -25899,7 +26136,7 @@ function () {
   }, {
     key: "autoPlay",
     value: function autoPlay(enable) {
-      var _this13 = this;
+      var _this17 = this;
 
       if (enable === true) {
         // The interval for autoplay speed is measured in minutes
@@ -25912,11 +26149,11 @@ function () {
             // possibly special handling to avoid futile "catch up" run
           }
 
-          _this13.canProceed().then(function () {
-            _this13.next();
+          _this17.proceed().then(function () {
+            _this17.next();
 
             expected += interval;
-            setTimeout(_this13.global('_AutoPlayTimer'), Math.max(0, interval - now)); // take into account drift
+            setTimeout(_this17.global('_AutoPlayTimer'), Math.max(0, interval - now)); // take into account drift
           }).catch(function () {// An action waiting for user interaction or something else
             // is blocking the game.
           });
@@ -25961,14 +26198,14 @@ function () {
   }, {
     key: "setup",
     value: function setup(selector) {
-      var _this14 = this;
+      var _this18 = this;
 
       // Set the initial settings if they don't exist or load them from the
       // Storage if they do.
       this.Storage.get('Settings').then(function (local_settings) {
-        _this14._preferences = (0, _deeply.default)(_this14._preferences, local_settings);
+        _this18._preferences = (0, _deeply.default)(_this18._preferences, local_settings);
       }).catch(function () {
-        _this14.Storage.set('Settings', _this14._preferences);
+        _this18.Storage.set('Settings', _this18._preferences);
       }); // Register service worker. The service worker will save all requests into
       // the cache so the game loads more quickly and we can play offline. The
       // service worker will only be used if it was allowed by the settings and
@@ -25992,9 +26229,9 @@ function () {
                 // page and get the latest content.
                 if (worker.state === 'installed') {
                   if (navigator.serviceWorker.controller) {
-                    var element = "\n\t\t\t\t\t\t\t\t\t\t<div data-ui=\"broadcast\">\n\t\t\t\t\t\t\t\t\t\t\t<p data-string=\"NewContent\">".concat(_this14.string('NewContent'), ".</p>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t");
+                    var element = "\n\t\t\t\t\t\t\t\t\t\t<div data-ui=\"broadcast\">\n\t\t\t\t\t\t\t\t\t\t\t<p data-string=\"NewContent\">".concat(_this18.string('NewContent'), ".</p>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t");
 
-                    _this14.element().prepend(element);
+                    _this18.element().prepend(element);
 
                     (0, _artemis.$_)("".concat(selector, " [data-ui=\"broadcast\"]")).click(function () {
                       (0, _artemis.$_)("".concat(selector, " [data-ui=\"broadcast\"]")).remove();
@@ -26018,13 +26255,13 @@ function () {
 
       this.registerListener('open-screen', {
         callback: function callback(element) {
-          _this14.element().find('[data-screen]').each(function (screen) {
+          _this18.element().find('[data-screen]').each(function (screen) {
             screen.setState({
               open: false
             });
           });
 
-          _this14.element().find("[data-screen=\"".concat(element.data('open'), "\"]")).get(0).setState({
+          _this18.element().find("[data-screen=\"".concat(element.data('open'), "\"]")).get(0).setState({
             open: true
           });
         }
@@ -26034,22 +26271,22 @@ function () {
       this.registerListener('start', {
         callback: function callback() {
           //this.stopAmbient();
-          _this14.global('playing', true);
+          _this18.global('playing', true);
 
-          _this14.onStart().then(function () {
-            _this14.element().find('[data-screen]').each(function (screen) {
+          _this18.onStart().then(function () {
+            _this18.element().find('[data-screen]').each(function (screen) {
               screen.setState({
                 open: false
               });
             });
 
-            _this14.element().find('[data-screen="game"]').get(0).setState({
+            _this18.element().find('[data-screen="game"]').get(0).setState({
               open: true
             }); // Check if the initial label exists
 
 
-            if (_this14.label()) {
-              _this14.run(_this14.label()[_this14.state('step')]);
+            if (_this18.label()) {
+              _this18.run(_this18.label()[_this18.state('step')]);
             }
           });
         }
@@ -26058,30 +26295,30 @@ function () {
 
       this.registerListener('close', {
         callback: function callback(element) {
-          _this14.element().find("[data-component=\"".concat(element.data('close'), "\"]")).removeClass('modal--active');
+          _this18.element().find("[data-component=\"".concat(element.data('close'), "\"]")).remove();
 
           return true;
         }
       });
       this.registerListener('dismiss-alert', {
         callback: function callback() {
-          _this14.dismissAlertDialog();
+          _this18.dismissAlertDialog();
         }
       });
       this.registerListener('distraction-free', {
         keys: 'h',
         callback: function callback() {
-          _this14.distractionFree();
+          _this18.distractionFree();
         }
       });
       this.registerListener('skip', {
         keys: 's',
         callback: function callback() {
-          if (_this14.global('playing')) {
-            if (_this14.global('skip') !== null) {
-              _this14.skip(false);
+          if (_this18.global('playing')) {
+            if (_this18.global('skip') !== null) {
+              _this18.skip(false);
             } else {
-              _this14.skip(true);
+              _this18.skip(true);
             }
           }
         }
@@ -26090,54 +26327,54 @@ function () {
 
       this.registerListener('auto-play', {
         callback: function callback() {
-          _this14.autoPlay(_this14.global('_AutoPlayTimer') === null);
+          _this18.autoPlay(_this18.global('_AutoPlayTimer') === null);
         }
       });
       var promises = [];
-      var _iteratorNormalCompletion18 = true;
-      var _didIteratorError18 = false;
-      var _iteratorError18 = undefined;
+      var _iteratorNormalCompletion23 = true;
+      var _didIteratorError23 = false;
+      var _iteratorError23 = undefined;
 
       try {
-        for (var _iterator18 = this.components()[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
-          var component = _step18.value;
+        for (var _iterator23 = this.components()[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
+          var component = _step23.value;
           promises.push(component.setup(selector));
         }
       } catch (err) {
-        _didIteratorError18 = true;
-        _iteratorError18 = err;
+        _didIteratorError23 = true;
+        _iteratorError23 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion18 && _iterator18.return != null) {
-            _iterator18.return();
+          if (!_iteratorNormalCompletion23 && _iterator23.return != null) {
+            _iterator23.return();
           }
         } finally {
-          if (_didIteratorError18) {
-            throw _iteratorError18;
+          if (_didIteratorError23) {
+            throw _iteratorError23;
           }
         }
       }
 
-      var _iteratorNormalCompletion19 = true;
-      var _didIteratorError19 = false;
-      var _iteratorError19 = undefined;
+      var _iteratorNormalCompletion24 = true;
+      var _didIteratorError24 = false;
+      var _iteratorError24 = undefined;
 
       try {
-        for (var _iterator19 = this.actions()[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
-          var action = _step19.value;
+        for (var _iterator24 = this.actions()[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
+          var action = _step24.value;
           promises.push(action.setup(selector));
         }
       } catch (err) {
-        _didIteratorError19 = true;
-        _iteratorError19 = err;
+        _didIteratorError24 = true;
+        _iteratorError24 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion19 && _iterator19.return != null) {
-            _iterator19.return();
+          if (!_iteratorNormalCompletion24 && _iterator24.return != null) {
+            _iterator24.return();
           }
         } finally {
-          if (_didIteratorError19) {
-            throw _iteratorError19;
+          if (_didIteratorError24) {
+            throw _iteratorError24;
           }
         }
       }
@@ -26154,7 +26391,7 @@ function () {
   }, {
     key: "skip",
     value: function skip(enable) {
-      var _this15 = this;
+      var _this19 = this;
 
       if (enable === true) {
         // Check if Skip was enabled on the settings, if it has a value greater
@@ -26165,14 +26402,14 @@ function () {
           // save it on a global variable so that we can disable later.
 
           this.global('skip', setTimeout(function () {
-            _this15.canProceed().then(function () {
-              _this15.next();
+            _this19.proceed().then(function () {
+              _this19.next();
             }).catch(function () {// An action waiting for user interaction or something else
               // is blocking the game.
             }); // Start all over again
 
 
-            _this15.skip(true);
+            _this19.skip(true);
           }, this.setting('Skip')));
         }
       } else {
@@ -26200,7 +26437,7 @@ function () {
   }, {
     key: "bind",
     value: function bind(selector) {
-      var _this16 = this;
+      var _this20 = this;
 
       // Add the orientation checker in case that a specific orientation was
       // defined.
@@ -26209,12 +26446,12 @@ function () {
         window.addEventListener('orientationchange', function () {
           // Display or remove the device orientation notice depending on the
           // current device orientation
-          if (_artemis.Platform.orientation() !== _this16.setting('Orientation')) {
-            _this16.alert('orientation-warning', {
+          if (_artemis.Platform.orientation() !== _this20.setting('Orientation')) {
+            _this20.alert('orientation-warning', {
               message: 'OrientationWarning'
             });
           } else {
-            _this16.dismissAlertDialog('orientation-warning');
+            _this20.dismissAlertDialog('orientation-warning');
           }
         }, false);
       } // Add event listener for back buttons. If the player is playing, the back
@@ -26222,33 +26459,33 @@ function () {
       // to the main menu.
 
 
-      this.element().on('click', '[data-screen]:not([data-screen="game"]) [data-action="back"]', function (event) {
+      this.on('click', '[data-screen]:not([data-screen="game"]) [data-action="back"]', function (event) {
         if (!(0, _artemis.$_)("".concat(selector, " [data-screen=\"game\"]")).isVisible()) {
-          _this16.debug.debug('Registered Back Listener on Non-Game Screen');
+          _this20.debug.debug('Registered Back Listener on Non-Game Screen');
 
           event.stopImmediatePropagation();
           event.stopPropagation();
           event.preventDefault();
 
-          _this16.element().find('[data-screen]').each(function (screen) {
+          _this20.element().find('[data-screen]').each(function (screen) {
             screen.setState({
               open: false
             });
           });
 
-          if (_this16.global('playing')) {
-            _this16.element().find('[data-screen="game"]').get(0).setState({
+          if (_this20.global('playing')) {
+            _this20.element().find('[data-screen="game"]').get(0).setState({
               open: true
             });
           } else {
-            _this16.element().find('[data-screen="main"]').get(0).setState({
+            _this20.element().find('[data-screen="main"]').get(0).setState({
               open: true
             });
           }
         }
       }); // Add listeners for the data-action properties
 
-      this.element().on('click', '[data-action]', function (event) {
+      this.on('click', '[data-action]', function (event) {
         var element = (0, _artemis.$_)(this);
         var action = element.data('action');
 
@@ -26259,104 +26496,104 @@ function () {
         return false;
       });
       this.keyboardShortcut(['right', 'space'], function () {
-        _this16.canProceed().then(function () {
-          _this16.next();
+        _this20.proceed().then(function () {
+          _this20.next();
         }).catch(function () {// An action waiting for user interaction or something else
           // is blocking the game.
         });
       });
       this.keyboardShortcut('esc', function () {
-        if ((0, _artemis.$_)("".concat(selector, " [data-screen=\"game\"]")).isVisible() && _this16.global('playing')) {
-          _this16.showScreen('settings');
-        } else if ((0, _artemis.$_)("".concat(selector, " [data-screen=\"settings\"]")).isVisible() && _this16.global('playing')) {
-          _this16.showScreen('game');
+        if ((0, _artemis.$_)("".concat(selector, " [data-screen=\"game\"]")).isVisible() && _this20.global('playing')) {
+          _this20.showScreen('settings');
+        } else if ((0, _artemis.$_)("".concat(selector, " [data-screen=\"settings\"]")).isVisible() && _this20.global('playing')) {
+          _this20.showScreen('game');
         }
       });
       this.keyboardShortcut('shift+s', function () {
-        if (_this16.global('playing')) {
-          _this16.showScreen('save');
+        if (_this20.global('playing')) {
+          _this20.showScreen('save');
         }
       });
       this.keyboardShortcut('shift+l', function () {
-        if (_this16.global('playing')) {
-          _this16.showScreen('load');
+        if (_this20.global('playing')) {
+          _this20.showScreen('load');
         }
       });
       var promises = [];
-      var _iteratorNormalCompletion20 = true;
-      var _didIteratorError20 = false;
-      var _iteratorError20 = undefined;
+      var _iteratorNormalCompletion25 = true;
+      var _didIteratorError25 = false;
+      var _iteratorError25 = undefined;
 
       try {
-        for (var _iterator20 = this.components()[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
-          var component = _step20.value;
+        for (var _iterator25 = this.components()[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
+          var component = _step25.value;
           promises.push(component.bind(selector));
         }
       } catch (err) {
-        _didIteratorError20 = true;
-        _iteratorError20 = err;
+        _didIteratorError25 = true;
+        _iteratorError25 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion20 && _iterator20.return != null) {
-            _iterator20.return();
+          if (!_iteratorNormalCompletion25 && _iterator25.return != null) {
+            _iterator25.return();
           }
         } finally {
-          if (_didIteratorError20) {
-            throw _iteratorError20;
+          if (_didIteratorError25) {
+            throw _iteratorError25;
           }
         }
       }
 
-      var _iteratorNormalCompletion21 = true;
-      var _didIteratorError21 = false;
-      var _iteratorError21 = undefined;
+      var _iteratorNormalCompletion26 = true;
+      var _didIteratorError26 = false;
+      var _iteratorError26 = undefined;
 
       try {
-        for (var _iterator21 = this.actions()[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
-          var action = _step21.value;
+        for (var _iterator26 = this.actions()[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
+          var action = _step26.value;
           promises.push(action.bind(selector));
         }
       } catch (err) {
-        _didIteratorError21 = true;
-        _iteratorError21 = err;
+        _didIteratorError26 = true;
+        _iteratorError26 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion21 && _iterator21.return != null) {
-            _iterator21.return();
+          if (!_iteratorNormalCompletion26 && _iterator26.return != null) {
+            _iterator26.return();
           }
         } finally {
-          if (_didIteratorError21) {
-            throw _iteratorError21;
+          if (_didIteratorError26) {
+            throw _iteratorError26;
           }
         }
       }
 
       return Promise.all(promises).then(function () {
-        var _iteratorNormalCompletion22 = true;
-        var _didIteratorError22 = false;
-        var _iteratorError22 = undefined;
+        var _iteratorNormalCompletion27 = true;
+        var _didIteratorError27 = false;
+        var _iteratorError27 = undefined;
 
         try {
-          for (var _iterator22 = _this16._listeners[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
-            var listener = _step22.value;
+          for (var _iterator27 = _this20._listeners[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
+            var listener = _step27.value;
             var keys = listener.keys,
                 callback = listener.callback;
 
             if (typeof keys !== 'undefined') {
-              _this16.keyboardShortcut(keys, callback);
+              _this20.keyboardShortcut(keys, callback);
             }
           }
         } catch (err) {
-          _didIteratorError22 = true;
-          _iteratorError22 = err;
+          _didIteratorError27 = true;
+          _iteratorError27 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion22 && _iterator22.return != null) {
-              _iterator22.return();
+            if (!_iteratorNormalCompletion27 && _iterator27.return != null) {
+              _iterator27.return();
             }
           } finally {
-            if (_didIteratorError22) {
-              throw _iteratorError22;
+            if (_didIteratorError27) {
+              throw _iteratorError27;
             }
           }
         }
@@ -26377,8 +26614,8 @@ function () {
     }
   }, {
     key: "on",
-    value: function on(event, callback) {
-      return this.element().on(event, callback);
+    value: function on(event, target, callback) {
+      return this.element().on(event, target, callback);
     }
   }, {
     key: "parentElement",
@@ -26408,7 +26645,7 @@ function () {
   }, {
     key: "init",
     value: function init() {
-      var _this17 = this;
+      var _this21 = this;
 
       var selector = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '#monogatari';
       this._selector = selector;
@@ -26422,89 +26659,89 @@ function () {
 
       this.trigger('willSetup');
       this.setup(selector).then(function () {
-        _this17.trigger('didSetup');
+        _this21.trigger('didSetup');
 
-        _this17.trigger('willBind');
+        _this21.trigger('willBind');
 
-        _this17.bind(selector).then(function () {
-          _this17.trigger('didBind'); // Set the initial language translations
-
-
-          _this17.localize(); // Set the label in which the game will start
+        _this21.bind(selector).then(function () {
+          _this21.trigger('didBind'); // Set the initial language translations
 
 
-          _this17.state({
-            label: _this17.setting('Label')
+          _this21.localize(); // Set the label in which the game will start
+
+
+          _this21.state({
+            label: _this21.setting('Label')
           }); // Check if the orientation is correct, if it's not, show the warning
           // message so the player will rotate its device.
 
 
-          if (_this17.setting('Orientation') !== 'any') {
-            if (_artemis.Platform.mobile() && _artemis.Platform.orientation() !== _this17.setting('Orientation')) {
-              _this17.alert('orientation-warning', {
+          if (_this21.setting('Orientation') !== 'any') {
+            if (_artemis.Platform.mobile() && _artemis.Platform.orientation() !== _this21.setting('Orientation')) {
+              _this21.alert('orientation-warning', {
                 message: 'OrientationWarning'
               });
             }
           } // Preload all the game assets
 
 
-          _this17.preload().then(function () {}).catch(function (e) {
+          _this21.preload().then(function () {}).catch(function (e) {
             console.error(e);
           }).finally(function () {
-            if (_this17.label()) {
-              _this17.showSplashScreen();
+            if (_this21.label()) {
+              _this21.showSplashScreen();
             }
           });
 
-          var _iteratorNormalCompletion23 = true;
-          var _didIteratorError23 = false;
-          var _iteratorError23 = undefined;
+          var _iteratorNormalCompletion28 = true;
+          var _didIteratorError28 = false;
+          var _iteratorError28 = undefined;
 
           try {
-            for (var _iterator23 = _this17.components()[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
-              var component = _step23.value;
+            for (var _iterator28 = _this21.components()[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
+              var component = _step28.value;
               component.init(selector);
             }
           } catch (err) {
-            _didIteratorError23 = true;
-            _iteratorError23 = err;
+            _didIteratorError28 = true;
+            _iteratorError28 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion23 && _iterator23.return != null) {
-                _iterator23.return();
+              if (!_iteratorNormalCompletion28 && _iterator28.return != null) {
+                _iterator28.return();
               }
             } finally {
-              if (_didIteratorError23) {
-                throw _iteratorError23;
+              if (_didIteratorError28) {
+                throw _iteratorError28;
               }
             }
           }
 
-          var _iteratorNormalCompletion24 = true;
-          var _didIteratorError24 = false;
-          var _iteratorError24 = undefined;
+          var _iteratorNormalCompletion29 = true;
+          var _didIteratorError29 = false;
+          var _iteratorError29 = undefined;
 
           try {
-            for (var _iterator24 = _this17.actions()[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
-              var action = _step24.value;
+            for (var _iterator29 = _this21.actions()[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
+              var action = _step29.value;
               action.init(selector);
             }
           } catch (err) {
-            _didIteratorError24 = true;
-            _iteratorError24 = err;
+            _didIteratorError29 = true;
+            _iteratorError29 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion24 && _iterator24.return != null) {
-                _iterator24.return();
+              if (!_iteratorNormalCompletion29 && _iterator29.return != null) {
+                _iterator29.return();
               }
             } finally {
-              if (_didIteratorError24) {
-                throw _iteratorError24;
+              if (_didIteratorError29) {
+                throw _iteratorError29;
               }
             }
           }
 
-          _this17.trigger('didInit');
+          _this21.trigger('didInit');
         });
       });
     }
@@ -27544,14 +27781,19 @@ function (_HTMLElement) {
   _inherits(Component, _HTMLElement);
 
   _createClass(Component, [{
-    key: "element",
-
+    key: "onReset",
+    value: function onReset() {
+      return Promise.resolve();
+    }
     /**
      * @static element - Returns this component's element as an Artemis DOM
      * instance, using the result of the `selector ()` function as the selector
      *
      * @returns {DOM} - Artemis DOM instance
      */
+
+  }, {
+    key: "element",
     value: function element() {
       return (0, _artemis.$_)(this);
     }
@@ -27701,6 +27943,76 @@ function (_HTMLElement) {
       return Promise.resolve();
     }
     /**
+     * @static shouldProceed - Either when the user clicks in the game to proceed or
+     * the autoPlay feature is ready to go on, Monogatari will first check with
+     * all actions if it's ok to proceed. Every action should implement its own
+     * logic for it according to its requirements.
+     *
+     * @return {Promise} - Resolved if proceeding is alright or rejected if its not
+     */
+
+  }, {
+    key: "shouldProceed",
+    value: function shouldProceed() {
+      var promises = [];
+      this.instances(function (instance) {
+        promises.push(instance.shouldProceed());
+      });
+      return Promise.all(promises);
+    }
+    /**
+     * @static willProceed - Once the shouldProceed check is passed, each action
+     * should implement its own logic according to its requirements to respond to
+     * the game proceeding.
+     *
+     * @return {Promise}
+     */
+
+  }, {
+    key: "willProceed",
+    value: function willProceed() {
+      var promises = [];
+      this.instances(function (instance) {
+        promises.push(instance.willProceed());
+      });
+      return Promise.all(promises);
+    }
+    /**
+     * @static shouldRollback - Similarly to the shouldProceed () function, this one takes
+     * action when the player tries to go back in the game.Monogatari will first
+     * check with all actions if it's ok to go back. Every action should implement
+     * its own logic for it according to its requirements.
+     *
+     * @return {Promise} - Resolved if going back is alright or rejected if its not
+     */
+
+  }, {
+    key: "shouldRollback",
+    value: function shouldRollback() {
+      var promises = [];
+      this.instances(function (instance) {
+        promises.push(instance.shouldRollback());
+      });
+      return Promise.all(promises);
+    }
+    /**
+     * @static willRollback - Once the shouldRollback check is passed, each action
+     * should implement its own logic according to its requirements to respond to
+     * the game reverting the previous action
+     *
+     * @return {Promise}
+     */
+
+  }, {
+    key: "willRollback",
+    value: function willRollback() {
+      var promises = [];
+      this.instances(function (instance) {
+        promises.push(instance.willRollback());
+      });
+      return Promise.all(promises);
+    }
+    /**
      * @static bind - The binding is the second step of the Mounting cycle, all
      * operations related to event bindings or other sort of binding with the
      * HTML content generated in the setup phase should be implemented here.
@@ -27778,9 +28090,13 @@ function (_HTMLElement) {
      */
 
   }, {
-    key: "reset",
-    value: function reset() {
-      return Promise.resolve();
+    key: "onReset",
+    value: function onReset() {
+      var promises = [];
+      this.instances(function (instance) {
+        promises.push(instance.onReset());
+      });
+      return Promise.all(promises);
     }
   }, {
     key: "instances",
@@ -27833,7 +28149,7 @@ function (_HTMLElement) {
 
 
   _createClass(Component, [{
-    key: "setState",
+    key: "shouldProceed",
     // /**
     //  * @static html - A simple function providing access to the basic HTML
     //  * structure of the component.
@@ -27865,6 +28181,26 @@ function (_HTMLElement) {
     // 		return this._html;
     // 	}
     // }
+    value: function shouldProceed() {
+      return Promise.resolve();
+    }
+  }, {
+    key: "willProceed",
+    value: function willProceed() {
+      return Promise.resolve();
+    }
+  }, {
+    key: "shouldRollback",
+    value: function shouldRollback() {
+      return Promise.resolve();
+    }
+  }, {
+    key: "willRollback",
+    value: function willRollback() {
+      return Promise.resolve();
+    }
+  }, {
+    key: "setState",
     value: function setState(state) {
       if (_typeof(state) === 'object') {
         var oldState = Object.assign({}, this._state);
@@ -27979,6 +28315,7 @@ function (_HTMLElement) {
 
       this._connected = true;
       this.dataset.component = this.static._id;
+      this.classList.add('animated');
 
       this._setPropAttributes();
 
@@ -28135,12 +28472,12 @@ _defineProperty(Component, "_configuration", {});
 
 var _default = Component;
 exports.default = _default;
-},{"@aegis-framework/artemis":"../node_modules/@aegis-framework/artemis/index.js"}],"components/alert-dialog/index.js":[function(require,module,exports) {
+},{"@aegis-framework/artemis":"../node_modules/@aegis-framework/artemis/index.js"}],"components/alert-modal/index.js":[function(require,module,exports) {
 "use strict";
 
-var _Component2 = _interopRequireDefault(require("./../../lib/Component"));
+var _Component2 = _interopRequireDefault(require("../../lib/Component"));
 
-var _monogatari = require("./../../monogatari");
+var _monogatari = require("../../monogatari");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28217,9 +28554,189 @@ function (_Component) {
   return AlertDialog;
 }(_Component2.default);
 
-AlertDialog._id = 'alert-dialog';
+AlertDialog._id = 'alert-modal';
 
 _monogatari.Monogatari.registerComponent(AlertDialog);
+},{"../../lib/Component":"lib/Component.js","../../monogatari":"monogatari.js"}],"components/centered-dialog/index.js":[function(require,module,exports) {
+"use strict";
+
+var _Component2 = _interopRequireDefault(require("./../../lib/Component"));
+
+var _monogatari = require("./../../monogatari");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var CenteredDialog =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(CenteredDialog, _Component);
+
+  function CenteredDialog() {
+    _classCallCheck(this, CenteredDialog);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(CenteredDialog).call(this));
+  }
+
+  _createClass(CenteredDialog, [{
+    key: "willProceed",
+    value: function willProceed() {
+      this.remove();
+      return Promise.resolve();
+    }
+  }, {
+    key: "willRollback",
+    value: function willRollback() {
+      // If a choice is visible right now, we can simply remove it and let the
+      // game revert to the previous statement.
+      this.remove();
+      return Promise.resolve();
+    }
+  }, {
+    key: "onReset",
+    value: function onReset() {
+      this.remove();
+      return Promise.resolve();
+    }
+  }, {
+    key: "willMount",
+    value: function willMount() {
+      return Promise.resolve();
+    }
+  }, {
+    key: "didMount",
+    value: function didMount() {
+      return Promise.resolve();
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return "\n\t\t\t<div data-content=\"wrapper\"></div>\n\t\t";
+    }
+  }]);
+
+  return CenteredDialog;
+}(_Component2.default);
+
+CenteredDialog._id = 'centered-dialog';
+
+_monogatari.Monogatari.registerComponent(CenteredDialog);
+},{"./../../lib/Component":"lib/Component.js","./../../monogatari":"monogatari.js"}],"components/choice-container/index.js":[function(require,module,exports) {
+"use strict";
+
+var _Component2 = _interopRequireDefault(require("./../../lib/Component"));
+
+var _monogatari = require("./../../monogatari");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var ChoiceContainer =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(ChoiceContainer, _Component);
+
+  function ChoiceContainer() {
+    var _this;
+
+    _classCallCheck(this, ChoiceContainer);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ChoiceContainer).call(this));
+    _this.props = {
+      choices: []
+    };
+    return _this;
+  }
+
+  _createClass(ChoiceContainer, [{
+    key: "shouldProceed",
+    value: function shouldProceed() {
+      // If a choice is currently being displayed, the player should not be able
+      // to advance until one is chosen.
+      return Promise.reject('Choice Container awaiting for user input.');
+    }
+  }, {
+    key: "willRollback",
+    value: function willRollback() {
+      // If a choice is visible right now, we can simply remove it and let the
+      // game revert to the previous statement.
+      this.remove();
+      return Promise.resolve();
+    }
+  }, {
+    key: "onReset",
+    value: function onReset() {
+      this.remove();
+      return Promise.resolve();
+    }
+  }, {
+    key: "willMount",
+    value: function willMount() {
+      return Promise.resolve();
+    }
+  }, {
+    key: "didMount",
+    value: function didMount() {
+      return Promise.resolve();
+    }
+  }, {
+    key: "renderChoice",
+    value: function renderChoice(choice) {
+      return "<button data-do=\"".concat(choice.Do, "\" ").concat(choice.Class ? "class=\"".concat(choice.Class, "\"") : '', " data-choice=\"").concat(choice._key, "\">").concat(choice.Text, "</button>");
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      console.log(this.props.choices);
+      var choices = this.props.choices.map(function (choice) {
+        return _this2.renderChoice(choice);
+      }).join('');
+      return "\n\t\t\t<div data-content=\"wrapper\">\n\t\t\t\t".concat(choices, "\n\t\t\t</div>\n\t\t");
+    }
+  }]);
+
+  return ChoiceContainer;
+}(_Component2.default);
+
+ChoiceContainer._id = 'choice-container';
+
+_monogatari.Monogatari.registerComponent(ChoiceContainer);
 },{"./../../lib/Component":"lib/Component.js","./../../monogatari":"monogatari.js"}],"components/dialog-log/index.js":[function(require,module,exports) {
 "use strict";
 
@@ -28253,6 +28770,12 @@ function (_Component) {
   _inherits(DialogLog, _Component);
 
   _createClass(DialogLog, [{
+    key: "onReset",
+    value: function onReset() {
+      this.content('log').html('<div class="text--center padded" data-string="NoDialogsAvailable">No dialogs available. Dialogs will appear here as they show up.</div>');
+      return Promise.resolve();
+    }
+  }, {
     key: "write",
     value: function write(_ref) {
       var id = _ref.id,
@@ -28308,14 +28831,6 @@ function (_Component) {
             });
           });
         }
-      });
-      return Promise.resolve();
-    }
-  }, {
-    key: "reset",
-    value: function reset() {
-      this.instances().each(function (instance) {
-        instance.content('log').html('<div class="text--center padded" data-string="NoDialogsAvailable">No dialogs available. Dialogs will appear here as they show up.</div>');
       });
       return Promise.resolve();
     }
@@ -28520,7 +29035,7 @@ function (_ScreenComponent) {
       this.engine.on('click', '[data-screen="game"] *:not([data-choice])', function () {
         _monogatari.Monogatari.debug.debug('Next Statement Listener');
 
-        _monogatari.Monogatari.canProceed().then(function () {
+        _monogatari.Monogatari.shouldProceed().then(function () {
           _monogatari.Monogatari.next();
         }).catch(function () {// An action waiting for user interaction or something else
           // is blocking the game.
@@ -28540,7 +29055,7 @@ function (_ScreenComponent) {
         callback: function callback() {
           _monogatari.Monogatari.global('block', false);
 
-          _monogatari.Monogatari.canRevert().then(function () {
+          _monogatari.Monogatari.rollback().then(function () {
             _monogatari.Monogatari.previous();
           }).catch(function (e) {// An action waiting for user interaction or something else
             // is blocking the game.
@@ -28698,8 +29213,8 @@ function (_ScreenComponent) {
       return Promise.resolve();
     }
   }, {
-    key: "reset",
-    value: function reset() {
+    key: "onReset",
+    value: function onReset() {
       clearInterval(this.engine.global('_AutoSaveInterval'));
       return Promise.resolve();
     }
@@ -29143,6 +29658,102 @@ function (_Component) {
 VisualNovel._id = 'visual-novel';
 
 _monogatari.Monogatari.registerComponent(VisualNovel);
+},{"./../../lib/Component":"lib/Component.js","./../../monogatari":"monogatari.js"}],"components/message-modal/index.js":[function(require,module,exports) {
+"use strict";
+
+var _Component2 = _interopRequireDefault(require("./../../lib/Component"));
+
+var _monogatari = require("./../../monogatari");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var MessageModal =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(MessageModal, _Component);
+
+  function MessageModal() {
+    var _this;
+
+    _classCallCheck(this, MessageModal);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MessageModal).call(this));
+    _this.props = {
+      title: '',
+      subtitle: '',
+      body: ''
+    };
+    return _this;
+  }
+
+  _createClass(MessageModal, [{
+    key: "shouldProceed",
+    value: function shouldProceed() {
+      return Promise.reject('Message Modal awaiting for user to close the modal window.');
+    }
+  }, {
+    key: "willProceed",
+    value: function willProceed() {
+      console.log('Proceeding');
+      this.remove();
+      return Promise.resolve();
+    }
+  }, {
+    key: "willRollback",
+    value: function willRollback() {
+      // If a choice is visible right now, we can simply remove it and let the
+      // game revert to the previous statement.
+      this.remove();
+      return Promise.resolve();
+    }
+  }, {
+    key: "onReset",
+    value: function onReset() {
+      this.remove();
+      return Promise.resolve();
+    }
+  }, {
+    key: "willMount",
+    value: function willMount() {
+      this.classList.add('modal', 'modal--active');
+      return Promise.resolve();
+    }
+  }, {
+    key: "didMount",
+    value: function didMount() {
+      return Promise.resolve();
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return "\n\t\t\t<div class=\"modal__content\">\n\t\t\t\t<div data-ui=\"message-content\" >\n\t\t\t\t\t<h3 data-content=\"title\">".concat(this.props.title, "</h3>\n\t\t\t\t\t<p data-content=\"subtitle\">").concat(this.props.subtitle, "</p>\n\t\t\t\t\t<p data-content=\"body\">").concat(this.props.body, "</p>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"horizontal horizontal--center\" data-ui=\"inner-menu\">\n\t\t\t\t\t<button data-action=\"close\" data-close=\"message-modal\" data-string=\"Close\">Close</button>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t");
+    }
+  }]);
+
+  return MessageModal;
+}(_Component2.default);
+
+MessageModal._id = 'message-modal';
+
+_monogatari.Monogatari.registerComponent(MessageModal);
 },{"./../../lib/Component":"lib/Component.js","./../../monogatari":"monogatari.js"}],"components/save-screen/index.js":[function(require,module,exports) {
 "use strict";
 
@@ -29335,7 +29946,7 @@ function (_Component) {
           _this2.instances().remove();
         }
       });
-      (0, _artemis.$_)("".concat(selector)).on('click', '[data-component="slot"] [data-delete], [data-component="slot"] [data-delete] *', function (event) {
+      this.engine.on('click', '[data-component="slot"] [data-delete], [data-component="slot"] [data-delete] *', function (event) {
         _monogatari.Monogatari.debug.debug('Registered Click on Slot Delete Button');
 
         event.stopImmediatePropagation();
@@ -29591,7 +30202,7 @@ function (_ScreenComponent) {
       var _this2 = this;
 
       // Fix for select labels
-      this.engine.element().on('click', '[data-select]', function () {
+      this.engine.on('click', '[data-select]', function () {
         var e = document.createEvent('MouseEvents');
         e.initMouseEvent('mousedown');
 
@@ -29953,9 +30564,9 @@ function (_Component) {
   }
 
   _createClass(TextInput, [{
-    key: "reset",
-    value: function reset() {
-      this.remove();
+    key: "shouldProceed",
+    value: function shouldProceed() {
+      return Promise.reject('Text Input is awaiting user input.');
     }
   }, {
     key: "onStateUpdate",
@@ -29971,8 +30582,7 @@ function (_Component) {
   }, {
     key: "willMount",
     value: function willMount() {
-      console.log('1');
-      this.classList.add('modal');
+      this.classList.add('modal', 'modal--active');
       return Promise.resolve();
     }
   }, {
@@ -30029,14 +30639,38 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _alertDialog = require("./alert-dialog");
+var _alertModal = require("./alert-modal");
 
-Object.keys(_alertDialog).forEach(function (key) {
+Object.keys(_alertModal).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function () {
-      return _alertDialog[key];
+      return _alertModal[key];
+    }
+  });
+});
+
+var _centeredDialog = require("./centered-dialog");
+
+Object.keys(_centeredDialog).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _centeredDialog[key];
+    }
+  });
+});
+
+var _choiceContainer = require("./choice-container");
+
+Object.keys(_choiceContainer).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _choiceContainer[key];
     }
   });
 });
@@ -30137,6 +30771,18 @@ Object.keys(_visualNovel).forEach(function (key) {
   });
 });
 
+var _messageModal = require("./message-modal");
+
+Object.keys(_messageModal).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _messageModal[key];
+    }
+  });
+});
+
 var _saveScreen = require("./save-screen");
 
 Object.keys(_saveScreen).forEach(function (key) {
@@ -30220,7 +30866,7 @@ Object.keys(_textInput).forEach(function (key) {
     }
   });
 });
-},{"./alert-dialog":"components/alert-dialog/index.js","./dialog-log":"components/dialog-log/index.js","./game-screen":"components/game-screen/index.js","./help-screen":"components/help-screen/index.js","./load-screen":"components/load-screen/index.js","./loading-screen":"components/loading-screen/index.js","./main-screen":"components/main-screen/index.js","./main-menu":"components/main-menu/index.js","./visual-novel":"components/visual-novel/index.js","./save-screen":"components/save-screen/index.js","./save-slot":"components/save-slot/index.js","./settings-screen":"components/settings-screen/index.js","./slot-list":"components/slot-list/index.js","./quick-menu":"components/quick-menu/index.js","./text-box":"components/text-box/index.js","./text-input":"components/text-input/index.js"}],"lib/Action.js":[function(require,module,exports) {
+},{"./alert-modal":"components/alert-modal/index.js","./centered-dialog":"components/centered-dialog/index.js","./choice-container":"components/choice-container/index.js","./dialog-log":"components/dialog-log/index.js","./game-screen":"components/game-screen/index.js","./help-screen":"components/help-screen/index.js","./load-screen":"components/load-screen/index.js","./loading-screen":"components/loading-screen/index.js","./main-screen":"components/main-screen/index.js","./main-menu":"components/main-menu/index.js","./visual-novel":"components/visual-novel/index.js","./message-modal":"components/message-modal/index.js","./save-screen":"components/save-screen/index.js","./save-slot":"components/save-slot/index.js","./settings-screen":"components/settings-screen/index.js","./slot-list":"components/slot-list/index.js","./quick-menu":"components/quick-menu/index.js","./text-box":"components/text-box/index.js","./text-input":"components/text-input/index.js"}],"lib/Action.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30324,6 +30970,9 @@ function () {
      * @param  {string[]|Object} statement - The statement it matched
      */
     value: function constuctor(statement) {}
+  }, {
+    key: "setContext",
+
     /**
      * setContext - This is a built in function in every action, the context of
      * the action will always be the Monogatari class. This is mainly used for
@@ -30332,9 +30981,6 @@ function () {
      *
      * @param  {Monogatari} context - The Monogatari Class
      */
-
-  }, {
-    key: "setContext",
     value: function setContext(context) {
       this.context = context;
     }
@@ -30467,6 +31113,14 @@ function () {
         step: true
       });
     }
+  }, {
+    key: "engine",
+    get: function get() {
+      return this.constructor.engine;
+    },
+    set: function set(value) {
+      throw new Error('Component engine reference is hold at static level and cannot be modified.');
+    }
   }], [{
     key: "configuration",
 
@@ -30498,7 +31152,7 @@ function () {
       }
     }
     /**
-     * @static canProceed - Either when the user clicks in the game to proceed or
+     * @static shouldProceed - Either when the user clicks in the game to proceed or
      * the autoPlay feature is ready to go on, Monogatari will first check with
      * all actions if it's ok to proceed. Every action should implement its own
      * logic for it according to its requirements.
@@ -30507,12 +31161,25 @@ function () {
      */
 
   }, {
-    key: "canProceed",
-    value: function canProceed() {
+    key: "shouldProceed",
+    value: function shouldProceed() {
       return Promise.resolve();
     }
     /**
-     * @static canRevert - Similarly to the canProceed () function, this one takes
+     * @static willProceed - Once the shouldProceed check is passed, each action
+     * should implement its own logic according to its requirements to respond to
+     * the game proceeding.
+     *
+     * @return {Promise}
+     */
+
+  }, {
+    key: "willProceed",
+    value: function willProceed() {
+      return Promise.resolve();
+    }
+    /**
+     * @static shouldRollback - Similarly to the shouldProceed () function, this one takes
      * action when the player tries to go back in the game.Monogatari will first
      * check with all actions if it's ok to go back. Every action should implement
      * its own logic for it according to its requirements.
@@ -30521,8 +31188,21 @@ function () {
      */
 
   }, {
-    key: "canRevert",
-    value: function canRevert() {
+    key: "shouldRollback",
+    value: function shouldRollback() {
+      return Promise.resolve();
+    }
+    /**
+     * @static willRollback - Once the shouldRollback check is passed, each action
+     * should implement its own logic according to its requirements to respond to
+     * the game reverting the previous action
+     *
+     * @return {Promise}
+     */
+
+  }, {
+    key: "willRollback",
+    value: function willRollback() {
       return Promise.resolve();
     }
     /**
@@ -31021,200 +31701,7 @@ Canvas._configuration = {
 };
 
 _monogatari.Monogatari.registerAction(Canvas);
-},{"../lib/Action":"lib/Action.js","../monogatari":"monogatari.js","@aegis-framework/artemis":"../node_modules/@aegis-framework/artemis/index.js"}],"actions/Centered.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Centered = void 0;
-
-var _Action2 = require("./../lib/Action");
-
-var _monogatari = require("../monogatari");
-
-var _artemis = require("@aegis-framework/artemis");
-
-var _typed = _interopRequireDefault(require("typed.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _toArray(arr) { return _arrayWithHoles(arr) || _iterableToArray(arr) || _nonIterableRest(); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var Centered =
-/*#__PURE__*/
-function (_Action) {
-  _inherits(Centered, _Action);
-
-  _createClass(Centered, null, [{
-    key: "canProceed",
-    value: function canProceed() {
-      if (!_monogatari.Monogatari.global('finishedTyping') && _monogatari.Monogatari.global('textObject') !== null) {
-        var str = _monogatari.Monogatari.global('textObject').strings[0];
-
-        var target = (0, _artemis.$_)(_monogatari.Monogatari.global('textObject').el);
-        var parent = target.parent();
-
-        if (typeof parent !== 'undefined') {
-          var element = parent.data('ui');
-
-          if (element == 'centered') {
-            _monogatari.Monogatari.global('textObject').destroy();
-
-            _monogatari.Monogatari.element().find("[data-ui=\"centered\"] div").html(str);
-
-            _monogatari.Monogatari.global('finishedTyping', true);
-
-            return Promise.reject('TypeWriter effect has not finished. Skipping it.');
-          }
-        }
-      } else if (_monogatari.Monogatari.global('finishedTyping') && _monogatari.Monogatari.element().find("[data-ui=\"centered\"]").isVisible()) {
-        _monogatari.Monogatari.element().find("[data-ui=\"centered\"]").remove();
-
-        _monogatari.Monogatari.element().find("[data-ui=\"text\"]").show();
-      }
-
-      return Promise.resolve(_monogatari.Monogatari.global('finishedTyping'));
-    }
-  }, {
-    key: "canRevert",
-    value: function canRevert() {
-      if (_monogatari.Monogatari.element().find("[data-ui=\"centered\"]").isVisible()) {
-        _monogatari.Monogatari.element().find("[data-ui=\"centered\"]").remove();
-
-        _monogatari.Monogatari.global('finishedTyping', true);
-
-        _monogatari.Monogatari.global('textObject').destroy();
-
-        _monogatari.Monogatari.global('_CurrentChoice', null);
-
-        _monogatari.Monogatari.element().find("[data-ui=\"text\"]").show();
-      }
-
-      return Promise.resolve();
-    }
-  }, {
-    key: "matchString",
-    value: function matchString(_ref) {
-      var _ref2 = _slicedToArray(_ref, 1),
-          action = _ref2[0];
-
-      return action === 'centered';
-    }
-  }, {
-    key: "reset",
-    value: function reset() {
-      _monogatari.Monogatari.element().find("[data-ui=\"centered\"]").remove();
-
-      return Promise.resolve();
-    }
-  }, {
-    key: "hide",
-    value: function hide() {
-      _monogatari.Monogatari.element().find("[data-ui=\"centered\"]").remove();
-
-      _monogatari.Monogatari.element().find("[data-ui=\"text\"]").show();
-    }
-  }]);
-
-  function Centered(_ref3) {
-    var _this;
-
-    var _ref4 = _toArray(_ref3),
-        action = _ref4[0],
-        dialog = _ref4.slice(1);
-
-    _classCallCheck(this, Centered);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Centered).call(this));
-    _this.dialog = _monogatari.Monogatari.replaceVariables(dialog.join(' '));
-    _this.animate = _monogatari.Monogatari.setting('TypeAnimation') && _monogatari.Monogatari.setting('CenteredTypeAnimation');
-    return _this;
-  }
-
-  _createClass(Centered, [{
-    key: "apply",
-    value: function apply() {
-      _monogatari.Monogatari.element().find("[data-ui=\"text\"]").hide();
-
-      _monogatari.Monogatari.element().find("[data-screen=\"game\"]").append('<div class="middle align-center" data-ui="centered"><div></div></div>');
-
-      if (this.animate) {
-        _monogatari.Monogatari.global('typedConfiguration').strings = [this.dialog];
-
-        _monogatari.Monogatari.global('textObject', new _typed.default("".concat(_monogatari.Monogatari.selector(), " [data-ui=\"centered\"] div"), _monogatari.Monogatari.global('typedConfiguration')));
-      } else {
-        _monogatari.Monogatari.element().find("[data-ui=\"centered\"] div").html(this.dialog);
-      }
-
-      var dialogLog = _monogatari.Monogatari.component('dialog-log');
-
-      if (typeof dialogLog !== 'undefined') {
-        if (this._cycle === 'Application') {
-          dialogLog.write({
-            id: 'centered',
-            character: null,
-            dialog: this.dialog
-          });
-        } else {
-          dialogLog.pop('centered');
-        }
-      }
-
-      return Promise.resolve();
-    }
-  }, {
-    key: "revert",
-    value: function revert() {
-      this.apply();
-      return Promise.resolve();
-    }
-  }, {
-    key: "didRevert",
-    value: function didRevert() {
-      return Promise.resolve({
-        advance: false,
-        step: true
-      });
-    }
-  }]);
-
-  return Centered;
-}(_Action2.Action);
-
-exports.Centered = Centered;
-Centered.id = 'Centered';
-
-_monogatari.Monogatari.registerAction(Centered);
-},{"./../lib/Action":"lib/Action.js","../monogatari":"monogatari.js","@aegis-framework/artemis":"../node_modules/@aegis-framework/artemis/index.js","typed.js":"../node_modules/typed.js/lib/typed.js"}],"actions/Choice.js":[function(require,module,exports) {
+},{"../lib/Action":"lib/Action.js","../monogatari":"monogatari.js","@aegis-framework/artemis":"../node_modules/@aegis-framework/artemis/index.js"}],"actions/Choice.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31261,26 +31748,9 @@ function (_Action) {
       return Promise.resolve();
     }
   }, {
-    key: "canProceed",
-    value: function canProceed() {
-      // If a choice is currently being displayed, the player should not be able
-      // to advance until one is chosen.
-      if (_monogatari.Monogatari.element().find("[data-ui=\"choices\"]").isVisible()) {
-        return Promise.reject();
-      }
-
-      return Promise.resolve();
-    }
-  }, {
-    key: "canRevert",
-    value: function canRevert() {
-      // If a choice is visible right now, we can simply remove it and let the
-      // game revert to the previous statement.
-      if (_monogatari.Monogatari.element().find("[data-ui=\"choices\"]").isVisible()) {
-        _monogatari.Monogatari.element().find("[data-ui=\"choices\"]").remove();
-
-        _monogatari.Monogatari.global('_CurrentChoice', null);
-      }
+    key: "willRollback",
+    value: function willRollback() {
+      _monogatari.Monogatari.global('_CurrentChoice', null);
 
       return Promise.resolve();
     }
@@ -31289,7 +31759,7 @@ function (_Action) {
     value: function bind(selector) {
       // Bind the click event on data-do elements. This property is used for
       // every choice button.
-      (0, _artemis.$_)("".concat(selector)).on('click', '[data-choice]', function (event) {
+      this.engine.on('click', '[data-choice]', function (event) {
         var _this2 = this;
 
         _monogatari.Monogatari.debug.debug('Registered Click on Choice Button');
@@ -31301,7 +31771,7 @@ function (_Action) {
 
         if ((0, _artemis.$_)(this).data('do') != 'null') {
           // Remove all the choices
-          _monogatari.Monogatari.element().find("[data-ui=\"choices\"]").remove(); // Remove the reference to the current choice object
+          _monogatari.Monogatari.element().find('choice-container').remove(); // Remove the reference to the current choice object
 
 
           if (_monogatari.Monogatari.global('_CurrentChoice') !== null) {
@@ -31336,8 +31806,6 @@ function (_Action) {
   }, {
     key: "reset",
     value: function reset() {
-      _monogatari.Monogatari.element().find("[data-ui=\"choices\"]").remove();
-
       _monogatari.Monogatari.global('_CurrentChoice', null);
 
       return Promise.resolve();
@@ -31362,8 +31830,6 @@ function (_Action) {
   _createClass(Choice, [{
     key: "willApply",
     value: function willApply() {
-      _monogatari.Monogatari.element().find("[data-ui=\"choices\"]").html('');
-
       return Promise.resolve();
     }
   }, {
@@ -31377,62 +31843,51 @@ function (_Action) {
       // able to be used in choices.
       _monogatari.Monogatari.global('_CurrentChoice', this.statement);
 
-      var element = (0, _artemis.$_)(document.createElement('div'));
-      element.addClass('text--center');
-      element.data('ui', 'choices');
       var promises = []; // Go over all the objects defined in the choice object which should be
       // call the options to chose from or the string to show as dialog
 
       var _loop = function _loop(i) {
-        var choice = _this3.statement[i]; // Check if the current option has a condition to be shown
+        var choice = _this3.statement[i]; // Check if the option is an object (a option to choose from) or
+        // if it's text (dialog to be shown)
 
-        if (typeof choice.Condition !== 'undefined' && choice.Condition !== '') {
-          promises.push(new Promise(function (resolve) {
-            // First check if the condition is met before we add the button
-            _monogatari.Monogatari.assertAsync(_this3.statement[i].Condition, _monogatari.Monogatari).then(function () {
-              if (typeof choice.Class !== 'undefined') {
-                element.append("<button data-do=\"".concat(choice.Do, "\" class=\"").concat(choice.Class, "\" data-choice=\"").concat(i, "\">").concat(choice.Text, "</button>"));
-              } else {
-                element.append("<button data-do=\"".concat(choice.Do, "\" data-choice=\"").concat(i, "\">").concat(choice.Text, "</button>"));
-              }
-            }).catch(function () {// The condition wasn't met
-            }).finally(function () {
-              _monogatari.Monogatari.global('block', false);
+        if (_typeof(choice) == 'object') {
+          _this3.statement[i]._key = i; // Check if the current option has a condition to be shown
 
-              resolve();
-            });
-          }));
-        } else {
-          // Check if the option is an object (a option to choose from) or
-          // if it's text (dialog to be shown)
-          if (_typeof(choice) == 'object') {
-            if (typeof choice.Class != 'undefined') {
-              element.append("<button data-do=\"".concat(choice.Do, "\" class=\"").concat(choice.Class, "\" data-choice=\"").concat(i, "\">").concat(choice.Text, "</button>"));
-            } else {
-              element.append("<button data-do=\"".concat(choice.Do, "\" data-choice=\"").concat(i, "\">").concat(choice.Text, "</button>"));
-            }
-          } else if (typeof choice == 'string') {
-            promises.push(_monogatari.Monogatari.run(choice, false));
+          if (typeof choice.Condition !== 'undefined' && choice.Condition !== '') {
+            promises.push(new Promise(function (resolve) {
+              // First check if the condition is met before we add the button
+              _monogatari.Monogatari.assertAsync(_this3.statement[i].Condition, _monogatari.Monogatari).then(function () {
+                resolve(_this3.statement[i]);
+              }).catch(function () {// The condition wasn't met
+              }).finally(function () {
+                _monogatari.Monogatari.global('block', false);
+              });
+            }));
+          } else {
+            promises.push(Promise.resolve(_this3.statement[i]));
           }
         }
-
-        _monogatari.Monogatari.element().find("[data-ui=\"choices\"]").show('flex');
       };
 
       for (var i in this.statement) {
         _loop(i);
       }
 
-      return Promise.all(promises).then(function () {
-        if (_monogatari.Monogatari.element().find("[data-screen=\"game\"] [data-ui=\"text\"]").hasClass('nvl')) {
-          element.addClass('horizontal');
+      return Promise.all(promises).then(function (choices) {
+        var element = document.createElement('choice-container');
+        element.setProps({
+          choices: choices
+        });
+        var dialog = _this3.statement.Dialog;
 
-          _monogatari.Monogatari.element().find(" [data-screen=\"game\"] [data-ui=\"text\"]").append(element.get(0));
+        if (typeof dialog === 'string') {
+          _this3.engine.run(dialog, false);
+        }
+
+        if (_monogatari.Monogatari.element().find('text-box').hasClass('nvl')) {
+          _this3.engine.element().find('[data-component="text-box"]').append(element);
         } else {
-          element.addClass('vertical');
-          element.addClass('middle');
-
-          _monogatari.Monogatari.element().find(" [data-screen=\"game\"]").append(element.get(0));
+          _this3.engine.element().find('[data-screen="game"]').append(element);
         }
       });
     } // Revert is disabled for choices since we still don't have a way to know what
@@ -31746,15 +32201,15 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -31765,9 +32220,34 @@ var End =
 function (_Action) {
   _inherits(End, _Action);
 
-  _createClass(End, null, [{
+  function End() {
+    _classCallCheck(this, End);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(End).apply(this, arguments));
+  }
+
+  _createClass(End, [{
+    key: "willApply",
+    value: function willApply() {
+      this.engine.element().find('[data-screen]').hide();
+      return Promise.resolve();
+    }
+  }, {
+    key: "apply",
+    value: function apply() {
+      this.engine.global('playing', false);
+      this.engine.resetGame(); //this.engine.showMainScreen ();
+
+      return Promise.resolve();
+    }
+  }, {
+    key: "willRevert",
+    value: function willRevert() {
+      return Promise.reject();
+    }
+  }], [{
     key: "bind",
-    value: function bind(selector) {
+    value: function bind() {
       var _this = this;
 
       this.engine.registerListener('end', {
@@ -31803,36 +32283,6 @@ function (_Action) {
           action = _ref2[0];
 
       return action === 'end';
-    }
-  }]);
-
-  function End(_ref3) {
-    var _ref4 = _slicedToArray(_ref3, 1),
-        action = _ref4[0];
-
-    _classCallCheck(this, End);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(End).call(this));
-  }
-
-  _createClass(End, [{
-    key: "willApply",
-    value: function willApply() {
-      //this.engine.element ().find ('[data-screen]').hide ();
-      return Promise.resolve();
-    }
-  }, {
-    key: "apply",
-    value: function apply() {
-      this.engine.global('playing', false);
-      this.engine.resetGame(); //this.engine.showMainScreen ();
-
-      return Promise.resolve();
-    }
-  }, {
-    key: "willRevert",
-    value: function willRevert() {
-      return Promise.reject();
     }
   }]);
 
@@ -32897,23 +33347,8 @@ function (_Action) {
       return typeof Input !== 'undefined';
     }
   }, {
-    key: "reset",
-    value: function reset() {
-      this.instances().remove();
-      return Promise.resolve();
-    }
-  }, {
-    key: "canProceed",
-    value: function canProceed() {
-      if (this.instances().isVisible()) {
-        return Promise.reject();
-      }
-
-      return Promise.resolve();
-    }
-  }, {
-    key: "canRevert",
-    value: function canRevert() {
+    key: "shouldRollback",
+    value: function shouldRollback() {
       // If the player is trying to go back when the input form is being shown
       // we simply remove it, reset it and remove the listener it had.
       if (this.instances().isVisible()) {
@@ -33258,40 +33693,13 @@ function (_Action) {
   _inherits(Message, _Action);
 
   _createClass(Message, null, [{
-    key: "reset",
-    value: function reset() {
-      _monogatari.Monogatari.component('mesage-dialog').element().remove();
-
-      return Promise.resolve();
-    }
-  }, {
-    key: "canProceed",
-    value: function canProceed() {
-      if (_monogatari.Monogatari.component('mesage-dialog').element().isVisible()) {
-        return Promise.reject();
-      }
-
-      return Promise.resolve();
-    }
-  }, {
-    key: "canRevert",
-    value: function canRevert() {
-      if (_monogatari.Monogatari.component('mesage-dialog').element().isVisible()) {
-        _monogatari.Monogatari.component('mesage-dialog').element().remove();
-
-        _monogatari.Monogatari.global('block', false);
-      }
-
-      return Promise.resolve();
-    }
-  }, {
     key: "matchString",
     value: function matchString(_ref) {
       var _ref2 = _slicedToArray(_ref, 2),
           show = _ref2[0],
           type = _ref2[1];
 
-      return show === 'show' && type === 'mesage-dialog';
+      return show === 'show' && type === 'message';
     }
   }, {
     key: "messages",
@@ -33323,7 +33731,7 @@ function (_Action) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Message).call(this));
     _this.id = message;
-    _this.message = Message.messages(message);
+    _this.message = _this.constructor.messages(message);
     _this.classes = classes;
     return _this;
   }
@@ -33360,10 +33768,13 @@ function (_Action) {
   }, {
     key: "apply",
     value: function apply() {
-      _monogatari.Monogatari.element().find('[data-screen="game"]').append(_monogatari.Monogatari.replaceVariables(_monogatari.Monogatari.component('mesage-dialog').render(this.message.title, this.message.subtitle, this.message.body)));
-
-      _monogatari.Monogatari.component('mesage-dialog').element().addClass('animated');
-
+      var element = document.createElement('message-modal');
+      element.setProps({
+        title: this.engine.replaceVariables(this.message.title),
+        subtitle: this.engine.replaceVariables(this.message.subtitle),
+        body: this.engine.replaceVariables(this.message.body)
+      });
+      this.engine.element().find('[data-screen="game"]').append(element);
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -33371,8 +33782,7 @@ function (_Action) {
       try {
         for (var _iterator = this.classes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var newClass = _step.value;
-
-          _monogatari.Monogatari.component('mesage-dialog').element().addClass(newClass);
+          element.classList.add(newClass);
         }
       } catch (err) {
         _didIteratorError = true;
@@ -33394,8 +33804,7 @@ function (_Action) {
   }, {
     key: "revert",
     value: function revert() {
-      _monogatari.Monogatari.component('mesage-dialog').element().remove();
-
+      // Monogatari.component ('mesage-dialog').element ().remove ();
       return this.apply();
     }
   }, {
@@ -33442,15 +33851,15 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -33461,30 +33870,16 @@ var Next =
 function (_Action) {
   _inherits(Next, _Action);
 
-  _createClass(Next, null, [{
-    key: "matchString",
-    value: function matchString(_ref) {
-      var _ref2 = _slicedToArray(_ref, 1),
-          action = _ref2[0];
-
-      return action === 'next';
-    }
-  }]);
-
-  function Next(_ref3) {
-    var _ref4 = _slicedToArray(_ref3, 1),
-        action = _ref4[0];
-
+  function Next() {
     _classCallCheck(this, Next);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Next).call(this));
+    return _possibleConstructorReturn(this, _getPrototypeOf(Next).apply(this, arguments));
   }
 
   _createClass(Next, [{
     key: "apply",
     value: function apply() {
-      _monogatari.Monogatari.next();
-
+      this.engine.next();
       return Promise.resolve();
     }
   }, {
@@ -33494,6 +33889,14 @@ function (_Action) {
         advance: true,
         step: true
       });
+    }
+  }], [{
+    key: "matchString",
+    value: function matchString(_ref) {
+      var _ref2 = _slicedToArray(_ref, 1),
+          action = _ref2[0];
+
+      return action === 'next';
     }
   }]);
 
@@ -34132,14 +34535,14 @@ function (_Action) {
   _inherits(Play, _Action);
 
   _createClass(Play, null, [{
-    key: "canProceed",
-    value: function canProceed() {
+    key: "shouldProceed",
+    value: function shouldProceed() {
       Play.shutUp();
       return Promise.resolve();
     }
   }, {
-    key: "canRevert",
-    value: function canRevert() {
+    key: "shouldRollback",
+    value: function shouldRollback() {
       Play.shutUp();
       return Promise.resolve();
     }
@@ -36021,8 +36424,8 @@ function (_Action) {
   _inherits(Video, _Action);
 
   _createClass(Video, null, [{
-    key: "canProceed",
-    value: function canProceed() {
+    key: "shouldProceed",
+    value: function shouldProceed() {
       return new Promise(function (resolve, reject) {
         (0, _artemis.$_)('[data-video]').each(function (element) {
           if (element.hasAttribute('controls') === true && element.ended !== true) {
@@ -36430,12 +36833,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
@@ -36470,42 +36867,47 @@ function (_Action) {
   _inherits(Dialog, _Action);
 
   _createClass(Dialog, null, [{
-    key: "canProceed",
-    value: function canProceed() {
+    key: "shouldProceed",
+    value: function shouldProceed() {
       // Check if the type animation has finished and the Typed object still exists
       if (!_monogatari.Monogatari.global('finishedTyping') && _monogatari.Monogatari.global('textObject') !== null) {
         // Get the string it was typing
         var str = _monogatari.Monogatari.global('textObject').strings[0]; // Get the element it was typing to
 
 
-        var element = (0, _artemis.$_)(_monogatari.Monogatari.global('textObject').el).data('ui');
+        var element = _monogatari.Monogatari.global('textObject').el;
 
-        if (element !== 'centered' && !(0, _artemis.$_)('text-box').hasClass('nvl')) {
-          _monogatari.Monogatari.global('textObject').destroy();
+        _monogatari.Monogatari.global('textObject').destroy();
 
-          _monogatari.Monogatari.element().find('[data-ui="say"]').html(str);
+        element.innerHTML = str;
 
-          _monogatari.Monogatari.global('finishedTyping', true);
+        _monogatari.Monogatari.global('finishedTyping', true);
 
-          return Promise.reject('TypeWriter effect has not finished. Skipping it.');
-        } else if (element !== 'centered' && (0, _artemis.$_)('text-box').hasClass('nvl')) {
-          var last = (0, _artemis.$_)('[data-ui="say"] [data-spoke] p').last().get(0);
-
-          _monogatari.Monogatari.global('textObject').destroy();
-
-          (0, _artemis.$_)(last).html(str);
-
-          _monogatari.Monogatari.global('finishedTyping', true);
-
-          return Promise.reject('TypeWriter effect has not finished. Skipping it.');
-        }
+        return Promise.reject('TypeWriter effect has not finished.');
       }
 
       return Promise.resolve(_monogatari.Monogatari.global('finishedTyping'));
     }
   }, {
-    key: "canRevert",
-    value: function canRevert() {
+    key: "willProceed",
+    value: function willProceed() {
+      if (_monogatari.Monogatari.global('finishedTyping') && _monogatari.Monogatari.element().find("[data-component\"centered-dialog\"]").isVisible()) {
+        _monogatari.Monogatari.element().find("[data-component=\"text-box\"]").show('flex');
+      }
+
+      return Promise.resolve(_monogatari.Monogatari.global('finishedTyping'));
+    }
+  }, {
+    key: "willRollback",
+    value: function willRollback() {
+      _monogatari.Monogatari.global('textObject').destroy();
+
+      _monogatari.Monogatari.global('finishedTyping', true);
+
+      _monogatari.Monogatari.global('_CurrentChoice', null);
+
+      _monogatari.Monogatari.element().find('[data-component="text-box"]').show();
+
       var dialogLog = _monogatari.Monogatari.component('dialog-log');
 
       if (typeof dialogLog !== 'undefined') {
@@ -36620,15 +37022,15 @@ function (_Action) {
         id = _character$split2[0],
         expression = _character$split2[1];
 
+    _this.dialog = dialog.join(' ');
+    _this.nvl = false;
+
     if (typeof _monogatari.Monogatari.character(id) !== 'undefined') {
       _this.character = _monogatari.Monogatari.character(id);
       _this.id = id;
-      _this.dialog = dialog.join(' ');
 
       if (typeof _this.character.nvl !== 'undefined') {
         _this.nvl = _this.character.nvl;
-      } else {
-        _this.nvl = false;
       }
 
       if (typeof expression !== 'undefined') {
@@ -36646,15 +37048,15 @@ function (_Action) {
           _this.image = _this.character.default_expression;
         }
       }
+    } else if (id === 'centered') {
+      _this.id = 'centered';
     } else {
       _this.id = 'narrator';
 
       if (id === 'nvl') {
         _this.nvl = true;
-        _this.dialog = dialog.join(' ');
       } else {
-        _this.dialog = [character].concat(_toConsumableArray(dialog)).join(' ');
-        _this.nvl = false;
+        _this.dialog = "".concat(character, " ").concat(_this.dialog);
       }
     }
 
@@ -36669,6 +37071,22 @@ function (_Action) {
       _monogatari.Monogatari.element().find('[data-ui="face"]').hide();
 
       document.querySelector('[data-ui="who"]').innerHTML = '';
+      return Promise.resolve();
+    }
+  }, {
+    key: "displayCenteredDialog",
+    value: function displayCenteredDialog(dialog, character, animation) {
+      var element = document.createElement('centered-dialog');
+      this.engine.element().find('[data-screen="game"]').append(element);
+
+      if (animation) {
+        _monogatari.Monogatari.global('typedConfiguration').strings = [dialog];
+
+        _monogatari.Monogatari.global('textObject', new _typed.default("".concat(_monogatari.Monogatari.selector(), " [data-component=\"centered-dialog\"] [data-content=\"wrapper\"]"), _monogatari.Monogatari.global('typedConfiguration')));
+      } else {
+        element.content('wrapper').html(dialog);
+      }
+
       return Promise.resolve();
     }
   }, {
@@ -36722,8 +37140,6 @@ function (_Action) {
   }, {
     key: "displayDialog",
     value: function displayDialog(dialog, character, animation) {
-      var _this2 = this;
-
       if (this.nvl === false) {
         if (_monogatari.Monogatari.element().find('text-box').hasClass('nvl') && this._cycle === 'Application') {
           _monogatari.Monogatari.history('nvl').push(_monogatari.Monogatari.element().find('text-box [data-ui="say"]').html());
@@ -36747,11 +37163,11 @@ function (_Action) {
           // If the property is set to true, the animation will be shown
           // if it is set to false, even if the flag was set to true,
           // no animation will be shown in the game.
-          _monogatari.Monogatari.global('typedConfiguration').strings = [_monogatari.Monogatari.replaceVariables(dialog)];
+          _monogatari.Monogatari.global('typedConfiguration').strings = [dialog];
 
           _monogatari.Monogatari.global('textObject', new _typed.default('[data-ui="say"]', _monogatari.Monogatari.global('typedConfiguration')));
         } else {
-          _monogatari.Monogatari.element().find('[data-ui="say"]').html(_monogatari.Monogatari.replaceVariables(dialog));
+          _monogatari.Monogatari.element().find('[data-ui="say"]').html(dialog);
 
           _monogatari.Monogatari.global('finishedTyping', true);
         }
@@ -36759,34 +37175,7 @@ function (_Action) {
         this.displayNvlDialog(dialog, character, animation);
       }
 
-      try {
-        var dialogLog = _monogatari.Monogatari.component('dialog-log');
-
-        if (typeof dialogLog !== 'undefined') {
-          if (this._cycle === 'Application') {
-            dialogLog.instances(function (instance) {
-              return instance.write({
-                id: character,
-                character: _this2.character,
-                dialog: dialog
-              });
-            });
-          } else {
-            dialogLog.instances(function (instance) {
-              return instance.pop();
-            });
-          }
-        }
-      } catch (e) {
-        _monogatari.Monogatari.debug.error(e);
-      }
-
       return Promise.resolve();
-    }
-  }, {
-    key: "narratorDialog",
-    value: function narratorDialog() {
-      return this.displayDialog(this.dialog, 'narrator', _monogatari.Monogatari.setting('NarratorTypeAnimation'));
     }
   }, {
     key: "characterDialog",
@@ -36794,6 +37183,14 @@ function (_Action) {
       // Check if the character has a name to show
       if (typeof this.character.name !== 'undefined' && !this.nvl) {
         _monogatari.Monogatari.element().find('[data-ui="who"]').html(_monogatari.Monogatari.replaceVariables(this.character.name));
+      }
+
+      var directory = this.character.directory;
+
+      if (typeof directory == 'undefined') {
+        directory = '';
+      } else {
+        directory += '/';
       } // Focus the character's sprite and colorize it's name with the defined
       // color on its declaration
 
@@ -36805,7 +37202,9 @@ function (_Action) {
 
 
       if (typeof this.image !== 'undefined' && !this.nvl) {
-        _monogatari.Monogatari.element().find('[data-ui="face"]').attribute('src', 'img/characters/' + this.image);
+        "".concat(_monogatari.Monogatari.setting('AssetsPath').root, "/").concat(_monogatari.Monogatari.setting('AssetsPath').characters, "/").concat(directory).concat(this.image);
+
+        _monogatari.Monogatari.element().find('[data-ui="face"]').attribute('src', "".concat(_monogatari.Monogatari.setting('AssetsPath').root, "/").concat(_monogatari.Monogatari.setting('AssetsPath').characters, "/").concat(directory).concat(this.image, "/").concat(directory).concat(this.image));
 
         _monogatari.Monogatari.element().find('[data-ui="face"]').show();
       } // Check if the character object defines if the type animation should be used.
@@ -36820,11 +37219,36 @@ function (_Action) {
   }, {
     key: "apply",
     value: function apply() {
-      // Check if a character is the one speaking or if the narrator is speaking
+      var _this2 = this;
+
+      try {
+        var dialogLog = _monogatari.Monogatari.component('dialog-log');
+
+        if (typeof dialogLog !== 'undefined') {
+          if (this._cycle === 'Application') {
+            dialogLog.instances(function (instance) {
+              return instance.write({
+                id: _this2.id,
+                character: _this2.character,
+                dialog: _this2.dialog
+              });
+            });
+          } else {
+            dialogLog.instances(function (instance) {
+              return instance.pop();
+            });
+          }
+        }
+      } catch (e) {
+        _monogatari.Monogatari.debug.error(e);
+      }
+
       if (typeof this.character !== 'undefined') {
         return this.characterDialog();
+      } else if (this.id === 'centered') {
+        return this.displayCenteredDialog(this.dialog, this.id, _monogatari.Monogatari.setting('CenteredTypeAnimation'));
       } else {
-        return this.narratorDialog();
+        return this.displayDialog(this.dialog, 'narrator', _monogatari.Monogatari.setting('NarratorTypeAnimation'));
       }
     }
   }, {
@@ -36899,18 +37323,6 @@ Object.keys(_Canvas).forEach(function (key) {
     enumerable: true,
     get: function () {
       return _Canvas[key];
-    }
-  });
-});
-
-var _Centered = require("./Centered");
-
-Object.keys(_Centered).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _Centered[key];
     }
   });
 });
@@ -37226,7 +37638,7 @@ Object.keys(_Dialog).forEach(function (key) {
     }
   });
 });
-},{"./Canvas":"actions/Canvas.js","./Centered":"actions/Centered.js","./Choice":"actions/Choice.js","./Clear":"actions/Clear.js","./Conditional":"actions/Conditional.js","./End":"actions/End.js","./Function":"actions/Function.js","./HideCanvas":"actions/HideCanvas.js","./HideCharacter":"actions/HideCharacter.js","./HideImage":"actions/HideImage.js","./HideParticles":"actions/HideParticles.js","./HideVideo":"actions/HideVideo.js","./InputModal":"actions/InputModal.js","./Jump":"actions/Jump.js","./Message":"actions/Message.js","./Next":"actions/Next.js","./Notify":"actions/Notify.js","./Particles":"actions/Particles.js","./Pause":"actions/Pause.js","./Play":"actions/Play.js","./Scene":"actions/Scene.js","./ShowCharacter":"actions/ShowCharacter.js","./ShowImage":"actions/ShowImage.js","./Stop":"actions/Stop.js","./Vibrate":"actions/Vibrate.js","./Video":"actions/Video.js","./Wait":"actions/Wait.js","./Dialog":"actions/Dialog.js"}],"index.js":[function(require,module,exports) {
+},{"./Canvas":"actions/Canvas.js","./Choice":"actions/Choice.js","./Clear":"actions/Clear.js","./Conditional":"actions/Conditional.js","./End":"actions/End.js","./Function":"actions/Function.js","./HideCanvas":"actions/HideCanvas.js","./HideCharacter":"actions/HideCharacter.js","./HideImage":"actions/HideImage.js","./HideParticles":"actions/HideParticles.js","./HideVideo":"actions/HideVideo.js","./InputModal":"actions/InputModal.js","./Jump":"actions/Jump.js","./Message":"actions/Message.js","./Next":"actions/Next.js","./Notify":"actions/Notify.js","./Particles":"actions/Particles.js","./Pause":"actions/Pause.js","./Play":"actions/Play.js","./Scene":"actions/Scene.js","./ShowCharacter":"actions/ShowCharacter.js","./ShowImage":"actions/ShowImage.js","./Stop":"actions/Stop.js","./Vibrate":"actions/Vibrate.js","./Video":"actions/Video.js","./Wait":"actions/Wait.js","./Dialog":"actions/Dialog.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37596,7 +38008,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41633" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45129" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

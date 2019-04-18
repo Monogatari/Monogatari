@@ -10,29 +10,15 @@ export class Choice extends Action {
 		return Promise.resolve ();
 	}
 
-	static canProceed () {
-		// If a choice is currently being displayed, the player should not be able
-		// to advance until one is chosen.
-		if (Monogatari.element ().find (`[data-ui="choices"]`).isVisible ()) {
-			return Promise.reject ();
-		}
-		return Promise.resolve ();
-	}
-
-	static canRevert () {
-		// If a choice is visible right now, we can simply remove it and let the
-		// game revert to the previous statement.
-		if (Monogatari.element ().find (`[data-ui="choices"]`).isVisible ()) {
-			Monogatari.element ().find (`[data-ui="choices"]`).remove ();
-			Monogatari.global ('_CurrentChoice', null);
-		}
+	static willRollback () {
+		Monogatari.global ('_CurrentChoice', null);
 		return Promise.resolve ();
 	}
 
 	static bind (selector) {
 		// Bind the click event on data-do elements. This property is used for
 		// every choice button.
-		$_(`${selector}`).on('click', '[data-choice]', function (event) {
+		this.engine.on ('click', '[data-choice]', function (event) {
 			Monogatari.debug.debug ('Registered Click on Choice Button');
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();
@@ -43,7 +29,7 @@ export class Choice extends Action {
 			if ($_(this).data('do') != 'null') {
 
 				// Remove all the choices
-				Monogatari.element ().find (`[data-ui="choices"]`).remove ();
+				Monogatari.element ().find ('choice-container').remove ();
 
 				// Remove the reference to the current choice object
 				if (Monogatari.global ('_CurrentChoice') !== null) {
@@ -72,7 +58,6 @@ export class Choice extends Action {
 	}
 
 	static reset () {
-		Monogatari.element ().find (`[data-ui="choices"]`).remove ();
 		Monogatari.global ('_CurrentChoice', null);
 		return Promise.resolve ();
 	}
@@ -87,7 +72,6 @@ export class Choice extends Action {
 	}
 
 	willApply () {
-		Monogatari.element ().find (`[data-ui="choices"]`).html ('');
 		return Promise.resolve ();
 	}
 
@@ -99,10 +83,6 @@ export class Choice extends Action {
 		// able to be used in choices.
 		Monogatari.global ('_CurrentChoice', this.statement);
 
-		const element = $_(document.createElement ('div'));
-		element.addClass ('text--center');
-		element.data ('ui', 'choices');
-
 		const promises = [];
 
 		// Go over all the objects defined in the choice object which should be
@@ -110,50 +90,47 @@ export class Choice extends Action {
 		for (const i in this.statement) {
 			const choice = this.statement[i];
 
-			// Check if the current option has a condition to be shown
-			if (typeof choice.Condition !== 'undefined' && choice.Condition !== '') {
+			// Check if the option is an object (a option to choose from) or
+			// if it's text (dialog to be shown)
+			if (typeof choice == 'object') {
+				this.statement[i]._key = i;
 
-				promises.push (
-					new Promise ((resolve) => {
-						// First check if the condition is met before we add the button
-						Monogatari.assertAsync (this.statement[i].Condition, Monogatari).then (() => {
-							if (typeof choice.Class !== 'undefined') {
-								element.append (`<button data-do="${choice.Do}" class="${choice.Class}" data-choice="${i}">${choice.Text}</button>`);
-							} else {
-								element.append (`<button data-do="${choice.Do}" data-choice="${i}">${choice.Text}</button>`);
-							}
-						}).catch (() => {
-							// The condition wasn't met
-						}).finally (() => {
-							Monogatari.global ('block', false);
-							resolve ();
-						});
-					})
-				);
-			} else {
-				// Check if the option is an object (a option to choose from) or
-				// if it's text (dialog to be shown)
-				if (typeof choice == 'object') {
-					if (typeof choice.Class != 'undefined') {
-						element.append (`<button data-do="${choice.Do}" class="${choice.Class}" data-choice="${i}">${choice.Text}</button>`);
-					} else {
-						element.append (`<button data-do="${choice.Do}" data-choice="${i}">${choice.Text}</button>`);
-					}
-				} else if (typeof choice == 'string') {
-					promises.push (Monogatari.run (choice, false));
+				// Check if the current option has a condition to be shown
+				if (typeof choice.Condition !== 'undefined' && choice.Condition !== '') {
+					promises.push (
+						new Promise ((resolve) => {
+							// First check if the condition is met before we add the button
+							Monogatari.assertAsync (this.statement[i].Condition, Monogatari).then (() => {
+								resolve (this.statement[i]);
+							}).catch (() => {
+								// The condition wasn't met
+							}).finally (() => {
+								Monogatari.global ('block', false);
+							});
+						})
+					);
+				} else {
+					promises.push (Promise.resolve (this.statement[i]));
 				}
 			}
-			Monogatari.element ().find (`[data-ui="choices"]`).show ('flex');
 		}
 
-		return Promise.all (promises).then (() => {
-			if (Monogatari.element ().find (`[data-screen="game"] [data-ui="text"]`).hasClass ('nvl')) {
-				element.addClass ('horizontal');
-				Monogatari.element ().find (` [data-screen="game"] [data-ui="text"]`).append (element.get (0));
+		return Promise.all (promises).then ((choices) => {
+			const element = document.createElement ('choice-container');
+			element.setProps ({
+				choices
+			});
+
+			const dialog = this.statement.Dialog;
+
+			if (typeof dialog === 'string') {
+				this.engine.run (dialog, false);
+			}
+
+			if (Monogatari.element ().find ('text-box').hasClass ('nvl')) {
+				this.engine.element ().find ('[data-component="text-box"]').append (element);
 			} else {
-				element.addClass ('vertical');
-				element.addClass ('middle');
-				Monogatari.element ().find (` [data-screen="game"]`).append (element.get (0));
+				this.engine.element ().find ('[data-screen="game"]').append (element);
 			}
 		});
 	}

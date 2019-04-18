@@ -4,7 +4,7 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Video extends Action {
 
-	static canProceed () {
+	static shouldProceed () {
 		return new Promise ((resolve, reject) => {
 			$_('[data-video]').each ((element) => {
 				if (element.hasAttribute ('controls') === true && element.ended !== true) {

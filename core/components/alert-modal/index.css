@@ -1,10 +1,10 @@
 /**
  * ===========================
- * Alert Dialog Component
+ * Alert Modal Component
  * ===========================
  */
 
-alert-dialog {
+alert-modal {
 	[data-content="wrapper"] {
 		overflow: auto;
 		overflow-x: hidden;

@@ -1060,7 +1060,7 @@ class Monogatari {
 		}
 
 		for (const component of this.components ()) {
-			promises.push (component.reset ());
+			promises.push (component.onReset ());
 		}
 
 		return Promise.all (promises);
@@ -1450,9 +1450,11 @@ class Monogatari {
 						this.debug.debug (`Application Failed.\nReason: ${e}`);
 						return Promise.reject (e);
 					});
-				}).catch (() => {
+				}).catch ((e) => {
+					this.debug.debug (`Will Apply Failed.\nReason: ${e}`);
 					this.debug.trace ();
 					this.debug.groupEnd ();
+					return Promise.reject (e);
 				});
 			}
 		}
@@ -1465,7 +1467,7 @@ class Monogatari {
 	////////////////////////////////////////////////////////////////////////////
 
 	static alert (id, options) {
-		const alert = document.createElement ('alert-dialog');
+		const alert = document.createElement ('alert-modal');
 		alert.setProps (options);
 		this.element ().prepend (alert);
 	}
@@ -1473,10 +1475,10 @@ class Monogatari {
 	static dismissAlertDialog (id = null) {
 		// console.log (id);
 		// if (typeof id === 'string') {
-		// 	this.component ('alert-dialog').instance (id).remove ();
+		// 	this.component ('alert-modal').instance (id).remove ();
 		// } else {
-		//console.log (this.element ().find ('alert-dialog'));
-		this.element ().find ('alert-dialog').remove ();
+		//console.log (this.element ().find ('alert-modal'));
+		this.element ().find ('alert-modal').remove ();
 		// }
 	}
 
@@ -1591,20 +1593,34 @@ class Monogatari {
 		});
 	}
 
+	static proceed () {
+		return this.shouldProceed ().then (() => {
+			return this.willProceed ();
+		});
+	}
+
+	static rollback () {
+		return this.shouldRollback ().then (() => {
+			return this.willRollback ();
+		});
+	}
+
 	/**
-	 * @static canProceed - Check if the game can proceed
+	 * @static shouldProceed - Check if the game can proceed
 	 *
 	 * @returns {Promise} - Resolves if the game can proceed or reject if it
 	 * can't proceed right now.
 	 */
-	static canProceed () {
+	static shouldProceed () {
 		const promises = [];
 
-		this.debug.groupCollapsed ('canProceed Check');
+		this.debug.groupCollapsed ('shouldProceed Check');
+
+		this.debug.debug ('Checking Actions');
 
 		// Check action by action if they will allow the game to proceed
 		for (const action of this.actions ()) {
-			promises.push (action.canProceed ().then (() => {
+			promises.push (action.shouldProceed ().then (() => {
 				this.debug.debug (`OK ${action.id}`);
 			}).catch ((e) => {
 				this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
@@ -1612,9 +1628,11 @@ class Monogatari {
 			}));
 		}
 
+		this.debug.debug ('Checking Components');
+
 		// Check component by component if they will allow the game to proceed
 		for (const component of this.components ()) {
-			promises.push (component.canProceed ().then (() => {
+			promises.push (component.shouldProceed ().then (() => {
 				this.debug.debug (`OK ${component._id}`);
 			}).catch ((e) => {
 				this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
@@ -1622,6 +1640,7 @@ class Monogatari {
 			}));
 		}
 
+		this.debug.debug ('Checking Extra Conditions');
 
 		// Check if the game is visible, if it's not, then it probably is not
 		// playing or is looking at some menu and thus the game should not
@@ -1635,27 +1654,73 @@ class Monogatari {
 		} else {
 			promises.push (Promise.reject ());
 		}
+
+		console.log (promises);
+		return Promise.all (promises).then ((...args) => {
+			this.debug.groupEnd ();
+			return Promise.resolve (...args);
+		}).catch ((e) => {
+			this.debug.groupEnd ();
+			return Promise.reject (e);
+		});
+	}
+
+	static willProceed () {
+
+		const promises = [];
+		this.debug.groupCollapsed ('Can proceed check passed, game will proceed.');
+
+		// Check action by action if they will allow the game to proceed
+		for (const action of this.actions ()) {
+			promises.push (action.willProceed ().then (() => {
+				this.debug.debug (`OK ${action.id}`);
+			}).catch ((e) => {
+				this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
+				return Promise.reject (e);
+			}));
+		}
+
+		// Check component by component if they will allow the game to proceed
+		for (const component of this.components ()) {
+			promises.push (component.willProceed ().then (() => {
+				this.debug.debug (`OK ${component._id}`);
+			}).catch ((e) => {
+				this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
+				return Promise.reject (e);
+			}));
+		}
+
 		return Promise.all (promises).finally (() => {
 			this.debug.groupEnd ();
 		});
 	}
 
 	/**
-	 * @static canRevert - Check if the game can revert
+	 * @static shouldRollback - Check if the game can revert
 	 *
 	 * @returns {Promise} - Resolves if the game can be reverted or reject if it
 	 * can't be reverted right now.
 	 */
-	static canRevert () {
+	static shouldRollback () {
 		const promises = [];
 
-		this.debug.groupCollapsed ('canRevert Check');
+		this.debug.groupCollapsed ('shouldRollback Check');
 		// Check action by action if they will allow the game to revert
 		for (const action of this.actions ()) {
-			promises.push (action.canRevert ().then (() => {
+			promises.push (action.shouldRollback ().then (() => {
 				this.debug.debug (`OK ${action.id}`);
 			}).catch ((e) => {
 				this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
+				return Promise.reject (e);
+			}));
+		}
+
+		// Check component by component if they will allow the game to revert
+		for (const component of this.components ()) {
+			promises.push (component.shouldRollback ().then (() => {
+				this.debug.debug (`OK ${component._id}`);
+			}).catch ((e) => {
+				this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
 				return Promise.reject (e);
 			}));
 		}
@@ -1674,6 +1739,31 @@ class Monogatari {
 		return Promise.all (promises).finally (() => {
 			this.debug.groupEnd ();
 		});
+	}
+
+	static willRollback () {
+		const promises = [];
+
+		this.debug.groupCollapsed ('shouldRollback Check');
+		// Check action by action if they will allow the game to revert
+		for (const action of this.actions ()) {
+			promises.push (action.willRollback ().then (() => {
+				this.debug.debug (`OK ${action.id}`);
+			}).catch ((e) => {
+				this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
+				return Promise.reject (e);
+			}));
+		}
+
+		// Check component by component if they will allow the game to revert
+		for (const component of this.components ()) {
+			promises.push (component.willRollback ().then (() => {
+				this.debug.debug (`OK ${component._id}`);
+			}).catch ((e) => {
+				this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
+				return Promise.reject (e);
+			}));
+		}
 	}
 
 	/**
@@ -1804,7 +1894,7 @@ class Monogatari {
 					// something really bad happened. Maybe the browser (tab) was inactive?
 					// possibly special handling to avoid futile "catch up" run
 				}
-				this.canProceed ().then (() => {
+				this.proceed ().then (() => {
 					this.next ();
 					expected += interval;
 					setTimeout (this.global ('_AutoPlayTimer'), Math.max (0, interval - now)); // take into account drift
@@ -1944,7 +2034,7 @@ class Monogatari {
 		// points to.
 		this.registerListener ('close', {
 			callback: (element) => {
-				this.element ().find (`[data-component="${element.data('close')}"]`).removeClass('modal--active');
+				this.element ().find (`[data-component="${element.data('close')}"]`).remove ();
 				return true;
 			}
 		});
@@ -2012,7 +2102,7 @@ class Monogatari {
 				// Start the timeout with the time specified on the settings. We
 				// save it on a global variable so that we can disable later.
 				this.global ('skip', setTimeout (() => {
-					this.canProceed ().then (() => {
+					this.proceed ().then (() => {
 						this.next ();
 					}).catch (() => {
 						// An action waiting for user interaction or something else
@@ -2067,7 +2157,7 @@ class Monogatari {
 		// Add event listener for back buttons. If the player is playing, the back
 		// button will return to the game, if its not playing, then it'll return
 		// to the main menu.
-		this.element ().on ('click', '[data-screen]:not([data-screen="game"]) [data-action="back"]', (event) => {
+		this.on ('click', '[data-screen]:not([data-screen="game"]) [data-action="back"]', (event) => {
 
 			if (!$_(`${selector} [data-screen="game"]`).isVisible ()) {
 				this.debug.debug ('Registered Back Listener on Non-Game Screen');
@@ -2088,7 +2178,7 @@ class Monogatari {
 		});
 
 		// Add listeners for the data-action properties
-		this.element().on ('click', '[data-action]', function (event) {
+		this.on ('click', '[data-action]', function (event) {
 			const element = $_(this);
 
 			const action = element.data ('action');
@@ -2101,7 +2191,7 @@ class Monogatari {
 		});
 
 		this.keyboardShortcut (['right', 'space'], () => {
-			this.canProceed ().then (() => {
+			this.proceed ().then (() => {
 				this.next ();
 			}).catch (() => {
 				// An action waiting for user interaction or something else
@@ -2156,8 +2246,8 @@ class Monogatari {
 		return $_('visual-novel');
 	}
 
-	static on (event, callback) {
-		return this.element ().on (event, callback);
+	static on (event, target, callback) {
+		return this.element ().on (event, target, callback);
 	}
 
 	static parentElement () {

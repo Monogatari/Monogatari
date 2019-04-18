@@ -4,12 +4,12 @@ import { $_, Text } from '@aegis-framework/artemis';
 
 export class Play extends Action {
 
-	static canProceed () {
+	static shouldProceed () {
 		Play.shutUp ();
 		return Promise.resolve ();
 	}
 
-	static canRevert () {
+	static shouldRollback () {
 		Play.shutUp ();
 		return Promise.resolve ();
 	}

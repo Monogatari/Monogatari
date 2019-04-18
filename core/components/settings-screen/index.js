@@ -6,7 +6,7 @@ class SettingsScreen extends ScreenComponent {
 
 	static bind () {
 		// Fix for select labels
-		this.engine.element ().on ('click', '[data-select]', () => {
+		this.engine.on ('click', '[data-select]', () => {
 			const e = document.createEvent ('MouseEvents');
 			e.initMouseEvent ('mousedown');
 			this.engine.element ().find (`[data-action='${this.dataset.select}']`).first ().dispatchEvent (e);
@@ -16,8 +16,6 @@ class SettingsScreen extends ScreenComponent {
 	}
 
 	// static init (selector) {
-
-
 
 	// 	// Set the electron quit handler.
 	// 	if (Platform.electron ()) {

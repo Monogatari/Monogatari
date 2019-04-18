@@ -40,9 +40,9 @@ class GameScreen extends Component {
 	}
 
 	static bind (selector) {
-		$_(`${selector}`).on ('click', '[data-screen="game"] *:not([data-choice])', function () {
+		this.engine.on ('click', '[data-screen="game"] *:not([data-choice])', function () {
 			Monogatari.debug.debug ('Next Statement Listener');
-			Monogatari.canProceed ().then (() => {
+			Monogatari.shouldProceed ().then (() => {
 				Monogatari.next ();
 			}).catch (() => {
 				// An action waiting for user interaction or something else
@@ -66,7 +66,7 @@ class GameScreen extends Component {
 			keys: 'left',
 			callback: () => {
 				Monogatari.global ('block', false);
-				Monogatari.canRevert ().then (() => {
+				Monogatari.ollback ().then (() => {
 					Monogatari.previous ();
 				}).catch ((e) => {
 					// An action waiting for user interaction or something else

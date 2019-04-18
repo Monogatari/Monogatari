@@ -3,7 +3,7 @@ import { Monogatari } from '../monogatari';
 
 export class End extends Action {
 
-	static bind (selector) {
+	static bind () {
 
 		this.engine.registerListener ('end', {
 			keys: 'shift+q',
@@ -40,12 +40,8 @@ export class End extends Action {
 		return action === 'end';
 	}
 
-	constructor ([ action ]) {
-		super ();
-	}
-
 	willApply () {
-		//this.engine.element ().find ('[data-screen]').hide ();
+		this.engine.element ().find ('[data-screen]').hide ();
 		return Promise.resolve ();
 	}
 

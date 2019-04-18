@@ -7,12 +7,8 @@ export class Next extends Action {
 		return action === 'next';
 	}
 
-	constructor ([ action ]) {
-		super ();
-	}
-
 	apply () {
-		Monogatari.next ();
+		this.engine.next ();
 		return Promise.resolve ();
 	}
 

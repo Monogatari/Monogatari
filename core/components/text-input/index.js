@@ -19,8 +19,8 @@ class TextInput extends Component {
 		};
 	}
 
-	reset () {
-		this.remove ();
+	shouldProceed () {
+		return Promise.reject ('Text Input is awaiting user input.');
 	}
 
 	onStateUpdate (property, oldValue, newValue) {
@@ -33,8 +33,7 @@ class TextInput extends Component {
 	}
 
 	willMount () {
-		console.log ('1');
-		this.classList.add ('modal');
+		this.classList.add ('modal', 'modal--active');
 		return Promise.resolve ();
 	}
 

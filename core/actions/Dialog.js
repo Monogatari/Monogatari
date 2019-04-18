@@ -5,33 +5,41 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class Dialog extends Action {
 
-	static canProceed () {
+	static shouldProceed () {
 
 		// Check if the type animation has finished and the Typed object still exists
 		if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
+
 			// Get the string it was typing
 			const str = Monogatari.global ('textObject').strings [0];
 
 			// Get the element it was typing to
-			const element = $_(Monogatari.global ('textObject').el).data ('ui');
+			const element = Monogatari.global ('textObject').el;
 
-			if (element !== 'centered' && !$_('text-box').hasClass ('nvl')) {
-				Monogatari.global ('textObject').destroy ();
-				Monogatari.element ().find ('[data-ui="say"]').html (str);
-				Monogatari.global ('finishedTyping', true);
-				return Promise.reject ('TypeWriter effect has not finished. Skipping it.');
-			} else if (element !== 'centered' && $_('text-box').hasClass ('nvl')) {
-				const last = $_('[data-ui="say"] [data-spoke] p').last ().get (0);
-				Monogatari.global ('textObject').destroy ();
-				$_(last).html (str);
-				Monogatari.global ('finishedTyping', true);
-				return Promise.reject ('TypeWriter effect has not finished. Skipping it.');
-			}
+			Monogatari.global ('textObject').destroy ();
+
+			element.innerHTML = str;
+
+			Monogatari.global ('finishedTyping', true);
+
+			return Promise.reject ('TypeWriter effect has not finished.');
 		}
 		return Promise.resolve (Monogatari.global ('finishedTyping'));
 	}
 
-	static canRevert () {
+	static willProceed () {
+		if (Monogatari.global ('finishedTyping') && Monogatari.element ().find (`[data-component"centered-dialog"]`).isVisible ()) {
+			Monogatari.element ().find (`[data-component="text-box"]`).show ('flex');
+		}
+		return Promise.resolve (Monogatari.global ('finishedTyping'));
+	}
+
+	static willRollback () {
+		Monogatari.global ('textObject').destroy ();
+		Monogatari.global ('finishedTyping', true);
+		Monogatari.global ('_CurrentChoice', null);
+		Monogatari.element ().find ('[data-component="text-box"]').show ();
+
 		const dialogLog = Monogatari.component ('dialog-log');
 
 		if (typeof dialogLog !== 'undefined') {
@@ -126,15 +134,16 @@ export class Dialog extends Action {
 
 		const [ id, expression ] = character.split (':');
 
+		this.dialog = dialog.join (' ');
+
+		this.nvl = false;
+
 		if (typeof Monogatari.character (id) !== 'undefined') {
 			this.character = Monogatari.character (id);
 			this.id = id;
-			this.dialog = dialog.join (' ');
 
 			if (typeof this.character.nvl !== 'undefined') {
 				this.nvl = this.character.nvl;
-			} else {
-				this.nvl = false;
 			}
 
 			if (typeof expression !== 'undefined') {
@@ -153,14 +162,14 @@ export class Dialog extends Action {
 					this.image = this.character.default_expression;
 				}
 			}
+		} else if (id === 'centered') {
+			this.id = 'centered';
 		} else {
 			this.id = 'narrator';
 			if (id === 'nvl') {
 				this.nvl = true;
-				this.dialog = dialog.join (' ');
 			} else {
-				this.dialog = [ character, ...dialog ].join (' ');
-				this.nvl = false;
+				this.dialog = `${character} ${this.dialog}`;
 			}
 		}
 	}
@@ -169,6 +178,20 @@ export class Dialog extends Action {
 		Monogatari.element ().find ('[data-character]').removeClass ('focus');
 		Monogatari.element ().find ('[data-ui="face"]').hide ();
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
+		return Promise.resolve ();
+	}
+
+	displayCenteredDialog (dialog, character, animation) {
+		const element = document.createElement ('centered-dialog');
+		this.engine.element ().find ('[data-screen="game"]').append (element);
+
+		if (animation) {
+			Monogatari.global ('typedConfiguration').strings = [dialog];
+			Monogatari.global ('textObject', new Typed (`${Monogatari.selector ()} [data-component="centered-dialog"] [data-content="wrapper"]`, Monogatari.global ('typedConfiguration')));
+		} else {
+			element.content ('wrapper').html (dialog);
+		}
+
 		return Promise.resolve ();
 	}
 
@@ -243,46 +266,32 @@ export class Dialog extends Action {
 				// If the property is set to true, the animation will be shown
 				// if it is set to false, even if the flag was set to true,
 				// no animation will be shown in the game.
-				Monogatari.global ('typedConfiguration').strings = [Monogatari.replaceVariables (dialog)];
+				Monogatari.global ('typedConfiguration').strings = [dialog];
 				Monogatari.global ('textObject', new Typed ('[data-ui="say"]', Monogatari.global ('typedConfiguration')));
 			} else {
-				Monogatari.element ().find ('[data-ui="say"]').html (Monogatari.replaceVariables (dialog));
+				Monogatari.element ().find ('[data-ui="say"]').html (dialog);
 				Monogatari.global ('finishedTyping', true);
 			}
 		} else {
 			this.displayNvlDialog (dialog, character, animation);
 		}
 
-		try {
-			const dialogLog = Monogatari.component ('dialog-log');
-			if (typeof dialogLog !== 'undefined') {
-				if (this._cycle === 'Application') {
-					dialogLog.instances (instance => instance.write ({
-						id: character,
-						character: this.character,
-						dialog
-					}));
-				} else {
-					dialogLog.instances (instance => instance.pop ());
-				}
-			}
-		} catch (e) {
-			Monogatari.debug.error (e);
-		}
-
-
-
 		return Promise.resolve ();
 	}
 
-	narratorDialog () {
-		return this.displayDialog (this.dialog, 'narrator', Monogatari.setting ('NarratorTypeAnimation'));
-	}
 
 	characterDialog () {
 		// Check if the character has a name to show
 		if (typeof this.character.name !== 'undefined' && !this.nvl) {
 			Monogatari.element ().find ('[data-ui="who"]').html (Monogatari.replaceVariables (this.character.name));
+		}
+
+		let directory = this.character.directory;
+
+		if (typeof directory == 'undefined') {
+			directory = '';
+		} else {
+			directory += '/';
 		}
 
 		// Focus the character's sprite and colorize it's name with the defined
@@ -293,7 +302,8 @@ export class Dialog extends Action {
 		// Check if an expression or face image was used and if it exists and
 		// display it
 		if (typeof this.image !== 'undefined' && !this.nvl) {
-			Monogatari.element ().find ('[data-ui="face"]').attribute ('src', 'img/characters/' + this.image);
+			`${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}`
+			Monogatari.element ().find ('[data-ui="face"]').attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}/${directory}${this.image}`);
 			Monogatari.element ().find ('[data-ui="face"]').show ();
 		}
 
@@ -306,11 +316,29 @@ export class Dialog extends Action {
 	}
 
 	apply () {
-		// Check if a character is the one speaking or if the narrator is speaking
+		try {
+			const dialogLog = Monogatari.component ('dialog-log');
+			if (typeof dialogLog !== 'undefined') {
+				if (this._cycle === 'Application') {
+					dialogLog.instances (instance => instance.write ({
+						id: this.id,
+						character: this.character,
+						dialog: this.dialog
+					}));
+				} else {
+					dialogLog.instances (instance => instance.pop ());
+				}
+			}
+		} catch (e) {
+			Monogatari.debug.error (e);
+		}
+
 		if (typeof this.character !== 'undefined') {
 			return this.characterDialog ();
+		} else if (this.id === 'centered') {
+			return this.displayCenteredDialog (this.dialog, this.id, Monogatari.setting ('CenteredTypeAnimation'));
 		} else {
-			return this.narratorDialog ();
+			return this.displayDialog (this.dialog, 'narrator', Monogatari.setting ('NarratorTypeAnimation'));
 		}
 	}
 

@@ -1,5 +1,5 @@
-import Component from './../../lib/Component';
-import { Monogatari } from './../../monogatari';
+import Component from '../../lib/Component';
+import { Monogatari } from '../../monogatari';
 
 class AlertDialog extends Component {
 
@@ -44,6 +44,6 @@ class AlertDialog extends Component {
 }
 
 
-AlertDialog._id = 'alert-dialog';
+AlertDialog._id = 'alert-modal';
 
 Monogatari.registerComponent (AlertDialog);

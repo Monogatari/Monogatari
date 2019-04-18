@@ -128,6 +128,68 @@ class Component extends HTMLElement {
 	}
 
 	/**
+	 * @static shouldProceed - Either when the user clicks in the game to proceed or
+	 * the autoPlay feature is ready to go on, Monogatari will first check with
+	 * all actions if it's ok to proceed. Every action should implement its own
+	 * logic for it according to its requirements.
+	 *
+	 * @return {Promise} - Resolved if proceeding is alright or rejected if its not
+	 */
+	static shouldProceed () {
+		const promises = [];
+		this.instances ((instance) => {
+			promises.push (instance.shouldProceed ());
+		});
+		return Promise.all (promises);
+	}
+
+	/**
+	 * @static willProceed - Once the shouldProceed check is passed, each action
+	 * should implement its own logic according to its requirements to respond to
+	 * the game proceeding.
+	 *
+	 * @return {Promise}
+	 */
+	static willProceed () {
+		const promises = [];
+		this.instances ((instance) => {
+			promises.push (instance.willProceed ());
+		});
+		return Promise.all (promises);
+	}
+
+	/**
+	 * @static shouldRollback - Similarly to the shouldProceed () function, this one takes
+	 * action when the player tries to go back in the game.Monogatari will first
+	 * check with all actions if it's ok to go back. Every action should implement
+	 * its own logic for it according to its requirements.
+	 *
+	 * @return {Promise} - Resolved if going back is alright or rejected if its not
+	 */
+	static shouldRollback () {
+		const promises = [];
+		this.instances ((instance) => {
+			promises.push (instance.shouldRollback ());
+		});
+		return Promise.all (promises);
+	}
+
+	/**
+	 * @static willRollback - Once the shouldRollback check is passed, each action
+	 * should implement its own logic according to its requirements to respond to
+	 * the game reverting the previous action
+	 *
+	 * @return {Promise}
+	 */
+	static willRollback () {
+		const promises = [];
+		this.instances ((instance) => {
+			promises.push (instance.willRollback ());
+		});
+		return Promise.all (promises);
+	}
+
+	/**
 	 * @static bind - The binding is the second step of the Mounting cycle, all
 	 * operations related to event bindings or other sort of binding with the
 	 * HTML content generated in the setup phase should be implemented here.
@@ -195,7 +257,18 @@ class Component extends HTMLElement {
 	 *
 	 * @return {Promise} - Result of the reset operation
 	 */
-	static reset () {
+	static onReset () {
+		const promises = [];
+
+		this.instances ((instance) => {
+			promises.push (instance.onReset ());
+		});
+
+		return Promise.all (promises);
+	}
+
+
+	onReset () {
 		return Promise.resolve ();
 	}
 
@@ -401,6 +474,22 @@ class Component extends HTMLElement {
 	// 	}
 	// }
 
+	shouldProceed () {
+		return Promise.resolve ();
+	}
+
+	willProceed () {
+		return Promise.resolve ();
+	}
+
+	shouldRollback () {
+		return Promise.resolve ();
+	}
+
+	willRollback () {
+		return Promise.resolve ();
+	}
+
 	setState (state) {
 		if (typeof state === 'object') {
 			const oldState = Object.assign ({}, this._state);
@@ -493,6 +582,7 @@ class Component extends HTMLElement {
 	connectedCallback () {
 		this._connected = true;
 		this.dataset.component = this.static._id;
+		this.classList.add ('animated');
 
 		this._setPropAttributes ();
 

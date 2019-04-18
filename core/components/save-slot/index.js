@@ -23,7 +23,7 @@ class SaveSlot extends Component {
 			}
 		});
 
-		$_(`${selector}`).on ('click', '[data-component="slot"] [data-delete], [data-component="slot"] [data-delete] *', function (event) {
+		this.engine.on ('click', '[data-component="slot"] [data-delete], [data-component="slot"] [data-delete] *', function (event) {
 			Monogatari.debug.debug ('Registered Click on Slot Delete Button');
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();

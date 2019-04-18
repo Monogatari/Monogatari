@@ -8,19 +8,7 @@ export class InputModal extends Action {
 		return typeof Input !== 'undefined';
 	}
 
-	static reset () {
-		this.instances ().remove ();
-		return Promise.resolve ();
-	}
-
-	static canProceed () {
-		if (this.instances ().isVisible ()) {
-			return Promise.reject ();
-		}
-		return Promise.resolve ();
-	}
-
-	static canRevert () {
+	static shouldRollback () {
 		// If the player is trying to go back when the input form is being shown
 		// we simply remove it, reset it and remove the listener it had.
 		if (this.instances ().isVisible ()) {

@@ -325,25 +325,7 @@ video {
 	}
 }
 
-[data-ui='choices'] {
-	z-index: 11;
-	max-height: 90%;
-	overflow-y: auto;
-	height: auto;
-	width: 90%;
-	justify-content: center;
-	margin: 0 auto;
-	flex-wrap: wrap;
 
-	button {
-		margin: 1em;
-		padding: 0.5em;
-		border-radius: 0.5em;
-		width: auto;
-		height: auto;
-		color: rgb(255, 255, 255);
-	}
-}
 
 [data-ui='face'] {
 	float: left;
@@ -379,7 +361,9 @@ video {
 	}
 }
 
-
+[data-content="wrapper"] {
+	display: flex;
+}
 
 
 [data-notice='slot-overwrite'] input {
@@ -387,7 +371,7 @@ video {
 }
 
 [data-ui='centered'] {
-	margin: 0;
+
 }
 
 [data-ui='particles'] {
@@ -524,10 +508,6 @@ video {
 		}
 	}
 
-	[data-ui='choices'] {
-		width: 70%;
-	}
-
 	button {
 		width: 10rem;
 		height: 3.5rem;
@@ -545,10 +525,6 @@ video {
 		font-size: 3.5rem;
 	}
 
-	[data-ui='choices'] {
-		width: 50%;
-	}
-
 	.modal > * {
 		width: 50%;
 	}
@@ -558,10 +534,6 @@ video {
 /** HD Screen, Large Devices, Wide Screens (1200px) **/
 @media screen and (min-width: 75em) {
 
-	[data-ui='choices'] {
-		width: 40%;
-	}
-
 	.modal > * {
 		width: 40%;
 	}
@@ -570,10 +542,6 @@ video {
 
 /** Full HD Screen, Large Devices, Wide Screens (1920px) **/
 @media screen and (min-width: 120em) {
-
-	[data-ui='choices'] {
-		width: 30%;
-	}
 
 	.modal > * {
 		width: 30%;

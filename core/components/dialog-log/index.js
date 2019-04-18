@@ -31,10 +31,8 @@ class DialogLog extends Component {
 		return Promise.resolve ();
 	}
 
-	static reset () {
-		this.instances ().each ((instance) => {
-			instance.content ('log').html ('<div class="text--center padded" data-string="NoDialogsAvailable">No dialogs available. Dialogs will appear here as they show up.</div>');
-		});
+	onReset () {
+		this.content ('log').html ('<div class="text--center padded" data-string="NoDialogsAvailable">No dialogs available. Dialogs will appear here as they show up.</div>');
 		return Promise.resolve ();
 	}
 
