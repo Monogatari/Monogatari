@@ -1,0 +1,13 @@
+/**
+ * ===========================
+ * Main Menu Component
+ * ===========================
+ */
+
+main-menu {
+	align-self: flex-end;
+	flex-direction: column;
+	align-items: flex-end;
+	position: absolute;
+	bottom: 0;
+}

@@ -139,6 +139,10 @@ video {
 	.modal__content {
 		border-radius: 4px;
 	}
+
+	&[data-component]:not(.modal--active) {
+		display: none;
+	}
 }
 
 .horizontal {
@@ -151,17 +155,8 @@ video {
  * ===========================
  */
 
-[data-screen] {
-	overflow-y: auto;
-	overflow-x: hidden;
-	display: none;
-	align-items: stretch;
-	flex-direction: column;
-	@include full-size;
-	@include background-image;
-}
-
 [data-component] {
+	display: flex;
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -172,6 +167,22 @@ video {
 		background-position: center;
 	}
 }
+
+[data-screen] {
+	overflow-y: auto;
+	overflow-x: hidden;
+	display: none;
+	align-items: stretch;
+	flex-direction: column;
+	@include full-size;
+	@include background-image;
+}
+
+[data-screen].active {
+	display: flex;
+}
+
+
 
 /**
  * ===========================
@@ -211,156 +222,6 @@ video {
 		padding-left: 1rem;
 	}
 }
-
-
-/**
- * =============================================================================
- * Loading Screen
- * =============================================================================
- * The loading screen is the first one to be shown if asset preloading is
- * enabled.
- *
- * Contents:
- * progress_bar: The bar showing the load progress
- *
- * ===========================
- */
-
-[data-component="loading-screen"] {
-	align-items: center;
-	justify-content: center;
-
-	[data-content="wrapper"] {
-		display: flex;
-		flex-direction: column;
-	}
-
-	[data-content="progress"] {
-		appearance: none;
-		border: none;
-		margin: 1em auto;
-		display: block;
-		border-radius: 3px;
-		box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2) inset;
-		background: transparent;
-		width: 50%;
-
-		&::-webkit-progress-bar {
-			background: transparent;
-			box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2) inset;
-			border-radius: 3px;
-		}
-
-		&::-webkit-progress-value {
-			background-color: #f16272;
-			border-radius: 3px;
-		}
-
-		&::-moz-progress-bar {
-			background-color: #f16272;
-			border-radius: 3px;
-		}
-	}
-}
-
-/**
- * ===========================
- * Main Screen
- * ===========================
- */
-[data-component="main-screen"] {
-
-}
-
-/**
- * ===========================
- * Main Menu
- * ===========================
- * The following style belongs to the main menu, shown on the main screen.
- * By default we'll show the menu at the bottom right portion of the screen
- * ===========================
- */
-[data-component="main_menu"] {
-	display: flex;
-	align-self: flex-end;
-	flex-direction: column;
-	align-items: flex-end;
-	position: absolute;
-	bottom: 0;
-}
-
-/**
- * ===========================
- * Game Screen
- * ===========================
- */
-[data-component='game-screen'] {
-	@include full-size;
-	max-height: 100%;
-	max-width: 100%;
-	overflow: hidden;
-	overflow-y: hidden;
-	display: none;
-	position: relative;
-	background-color: #000000;
-
-	img {
-		position: absolute;
-		max-height: 90%;
-	}
-
-	[data-image] {
-		top: 0;
-		bottom: 0;
-		margin: auto;
-		max-width: 100%;
-		max-height: 100%;
-	}
-
-	[data-character] {
-		bottom: 0;
-		position: absolute;
-		max-width: 100%;
-		max-height: 80vh;
-	}
-
-	[data-sprite] {
-		margin: 0 auto;
-		left: 0;
-		right: 0;
-
-		&.right {
-			left: initial;
-			right: 0;
-		}
-
-		&.left {
-			left: 0;
-			right: initial;
-		}
-	}
-
-	[data-canvas] {
-		&.character {
-			@extend [data-screen='game'] [data-character];
-		}
-
-		&.immersive {
-			position: absolute;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
-		}
-	}
-}
-
-
-
-
-
-
-
 /**
  * ===========================
  * Data Components Styling
@@ -464,74 +325,12 @@ video {
 	}
 }
 
-[data-ui='choices'] {
-	z-index: 11;
-	max-height: 100vh;
-	overflow-y: auto;
-	height: auto;
-	width: 90%;
-	justify-content: center;
-	margin: 0 auto;
 
-	button {
-		margin: 1em;
-		padding: 0.5em;
-		border-radius: 0.5em;
-		width: auto;
-		height: auto;
-		color: rgb(255, 255, 255);
-	}
-}
 
 [data-ui='face'] {
 	float: left;
 	max-height: 20vh !important;
 	position: initial !important;
-}
-
-[data-ui='text'] {
-	background-color: var(--main-color);
-	min-height: 20%;
-	max-height: 25%;
-	overflow-y: auto;
-	width: 100%;
-	z-index: 10;
-	text-align: left;
-	position: absolute;
-	bottom: 0;
-	color: rgb(255, 255, 255);
-
-	&::after {
-		content: ' ';
-		width: 100%;
-		height: 0;
-		display: block;
-		background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.22) 85%);
-		position: sticky;
-		bottom: 0;
-		transition: all ease 0.5s;
-	}
-
-	&.unread::after {
-		height: 2rem;
-	}
-
-	&.nvl {
-		max-height: 100%;
-		height: 100%;
-	}
-
-	p {
-		display: block;
-		width: 100%;
-		padding: 1rem;
-		margin: 0;
-	}
-
-	.fa {
-		width: auto;
-		display: inline-block;
-	}
 }
 
 [data-spoke='narrator'] p {
@@ -550,102 +349,7 @@ video {
 	margin: 0;
 }
 
-[data-component='quick-menu'] {
-	top: 0;
-	background-color: transparent;
-	width: 100%;
-	z-index: 3;
-	position: absolute;
-	height: 2.5rem;
-	max-height: 2.5rem;
-
-	&.transparent {
-		background-color: transparent;
-
-		button:hover {
-			color: var(--main-color);
-			cursor: pointer;
-		}
-	}
-
-	button {
-		display: inline-block;
-		width: auto;
-		font-size: 1rem;
-		margin: 0 0.25rem;
-		background: transparent;
-		color: rgba(125, 125, 125, 0.5);
-
-		&:hover {
-			color: rgba(125, 125, 125, 0.5);
-			background: transparent;
-			cursor: pointer;
-		}
-
-		& > [data-string] {
-			display: none;
-		}
-
-		& > .fas {
-			display: inline-block;
-			font-size: 1.5rem;
-		}
-	}
-}
-
 [data-ui='slots'] {
-	[data-slot] {
-		width: 20rem;
-		height: auto;
-		background-color: var(--main-color);
-		border-radius: 3px;
-		vertical-align: middle;
-		cursor: pointer;
-		position: relative;
-		min-height: 10rem;
-		font-size: 1rem;
-		display: flex;
-		flex-flow: column;
-		justify-content: center;
-		color: #fff;
-
-		.badge {
-			position: absolute;
-			top: 0;
-			left: 0;
-			padding: 0.5rem;
-			font-size: 0.7rem;
-			background: inherit;
-			color: inherit;
-			font-style: italic;
-			font-weight: bold;
-		}
-
-		[data-delete] {
-			top: -1rem;
-			border-radius: 100%;
-			width: 2rem;
-			height: 2rem;
-			position: absolute;
-			right: -1rem;
-			margin: 0;
-			font-size: 0.5rem;
-			padding: 0.5rem;
-			background-color: var(--main-color);
-			color: #f7f7f7;
-		}
-
-		img {
-			width: 100%;
-		}
-
-		[data-content="background"] {
-			width: 100%;
-			height: 10rem;
-			border: 1px solid rgba(0, 0, 0, 0.2);
-			@include background-image;
-		}
-	}
 
 	figcaption {
 		padding: 1rem;
@@ -657,7 +361,9 @@ video {
 	}
 }
 
-
+[data-content="wrapper"] {
+	display: flex;
+}
 
 
 [data-notice='slot-overwrite'] input {
@@ -665,7 +371,7 @@ video {
 }
 
 [data-ui='centered'] {
-	margin: 0;
+
 }
 
 [data-ui='particles'] {
@@ -689,52 +395,7 @@ video {
  * ===========================
  */
 
-[data-component="dialog-log"] {
 
-	& .modal__content {
-		width: 95%;
-		height: 95%;
-		max-height: 95%;
-		max-width: 1000px;
-		overflow: hidden;
-		padding: 0;
-		color: var(--text-color);
-
-		& [data-content="log"] {
-			text-align: left;
-			padding: 1rem;
-
-			height: 93%;
-			max-height: 93%;
-
-			overflow: auto;
-
-			& [data-spoke] {
-				font-size: 1rem;
-				padding: 0.5rem 0;
-				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-
-				& span {
-					font-size: 0.9rem;
-				}
-
-				& > p {
-					font-size: 1rem;
-					margin: 0.5rem 0;
-				}
-
-				&[data-spoke="narrator"] > p {
-					color: var(--main-color);
-				}
-
-				&[data-spoke="centered"] > p {
-					text-align: center;
-					font-weight: bold;
-				}
-			}
-		}
-	}
-}
 
 /**
  * ===========================
@@ -742,11 +403,7 @@ video {
  * ===========================
 **/
 
-[data-screen='settings'] input,
-[data-screen='settings'] select {
-	margin: 2rem;
-	background-color: transparent;
-}
+
 
 [data-screen='save'] input {
 	background-color: #fff;
@@ -776,44 +433,6 @@ video {
 
 [data-screen='loading'] div {
 	width: 90%;
-}
-
-[data-component='help-screen'] {
-
-	[data-content='help'] {
-		max-width: 1000px;
-		margin: 0 auto;
-
-		& > .row {
-			align-self: flex-start;
-		}
-
-		h3 {
-			margin-bottom: 1rem;
-		}
-	}
-
-	[data-content='symbols'] {
-		align-items: center;
-		justify-content: flex-start;
-
-		[data-content='shortcut'] {
-			width: 1.5rem;
-			height:1.5rem;
-			min-width: 1.5rem;
-			display: block;
-			background-color: var(--text-color);
-			text-align: center;
-			border-radius: 2px;
-			color: #fff;
-			display: inline-block;
-			font-size: 0.8rem;
-			margin-right: 1rem;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-	}
 }
 
 /**
@@ -869,37 +488,6 @@ video {
 		width: 70%;
 	}
 
-
-	[data-ui='quick-menu'] {
-		bottom: 0;
-		top: auto;
-		background-color: var(--main-color);
-
-		&.transparent {
-			color: var(--main-color);
-		}
-
-		& button {
-			color: #f7f7f7;
-
-			&:hover {
-				color: rgba(255, 255, 255, 0.8);
-				background: transparent;
-			}
-		}
-
-		& > button {
-
-			& > [data-string] {
-				display: inline-block;
-			}
-
-			& > .fas {
-				display: none;
-			}
-		}
-	}
-
 	[data-ui='load-progress'] {
 		width: 80%;
 	}
@@ -920,24 +508,9 @@ video {
 		}
 	}
 
-	[data-ui='choices'] {
-		width: 70%;
-	}
-
 	button {
 		width: 10rem;
 		height: 3.5rem;
-	}
-
-	[data-ui="dialog-log"] button {
-		width: 8rem;
-		height: 2.5rem;
-		font-size: 1rem;
-	}
-
-	[data-ui='quick-menu'] > button {
-		width: auto;
-		height: auto;
 	}
 
 	.modal > * {
@@ -952,10 +525,6 @@ video {
 		font-size: 3.5rem;
 	}
 
-	[data-ui='choices'] {
-		width: 50%;
-	}
-
 	.modal > * {
 		width: 50%;
 	}
@@ -965,10 +534,6 @@ video {
 /** HD Screen, Large Devices, Wide Screens (1200px) **/
 @media screen and (min-width: 75em) {
 
-	[data-ui='choices'] {
-		width: 40%;
-	}
-
 	.modal > * {
 		width: 40%;
 	}
@@ -977,10 +542,6 @@ video {
 
 /** Full HD Screen, Large Devices, Wide Screens (1920px) **/
 @media screen and (min-width: 120em) {
-
-	[data-ui='choices'] {
-		width: 30%;
-	}
 
 	.modal > * {
 		width: 30%;

@@ -99,26 +99,48 @@ class Action {
 	}
 
 	/**
-	 * @static canProceed - Either when the user clicks in the game to proceed or
+	 * @static shouldProceed - Either when the user clicks in the game to proceed or
 	 * the autoPlay feature is ready to go on, Monogatari will first check with
 	 * all actions if it's ok to proceed. Every action should implement its own
 	 * logic for it according to its requirements.
 	 *
 	 * @return {Promise} - Resolved if proceeding is alright or rejected if its not
 	 */
-	static canProceed () {
+	static shouldProceed () {
 		return Promise.resolve ();
 	}
 
 	/**
-	 * @static canRevert - Similarly to the canProceed () function, this one takes
+	 * @static willProceed - Once the shouldProceed check is passed, each action
+	 * should implement its own logic according to its requirements to respond to
+	 * the game proceeding.
+	 *
+	 * @return {Promise}
+	 */
+	static willProceed () {
+		return Promise.resolve ();
+	}
+
+	/**
+	 * @static shouldRollback - Similarly to the shouldProceed () function, this one takes
 	 * action when the player tries to go back in the game.Monogatari will first
 	 * check with all actions if it's ok to go back. Every action should implement
 	 * its own logic for it according to its requirements.
 	 *
 	 * @return {Promise} - Resolved if going back is alright or rejected if its not
 	 */
-	static canRevert () {
+	static shouldRollback () {
+		return Promise.resolve ();
+	}
+
+	/**
+	 * @static willRollback - Once the shouldRollback check is passed, each action
+	 * should implement its own logic according to its requirements to respond to
+	 * the game reverting the previous action
+	 *
+	 * @return {Promise}
+	 */
+	static willRollback () {
 		return Promise.resolve ();
 	}
 
@@ -257,6 +279,14 @@ class Action {
 	 */
 	constuctor (statement) {
 
+	}
+
+	get engine () {
+		return this.constructor.engine;
+	}
+
+	set engine (value) {
+		throw new Error ('Component engine reference is hold at static level and cannot be modified.');
 	}
 
 	/**

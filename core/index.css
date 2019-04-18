@@ -21,3 +21,5 @@
  * Monogatari main styling
  */
 @import './style/monogatari.css';
+
+@import './components/index.css'

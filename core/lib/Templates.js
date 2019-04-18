@@ -351,7 +351,7 @@ Monogatari.component ('settings-screen').html (`
 	</section>
 `);
 
-Monogatari.component ('message').html ((title, subtitle, message) => `
+Monogatari.component ('mesage-dialog').html ((title, subtitle, message) => `
 	<div data-component="modal" data-component="message" class="middle">
 		<div data-ui="message-content">
 			<h3>${title}</h3>

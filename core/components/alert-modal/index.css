@@ -1,0 +1,12 @@
+/**
+ * ===========================
+ * Alert Modal Component
+ * ===========================
+ */
+
+alert-modal {
+	[data-content="wrapper"] {
+		overflow: auto;
+		overflow-x: hidden;
+	}
+}
