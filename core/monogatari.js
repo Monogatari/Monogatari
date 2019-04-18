@@ -2446,7 +2446,8 @@ Monogatari._assets = {
 	sound: {},
 	video: {},
 	images: {},
-	scenes: {}
+	scenes: {},
+	gallery: {}
 };
 
 // These are the default settings and they are overwritten by the user's settings
@@ -2537,7 +2538,8 @@ Monogatari._settings = {
 		'sound': 'sound',
 		'ui': 'ui',
 		'video': 'video',
-		'voice': 'voice'
+		'voice': 'voice',
+		'gallery': 'gallery'
 	},
 
 	// Name of the Splash Screen Label. If a name is given and a label with that

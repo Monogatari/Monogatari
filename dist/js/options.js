@@ -55,7 +55,7 @@ monogatari.settings({
 	'AspectRatio': '16:9',
 
 	// Force aspect ratio, it will make all images to comply with aspect ratio.
-	// Values: 'None' (don't force), 'Visuals' (force only visuals) 
+	// Values: 'None' (don't force), 'Visuals' (force only visuals)
 	// or 'Global' (force all game)
 	'ForceAspectRatio': 'None',
 
@@ -102,7 +102,8 @@ monogatari.settings({
 		'sound': 'sound',
 		'ui': 'ui',
 		'video': 'video',
-		'voice': 'voice'
+		'voice': 'voice',
+		'gallery': 'gallery'
 	},
 
 	// Name of the Splash Screen Label. If a name is given and a label with that

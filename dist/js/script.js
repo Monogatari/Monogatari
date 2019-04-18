@@ -56,6 +56,10 @@ monogatari.assets ('scenes', {
 
 });
 
+monogatari.assets ('gallery', {
+	'yui': '../characters/Yui/normal.png'
+});
+
 // Define the Characters
 monogatari.characters ({
 	'y': {

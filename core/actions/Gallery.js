@@ -15,14 +15,21 @@ export class Gallery extends Action {
 
 	apply () {
 		if (this.mode === 'unlock') {
-			const unlocked = [...Monogatari.component ('gallery-screen').state ('unlocked'), this.asset];
-			Gallery.state ({
-				unlocked
+
+			this.engine.instances ((instance) => {
+				const unlocked = [...instance.state.unlocked, this.asset];
+				instance.setState ({
+					unlocked
+				});
 			});
+
+
 		} else if (this.mode === 'lock') {
-			const unlocked = Monogatari.component ('gallery-screen').state ('unlocked').filter ((item) => item !== this.asset);
-			Gallery.state ({
-				unlocked
+			this.engine.instances ((instance) => {
+				const unlocked = instance.state.unlocked.filter ((item) => item !== this.asset);
+				instance.setState ({
+					unlocked
+				});
 			});
 		}
 		return Promise.resolve ();
@@ -30,15 +37,11 @@ export class Gallery extends Action {
 
 	revert () {
 		if (this.mode === 'lock') {
-			const unlocked = [...Monogatari.component ('gallery-screen').state ('unlocked'), this.asset];
-			Gallery.state ({
-				unlocked
-			});
+			this.mode = 'unlock';
+			return this.apply ();
 		} else if (this.mode === 'unlock') {
-			const unlocked = Monogatari.component ('gallery-screen').state ('unlocked').filter ((item) => item !== this.asset);
-			Gallery.state ({
-				unlocked
-			});
+			this.mode = 'lock';
+			return this.apply ();
 		}
 		return Promise.resolve ();
 	}
