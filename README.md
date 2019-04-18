@@ -5,6 +5,10 @@ Website: https://monogatari.io/
 
 Demo: https://monogatari.io/demo/
 
+Discord: https://discord.gg/gWSeDTz
+
+Twitter: https://twitter.com/monogatari
+
 ## Features
 - Responsive out of the box
 - Plays nice with Electron for Desktop apps and Cordova for mobile apps
@@ -25,9 +29,9 @@ To develop in Monogatari you would need the same as to develop a webpage, you ju
 
 Some recommended (and free) ones include:
 
+* [Visual Studio Code](https://code.visualstudio.com)
 * [Atom](https://atom.io/)
 * [Brackets](http://brackets.io/)
-* [Visual Studio Code](https://code.visualstudio.com)
 
 Take a look at them and pick the one you like the most and feel comfortable with, this will be your main tool from now on.
 
@@ -41,27 +45,21 @@ Ok so now you have the environment set up, you have some idea on what the files 
 
 1. Try the game first, open the index.html file inside the directory you just unzipped and play the sample game through.
 2. Once you've played it once, open the directory (the one you unzipped) with the editor you chose to start making changes.
-3. Open the script.js file with your editor, find the variable called ˋscriptˋ, as you'll see, all the dialogs you just saw are just a simple list in there. More information can be found in [the documentation](https://monogatari.io/documentation/script/text/).
+3. Open the script.js file with your editor, find the variable called ˋscriptˋ, as you'll see, all the dialogs you just saw are just a simple list in there. More information can be found in [the documentation](https://developers.monogatari.io/documentation/script/text).
 4. Change one of the dialogs, save the file and reload the game (just like you reload a website).
 5. Play it again and you'll see the dialog changed just like you made it.
 6. Now try adding more dialog to it and you'll quickly get how things are done.
-7. Once you've gotten yourself used to adding dialogs, [add a scene](https://monogatari.io/documentation/script/scenes/) as a challenge, that means you'll have to add your image file to the ˋimg/scenes/ directoryˋ, more instructions are on the link.
+7. Once you've gotten yourself used to adding dialogs, [add a scene](https://developers.monogatari.io/documentation/script/scenes) as a challenge, that means you'll have to add your image file to the ˋimg/scenes/ directoryˋ, more instructions are on the link.
 
 If you manage to do all that, congratulations! You just made your first game and are probably more familiarized with the workflow you'll be using, just make changes, save, reload, try and repeat!
 
 ## Documentation
-You can take a look at the documentation in https://monogatari.io/documentation/
+You can take a look at the documentation in https://developers.monogatari.io/
 
 You can also contribute to it in the [Documentation repository](https://github.com/Monogatari/Documentation)
 
-
-## Get in Touch
-If you have any doubt, problem or just want some help please contact me, I'll be glad to help in any way I can. Even though Monogatari is simple enough and you can find many resources online, I know it can be hard to get started and sometimes the documentation is not clear enough, so really, contact me anytime!
-
-You can join the [Discord Server](https://discord.gg/gWSeDTz), send me an email, DM me at [Twitter](https://twitter.com/Hyuchia), and [Mastodon](https://mastodon.social/@HyuchiaDiego) as well.
-
 ## Contributing
-Contributions are always welcome! If you have contributed to this project, or in the website, please make sure you are listed in the contributors list of the website, you can add yourself in the [contributors file](https://github.com/Monogatari/Website/blob/master/templates/contributors.html) of the website
+Contributions are always welcome! Read the [CONTRIBUTING file](https://github.com/Monogatari/Monogatari/blob/develop/CONTRIBUTING.md) to get started.
 
 ## License
 Monogatari is a Free Open Source Software project released under the [MIT License](https://raw.githubusercontent.com/Monogatari/Monogatari/master/LICENSE).

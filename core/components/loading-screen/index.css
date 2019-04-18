@@ -39,4 +39,8 @@ loading-screen {
 			border-radius: 3px;
 		}
 	}
+
+	div {
+		width: 90%;
+	}
 }

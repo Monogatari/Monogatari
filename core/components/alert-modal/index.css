@@ -9,4 +9,8 @@ alert-modal {
 		overflow: auto;
 		overflow-x: hidden;
 	}
+
+	p {
+		font-size: 1.5rem;
+	}
 }

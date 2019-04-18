@@ -40,3 +40,16 @@ help-screen {
 		}
 	}
 }
+
+
+/** Medium Devices, Desktops (768px)**/
+@media screen and (min-width: 48em) {
+	help-screen {
+		& [data-content='symbols'] {
+			& [data-content='shortcut'] {
+				width: 2rem;
+				height: 2rem;
+			}
+		}
+	}
+}
