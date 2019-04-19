@@ -30,7 +30,7 @@ export class Jump extends Action {
 
 	willApply () {
 		if (typeof Monogatari.script (this.label) !== 'undefined') {
-			//Monogatari.stopAmbient ();
+			Monogatari.stopAmbient ();
 			this.engine.showScreen ('game');
 			return Promise.resolve ();
 		} else {
@@ -68,7 +68,7 @@ export class Jump extends Action {
 			label: this.label
 		});
 
-		if (!Monogatari.element ().find (`[data-ui="text"]`).hasClass ('nvl')) {
+		if (!Monogatari.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
 			Monogatari.action ('Dialog').reset ();
 		}
 

@@ -41,8 +41,6 @@ export class Play extends Action {
 	}
 
 	static bind (selector) {
-		Monogatari.ambientPlayer = document.querySelector (`${selector} [data-component="ambient"]`);
-		Monogatari.videoPlayer = document.querySelector (`${selector} [data-ui="player"]`);
 
 		// Volume bars listeners
 		$_(`${selector} [data-action="set-volume"]`).on ('change mouseover', function () {
@@ -57,10 +55,6 @@ export class Play extends Action {
 			Monogatari.preference ('Volume')[Text.capitalize (target)] = value;
 
 			Monogatari.Storage.set ('Settings', Monogatari.preferences ());
-		});
-
-		$_(`${selector} [data-action="close-video"]`).click (() => {
-			Play.stopVideo ();
 		});
 
 		Monogatari.state ({
@@ -93,7 +87,6 @@ export class Play extends Action {
 	}
 
 	static reset () {
-		Play.stopVideo ();
 
 		const players = Monogatari.mediaPlayers ();
 
@@ -102,17 +95,11 @@ export class Play extends Action {
 			Monogatari.removeMediaPlayer (playerType);
 		}
 
-		Monogatari.element ().find ('[data-component="video"]').removeClass ('modal--active');
 		return Promise.resolve ();
 	}
 
 	static matchString ([ action ]) {
 		return action === 'play';
-	}
-
-	static stopVideo () {
-		Monogatari.removeMediaPlayer ('video');
-		Monogatari.element ().find ('[data-component="video"]').removeClass ('active');
 	}
 
 	// Stop the voice player
@@ -202,17 +189,13 @@ export class Play extends Action {
 				this.media = media;
 			}
 
-			if (this.type != 'video') {
-				let player = Monogatari.mediaPlayer (this.type, this.mediaKey);
-				if (typeof player === 'undefined') {
-					player = new Audio ();
-					player.volume = Monogatari.preference ('Volume')[Text.capitalize (this.type)];
-					this.player = Monogatari.mediaPlayer (this.type, this.mediaKey, player);
-				} else {
-					this.player = player;
-				}
-			} else if (this.type == 'video') {
-				this.player = Monogatari.mediaPlayer (this.type, this.mediaKey, Monogatari.videoPlayer);
+			let player = Monogatari.mediaPlayer (this.type, this.mediaKey);
+			if (typeof player === 'undefined') {
+				player = new Audio ();
+				player.volume = Monogatari.preference ('volume')[Text.capitalize (this.type)];
+				this.player = Monogatari.mediaPlayer (this.type, this.mediaKey, player);
+			} else {
+				this.player = player;
 			}
 		} else {
 			this.player = Monogatari.mediaPlayer (this.type);
@@ -256,11 +239,6 @@ export class Play extends Action {
 			}
 
 			return this.player.play ();
-		} else if (this.player instanceof HTMLVideoElement) {
-			this.player.src = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting('AssetsPath')[this.type]}/${this.media}`;
-			Monogatari.element ().find ('[data-component="video"]').addClass ('active');
-
-			return this.player.play ();
 		} else if (this.player instanceof Array) {
 			const promises = [];
 			for (const player of this.player) {
@@ -277,11 +255,7 @@ export class Play extends Action {
 	}
 
 	didApply () {
-		if (this.type !== 'video') {
-			return Promise.resolve ({ advance: true });
-		}
-
-		return Promise.resolve ();
+		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {

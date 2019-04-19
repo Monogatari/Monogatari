@@ -304,12 +304,6 @@ video {
  * ===========================
 **/
 
-[data-ui='face'] {
-	float: left;
-	max-height: 20vh !important;
-	position: initial !important;
-}
-
 [data-spoke='narrator'] p {
 	padding-left: 0;
 }
@@ -324,18 +318,6 @@ video {
 [data-ui='say'] span {
 	padding: 0;
 	margin: 0;
-}
-
-[data-ui='slots'] {
-
-	figcaption {
-		padding: 1rem;
-		color: #fff;
-
-		small {
-			display: block;
-		}
-	}
 }
 
 [data-ui='particles'] {
@@ -388,29 +370,8 @@ video {
 
 /** Medium Screens, Tablets (601px) **/
 @media screen and (min-width: 37.56255em) {
-
-	[data-ui='input'] {
-
-		button {
-			width: 5rem;
-			height: 3rem;
-		}
-
-		[data-ui='input-message'] {
-			font-size: 1.5rem;
-		}
-	}
-
-	[data-ui='text'] {
-		bottom: 2.5rem;
-	}
-
 	.modal > * {
 		width: 70%;
-	}
-
-	[data-ui='load-progress'] {
-		width: 80%;
 	}
 }
 

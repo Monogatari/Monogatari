@@ -50,6 +50,8 @@ export class Dialog extends Action {
 			Monogatari.element ().find ('[data-component="text-box"]').show ('flex');
 		}
 
+		document.querySelector ('[data-ui="who"]').innerHTML = '';
+
 		if (typeof dialogLog !== 'undefined') {
 			dialogLog.instances (instance => instance.pop ());
 		}

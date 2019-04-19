@@ -65,7 +65,9 @@ class SlotList extends Component {
 				const isDeleteButton = $_(event.target).closestParent ('[data-delete]', '[data-component="save-slot"]');
 
 				if (!isDeleteButton) {
-					engine.loadFromSlot($_(this).attribute ('slot'));
+					engine.loadFromSlot($_(this).attribute ('slot')).then (() => {
+						engine.run (engine.label ()[engine.state ('step')]);
+					});
 				}
 			});
 		} else if (this.props.type === 'save') {

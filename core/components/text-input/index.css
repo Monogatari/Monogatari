@@ -14,7 +14,7 @@ text-input {
 		margin: 0.5rem auto;
 	}
 
-	[data-ui='input-message'] {
+	[data-content="message"] {
 		font-size: 1rem;
 	}
 
@@ -28,5 +28,20 @@ text-input {
 	input {
 		background-color: #eee;
 		min-width: 50%;
+	}
+}
+
+/** Medium Screens, Tablets (601px) **/
+@media screen and (min-width: 37.56255em) {
+	text-input {
+
+		button {
+			width: 5rem;
+			height: 3rem;
+		}
+
+		[data-content="message"] {
+			font-size: 1.5rem;
+		}
 	}
 }

@@ -16,18 +16,6 @@ export class Video extends Action {
 		});
 	}
 
-	static configuration (object = null) {
-		if (object !== null) {
-			if (typeof object === 'string') {
-				return Video._configuration[object];
-			} else {
-				Video._configuration = Object.assign ({}, Video._configuration, object);
-			}
-		} else {
-			return Video._configuration;
-		}
-	}
-
 	static onLoad () {
 		if (Monogatari.state ('videos').length > 0) {
 			for (const video of Monogatari.state ('videos')) {

@@ -62,12 +62,12 @@ Monogatari.component ('game-screen').html (`
 		<div id="particles-js" data-ui="particles"></div>
 		<div id="background" data-ui="background"></div>
 
-		<div data-ui="text">
+		<div data-component="text-box">
 			<img data-ui="face" alt="">
 			<span data-ui="who"></span>
 			<p data-ui="say"></p>
 		</div>
-		<div data-ui="quick-menu" class="text--right"></div>
+		<div data-component="quick-menu" class="text--right"></div>
 	</section>
 `);
 
@@ -378,7 +378,7 @@ Monogatari.component ('quit_warning').html (`
 
 Monogatari.component ('text-input').html (message => `
 	<form data-component="modal" data-ui="input" class="middle active">
-		<p data-ui="input-message" class="block">${message}</p>
+		<p data-content="message" class="block">${message}</p>
 		<input type="text">
 		<small data-ui="warning" class="block"></small>
 		<div>

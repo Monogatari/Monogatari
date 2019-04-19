@@ -1493,11 +1493,10 @@ class Monogatari {
 
 		this.trigger ('willLoadGame');
 
-		this.resetGame ().then (() => {
-			this.element ().find ('[data-screen]').hide();
-			this.element ().find ('[data-screen="game"]').show();
+		return this.resetGame ().then (() => {
+			this.hideScreens ();
 
-			this.Storage.get (slot).then ((data) => {
+			return this.Storage.get (slot).then ((data) => {
 				// Check if an older save format was used so we can transform
 				// that information into the new format
 				if (typeof data.Engine !== 'undefined') {
@@ -1581,12 +1580,17 @@ class Monogatari {
 					promises.push (action.onLoad ());
 				}
 
-				Promise.all (promises).then (() => {
+				// Run the onLoad event of all the components
+				for (const component of this.components ()) {
+					promises.push (component.onLoad ());
+				}
+
+				return Promise.all (promises).then (() => {
 					// Finally show the game and start playing
 					this.showScreen ('game');
-					this.run (this.label ()[this.state ('step')]);
 					document.body.style.cursor = 'auto';
 					this.trigger ('didLoadGame');
+					return Promise.resolve ();
 				});
 			});
 		});
@@ -1614,29 +1618,43 @@ class Monogatari {
 		const promises = [];
 
 		this.debug.groupCollapsed ('shouldProceed Check');
+		try {
 
-		this.debug.debug ('Checking Actions');
+			this.debug.debug ('Checking Actions');
 
-		// Check action by action if they will allow the game to proceed
-		for (const action of this.actions ()) {
-			promises.push (action.shouldProceed ().then (() => {
-				this.debug.debug (`OK ${action.id}`);
-			}).catch ((e) => {
-				this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
-				return Promise.reject (e);
-			}));
-		}
+			// Check action by action if they will allow the game to proceed
+			for (const action of this.actions ()) {
+				promises.push (action.shouldProceed ().then (() => {
+					this.debug.debug (`OK ${action.id}`);
+				}).catch ((e) => {
+					this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
+					return Promise.reject (e);
+				}));
+			}
 
-		this.debug.debug ('Checking Components');
+			this.debug.debug ('Checking Components');
 
-		// Check component by component if they will allow the game to proceed
-		for (const component of this.components ()) {
-			promises.push (component.shouldProceed ().then (() => {
-				this.debug.debug (`OK ${component._id}`);
-			}).catch ((e) => {
-				this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
-				return Promise.reject (e);
-			}));
+			// Check component by component if they will allow the game to proceed
+			for (const component of this.components ()) {
+				promises.push (component.shouldProceed ().then (() => {
+					this.debug.debug (`OK ${component._id}`);
+				}).catch ((e) => {
+					this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
+					return Promise.reject (e);
+				}));
+			}
+		} catch (e) {
+			console.error (e);
+			FancyError.show (
+				'An error ocurred while trying to execute a shouldProceed function.',
+				'Monogatari attempted to execute the function but an error ocurred.',
+				{
+					'Error Message': e.message,
+					'Help': {
+						'_': 'More details should be available at the console.',
+					}
+				}
+			);
 		}
 
 		this.debug.debug ('Checking Extra Conditions');
@@ -1701,8 +1719,12 @@ class Monogatari {
 			);
 		}
 
-		return Promise.all (promises).finally (() => {
+		return Promise.all (promises).then ((...args) => {
 			this.debug.groupEnd ();
+			return Promise.resolve (...args);
+		}).catch ((e) => {
+			this.debug.groupEnd ();
+			return Promise.reject (e);
 		});
 	}
 
@@ -1716,24 +1738,38 @@ class Monogatari {
 		const promises = [];
 
 		this.debug.groupCollapsed ('shouldRollback Check');
-		// Check action by action if they will allow the game to revert
-		for (const action of this.actions ()) {
-			promises.push (action.shouldRollback ().then (() => {
-				this.debug.debug (`OK ${action.id}`);
-			}).catch ((e) => {
-				this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
-				return Promise.reject (e);
-			}));
-		}
+		try {
+			// Check action by action if they will allow the game to revert
+			for (const action of this.actions ()) {
+				promises.push (action.shouldRollback ().then (() => {
+					this.debug.debug (`OK ${action.id}`);
+				}).catch ((e) => {
+					this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
+					return Promise.reject (e);
+				}));
+			}
 
-		// Check component by component if they will allow the game to revert
-		for (const component of this.components ()) {
-			promises.push (component.shouldRollback ().then (() => {
-				this.debug.debug (`OK ${component._id}`);
-			}).catch ((e) => {
-				this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
-				return Promise.reject (e);
-			}));
+			// Check component by component if they will allow the game to revert
+			for (const component of this.components ()) {
+				promises.push (component.shouldRollback ().then (() => {
+					this.debug.debug (`OK ${component._id}`);
+				}).catch ((e) => {
+					this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
+					return Promise.reject (e);
+				}));
+			}
+		}  catch (e) {
+			console.error (e);
+			FancyError.show (
+				'An error ocurred while trying to execute a shouldRollback function.',
+				'Monogatari attempted to execute the function but an error ocurred.',
+				{
+					'Error Message': e.message,
+					'Help': {
+						'_': 'More details should be available at the console.',
+					}
+				}
+			);
 		}
 
 		// Check if the game is visible, if it's not, then it probably is not
@@ -1747,34 +1783,61 @@ class Monogatari {
 		} else {
 			promises.push (Promise.reject ());
 		}
-		return Promise.all (promises).finally (() => {
+		return Promise.all (promises).then ((...args) => {
 			this.debug.groupEnd ();
+			return Promise.resolve (...args);
+		}).catch ((e) => {
+			this.debug.groupEnd ();
+			return Promise.reject (e);
 		});
 	}
 
 	static willRollback () {
 		const promises = [];
 
-		this.debug.groupCollapsed ('shouldRollback Check');
-		// Check action by action if they will allow the game to revert
-		for (const action of this.actions ()) {
-			promises.push (action.willRollback ().then (() => {
-				this.debug.debug (`OK ${action.id}`);
-			}).catch ((e) => {
-				this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
-				return Promise.reject (e);
-			}));
+		this.debug.groupCollapsed ('Should Rollback Check passed, game will roll back.');
+
+		try {
+			// Check action by action if they will allow the game to revert
+			for (const action of this.actions ()) {
+				promises.push (action.willRollback ().then (() => {
+					this.debug.debug (`OK ${action.id}`);
+				}).catch ((e) => {
+					this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
+					return Promise.reject (e);
+				}));
+			}
+
+			// Check component by component if they will allow the game to revert
+			for (const component of this.components ()) {
+				promises.push (component.willRollback ().then (() => {
+					this.debug.debug (`OK ${component._id}`);
+				}).catch ((e) => {
+					this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
+					return Promise.reject (e);
+				}));
+			}
+		} catch (e) {
+			console.error (e);
+			FancyError.show (
+				'An error ocurred while trying to execute a willRollback function.',
+				'Monogatari attempted to execute the function but an error ocurred.',
+				{
+					'Error Message': e.message,
+					'Help': {
+						'_': 'More details should be available at the console.',
+					}
+				}
+			);
 		}
 
-		// Check component by component if they will allow the game to revert
-		for (const component of this.components ()) {
-			promises.push (component.willRollback ().then (() => {
-				this.debug.debug (`OK ${component._id}`);
-			}).catch ((e) => {
-				this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
-				return Promise.reject (e);
-			}));
-		}
+		return Promise.all (promises).then ((...args) => {
+			this.debug.groupEnd ();
+			return Promise.resolve (...args);
+		}).catch ((e) => {
+			this.debug.groupEnd ();
+			return Promise.reject (e);
+		});
 	}
 
 	/**
@@ -1871,7 +1934,7 @@ class Monogatari {
 					label: labelName
 				});
 
-				$_('[data-ui="quick-menu"]').hide ();
+				$_('[data-component="quick-menu"]').hide ();
 				this.showScreen ('game');
 				this.run (this.label ()[this.state ('step')]);
 			} else {
@@ -1913,13 +1976,13 @@ class Monogatari {
 				});
 			});
 			setTimeout (this.global ('_AutoPlayTimer'), interval);
-			this.element ().find ('[data-ui="quick-menu"] [data-action="auto-play"] [data-string]').text (this.string ('Stop'));
-			this.element ().find ('[data-ui="quick-menu"] [data-action="auto-play"] [data-icon]').replaceWith ('<span class="fas fa-stop-circle"></span>');
+			this.element ().find ('[data-component="quick-menu"] [data-action="auto-play"] [data-string]').text (this.string ('Stop'));
+			this.element ().find ('[data-component="quick-menu"] [data-action="auto-play"] [data-icon]').replaceWith ('<span class="fas fa-stop-circle"></span>');
 		} else {
 			clearTimeout (this.global ('_AutoPlayTimer'));
 			this.global ('_AutoPlayTimer', null);
-			this.element ().find ('[data-ui="quick-menu"] [data-action="auto-play"] [data-string]').text (this.string ('AutoPlay'));
-			this.element ().find ('[data-ui="quick-menu"] [data-action="auto-play"] [data-icon]').replaceWith ('<span class="fas fa-play-circle"></span>');
+			this.element ().find ('[data-component="quick-menu"] [data-action="auto-play"] [data-string]').text (this.string ('AutoPlay'));
+			this.element ().find ('[data-component="quick-menu"] [data-action="auto-play"] [data-icon]').replaceWith ('<span class="fas fa-play-circle"></span>');
 		}
 	}
 
@@ -1933,16 +1996,16 @@ class Monogatari {
 		if (this.global ('playing')) {
 			// Check if the distraction free is currently enabled
 			if (this.global ('distraction-free') === true) {
-				this.element ().find ('[data-ui="quick-menu"] [data-action="distraction-free"] [data-string]').text (this.string ('Hide'));
-				this.element ().find ('[data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]').replaceWith ('<span class="fas fa-eye" data-action="distraction-free"></span>');
-				this.element ().find ('[data-ui="quick-menu"]').removeClass ('transparent');
-				this.element ().find ('[data-ui="text"]').show ();
+				this.element ().find ('[data-component="quick-menu"] [data-action="distraction-free"] [data-string]').text (this.string ('Hide'));
+				this.element ().find ('[data-component="quick-menu"] [data-action="distraction-free"] [data-icon]').replaceWith ('<span class="fas fa-eye" data-action="distraction-free"></span>');
+				this.element ().find ('[data-component="quick-menu"]').removeClass ('transparent');
+				this.element ().find ('[data-component="text-box"]').show ();
 				this.global ('distraction-free', false);
 			} else {
-				this.element ().find ('[data-ui="quick-menu"] [data-action="distraction-free"] [data-string]').text (this.string ('Show'));
-				this.element ().find ('[data-ui="quick-menu"] [data-action="distraction-free"] [data-icon]').replaceWith ('<span class="fas fa-eye-slash" data-action="distraction-free"></span>');
-				this.element ().find ('[data-ui="quick-menu"]').addClass ('transparent');
-				this.element ().find ('[data-ui="text"]').hide();
+				this.element ().find ('[data-component="quick-menu"] [data-action="distraction-free"] [data-string]').text (this.string ('Show'));
+				this.element ().find ('[data-component="quick-menu"] [data-action="distraction-free"] [data-icon]').replaceWith ('<span class="fas fa-eye-slash" data-action="distraction-free"></span>');
+				this.element ().find ('[data-component="quick-menu"]').addClass ('transparent');
+				this.element ().find ('[data-component="text-box"]').hide();
 				this.global ('distraction-free', true);
 			}
 		}
@@ -2106,7 +2169,7 @@ class Monogatari {
 			// statements. If it's lesser or equal to 0 then it's disabled.
 			if (this.setting ('Skip') > 0) {
 
-				this.element ().find ('[data-ui="quick-menu"] [data-action="skip"] [data-icon]').replaceWith ('<span class="far fa-play-circle"></span>');
+				this.element ().find ('[data-component="quick-menu"] [data-action="skip"] [data-icon]').replaceWith ('<span class="far fa-play-circle"></span>');
 
 				// Start the timeout with the time specified on the settings. We
 				// save it on a global variable so that we can disable later.
@@ -2125,7 +2188,7 @@ class Monogatari {
 		} else {
 			clearTimeout (this.global ('skip'));
 			this.global ('skip', null);
-			this.element ().find ('[data-ui="quick-menu"] [data-action="skip"] [data-icon]').replaceWith ('<span class="fas fa-fast-forward"></span>');
+			this.element ().find ('[data-component="quick-menu"] [data-action="skip"] [data-icon]').replaceWith ('<span class="fas fa-fast-forward"></span>');
 		}
 	}
 
@@ -2398,6 +2461,30 @@ class Monogatari {
 					action.init (selector);
 				}
 
+				if (this.setting ('AutoSave') != 0 && typeof this.setting ('AutoSave') === 'number') {
+					this.debug.debug ('Automatic save is enabled, setting up timeout');
+					this.global ('_AutoSaveInterval', setInterval(function () {
+						this.debug.groupCollapsed ('Automatic Save');
+						const id = this.global ('currentAutoSaveSlot');
+
+						this.debug.debug ('Saving data to slot', id);
+
+						this.saveTo ('AutoSaveLabel', id);
+
+						if (this.global ('currentAutoSaveSlot') === this.setting ('Slots')) {
+							this.global ('currentAutoSaveSlot', 1);
+						} else {
+							this.global ('currentAutoSaveSlot', this.global ('currentAutoSaveSlot') + 1);
+						}
+
+						this.debug.groupEnd ('Automatic Save');
+
+					}, this.setting ('AutoSave') * 60000));
+				} else {
+					this.debug.debug ('Automatic save is disabled. Section will be hidden from Load Screen');
+					this.element ().find ('[data-screen="load"] [data-ui="autoSaveSlots"]').hide ();
+				}
+
 				this.trigger ('didInit');
 			});
 		});
@@ -2406,7 +2493,7 @@ class Monogatari {
 
 Monogatari._events = {
 
-}
+};
 
 Monogatari._selector = '#monogatari';
 
@@ -2609,7 +2696,8 @@ Monogatari.globals ({
 	currentAutoSaveSlot: 1,
 	_AutoPlayTimer: null,
 	skip: null,
-	_log: []
+	_log: [],
+	_AutoSaveInterval: null
 });
 
 Monogatari._listeners = [];

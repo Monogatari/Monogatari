@@ -57,4 +57,13 @@ save-slot {
 		background-repeat: no-repeat;
 		background-position: center;
 	}
+
+	figcaption {
+		padding: 1rem;
+		color: #fff;
+
+		small {
+			display: block;
+		}
+	}
 }

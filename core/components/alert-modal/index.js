@@ -33,10 +33,10 @@ class AlertDialog extends Component {
 		const { message, context, editable, actions } = this.props;
 		return `
 			<div class="modal__content" data-content="wrapper">
-				<p data-string="${message}" data-content="message">${Monogatari.string(message)}</p>
+				<p data-string="${message}" data-content="message">${this.engine.string(message)}</p>
 				${context ? `<small data-content="context" ${editable ? 'contenteditable="true"' : ''}>${context}</small>` : ''}
 				${actions ? `<div data-content="actions">
-					${actions.map (action => `<button data-action="${action.listener}" data-string="${action.label}">${Monogatari.string(action.label)}</button>`).join('')}
+					${actions.map (action => `<button data-action="${action.listener}" data-string="${action.label}">${this.engine.string(action.label)}</button>`).join('')}
 				</div>` : ''}
 			</div>
 		`;

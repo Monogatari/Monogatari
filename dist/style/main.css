@@ -96,7 +96,7 @@ button:hover {
 }
 
 /* Text Box styling */
-[data-ui="text"] {
+[data-component="text-box"] {
 
 }
 
@@ -129,22 +129,22 @@ button:hover {
 /* These styles are applied to the Mobile version of the Quick Menu */
 
 /* Quick Menu Style */
-[data-ui="quick-menu"] {
+[data-component="quick-menu"] {
 
 }
 
 /* Quick Menu Buttons Style */
-[data-ui="quick-menu"] span {
+[data-component="quick-menu"] span {
 
 }
 
 /* Quick Menu Buttons Style on Hover */
-[data-ui="quick-menu"] span:hover {
+[data-component="quick-menu"] span:hover {
 
 }
 
 /* Quick Menu Buttons Icon Style */
-[data-ui="quick-menu"] > span > .fa {
+[data-component="quick-menu"] > span > .fa {
 
 }
 
@@ -187,17 +187,17 @@ input[type=range]::-ms-fill-upper {
 @media screen and (min-width: 37.56255em) {
 
 	/* Quick Menu Style */
-	[data-ui="quick-menu"] {
+	[data-component="quick-menu"] {
 
 	}
 
 	/* Quick Menu Buttons Style */
-	[data-ui="quick-menu"] span {
+	[data-component="quick-menu"] span {
 
 	}
 
 	/* Quick Menu Buttons Style on Hover */
-	[data-ui="quick-menu"] span:hover {
+	[data-component="quick-menu"] span:hover {
 
 	}
 }

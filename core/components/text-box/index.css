@@ -48,6 +48,12 @@ text-box {
 		width: auto;
 		display: inline-block;
 	}
+
+	[data-ui='face'] {
+		float: left;
+		max-height: 20vh !important;
+		position: initial !important;
+	}
 }
 
 /** Medium Screens, Tablets (601px) **/

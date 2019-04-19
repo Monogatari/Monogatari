@@ -1,8 +1,6 @@
 import { Action } from './../lib/Action';
 import { Monogatari } from '../monogatari';
 
-/* global pJSDom */
-
 export class HideParticles extends Action {
 
 	static matchString ([ hide, type ]) {

@@ -44,3 +44,12 @@ loading-screen {
 		width: 90%;
 	}
 }
+
+/** Medium Screens, Tablets (601px) **/
+@media screen and (min-width: 37.56255em) {
+	loading-screen {
+		[data-content="progress"] {
+			width: 80%;
+		}
+	}
+}
