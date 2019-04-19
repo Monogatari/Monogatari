@@ -28,8 +28,10 @@ export class Dialog extends Action {
 	}
 
 	static willProceed () {
-		if (Monogatari.global ('finishedTyping') && Monogatari.element ().find (`[data-component"centered-dialog"]`).isVisible ()) {
-			Monogatari.element ().find (`[data-component="text-box"]`).show ('flex');
+		const centeredDialog = this.engine.element ().find ('[data-component="centered-dialog"]');
+		if (centeredDialog.isVisible ()) {
+			centeredDialog.remove ();
+			Monogatari.element ().find ('[data-component="text-box"]').show ('flex');
 		}
 		return Promise.resolve (Monogatari.global ('finishedTyping'));
 	}
@@ -41,6 +43,12 @@ export class Dialog extends Action {
 		Monogatari.element ().find ('[data-component="text-box"]').show ('flex');
 
 		const dialogLog = Monogatari.component ('dialog-log');
+
+		const centeredDialog = this.engine.element ().find ('[data-component="centered-dialog"]');
+		if (centeredDialog.isVisible ()) {
+			centeredDialog.remove ();
+			Monogatari.element ().find ('[data-component="text-box"]').show ('flex');
+		}
 
 		if (typeof dialogLog !== 'undefined') {
 			dialogLog.instances (instance => instance.pop ());
@@ -185,12 +193,15 @@ export class Dialog extends Action {
 		const element = document.createElement ('centered-dialog');
 		this.engine.element ().find ('[data-screen="game"]').append (element);
 
-		if (animation) {
-			Monogatari.global ('typedConfiguration').strings = [dialog];
-			Monogatari.global ('textObject', new Typed (`${Monogatari.selector ()} [data-component="centered-dialog"] [data-content="wrapper"]`, Monogatari.global ('typedConfiguration')));
-		} else {
-			element.content ('wrapper').html (dialog);
-		}
+		element.ready (() => {
+			Monogatari.element ().find ('[data-component="text-box"]').hide ();
+			if (animation) {
+				Monogatari.global ('typedConfiguration').strings = [dialog];
+				Monogatari.global ('textObject', new Typed (element.content ('wrapper').get (0), Monogatari.global ('typedConfiguration')));
+			} else {
+				element.content ('wrapper').html (dialog);
+			}
+		});
 
 		return Promise.resolve ();
 	}

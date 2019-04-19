@@ -1,6 +1,5 @@
 import { Action } from './../lib/Action';
 import { Monogatari } from '../monogatari';
-import { $_ } from '@aegis-framework/artemis';
 
 export class HideVideo extends Action {
 

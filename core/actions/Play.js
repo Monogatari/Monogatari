@@ -102,7 +102,7 @@ export class Play extends Action {
 			Monogatari.removeMediaPlayer (playerType);
 		}
 
-		Monogatari.element ().find (`[data-component="video"]`).removeClass ('modal--active');
+		Monogatari.element ().find ('[data-component="video"]').removeClass ('modal--active');
 		return Promise.resolve ();
 	}
 
@@ -112,7 +112,7 @@ export class Play extends Action {
 
 	static stopVideo () {
 		Monogatari.removeMediaPlayer ('video');
-		Monogatari.element ().find (`[data-component="video"]`).removeClass ('active');
+		Monogatari.element ().find ('[data-component="video"]').removeClass ('active');
 	}
 
 	// Stop the voice player
@@ -258,7 +258,7 @@ export class Play extends Action {
 			return this.player.play ();
 		} else if (this.player instanceof HTMLVideoElement) {
 			this.player.src = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting('AssetsPath')[this.type]}/${this.media}`;
-			Monogatari.element ().find (`[data-component="video"]`).addClass ('active');
+			Monogatari.element ().find ('[data-component="video"]').addClass ('active');
 
 			return this.player.play ();
 		} else if (this.player instanceof Array) {

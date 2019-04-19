@@ -71,10 +71,6 @@ export class Choice extends Action {
 		this.statement = statement.Choice;
 	}
 
-	willApply () {
-		return Promise.resolve ();
-	}
-
 	apply () {
 
 		// Save a reference to the choice object globally. Since the choice buttons

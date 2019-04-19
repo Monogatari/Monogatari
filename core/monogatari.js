@@ -1250,8 +1250,9 @@ class Monogatari {
 				// is a pure js function, it won't be reverted since we don't
 				// know what to do to revert it.
 				if (typeof actionStatement === 'string') {
+
 					// Split the statement into an array using the space separations
-					actionStatement = actionStatement.split (' ');
+					actionStatement = this.replaceVariables (actionStatement).split (' ');
 
 					// Check if it matches using the matchString method
 					matches = action.matchString (actionStatement);
@@ -1472,12 +1473,10 @@ class Monogatari {
 		this.element ().prepend (alert);
 	}
 
-	static dismissAlertDialog (id = null) {
-		// console.log (id);
+	static dismissAlert (id = null) {
 		// if (typeof id === 'string') {
 		// 	this.component ('alert-modal').instance (id).remove ();
 		// } else {
-		//console.log (this.element ().find ('alert-modal'));
 		this.element ().find ('alert-modal').remove ();
 		// }
 	}
@@ -1655,7 +1654,6 @@ class Monogatari {
 			promises.push (Promise.reject ());
 		}
 
-		//console.log (promises);
 		return Promise.all (promises).then ((...args) => {
 			this.debug.groupEnd ();
 			return Promise.resolve (...args);
@@ -1669,25 +1667,38 @@ class Monogatari {
 
 		const promises = [];
 		this.debug.groupCollapsed ('Can proceed check passed, game will proceed.');
+		try {
+			// Check action by action if they will allow the game to proceed
+			for (const action of this.actions ()) {
+				promises.push (action.willProceed ().then (() => {
+					this.debug.debug (`OK ${action.id}`);
+				}).catch ((e) => {
+					this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
+					return Promise.reject (e);
+				}));
+			}
 
-		// Check action by action if they will allow the game to proceed
-		for (const action of this.actions ()) {
-			promises.push (action.willProceed ().then (() => {
-				this.debug.debug (`OK ${action.id}`);
-			}).catch ((e) => {
-				this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
-				return Promise.reject (e);
-			}));
-		}
-
-		// Check component by component if they will allow the game to proceed
-		for (const component of this.components ()) {
-			promises.push (component.willProceed ().then (() => {
-				this.debug.debug (`OK ${component._id}`);
-			}).catch ((e) => {
-				this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
-				return Promise.reject (e);
-			}));
+			// Check component by component if they will allow the game to proceed
+			for (const component of this.components ()) {
+				promises.push (component.willProceed ().then (() => {
+					this.debug.debug (`OK ${component._id}`);
+				}).catch ((e) => {
+					this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
+					return Promise.reject (e);
+				}));
+			}
+		} catch (e) {
+			console.error (e);
+			FancyError.show (
+				'An error ocurred while trying to execute a willProceed function.',
+				'Monogatari attempted to execute the function but an error ocurred.',
+				{
+					'Error Message': e.message,
+					'Help': {
+						'_': 'More details should be available at the console.',
+					}
+				}
+			);
 		}
 
 		return Promise.all (promises).finally (() => {
@@ -1775,13 +1786,13 @@ class Monogatari {
 		if (this.setting ('MainScreenMusic') !== '') {
 
 			// Make the ambient player loop
-			this.ambientPlayer.setAttribute ('loop', '');
+			this.ambientPlayer.loop = true;
 
 			// Check if the music was defined in the music assets object
 			if (typeof this.asset ('music', this.setting ('MainScreenMusic')) !== 'undefined') {
 
 				// Get the full path to the asset and set the src to the ambient player
-				this.ambientPlayer.setAttribute('src', `${this.setting ('AssetsPath').root}/${this.setting ('AssetsPath').music}/${this.asset ('music', this.setting ('MainScreenMusic'))}`);
+				this.ambientPlayer.src =  `${this.setting ('AssetsPath').root}/${this.setting ('AssetsPath').music}/${this.asset ('music', this.setting ('MainScreenMusic'))}`;
 
 				// Play the music but catch any errors. Error catching is necessary
 				// since some browsers like chrome, have added some protections to
@@ -1798,8 +1809,7 @@ class Monogatari {
 					`;
 
 					// Add it to the main menu and game screens
-					this.element ().find ('[data-screen="main"]').prepend (element);
-					this.element ().find ('[data-screen="game"]').prepend (element);
+					this.element ().prepend (element);
 
 					// Try to play the media again once the element has been clicked
 					// and remove it.
@@ -2040,7 +2050,7 @@ class Monogatari {
 
 		this.registerListener ('dismiss-alert', {
 			callback: () => {
-				this.dismissAlertDialog ();
+				this.dismissAlert ();
 			}
 		});
 
@@ -2182,7 +2192,7 @@ class Monogatari {
 						message: 'OrientationWarning'
 					});
 				} else {
-					this.dismissAlertDialog ('orientation-warning');
+					this.dismissAlert ('orientation-warning');
 				}
 			}, false);
 		}
@@ -2348,6 +2358,8 @@ class Monogatari {
 			this.bind (selector).then (() => {
 
 				this.trigger ('didBind');
+
+				this.ambientPlayer = new Audio ();
 
 				// Set the initial language translations
 				this.localize ();

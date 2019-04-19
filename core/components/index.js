@@ -1,8 +1,7 @@
 export * from './alert-modal';
 export * from './centered-dialog';
 export * from './choice-container';
-// export * from './CreditsScreen';
-// export * from './CreditsScreenItem';
+export * from './credits-screen';
 export * from './dialog-log';
 export * from './game-screen';
 export * from './help-screen';

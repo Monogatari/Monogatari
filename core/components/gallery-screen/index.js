@@ -62,7 +62,6 @@ class GalleryScreen extends ScreenComponent {
 	willMount () {
 		super.willMount ();
 		return this.engine.Storage.get ('gallery').then ((data) => {
-			console.log (data);
 			this.setState ({
 				unlocked: data.unlocked
 			});

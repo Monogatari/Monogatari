@@ -18,7 +18,6 @@ class MessageModal extends Component {
 	}
 
 	willProceed () {
-		console.log ('Proceeding');
 		this.remove ();
 		return Promise.resolve ();
 	}

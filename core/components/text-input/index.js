@@ -23,6 +23,11 @@ class TextInput extends Component {
 		return Promise.reject ('Text Input is awaiting user input.');
 	}
 
+	willRollback () {
+		this.remove ();
+		return Promise.resolve ();
+	}
+
 	onStateUpdate (property, oldValue, newValue) {
 		if (property === 'active') {
 			if (newValue === true) {
@@ -66,7 +71,6 @@ class TextInput extends Component {
 				this.engine.global ('block', false);
 			});
 		});
-		console.log ('OK');
 		return Promise.resolve ();
 	}
 

@@ -17,11 +17,8 @@ class DialogLog extends Component {
 	static bind () {
 		this.engine.registerListener ('dialog-log', {
 			callback: () => {
-				console.log ('ON');
 				this.instances ((element) => {
-					console.log (element);
 					const active = element.state.active;
-					console.log (active);
 					element.setState ({
 						active: !active
 					});
@@ -38,7 +35,6 @@ class DialogLog extends Component {
 
 	write ({ id, character, dialog }) {
 		this.content ('placeholder').remove ();
-		console.log (id, character, dialog);
 		if (id !== 'narrator' && id !== 'centered') {
 			const { name, color } = character;
 			this.content ('log').append (`
@@ -81,10 +77,6 @@ class DialogLog extends Component {
 
 	willMount () {
 		this.classList.add ('modal');
-		return Promise.resolve ();
-	}
-
-	didMount () {
 		return Promise.resolve ();
 	}
 

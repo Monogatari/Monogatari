@@ -42,7 +42,7 @@ export class Canvas extends Action {
 
 		// Go through each canvas element being shown so it can be properly
 		// stopped and then removed.
-		Monogatari.element ().find (`[data-canvas]`).each ((element) => {
+		Monogatari.element ().find ('[data-canvas]').each ((element) => {
 			const name = $_(element).data ('canvas');
 			promises.push (Util.callAsync (Canvas.objects (name).stop, Monogatari).then (() => {
 				Monogatari.element ().find (`[data-canvas="${this.name}"]`).remove ();
@@ -98,7 +98,7 @@ export class Canvas extends Action {
 	show (mode) {
 		// TODO: Find a way to remove the resize listeners once the canvas is stopped
 		if (mode === 'background') {
-			Monogatari.element ().find (`[data-ui="background"]`).append (`
+			Monogatari.element ().find ('[data-ui="background"]').append (`
 				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}'></canvas>
 			`);
 
@@ -112,7 +112,7 @@ export class Canvas extends Action {
 			});
 			return Util.callAsync (this.object.start, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'immersive') {
-			Monogatari.element ().find (`[data-screen="game"]`).prepend (`
+			Monogatari.element ().find ('[data-screen="game"]').prepend (`
 				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}'></canvas>
 			`);
 
@@ -126,12 +126,12 @@ export class Canvas extends Action {
 			});
 			return Util.callAsync (this.object.start, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'displayable') {
-			Monogatari.element ().find (`[data-screen="game"]`).append (`
+			Monogatari.element ().find ('[data-screen="game"]').append (`
 				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}'></canvas>
 			`);
 			return Util.callAsync (this.object.start, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'character') {
-			Monogatari.element ().find (`[data-screen="game"]`).append (`
+			Monogatari.element ().find ('[data-screen="game"]').append (`
 				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}' data-character='${this.name}'></canvas>
 			`);
 			return Util.callAsync (this.object.start, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);

@@ -7,10 +7,6 @@ export class Clear extends Action {
 		return action === 'clear';
 	}
 
-	constructor ([ action ]) {
-		super ();
-	}
-
 	apply () {
 		Monogatari.action ('Dialog').reset ();
 		return Promise.resolve ();

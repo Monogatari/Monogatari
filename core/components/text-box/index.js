@@ -22,9 +22,16 @@ class TextBox extends Component {
 
 	render () {
 		return `
-			<img data-ui="face" alt="" data-content="character_expression">
-			<span data-ui="who" data-content="character_name"></span>
-			<p data-ui="say" data_content="dialog"></p>
+			<div data-content="wrapper">
+				<div data-content="side-image">
+					<img data-ui="face" alt="" data-content="character_expression">
+				</div>
+				<div data-content="text">
+					<span data-ui="who" data-content="character-name"></span>
+					<p data-ui="say" data_content="dialog"></p>
+				</div>
+			</div>
+
 		`;
 	}
 }

@@ -8,22 +8,6 @@ export class InputModal extends Action {
 		return typeof Input !== 'undefined';
 	}
 
-	static shouldRollback () {
-		// If the player is trying to go back when the input form is being shown
-		// we simply remove it, reset it and remove the listener it had.
-		if (this.instances ().isVisible ()) {
-
-			this.instances ().remove ();
-
-			// Unblock the game
-			Monogatari.global ('block', false);
-		}
-		return Promise.resolve ();
-	}
-
-	////////////////////////////////////////////////////////////////////////////
-
-
 	constructor ({ Input }) {
 		super ();
 		this.statement = Input;
@@ -57,7 +41,6 @@ export class InputModal extends Action {
 				this.engine.next ();
 			}
 		});
-		console.log (input);
 
 		this.engine.global ('block', true);
 

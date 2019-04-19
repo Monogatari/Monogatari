@@ -92,7 +92,7 @@ export class Message extends Action {
 	}
 
 	revert () {
-		// Monogatari.component ('mesage-dialog').element ().remove ();
+		Monogatari.component ('mesage-dialog').instances ().remove ();
 		return this.apply ();
 	}
 

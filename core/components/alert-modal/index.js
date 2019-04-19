@@ -25,7 +25,7 @@ class AlertDialog extends Component {
 	}
 
 	willMount () {
-		this.classList.add ('modal');
+		this.classList.add ('modal', 'modal--active');
 		return Promise.resolve ();
 	}
 

@@ -8,6 +8,7 @@ alert-modal {
 	[data-content="wrapper"] {
 		overflow: auto;
 		overflow-x: hidden;
+		flex-direction: column;
 	}
 
 	p {

@@ -42,7 +42,6 @@ class ChoiceContainer extends Component {
 	}
 
 	render () {
-		console.log (this.props.choices);
 		const choices = this.props.choices.map ((choice) => {
 			return this.renderChoice (choice);
 		}).join ('');

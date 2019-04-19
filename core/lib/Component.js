@@ -346,6 +346,7 @@ class Component extends HTMLElement {
 
 		this._state = {};
 		this._props = {};
+		this._ready = [];
 
 		this._connected = false;
 	}
@@ -588,9 +589,17 @@ class Component extends HTMLElement {
 
 		return this.willMount ().then (() => {
 			return this._render ().then (() => {
-				return this.didMount ();
+				return this.didMount ().then (() => {
+					for (const callback of this._ready) {
+						callback.call (this);
+					}
+				});
 			});
 		});
+	}
+
+	ready (callback) {
+		this._ready.push (callback);
 	}
 
 	disconnectedCallback () {

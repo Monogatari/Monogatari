@@ -6,7 +6,7 @@ class GameScreen extends ScreenComponent {
 	static bind (selector) {
 		this.engine.on ('click', '[data-screen="game"] *:not([data-choice])', function () {
 			Monogatari.debug.debug ('Next Statement Listener');
-			Monogatari.shouldProceed ().then (() => {
+			Monogatari.proceed ().then (() => {
 				Monogatari.next ();
 			}).catch (() => {
 				// An action waiting for user interaction or something else

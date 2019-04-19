@@ -17,7 +17,7 @@ export class ShowCharacter extends Action {
 	}
 
 	static reset () {
-		Monogatari.element ().find (`[data-screen="game"] [data-character]`).remove ();
+		Monogatari.element ().find ('[data-screen="game"] [data-character]').remove ();
 		return Promise.resolve ();
 	}
 
@@ -113,7 +113,7 @@ export class ShowCharacter extends Action {
 			}
 
 			Monogatari.element ().find (`[data-character="${this.asset}"]`).remove ();
-			Monogatari.element ().find (`[data-screen="game"] [data-content="visuals"]`).append (image);
+			Monogatari.element ().find ('[data-screen="game"] [data-content="visuals"]').append (image);
 		}
 		return Promise.resolve ();
 	}

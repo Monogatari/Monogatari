@@ -28,7 +28,7 @@ export class End extends Action {
 
 		this.engine.registerListener ('quit', {
 			callback: () => {
-				this.engine.dismissAlertDialog ('quit-warning');
+				this.engine.dismissAlert ('quit-warning');
 				this.engine.run ('end');
 			}
 		});

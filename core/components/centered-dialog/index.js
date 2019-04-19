@@ -7,11 +7,6 @@ class CenteredDialog extends Component {
 		super ();
 	}
 
-	willProceed () {
-		this.remove ();
-		return Promise.resolve ();
-	}
-
 	willRollback () {
 		// If a choice is visible right now, we can simply remove it and let the
 		// game revert to the previous statement.
@@ -29,6 +24,7 @@ class CenteredDialog extends Component {
 	}
 
 	didMount () {
+		this.engine.element ().find ('[data-component="text-box"]').hide ();
 		return Promise.resolve ();
 	}
 

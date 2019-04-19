@@ -55,16 +55,6 @@ class LoadScreen extends ScreenComponent {
 		return Promise.resolve ();
 	}
 
-	didMount () {
-		// Disable the load and save slots in case Local Storage is not supported.
-		if (!window.localStorage) {
-			this.content ('slots').html (`<p>${this.engine.string ('LocalStorageWarning')}</p>`);
-		} else {
-			//this.renderSlots ();
-		}
-
-		return Promise.resolve ();
-	}
 
 	render () {
 		return `
@@ -73,13 +63,13 @@ class LoadScreen extends ScreenComponent {
 			<div data-ui="saveSlots">
 				<h3 data-string="LoadSlots">Saved Games</h3>
 				<div data-ui="slots" class="row row--spaced padded">
-					<slot-list label="${this.engine.setting ('SaveLabel')}"></slot-list>
+					<slot-list label="${this.engine.setting ('SaveLabel')}" type="load"></slot-list>
 				</div>
 			</div>
 			<div data-ui="autoSaveSlots">
 				<h3 data-string="LoadAutoSaveSlots">Auto Saved Games</h3>
 				<div data-ui="slots" data-content="slots" class="row row--spaced padded">
-					<slot-list label="${this.engine.setting ('AutoSaveLabel')}"></slot-list>
+					<slot-list label="${this.engine.setting ('AutoSaveLabel')}" type="load"></slot-list>
 				</div>
 			</div>
 		`;

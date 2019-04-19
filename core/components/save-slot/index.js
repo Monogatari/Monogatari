@@ -16,28 +16,24 @@ class SaveSlot extends Component {
 				this.engine.Storage.remove (target);
 
 				// Reset the temporal delete slot variable
-				this.global ('deleteSlot', null);
-				this.dismissAlertDialog ('slot-deletion');
+				this.engine.global ('deleteSlot', null);
+				this.engine.dismissAlert ('slot-deletion');
 
-				this.instances ().remove ();
+				this.engine.instances ().remove ();
 			}
 		});
 
-		this.engine.on ('click', '[data-component="slot"] [data-delete], [data-component="slot"] [data-delete] *', function (event) {
+		const engine = this.engine;
+
+		this.engine.on ('click', '[data-component="slot-list"] [data-delete]', function (event) {
 			Monogatari.debug.debug ('Registered Click on Slot Delete Button');
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();
 			event.preventDefault ();
 
-			let element = $_(this);
-			if (element.matches ('path')) {
-				element = element.closest ('[data-delete]');
-			}
-
-			Monogatari.global ('deleteSlot', element.data ('delete'));
-			Monogatari.Storage.get (Monogatari.global ('deleteSlot')).then ((data) => {
-
-				Monogatari.alert ('slot-deletion', {
+			engine.global ('deleteSlot', $_(this).data ('delete'));
+			engine.Storage.get (engine.global ('deleteSlot')).then ((data) => {
+				engine.alert ('slot-deletion', {
 					message: 'SlotDeletion',
 					context: typeof data.name !== 'undefined' ? data.name : data.date,
 					actions: [
