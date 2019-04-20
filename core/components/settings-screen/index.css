@@ -10,4 +10,8 @@ settings-screen {
 		margin: 2rem;
 		background-color: transparent;
 	}
+
+	.horizontal {
+		justify-content: center;
+	}
 }

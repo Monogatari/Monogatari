@@ -34,7 +34,8 @@
 		],
 		"space-before-blocks":[2, "always"],
 		"space-before-function-paren": [2, "always"],
-		"strict":[0, "global"]
+		"strict":[0, "global"],
+		"no-unused-vars": [1, { "args": "after-used" }]
     },
     "env": {
         "es6": true,

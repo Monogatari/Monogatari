@@ -315,7 +315,7 @@ export class Dialog extends Action {
 		// Check if an expression or face image was used and if it exists and
 		// display it
 		if (typeof this.image !== 'undefined' && !this.nvl) {
-			`${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}`
+			`${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}`;
 			Monogatari.element ().find ('[data-ui="face"]').attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}/${directory}${this.image}`);
 			Monogatari.element ().find ('[data-ui="face"]').show ();
 		}

@@ -1410,7 +1410,7 @@ class Monogatari {
 				return Util.callAsync (actionStatement, Monogatari).finally (() => {
 					this.global ('block', false);
 					if (shouldAdvance) {
-						return this.proceed ();
+						return this.next ();
 					}
 				});
 			}
@@ -1449,7 +1449,7 @@ class Monogatari {
 							this.debug.debug ('Action Did Apply');
 							if (advance === true && shouldAdvance === true) {
 								this.debug.debug ('Next action will be run right away');
-								this.proceed ();
+								this.next ();
 							}
 							this.debug.trace ();
 							this.debug.groupEnd ();

@@ -1,6 +1,6 @@
 import { Action } from './../lib/Action';
 import { Monogatari } from '../monogatari';
-import { $_, Util } from '@aegis-framework/artemis';
+import { Util } from '@aegis-framework/artemis';
 
 export class HideCanvas extends Action {
 

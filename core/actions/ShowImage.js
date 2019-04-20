@@ -13,7 +13,7 @@ export class ShowImage extends Action {
 	}
 
 	static reset () {
-		Monogatari.element ().find (`[data-screen="game"] [data-image]`).remove ();
+		Monogatari.element ().find ('[data-screen="game"] [data-image]').remove ();
 		return Promise.resolve ();
 	}
 
@@ -65,7 +65,7 @@ export class ShowImage extends Action {
 			$_(image).style ('animation-duration', this.classes[durationPosition + 1]);
 		}
 
-		Monogatari.element ().find (`[data-screen="game"] [data-content="visuals"]`).append (image.outerHTML);
+		Monogatari.element ().find ('[data-screen="game"] [data-content="visuals"]').append (image.outerHTML);
 
 		return Promise.resolve ();
 	}

@@ -15,13 +15,10 @@ class SettingsScreen extends ScreenComponent {
 		return Promise.resolve ();
 	}
 
-	static electron (selector) {
-		const remote = require ('electron').remote;
-		const win = remote.getCurrentWindow ();
-
+	electron (selector) {
 		this.element ().find ('[data-action="set-resolution"]').value (Monogatari.preference ('Resolution'));
 
-		window.addEventListener ('beforeunload', (event) => {
+		window.onbeforeunload = (event) => {
 			event.preventDefault ();
 			this.engine.alert ('quit-warning', {
 				message: 'Confirm',
@@ -36,63 +33,69 @@ class SettingsScreen extends ScreenComponent {
 					}
 				]
 			});
+			return false;
+		};
+
+		window.ipcRendererSend ('window-info-request', {
+			title: Monogatari.setting ('Name'),
+			resizable: Monogatari.setting ('ForceAspectRatio') !== 'Global'
 		});
 
-		if (!win.isResizable ()) {
-			const aspectRatio = Monogatari.setting ('AspectRatio').split (':');
-			const aspectRatioWidth = parseInt (aspectRatio[0]);
-			const aspectRatioHeight = parseInt (aspectRatio[1]);
+		window.ipcRendererReceive ('window-info-reply', (event, args) => {
+			const { resizable, minWidth, maxWidth, minHeight, maxHeight } = args;
 
-			const minSize = win.getMinimumSize ();
+			if (!resizable) {
+				const aspectRatio = Monogatari.setting ('AspectRatio').split (':');
+				const aspectRatioWidth = parseInt (aspectRatio[0]);
+				const aspectRatioHeight = parseInt (aspectRatio[1]);
 
-			const {width, height} = remote.screen.getPrimaryDisplay ().workAreaSize;
+				for (let i = 0; i < 488; i += 8) {
+					const calculatedWidth = aspectRatioWidth * i;
+					const calculatedHeight = aspectRatioHeight * i;
 
-			for (let i = 0; i < 488; i+=8) {
-				const calculatedWidth = aspectRatioWidth * i;
-				const calculatedHeight = aspectRatioHeight * i;
-
-				if (calculatedWidth >= minSize[0] && calculatedHeight >= minSize[1] && calculatedWidth <= width && calculatedHeight <= height) {
-					this.element ().find ('[data-action="set-resolution"]').append(`<option value="${calculatedWidth}x${calculatedHeight}">${Monogatari.string ('Windowed')} ${calculatedWidth}x${calculatedHeight}</option>`);
+					if (calculatedWidth >= minWidth && calculatedHeight >= minHeight && calculatedWidth <= maxWidth && calculatedHeight <= maxHeight) {
+						this.element ().find ('[data-action="set-resolution"]').append(`<option value="${calculatedWidth}x${calculatedHeight}">${Monogatari.string ('Windowed')} ${calculatedWidth}x${calculatedHeight}</option>`);
+					}
 				}
+
+				this.element ().find ('[data-action="set-resolution"]').append(`<option value="fullscreen">${Monogatari.string ('FullScreen')}</option>`);
+
+				this.changeWindowResolution (Monogatari.preference ('Resolution'));
+				this.element ().find ('[data-action="set-resolution"]').change ((event) => {
+					const size = event.target.value;
+					this.changeWindowResolution (size);
+				});
+
+			} else {
+				this.element ().find ('[data-settings="resolution"]').hide ();
 			}
+		});
 
-			this.element ().find ('[data-action="set-resolution"]').append(`<option value="fullscreen">${Monogatari.string ('FullScreen')}</option>`);
+		window.ipcRendererReceive ('resize-reply', (event, args) => {
+			const { width, height, fullscreen } = args;
 
-			this.changeWindowResolution (Monogatari.preference ('Resolution'));
-			this.element ().find ('[data-action="set-resolution"]').change(function () {
-				const size = this.value;
-
-				this.changeWindowResolution (size);
-			});
-		} else {
-			this.element ().find ('[data-settings="resolution"]').hide ();
-		}
+			if (fullscreen) {
+				Monogatari.preference ('Resolution', 'fullscreen');
+			} else {
+				Monogatari.preference ('Resolution', `${width}x${height}`);
+			}
+		});
 	}
 
 	changeWindowResolution (resolution) {
-		/* global require */
-		const remote = require ('electron').remote;
-		const win = remote.getCurrentWindow ();
-		const {width, height} = remote.screen.getPrimaryDisplay ().workAreaSize;
 		if (resolution) {
-			win.setResizable (true);
-
-			if (resolution == 'fullscreen' && !win.isFullScreen () && win.isFullScreenable ()) {
-				win.setFullScreen(true);
-				Monogatari.preference ('Resolution', resolution);
+			if (resolution == 'fullscreen') {
+				window.ipcRendererSend ('resize-request', {
+					fullscreen: true
+				});
 			} else if (resolution.indexOf ('x') > -1) {
-				win.setFullScreen (false);
-				const size = resolution.split ('x');
-				const chosenWidth = parseInt (size[0]);
-				const chosenHeight = parseInt (size[1]);
-
-				if (chosenWidth <= width && chosenHeight <= height) {
-					win.setSize(chosenWidth, chosenHeight, true);
-					Monogatari.preference ('Resolution', resolution);
-				}
+				const [ width, height ] = resolution.split ('x');
+				window.ipcRendererSend ('resize-request', {
+					width: parseInt (width),
+					height: parseInt (height),
+					fullscreen: false
+				});
 			}
-
-			win.setResizable (false);
 		}
 	}
 
@@ -140,7 +143,7 @@ class SettingsScreen extends ScreenComponent {
 		this.content ('auto-play-speed-controller').value (this.engine.preference ('AutoPlaySpeed'));
 
 		// Set the electron quit handler.
-		if (Platform.electron ()) {
+		if (Platform.electron () || (typeof window.ipcRendererReceive === 'function' && typeof window.ipcRendererSend === 'function')) {
 			this.electron ();
 		} else {
 			this.element ().find ('[data-platform="electron"]').remove ();

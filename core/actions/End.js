@@ -29,7 +29,14 @@ export class End extends Action {
 		this.engine.registerListener ('quit', {
 			callback: () => {
 				this.engine.dismissAlert ('quit-warning');
-				this.engine.run ('end');
+
+				if (this.engine.global ('playing') === true) {
+					this.engine.run ('end');
+				} else {
+					if (typeof window.ipcRendererReceive === 'function' && typeof window.ipcRendererSend === 'function') {
+						window.ipcRendererSend ('quit-request');
+					}
+				}
 			}
 		});
 

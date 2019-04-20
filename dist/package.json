@@ -1,7 +1,7 @@
 {
   "name": "my-game",
   "version": "0.1.0",
-  "main": "electron.js",
+  "main": "engine/electron/index.js",
   "description": "A description of your game",
   "author": "Your Name",
   "license": "MIT",

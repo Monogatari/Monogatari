@@ -13,6 +13,7 @@
 const { app, BrowserWindow } = require ('electron');
 const path = require ('path');
 const url = require ('url');
+const { ipcMain } = require('electron');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -46,13 +47,21 @@ function createWindow () {
 		fullscrenable: true,
 
 		// Set an icon for the window
-		icon: __dirname + '/assets/icons/icon_128x128.png'
+		icon: __dirname + '/assets/icons/icon_128x128.png',
+
+		webPreferences: {
+			nodeIntegration: false,
+			nodeIntegrationInWorker: false,
+			// contextIsolation: true,
+			enableRemoteModule: false,
+			preload: path.join (app.getAppPath (), '/engine/electron/preload.js')
+		}
 	});
 
 	// and load the index.html of the app.
 	win.loadURL (url.format(
 		{
-			pathname: path.join(__dirname, 'index.html'),
+			pathname: path.join(__dirname, '/../../index.html'),
 			protocol: 'file:',
 			slashes: true
 		}
@@ -64,6 +73,55 @@ function createWindow () {
 		// in an array if your app supports multi windows, this is the time
 		// when you should delete the corresponding element.
 		win = null;
+	});
+
+	const { screen } = require ('electron');
+	const [ minWidth, minHeight ] = win.getMinimumSize ();
+	const { width: maxWidth, height: maxHeight } = screen.getPrimaryDisplay ().workAreaSize;
+
+	ipcMain.on ('window-info-request', (event, args) => {
+		const { title, resizable } = args;
+
+		if (title) {
+			win.setTitle (title);
+		}
+
+		if (resizable === false) {
+			win.setResizable (false);
+		}
+
+		event.sender.send ('window-info-reply', {
+			resizable,
+			minWidth,
+			minHeight,
+			maxWidth,
+			maxHeight
+		});
+	});
+
+	ipcMain.on ('resize-request', (event, args) => {
+		const { width, height, fullscreen } = args;
+
+		const fullScreenCapable = !win.isFullScreen () && win.isFullScreenable ();
+
+		win.setResizable (true);
+		if (fullscreen && fullScreenCapable) {
+			win.setFullScreen(true);
+		} else if (fullscreen === false) {
+			win.setFullScreen (false);
+			win.setSize (width, height, true);
+		}
+		win.setResizable (false);
+
+		event.sender.send ('resize-reply', {
+			fullscreen: fullscreen && fullScreenCapable,
+			width,
+			height
+		});
+	});
+
+	ipcMain.on ('quit-request', (event, args) => {
+		win.destroy ();
 	});
 }
 
