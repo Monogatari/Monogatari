@@ -7,7 +7,7 @@ class GameScreen extends ScreenComponent {
 		this.engine.on ('click', '[data-screen="game"] *:not([data-choice])', function () {
 			Monogatari.debug.debug ('Next Statement Listener');
 			Monogatari.proceed ().then (() => {
-				Monogatari.next ();
+				// Nothing to do here
 			}).catch (() => {
 				// An action waiting for user interaction or something else
 				// is blocking the game.
@@ -19,7 +19,7 @@ class GameScreen extends ScreenComponent {
 			callback: () => {
 				Monogatari.global ('block', false);
 				Monogatari.rollback ().then (() => {
-					Monogatari.previous ();
+					// Nothing to do here
 				}).catch ((e) => {
 					// An action waiting for user interaction or something else
 					// is blocking the game.

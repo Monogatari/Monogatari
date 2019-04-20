@@ -60,22 +60,22 @@ button:hover {
 **/
 
 /* Slots Style */
-[data-ui="slots"] figure {
+[data-component="save-slot"] figure {
 
 }
 
 /* Slot's Image Style */
-[data-ui="slots"] img {
+[data-component="save-slot"] img {
 
 }
 
 /* Slots Title Style */
-[data-ui="slots"] figcaption {
+[data-component="save-slot"] figcaption {
 
 }
 
 /* Slots Delete Button Style */
-[data-ui="slots"] button {
+[data-component="save-slot"] button {
 
 }
 
@@ -86,12 +86,12 @@ button:hover {
 **/
 
 /* Choice Buttons style */
-[data-ui="choices"] button {
+[data-component="choice-container"] button {
 
 }
 
 /* Choice Button Style on Hover */
-[data-ui="choices"] button:hover {
+[data-component="choice-container"] button:hover {
 
 }
 
@@ -106,7 +106,7 @@ button:hover {
 }
 
 /* Style for Centered Text */
-[data-ui="centered"] {
+[data-component="centered-dialog"] {
 
 }
 

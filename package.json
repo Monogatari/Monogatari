@@ -39,11 +39,11 @@
     "parcel": "^1.12.3",
     "postcss-calc": "^7.0.1",
     "precss": "^4.0.0",
-    "stylelint": "^9.10.1",
-    "stylelint-config-standard": "^18.2.0"
+    "stylelint": "^10.0.1",
+    "stylelint-config-standard": "^18.3.0"
   },
   "dependencies": {
-    "@aegis-framework/artemis": "^0.3.18",
+    "@aegis-framework/artemis": "^0.3.19",
     "@aegis-framework/kayros.css": "^0.4.2",
     "@fortawesome/fontawesome-free": "^5.8.1",
     "animate.css": "^3.6.1",

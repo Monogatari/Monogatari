@@ -2,7 +2,6 @@ import Component from './../../lib/Component';
 import { Monogatari } from './../../monogatari';
 import { Text } from '@aegis-framework/artemis';
 import moment from 'moment';
-import { $_ } from '@aegis-framework/artemis';
 
 class SaveSlot extends Component {
 
@@ -31,7 +30,7 @@ class SaveSlot extends Component {
 			event.stopPropagation ();
 			event.preventDefault ();
 
-			engine.global ('deleteSlot', $_(this).data ('delete'));
+			engine.global ('deleteSlot', this.dataset.delete);
 			engine.Storage.get (engine.global ('deleteSlot')).then ((data) => {
 				engine.alert ('slot-deletion', {
 					message: 'SlotDeletion',
@@ -88,7 +87,9 @@ class SaveSlot extends Component {
 	render () {
 		let background = '';
 
-		if (this.props.image) {
+		const hasImage = this.props.image && this.engine.asset ('scenes', this.props.image);
+
+		if (hasImage) {
 			background = `url(${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').scenes}/${this.props.image})`;
 		} else if (this.data.game.state.scene) {
 			background = this.data.game.state.scene;
@@ -100,7 +101,7 @@ class SaveSlot extends Component {
 		return `
 			<button data-delete='${this.props.slot}'><span class='fas fa-times'></span></button>
 			<small class='badge'>${this.props.name}</small>
-			<div data-content="background" style="${this.props.image ? 'background-image' : 'background'}: ${background}"></div>
+			<div data-content="background" style="${hasImage ? 'background-image' : 'background'}: ${background}"></div>
 			<figcaption>${moment (this.props.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
 		`;
 	}

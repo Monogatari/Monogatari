@@ -136,7 +136,7 @@ class Monogatari {
 							'_1': `
 								<pre>
 									<code class='language-javascript'>
-									this.translation ("YourLanguage", {
+									Monogatari.translation ("YourLanguage", {
 										"SomeString": "Your Translation"
 									});
 									</code>
@@ -161,7 +161,7 @@ class Monogatari {
 						'_1': `
 							<pre>
 								<code class='language-javascript'>
-								this.translation ("YourLanguage", {
+								Monogatari.translation ("YourLanguage", {
 									"SomeString": "Your Translation"
 								});
 								</code>
@@ -486,7 +486,6 @@ class Monogatari {
 	static preference (key, value = null) {
 		if (value !== null) {
 			this._preferences[key] = value;
-			console.trace ();
 			this.Storage.update ('Settings', this._preferences);
 		} else {
 			if (typeof this._preferences[key] !== 'undefined') {
@@ -497,14 +496,18 @@ class Monogatari {
 		}
 	}
 
-	static preferences (object = null) {
+	static preferences (object = null, save = false) {
 		if (object !== null) {
+
 			this._preferences = merge (this._preferences, object);
+
 			if (this.Storage.configuration ().name === '') {
 				this.setupStorage ();
 			}
-			console.trace ();
-			this.Storage.update ('Settings', this._preferences);
+
+			if (save === true) {
+				this.Storage.update ('Settings', this._preferences);
+			}
 		} else {
 			return this._preferences;
 		}
@@ -1015,6 +1018,8 @@ class Monogatari {
 		setTimeout ((...params) => {
 			this.run.call (Monogatari, ...params);
 		}, 0, this.label ()[this.state ('step')]);
+
+		return Promise.resolve ();
 	}
 
 	/**
@@ -1023,11 +1028,16 @@ class Monogatari {
 	 * @returns {void}
 	 */
 	static previous () {
-		this.revert ().catch (() => {
-			// The game could not be reverted, either because an
-			// action prevented it or because there are no statements
-			// left to revert to.
-		});
+		setTimeout (() => {
+			this.revert.call (Monogatari);
+		}, 0);
+		// this.revert ().catch (() => {
+		// 	// The game could not be reverted, either because an
+		// 	// action prevented it or because there are no statements
+		// 	// left to revert to.
+		// });
+
+		return Promise.resolve ();
 	}
 
 	static resetGame () {
@@ -1400,7 +1410,7 @@ class Monogatari {
 				return Util.callAsync (actionStatement, Monogatari).finally (() => {
 					this.global ('block', false);
 					if (shouldAdvance) {
-						return this.next ();
+						return this.proceed ();
 					}
 				});
 			}
@@ -1439,7 +1449,7 @@ class Monogatari {
 							this.debug.debug ('Action Did Apply');
 							if (advance === true && shouldAdvance === true) {
 								this.debug.debug ('Next action will be run right away');
-								this.next ();
+								this.proceed ();
 							}
 							this.debug.trace ();
 							this.debug.groupEnd ();
@@ -1598,13 +1608,17 @@ class Monogatari {
 
 	static proceed () {
 		return this.shouldProceed ().then (() => {
-			return this.willProceed ();
+			return this.willProceed ().then (() => {
+				return this.next ();
+			});
 		});
 	}
 
 	static rollback () {
 		return this.shouldRollback ().then (() => {
-			return this.willRollback ();
+			return this.willRollback ().then (() => {
+				return this.previous ();
+			});
 		});
 	}
 
@@ -1967,7 +1981,6 @@ class Monogatari {
 					// possibly special handling to avoid futile "catch up" run
 				}
 				this.proceed ().then (() => {
-					this.next ();
 					expected += interval;
 					setTimeout (this.global ('_AutoPlayTimer'), Math.max (0, interval - now)); // take into account drift
 				}).catch (() => {
@@ -2018,7 +2031,8 @@ class Monogatari {
 		// Storage if they do.
 		this.Storage.get ('Settings').then ((local_settings) => {
 			this._preferences = merge (this._preferences, local_settings);
-		}).catch (() => {
+		}).catch ((e) => {
+			console.error (e);
 			this.Storage.set ('Settings', this._preferences);
 		});
 
@@ -2102,15 +2116,6 @@ class Monogatari {
 			}
 		});
 
-		// The close action removes the active class from the element it
-		// points to.
-		this.registerListener ('close', {
-			callback: (element) => {
-				this.element ().find (`[data-component="${element.data('close')}"]`).remove ();
-				return true;
-			}
-		});
-
 		this.registerListener ('dismiss-alert', {
 			callback: () => {
 				this.dismissAlert ();
@@ -2175,7 +2180,7 @@ class Monogatari {
 				// save it on a global variable so that we can disable later.
 				this.global ('skip', setTimeout (() => {
 					this.proceed ().then (() => {
-						this.next ();
+						// Nothing to do here
 					}).catch (() => {
 						// An action waiting for user interaction or something else
 						// is blocking the game.
@@ -2298,7 +2303,7 @@ class Monogatari {
 
 		this.keyboardShortcut (['right', 'space'], () => {
 			this.proceed ().then (() => {
-				this.next ();
+				// Nothing to do here
 			}).catch (() => {
 				// An action waiting for user interaction or something else
 				// is blocking the game.

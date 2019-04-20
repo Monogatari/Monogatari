@@ -1,6 +1,6 @@
 import { Action } from './../lib/Action';
 import { Monogatari } from '../monogatari';
-import { $_, Util } from '@aegis-framework/artemis';
+import { Util } from '@aegis-framework/artemis';
 
 export class Choice extends Action {
 
@@ -24,32 +24,35 @@ export class Choice extends Action {
 			event.stopPropagation ();
 			event.preventDefault ();
 
+			const doAction = this.dataset.do;
+
 			// Check that the data property was not created with
 			// a null property
-			if ($_(this).data('do') != 'null') {
+			if (doAction != 'null') {
 
 				// Remove all the choices
 				Monogatari.element ().find ('choice-container').remove ();
+				const choice = this.dataset.choice;
 
 				// Remove the reference to the current choice object
 				if (Monogatari.global ('_CurrentChoice') !== null) {
-					if (typeof Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')] !== 'undefined') {
-						if (typeof Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].onChosen === 'function') {
-							Util.callAsync (Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].onChosen, Monogatari).then (() => {
-								Monogatari.run (Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].Do, false);
+					if (typeof Monogatari.global ('_CurrentChoice')[choice] !== 'undefined') {
+						if (typeof Monogatari.global ('_CurrentChoice')[choice].onChosen === 'function') {
+							Util.callAsync (Monogatari.global ('_CurrentChoice')[choice].onChosen, Monogatari).then (() => {
+								Monogatari.run (Monogatari.global ('_CurrentChoice')[choice].Do, false);
 								Monogatari.global ('_CurrentChoice', null);
 							});
 						} else {
-							Monogatari.run (Monogatari.global ('_CurrentChoice')[$_(this).data ('choice')].Do, false);
+							Monogatari.run (Monogatari.global ('_CurrentChoice')[choice].Do, false);
 							Monogatari.global ('_CurrentChoice', null);
 						}
-						Monogatari.history ('choice').push ($_(this).data ('choice'));
+						Monogatari.history ('choice').push (choice);
 					} else {
-						Monogatari.run ($_(this).data ('do'), false);
+						Monogatari.run (doAction, false);
 						Monogatari.global ('_CurrentChoice', null);
 					}
 				} else {
-					Monogatari.run ($_(this).data ('do'), false);
+					Monogatari.run (doAction, false);
 					Monogatari.global ('_CurrentChoice', null);
 				}
 			}

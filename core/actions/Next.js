@@ -8,7 +8,7 @@ export class Next extends Action {
 	}
 
 	apply () {
-		this.engine.next ();
+		this.engine.proceed ();
 		return Promise.resolve ();
 	}
 

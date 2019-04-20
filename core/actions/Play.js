@@ -54,7 +54,7 @@ export class Play extends Action {
 
 			Monogatari.preference ('Volume')[Text.capitalize (target)] = value;
 
-			Monogatari.Storage.set ('Settings', Monogatari.preferences ());
+			Monogatari.preferences (Monogatari.preferences (), true);
 		});
 
 		Monogatari.state ({

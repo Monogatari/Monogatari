@@ -68,7 +68,6 @@ class TextInput extends Component {
 			}).catch (() => {
 				// Show the warning message since the input was invalid
 				this.content ('warning').text (this.props.warning);
-				this.engine.global ('block', false);
 			});
 		});
 		return Promise.resolve ();

@@ -39,8 +39,7 @@ save-slot {
 		position: absolute;
 		right: -1rem;
 		margin: 0;
-		font-size: 0.5rem;
-		padding: 0.5rem;
+		font-size: 1rem;
 		background-color: var(--main-color);
 		color: #f7f7f7;
 	}

@@ -5,6 +5,16 @@ import { FancyError } from './../lib/FancyError';
 
 export class Message extends Action {
 
+	static bind () {
+		// The close action removes the active class from the element it
+		// points to.
+		this.engine.on ('click', '[data-component="message-modal"] [data-action="close"]', () => {
+			this.engine.element ().find ('[data-component="message-modal"]').remove ();
+			this.engine.proceed ();
+		});
+		return Promise.resolve ();
+	}
+
 	static matchString ([ show, type ]) {
 		return show === 'show' && type === 'message';
 	}

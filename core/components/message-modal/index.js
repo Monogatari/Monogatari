@@ -39,10 +39,6 @@ class MessageModal extends Component {
 		return Promise.resolve ();
 	}
 
-	didMount () {
-		return Promise.resolve ();
-	}
-
 	render () {
 		return `
 			<div class="modal__content">

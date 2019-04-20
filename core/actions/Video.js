@@ -38,7 +38,7 @@ export class Video extends Action {
 	}
 
 	static reset () {
-		Monogatari.element ().find (`[data-video]`).remove ();
+		Monogatari.element ().find ('[data-video]').remove ();
 		Monogatari.history ({
 			video: []
 		});
@@ -99,21 +99,21 @@ export class Video extends Action {
 		}
 
 		if (this.mode === 'background') {
-			Monogatari.element ().find (`[data-ui="background"]`).append (element);
+			Monogatari.element ().find ('[data-ui="background"]').append (element);
 		} else if (this.mode === 'immersive') {
 			Monogatari.global ('block', true);
-			Monogatari.element ().find (`[data-screen="game"]`).prepend (element);
+			Monogatari.element ().find ('[data-screen="game"]').prepend (element);
 		} else if (this.mode === 'fullscreen') {
 			if (element.requestFullscreen) {
-				Monogatari.element ().find (`[data-screen="game"]`).append (element);
+				Monogatari.element ().find ('[data-screen="game"]').append (element);
 				element.requestFullscreen ();
 			} else {
 				Monogatari.global ('block', true);
 				$_(element).toggleClass ('full-screen immersive');
-				Monogatari.element ().find (`[data-screen="game"]`).prepend (element);
+				Monogatari.element ().find ('[data-screen="game"]').prepend (element);
 			}
 		} else {
-			Monogatari.element ().find (`[data-screen="game"]`).append (element);
+			Monogatari.element ().find ('[data-screen="game"]').append (element);
 		}
 
 		element.play ();

@@ -15,82 +15,86 @@ class SettingsScreen extends ScreenComponent {
 		return Promise.resolve ();
 	}
 
-	// static init (selector) {
+	static electron (selector) {
+		const remote = require ('electron').remote;
+		const win = remote.getCurrentWindow ();
 
-	// 	// Set the electron quit handler.
-	// 	if (Platform.electron ()) {
-	// 		SettingsScreen.electron (selector);
-	// 	} else {
-	// 		$_(`${selector} [data-platform="electron"]`).hide ();
-	// 	}
+		this.element ().find ('[data-action="set-resolution"]').value (Monogatari.preference ('Resolution'));
 
-	// 	return Promise.resolve ();
-	// }
+		window.addEventListener ('beforeunload', (event) => {
+			event.preventDefault ();
+			this.engine.alert ('quit-warning', {
+				message: 'Confirm',
+				actions: [
+					{
+						label: 'Quit',
+						listener: 'quit'
+					},
+					{
+						label: 'Cancel',
+						listener: 'dismiss-alert'
+					}
+				]
+			});
+		});
 
-	// static electron (selector) {
-	// 	const remote = require ('electron').remote;
-	// 	const win = remote.getCurrentWindow ();
+		if (!win.isResizable ()) {
+			const aspectRatio = Monogatari.setting ('AspectRatio').split (':');
+			const aspectRatioWidth = parseInt (aspectRatio[0]);
+			const aspectRatioHeight = parseInt (aspectRatio[1]);
 
-	// 	$_(`${selector} [data-action="set-resolution"]`).value (Monogatari.preference ('Resolution'));
+			const minSize = win.getMinimumSize ();
 
-	// 	window.addEventListener ('beforeunload', (event) => {
-	// 		event.preventDefault ();
-	// 		$_(`${selector} [data-notice="exit"]`).addClass ('modal--active');
-	// 	});
+			const {width, height} = remote.screen.getPrimaryDisplay ().workAreaSize;
 
-	// 	if (!win.isResizable ()) {
-	// 		const aspectRatio = Monogatari.setting ('AspectRatio').split (':');
-	// 		const aspectRatioWidth = parseInt (aspectRatio[0]);
-	// 		const aspectRatioHeight = parseInt (aspectRatio[1]);
-	// 		const minSize = win.getMinimumSize ();
-	// 		const {width, height} = remote.screen.getPrimaryDisplay ().workAreaSize;
+			for (let i = 0; i < 488; i+=8) {
+				const calculatedWidth = aspectRatioWidth * i;
+				const calculatedHeight = aspectRatioHeight * i;
 
-	// 		for (let i = 0; i < 488; i+=8) {
-	// 			const calculatedWidth = aspectRatioWidth * i;
-	// 			const calculatedHeight = aspectRatioHeight * i;
+				if (calculatedWidth >= minSize[0] && calculatedHeight >= minSize[1] && calculatedWidth <= width && calculatedHeight <= height) {
+					this.element ().find ('[data-action="set-resolution"]').append(`<option value="${calculatedWidth}x${calculatedHeight}">${Monogatari.string ('Windowed')} ${calculatedWidth}x${calculatedHeight}</option>`);
+				}
+			}
 
-	// 			if (calculatedWidth >= minSize[0] && calculatedHeight >= minSize[1] && calculatedWidth <= width && calculatedHeight <= height) {
-	// 				$_(`${selector} [data-action="set-resolution"]`).append(`<option value="${calculatedWidth}x${calculatedHeight}">${Monogatari.string ('Windowed')} ${calculatedWidth}x${calculatedHeight}</option>`);
-	// 			}
-	// 		}
+			this.element ().find ('[data-action="set-resolution"]').append(`<option value="fullscreen">${Monogatari.string ('FullScreen')}</option>`);
 
-	// 		$_(`${selector} [data-action="set-resolution"]`).append(`<option value="fullscreen">${Monogatari.string ('FullScreen')}</option>`);
+			this.changeWindowResolution (Monogatari.preference ('Resolution'));
+			this.element ().find ('[data-action="set-resolution"]').change(function () {
+				const size = this.value;
 
-	// 		SettingsScreen.changeWindowResolution (Monogatari.preference ('Resolution'));
-	// 		$_(`${selector} [data-action="set-resolution"]`).change(function () {
-	// 			const size = $_(this).value ();
-	// 			SettingsScreen.changeWindowResolution (size);
-	// 		});
-	// 	} else {
-	// 		$_(`${selector} [data-settings="resolution"]`).hide ();
-	// 	}
-	// }
+				this.changeWindowResolution (size);
+			});
+		} else {
+			this.element ().find ('[data-settings="resolution"]').hide ();
+		}
+	}
 
-	// static changeWindowResolution (resolution) {
-	//	/* global require */
-	// 	const remote = require ('electron').remote;
-	// 	const win = remote.getCurrentWindow ();
-	// 	const {width, height} = remote.screen.getPrimaryDisplay ().workAreaSize;
-	// 	if (resolution) {
-	// 		win.setResizable (true);
+	changeWindowResolution (resolution) {
+		/* global require */
+		const remote = require ('electron').remote;
+		const win = remote.getCurrentWindow ();
+		const {width, height} = remote.screen.getPrimaryDisplay ().workAreaSize;
+		if (resolution) {
+			win.setResizable (true);
 
-	// 		if (resolution == 'fullscreen' && !win.isFullScreen () && win.isFullScreenable ()) {
-	// 			win.setFullScreen(true);
-	// 			Monogatari.preference ('Resolution', resolution);
-	// 		} else if (resolution.indexOf ('x') > -1) {
-	// 			win.setFullScreen (false);
-	// 			const size = resolution.split ('x');
-	// 			const chosenWidth = parseInt (size[0]);
-	// 			const chosenHeight = parseInt (size[1]);
+			if (resolution == 'fullscreen' && !win.isFullScreen () && win.isFullScreenable ()) {
+				win.setFullScreen(true);
+				Monogatari.preference ('Resolution', resolution);
+			} else if (resolution.indexOf ('x') > -1) {
+				win.setFullScreen (false);
+				const size = resolution.split ('x');
+				const chosenWidth = parseInt (size[0]);
+				const chosenHeight = parseInt (size[1]);
 
-	// 			if (chosenWidth <= width && chosenHeight <= height) {
-	// 				win.setSize(chosenWidth, chosenHeight, true);
-	// 				Monogatari.preference ('Resolution', resolution);
-	// 			}
-	// 		}
-	// 		win.setResizable (false);
-	// 	}
-	// }
+				if (chosenWidth <= width && chosenHeight <= height) {
+					win.setSize(chosenWidth, chosenHeight, true);
+					Monogatari.preference ('Resolution', resolution);
+				}
+			}
+
+			win.setResizable (false);
+		}
+	}
 
 	didMount () {
 		this.engine.on ('didInit', () => {
@@ -128,12 +132,20 @@ class SettingsScreen extends ScreenComponent {
 
 		const engine = this.engine;
 		this.content ('auto-play-speed-controller').on ('change mouseover', function () {
-			const value = engine.setting ('maxAutoPlaySpeed') - parseInt(this.value);
+			const value = engine.setting ('MaxAutoPlaySpeed') - parseInt(this.value);
 			engine.preference ('AutoPlaySpeed', value);
 		});
 
-		this.engine.setting ('maxAutoPlaySpeed', parseInt (this.content ('auto-play-speed-controller').property ('max')));
+		this.engine.setting ('MaxAutoPlaySpeed', parseInt (this.content ('auto-play-speed-controller').property ('max')));
 		this.content ('auto-play-speed-controller').value (this.engine.preference ('AutoPlaySpeed'));
+
+		// Set the electron quit handler.
+		if (Platform.electron ()) {
+			this.electron ();
+		} else {
+			this.element ().find ('[data-platform="electron"]').remove ();
+		}
+
 		return Promise.resolve ();
 	}
 

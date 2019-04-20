@@ -38,7 +38,7 @@ export class InputModal extends Action {
 			validate: Validation,
 			callback: () => {
 				this.engine.global ('block', false);
-				this.engine.next ();
+				this.engine.proceed ();
 			}
 		});
 
