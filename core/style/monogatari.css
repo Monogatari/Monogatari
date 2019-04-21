@@ -261,21 +261,21 @@ video {
 	max-width: 100%;
 	max-height: 100%;
 
-	&.background {
+	&[data-mode="background"] {
 		@include full-size;
 		object-fit: cover;
 	}
 
-	&.immersive {
+	&[data-mode="immersive"] {
 		height: 100%;
 		width: 100%;
 		object-fit: contain;
-		position: relative;
+		position: absolute;
 		z-index: 20;
 		background: #000;
 	}
 
-	&.displayable {
+	&[data-mode="modal"] {
 		position: absolute;
 		top: 0;
 		left: 0;

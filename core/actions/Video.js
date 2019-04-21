@@ -7,7 +7,7 @@ export class Video extends Action {
 	static shouldProceed () {
 		return new Promise ((resolve, reject) => {
 			$_('[data-video]').each ((element) => {
-				if (element.hasAttribute ('controls') === true && element.ended !== true) {
+				if (element.ended !== true) {
 					reject ();
 				}
 			});
@@ -61,7 +61,7 @@ export class Video extends Action {
 	 * @param {string} parameters.name
 	 * @param {string} parameters.props
 	 */
-	constructor ([ show, type, mode = 'modal', name, ...props]) {
+	constructor ([ show, type, name, mode = 'modal', ...props]) {
 		super ();
 		this.mode = mode;
 		this.name = name;
@@ -77,7 +77,7 @@ export class Video extends Action {
 		const element = document.createElement ('video');
 
 		$_(element).data ('video', this.name);
-		$_(element).addClass (this.mode);
+		$_(element).data ('mode', this.mode);
 
 		$_(element).attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').video}/${this.src}`);
 
@@ -86,6 +86,7 @@ export class Video extends Action {
 				Monogatari.element ().find (`[data-video="${this.name}"]`).remove ();
 				if (this.mode === 'immersive') {
 					Monogatari.global ('block', false);
+					Monogatari.proceed ();
 				}
 			};
 		}
@@ -109,7 +110,7 @@ export class Video extends Action {
 				element.requestFullscreen ();
 			} else {
 				Monogatari.global ('block', true);
-				$_(element).toggleClass ('full-screen immersive');
+				$_(element).data ('mode','immersive');
 				Monogatari.element ().find ('[data-screen="game"]').prepend (element);
 			}
 		} else {
@@ -124,7 +125,11 @@ export class Video extends Action {
 	didApply () {
 		Monogatari.state ('videos').push (this._statement);
 		Monogatari.history ('video').push (this._statement);
-		return Promise.resolve ({ advance: true });
+
+		if (this.mode === 'background') {
+			return Promise.resolve ({ advance: true });
+		}
+		return Promise.resolve ({ advance: false });
 	}
 
 	revert () {
