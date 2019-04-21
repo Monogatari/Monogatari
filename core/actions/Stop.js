@@ -82,38 +82,42 @@ export class Stop extends Action {
 	}
 
 	willApply () {
-		if (typeof this.player === 'object' && !(this.player instanceof Audio)) {
-			for (const player of Object.values (this.player)) {
-				player.loop = false;
+		if (this.player) {
+			if (typeof this.player === 'object' && !(this.player instanceof Audio)) {
+				for (const player of Object.values (this.player)) {
+					player.loop = false;
+				}
+			} else {
+				this.player.loop = false;
 			}
-		} else {
-			this.player.loop = false;
 		}
 		return Promise.resolve ();
 	}
 
 	apply () {
-		// Check if the audio should have a fade time
-		const fadePosition = this.props.indexOf ('fade');
+		if (this.player) {
+			// Check if the audio should have a fade time
+			const fadePosition = this.props.indexOf ('fade');
 
-		if (typeof this.player === 'object' && !(this.player instanceof Audio)) {
-			if (fadePosition > -1) {
-				for (const player of this.player) {
-					Stop.fadeOut (this.props[fadePosition + 1], this.player).then (() => {
-						Monogatari.removeMediaPlayer (this.type, player.dataset.key);
-					});
+			if (typeof this.player === 'object' && !(this.player instanceof Audio)) {
+				if (fadePosition > -1) {
+					for (const player of this.player) {
+						Stop.fadeOut (this.props[fadePosition + 1], this.player).then (() => {
+							Monogatari.removeMediaPlayer (this.type, player.dataset.key);
+						});
+					}
+				} else {
+					Monogatari.removeMediaPlayer (this.type);
 				}
 			} else {
-				Monogatari.removeMediaPlayer (this.type);
-			}
-		} else {
 
-			if (fadePosition > -1) {
-				Stop.fadeOut (this.props[fadePosition + 1], this.player).then (() => {
-					Monogatari.removeMediaPlayer (this.type, this.media);
-				});
-			} else {
-				Monogatari.removeMediaPlayer (this.type, this.mediaKey);
+				if (fadePosition > -1) {
+					Stop.fadeOut (this.props[fadePosition + 1], this.player).then (() => {
+						Monogatari.removeMediaPlayer (this.type, this.media);
+					});
+				} else {
+					Monogatari.removeMediaPlayer (this.type, this.mediaKey);
+				}
 			}
 		}
 
