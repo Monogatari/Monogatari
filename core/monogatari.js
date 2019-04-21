@@ -750,22 +750,24 @@ class Monogatari {
 
 					if (FileSystem.isImage (asset)) {
 
-						promises.push (Preload.image (`${directory}/${asset}`).finally (() => {
-							this.trigger ('asset-loaded', {
+						promises.push (Preload.image (`${directory}/${asset}`).then (() => {
+							this.trigger ('assetLoaded', {
 								name: asset,
 								type: 'image',
 								category
 							});
 						}));
 					} else {
-						promises.push (Preload.file (`${directory}/${asset}`).finally (() => {
-							this.trigger ('asset-loaded', {
+						promises.push (Preload.file (`${directory}/${asset}`).then (() => {
+							this.trigger ('assetLoaded', {
 								name: asset,
 								type: 'file',
 								category
 							});
 						}));
 					}
+
+					this.trigger ('assetQueued');
 				}
 			}
 
@@ -782,8 +784,8 @@ class Monogatari {
 
 				if (typeof character.sprites !== 'undefined') {
 					for (const image of Object.values (character.sprites)) {
-						promises.push (Preload.image (`${directory}${image}`).finally (() => {
-							this.trigger ('asset-loaded', {
+						promises.push (Preload.image (`${directory}${image}`).then (() => {
+							this.trigger ('assetLoaded', {
 								name: image,
 								type: 'image',
 								category: 'character'
@@ -794,8 +796,8 @@ class Monogatari {
 
 				if (typeof character.expressions !== 'undefined') {
 					for (const image of Object.values (character.expressions)) {
-						promises.push (Preload.image (`${directory}${image}`).finally (() => {
-							this.trigger ('asset-loaded', {
+						promises.push (Preload.image (`${directory}${image}`).then (() => {
+							this.trigger ('assetLoaded', {
 								name: image,
 								type: 'image',
 								category: 'character'
@@ -805,14 +807,16 @@ class Monogatari {
 				}
 
 				if (typeof character.default_expression !== 'undefined') {
-					promises.push (Preload.image (`${directory}${character.default_expression}`).finally (() => {
-						this.trigger ('asset-loaded', {
+					promises.push (Preload.image (`${directory}${character.default_expression}`).then (() => {
+						this.trigger ('assetLoaded', {
 							name: character.default_expression,
 							type: 'image',
 							category: 'character'
 						});
 					}));
 				}
+
+				this.trigger ('assetQueued');
 			}
 
 			return Promise.all (promises).then (() => {

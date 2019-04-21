@@ -6,6 +6,10 @@ class LoadingScreen extends ScreenComponent {
 	constructor () {
 		super ();
 
+		this.props = {
+			max: 0
+		};
+
 		this.state = {
 			progress: 0
 		};
@@ -18,18 +22,24 @@ class LoadingScreen extends ScreenComponent {
 			});
 		});
 
+		this.engine.on ('assetQueued', () => {
+			const max = this.props.max;
+			this.setProps ({
+				max: max + 1
+			});
+		});
+
 		this.engine.on ('didPreloadAssets', () => {
 			this.setState ({
 				open: false
 			});
 		});
 
-		this.engine.on ('asset-loaded', (event) => {
+		this.engine.on ('assetLoaded', (event) => {
 			const progress = this.state.progress;
 			this.setState ({
 				progress: progress + 1
 			});
-
 		});
 		return Promise.resolve ();
 	}
@@ -37,8 +47,15 @@ class LoadingScreen extends ScreenComponent {
 	onStateUpdate (property, oldValue, newValue) {
 		super.onStateUpdate (property, oldValue, newValue);
 		if (property === 'progress') {
-			this.content ('progress').attribute ('max', newValue);
 			this.content ('progress').value (newValue);
+		}
+		return Promise.resolve ();
+	}
+
+	onPropsUpdate (property, oldValue, newValue) {
+		super.onPropsUpdate (property, oldValue, newValue);
+		if (property === 'max') {
+			this.content ('progress').attribute ('max', newValue);
 		}
 		return Promise.resolve ();
 	}
