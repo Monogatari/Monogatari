@@ -8,7 +8,7 @@ export class Dialog extends Action {
 	static shouldProceed () {
 
 		// Check if the type animation has finished and the Typed object still exists
-		if (!Monogatari.global ('finishedTyping') && Monogatari.global ('textObject') !== null) {
+		if (!Monogatari.global ('finished_typing') && Monogatari.global ('textObject') !== null) {
 
 			// Get the string it was typing
 			const str = Monogatari.global ('textObject').strings [0];
@@ -20,11 +20,11 @@ export class Dialog extends Action {
 
 			element.innerHTML = str;
 
-			Monogatari.global ('finishedTyping', true);
+			Monogatari.global ('finished_typing', true);
 
 			return Promise.reject ('TypeWriter effect has not finished.');
 		}
-		return Promise.resolve (Monogatari.global ('finishedTyping'));
+		return Promise.resolve (Monogatari.global ('finished_typing'));
 	}
 
 	static willProceed () {
@@ -33,12 +33,12 @@ export class Dialog extends Action {
 			centeredDialog.remove ();
 			Monogatari.element ().find ('[data-component="text-box"]').show ('flex');
 		}
-		return Promise.resolve (Monogatari.global ('finishedTyping'));
+		return Promise.resolve (Monogatari.global ('finished_typing'));
 	}
 
 	static willRollback () {
 		Monogatari.global ('textObject').destroy ();
-		Monogatari.global ('finishedTyping', true);
+		Monogatari.global ('finished_typing', true);
 		Monogatari.global ('_CurrentChoice', null);
 		Monogatari.element ().find ('[data-component="text-box"]').show ('flex');
 
@@ -61,7 +61,7 @@ export class Dialog extends Action {
 	static setup () {
 		Monogatari.globals ({
 			textObject: null,
-			finishedTyping: true,
+			finished_typing: true,
 			typedConfiguration: {
 				strings: [],
 				typeSpeed: Monogatari.preference ('TextSpeed'),
@@ -70,13 +70,13 @@ export class Dialog extends Action {
 				showCursor: false,
 				contentType: 'html',
 				preStringTyped: () => {
-					Monogatari.global ('finishedTyping', false);
+					Monogatari.global ('finished_typing', false);
 				},
 				onStringTyped: () => {
-					Monogatari.global ('finishedTyping', true);
+					Monogatari.global ('finished_typing', true);
 				},
 				onDestroy () {
-					Monogatari.global ('finishedTyping', true);
+					Monogatari.global ('finished_typing', true);
 				}
 			}
 		});
@@ -252,7 +252,7 @@ export class Dialog extends Action {
 			} else {
 				Monogatari.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='unnamed'><p>${dialog}</p></div>`);
 			}
-			Monogatari.global ('finishedTyping', true);
+			Monogatari.global ('finished_typing', true);
 		}
 	}
 
@@ -283,7 +283,7 @@ export class Dialog extends Action {
 				Monogatari.global ('textObject', new Typed ('[data-ui="say"]', Monogatari.global ('typedConfiguration')));
 			} else {
 				Monogatari.element ().find ('[data-ui="say"]').html (dialog);
-				Monogatari.global ('finishedTyping', true);
+				Monogatari.global ('finished_typing', true);
 			}
 		} else {
 			this.displayNvlDialog (dialog, character, animation);

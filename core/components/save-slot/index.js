@@ -9,13 +9,13 @@ class SaveSlot extends Component {
 
 		this.engine.registerListener ('delete-slot', {
 			callback: () => {
-				const target = this.engine.global ('deleteSlot');
+				const target = this.engine.global ('delete_slot');
 
 				// Delete the slot from the storage
 				this.engine.Storage.remove (target);
 
 				// Reset the temporal delete slot variable
-				this.engine.global ('deleteSlot', null);
+				this.engine.global ('delete_slot', null);
 				this.engine.dismissAlert ('slot-deletion');
 
 				this.engine.instances ().remove ();
@@ -30,8 +30,8 @@ class SaveSlot extends Component {
 			event.stopPropagation ();
 			event.preventDefault ();
 
-			engine.global ('deleteSlot', this.dataset.delete);
-			engine.Storage.get (engine.global ('deleteSlot')).then ((data) => {
+			engine.global ('delete_slot', this.dataset.delete);
+			engine.Storage.get (engine.global ('delete_slot')).then ((data) => {
 				engine.alert ('slot-deletion', {
 					message: 'SlotDeletion',
 					context: typeof data.name !== 'undefined' ? data.name : data.date,

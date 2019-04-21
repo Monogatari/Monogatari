@@ -192,7 +192,7 @@ export class Play extends Action {
 			let player = Monogatari.mediaPlayer (this.type, this.mediaKey);
 			if (typeof player === 'undefined') {
 				player = new Audio ();
-				player.volume = Monogatari.preference ('volume')[Text.capitalize (this.type)];
+				player.volume = Monogatari.preference ('Volume')[Text.capitalize (this.type)];
 				this.player = Monogatari.mediaPlayer (this.type, this.mediaKey, player);
 			} else {
 				this.player = player;

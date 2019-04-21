@@ -9,9 +9,9 @@ class SlotList extends Component {
 			callback: (element) => {
 				const customName = $_(element).closest ('[data-content="context"]').text ().trim ();
 				if (customName !== '') {
-					this.engine.saveTo ('SaveLabel', this.engine.global ('overwriteSlot'), customName);
+					this.engine.saveTo ('SaveLabel', this.engine.global ('overwrite_slot'), customName);
 
-					this.engine.global ('overwriteSlot', null);
+					this.engine.global ('overwrite_slot', null);
 					this.engine.dismissAlert ('slot-overwrite');
 				}
 			}
@@ -84,8 +84,8 @@ class SlotList extends Component {
 					event.stopPropagation();
 					event.preventDefault();
 
-					engine.global('overwriteSlot', $_(this).attribute ('slot').split ('_').pop ());
-					engine.Storage.get (self.props.label + '_' + engine.global('overwriteSlot')).then((data) => {
+					engine.global('overwrite_slot', $_(this).attribute ('slot').split ('_').pop ());
+					engine.Storage.get (self.props.label + '_' + engine.global('overwrite_slot')).then((data) => {
 						engine.alert('slot-overwrite', {
 							message: 'SlotOverwrite',
 							context: typeof data.name !== 'undefined' ? data.name : data.date,

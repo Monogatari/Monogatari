@@ -1679,7 +1679,7 @@ class Monogatari {
 		// free mode is enabled.
 		if ($_('[data-screen="game"]').isVisible ()
 			&& !$_('.modal').isVisible ()
-			&& !this.global ('distraction-free')
+			&& !this.global ('distraction_free')
 			&& !this.global ('block')) {
 			promises.push (Promise.resolve ());
 		} else {
@@ -1791,7 +1791,7 @@ class Monogatari {
 		// revert. The game will not revert if it's blocked or if the distraction
 		// free mode is enabled.
 		if ($_('[data-screen="game"]').isVisible ()
-			&& !this.global ('distraction-free')
+			&& !this.global ('distraction_free')
 			&& !this.global ('block')) {
 			promises.push (Promise.resolve ());
 		} else {
@@ -1974,7 +1974,7 @@ class Monogatari {
 			const interval = this.preference ('AutoPlaySpeed') * 1000;
 			let expected = Date.now () + interval;
 
-			this.global ('_AutoPlayTimer', () => {
+			this.global ('_auto_play_timer', () => {
 				const now = Date.now () - expected; // the drift (positive for overshooting)
 				if (now > interval) {
 					// something really bad happened. Maybe the browser (tab) was inactive?
@@ -1982,18 +1982,18 @@ class Monogatari {
 				}
 				this.proceed ().then (() => {
 					expected += interval;
-					setTimeout (this.global ('_AutoPlayTimer'), Math.max (0, interval - now)); // take into account drift
+					setTimeout (this.global ('_auto_play_timer'), Math.max (0, interval - now)); // take into account drift
 				}).catch (() => {
 					// An action waiting for user interaction or something else
 					// is blocking the game.
 				});
 			});
-			setTimeout (this.global ('_AutoPlayTimer'), interval);
+			setTimeout (this.global ('_auto_play_timer'), interval);
 			this.element ().find ('[data-component="quick-menu"] [data-action="auto-play"] [data-string]').text (this.string ('Stop'));
 			this.element ().find ('[data-component="quick-menu"] [data-action="auto-play"] [data-icon]').replaceWith ('<span class="fas fa-stop-circle"></span>');
 		} else {
-			clearTimeout (this.global ('_AutoPlayTimer'));
-			this.global ('_AutoPlayTimer', null);
+			clearTimeout (this.global ('_auto_play_timer'));
+			this.global ('_auto_play_timer', null);
 			this.element ().find ('[data-component="quick-menu"] [data-action="auto-play"] [data-string]').text (this.string ('AutoPlay'));
 			this.element ().find ('[data-component="quick-menu"] [data-action="auto-play"] [data-icon]').replaceWith ('<span class="fas fa-play-circle"></span>');
 		}
@@ -2008,18 +2008,18 @@ class Monogatari {
 	static distractionFree () {
 		if (this.global ('playing')) {
 			// Check if the distraction free is currently enabled
-			if (this.global ('distraction-free') === true) {
+			if (this.global ('distraction_free') === true) {
 				this.element ().find ('[data-component="quick-menu"] [data-action="distraction-free"] [data-string]').text (this.string ('Hide'));
 				this.element ().find ('[data-component="quick-menu"] [data-action="distraction-free"] [data-icon]').replaceWith ('<span class="fas fa-eye" data-action="distraction-free"></span>');
 				this.element ().find ('[data-component="quick-menu"]').removeClass ('transparent');
 				this.element ().find ('[data-component="text-box"]').show ();
-				this.global ('distraction-free', false);
+				this.global ('distraction_free', false);
 			} else {
 				this.element ().find ('[data-component="quick-menu"] [data-action="distraction-free"] [data-string]').text (this.string ('Show'));
 				this.element ().find ('[data-component="quick-menu"] [data-action="distraction-free"] [data-icon]').replaceWith ('<span class="fas fa-eye-slash" data-action="distraction-free"></span>');
 				this.element ().find ('[data-component="quick-menu"]').addClass ('transparent');
 				this.element ().find ('[data-component="text-box"]').hide();
-				this.global ('distraction-free', true);
+				this.global ('distraction_free', true);
 			}
 		}
 	}
@@ -2146,7 +2146,7 @@ class Monogatari {
 		// auto-play feature
 		this.registerListener ('auto-play', {
 			callback: () => {
-				this.autoPlay (this.global ('_AutoPlayTimer') === null);
+				this.autoPlay (this.global ('_auto_play_timer') === null);
 			}
 		});
 
@@ -2468,18 +2468,18 @@ class Monogatari {
 
 				if (this.setting ('AutoSave') != 0 && typeof this.setting ('AutoSave') === 'number') {
 					this.debug.debug ('Automatic save is enabled, setting up timeout');
-					this.global ('_AutoSaveInterval', setInterval(function () {
+					this.global ('_auto_save_interval', setInterval(function () {
 						this.debug.groupCollapsed ('Automatic Save');
-						const id = this.global ('currentAutoSaveSlot');
+						const id = this.global ('current_auto_save_slot');
 
 						this.debug.debug ('Saving data to slot', id);
 
 						this.saveTo ('AutoSaveLabel', id);
 
-						if (this.global ('currentAutoSaveSlot') === this.setting ('Slots')) {
-							this.global ('currentAutoSaveSlot', 1);
+						if (this.global ('current_auto_save_slot') === this.setting ('Slots')) {
+							this.global ('current_auto_save_slot', 1);
 						} else {
-							this.global ('currentAutoSaveSlot', this.global ('currentAutoSaveSlot') + 1);
+							this.global ('current_auto_save_slot', this.global ('current_auto_save_slot') + 1);
 						}
 
 						this.debug.groupEnd ('Automatic Save');
@@ -2541,7 +2541,7 @@ Monogatari._functions = {
 Monogatari._status = {
 	block: false,
 	playing: false,
-	finishedTyping: true
+	finished_typing: true
 };
 
 Monogatari._assets = {
@@ -2692,17 +2692,16 @@ Monogatari._preferences = {
 };
 
 Monogatari.globals ({
-	autoPlay: null,
-	'distraction-free': false,
-	deleteSlot: null,
-	overwriteSlot: null,
+	distraction_free: false,
+	delete_slot: null,
+	overwrite_slot: null,
 	block: false,
 	playing: false,
-	currentAutoSaveSlot: 1,
-	_AutoPlayTimer: null,
+	current_auto_save_slot: 1,
+	_auto_play_timer: null,
 	skip: null,
 	_log: [],
-	_AutoSaveInterval: null
+	_auto_save_interval: null
 });
 
 Monogatari._listeners = [];
