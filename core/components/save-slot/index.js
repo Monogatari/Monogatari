@@ -5,6 +5,14 @@ import moment from 'moment';
 
 class SaveSlot extends Component {
 
+	static shouldRollback () {
+		return Promise.resolve ();
+	}
+
+	static willRollback () {
+		return Promise.resolve ();
+	}
+
 	static bind (selector) {
 
 		this.engine.registerListener ('delete-slot', {

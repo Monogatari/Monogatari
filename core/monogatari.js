@@ -105,7 +105,7 @@ class Monogatari {
 	}
 
 	static set debug (value) {
-		console.error ('Debug reference cannot be overriden.');
+		throw new Error ('Debug reference cannot be overriden.');
 	}
 
 	/**
@@ -470,7 +470,7 @@ class Monogatari {
 			if (typeof this._settings[key] !== 'undefined') {
 				return this._settings[key];
 			} else {
-				console.error (`Tried to access non existent setting with name '${key}'.`);
+				throw new Error (`Tried to access non existent setting with name '${key}'.`);
 			}
 		}
 	}
@@ -491,7 +491,7 @@ class Monogatari {
 			if (typeof this._preferences[key] !== 'undefined') {
 				return this._preferences[key];
 			} else {
-				console.error (`Tried to access non existent preference with name '${key}'.`);
+				throw new Error (`Tried to access non existent preference with name '${key}'.`);
 			}
 		}
 	}

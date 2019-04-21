@@ -44,7 +44,6 @@ export class ShowImage extends Action {
 		} else {
 			this.image = asset;
 		}
-		this.sprite = this.image;
 	}
 
 	apply () {
@@ -53,7 +52,6 @@ export class ShowImage extends Action {
 		$_(image).attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').images}/${this.image}`);
 		$_(image).addClass ('animated');
 		$_(image).data ('image', this.asset);
-		$_(image).data ('sprite', this.sprite);
 
 		for (const className of this.classes) {
 			$_(image).addClass (className);

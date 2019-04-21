@@ -3,6 +3,14 @@ import { Monogatari } from './../../monogatari';
 
 class MainMenu extends MenuComponent {
 
+	static shouldRollback () {
+		return Promise.resolve ();
+	}
+
+	static willRollback () {
+		return Promise.resolve ();
+	}
+
 	createButton (button) {
 		const element = super.createButton (button);
 		element.innerHTML = `

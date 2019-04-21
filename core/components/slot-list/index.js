@@ -4,6 +4,14 @@ import { $_ } from '@aegis-framework/artemis';
 
 class SlotList extends Component {
 
+	static shouldRollback () {
+		return Promise.resolve ();
+	}
+
+	static willRollback () {
+		return Promise.resolve ();
+	}
+
 	static bind () {
 		this.engine.registerListener ('overwrite-slot', {
 			callback: (element) => {

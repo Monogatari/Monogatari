@@ -14,5 +14,6 @@ centered-dialog {
 
 	[data-content="wrapper"] {
 		justify-content: center;
+		flex-direction: column;
 	}
 }
