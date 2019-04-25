@@ -275,7 +275,8 @@ video {
 		background: #000;
 	}
 
-	&[data-mode="modal"] {
+	&[data-mode="modal"],
+	&[data-mode="displayable"] {
 		position: absolute;
 		top: 0;
 		left: 0;

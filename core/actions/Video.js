@@ -7,8 +7,8 @@ export class Video extends Action {
 	static shouldProceed () {
 		return new Promise ((resolve, reject) => {
 			$_('[data-video]').each ((element) => {
-				if (element.ended !== true) {
-					reject ();
+				if (element.ended !== true && element.dataset.mode !== 'background' && element.dataset.mode !== 'displayable') {
+					reject ('Playing video must end before proceeding.');
 				}
 			});
 
@@ -57,7 +57,7 @@ export class Video extends Action {
 	 *
 	 * @param {string[]} parameters - List of parameters received from the script statement.
 	 * @param {string} parameters.action - In this case, action will always be 'video'
-	 * @param {string} [parameters.mode='modal'] - Mode in which the video element will be shown (modal, background, immersive, full-screen)
+	 * @param {string} [parameters.mode='modal'] - Mode in which the video element will be shown (modal, displayable, background, immersive, full-screen)
 	 * @param {string} parameters.name
 	 * @param {string} parameters.props
 	 */
@@ -113,6 +113,8 @@ export class Video extends Action {
 				$_(element).data ('mode','immersive');
 				Monogatari.element ().find ('[data-screen="game"]').prepend (element);
 			}
+		} else if (this.mode === 'displayable') {
+			Monogatari.element ().find ('[data-screen="game"]').append (element);
 		} else {
 			Monogatari.element ().find ('[data-screen="game"]').append (element);
 		}
@@ -126,9 +128,10 @@ export class Video extends Action {
 		Monogatari.state ('videos').push (this._statement);
 		Monogatari.history ('video').push (this._statement);
 
-		if (this.mode === 'background') {
+		if (this.mode === 'background' || this.mode === 'modal' || this.mode === 'displayable') {
 			return Promise.resolve ({ advance: true });
 		}
+
 		return Promise.resolve ({ advance: false });
 	}
 
