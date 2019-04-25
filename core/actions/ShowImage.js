@@ -77,14 +77,7 @@ export class ShowImage extends Action {
 	}
 
 	revert () {
-		if (this.classes.length > 0) {
-			for (const newClass of this.classes) {
-				Monogatari.element ().find (`[data-image="${this.asset}"]`).addClass(newClass);
-			}
-
-		} else {
-			Monogatari.element ().find (`[data-image="${this.asset}"]`).remove ();
-		}
+		Monogatari.element ().find (`[data-image="${this.asset}"]`).remove ();
 		Monogatari.history ('image').pop ();
 		return Promise.resolve ();
 	}
