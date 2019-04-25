@@ -84,6 +84,7 @@ Monogatari.translation ('简体中文', {
 
 	'TextSpeed': '文字显示速度',
 
+	'Video': 'Video Volume',
 	'Voice': '语音音量',
 
 	'Windowed': '窗口'

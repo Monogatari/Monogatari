@@ -76,6 +76,8 @@ export class Video extends Action {
 		// TODO: Find a way to remove the resize listeners once the video is stopped
 		const element = document.createElement ('video');
 
+		element.volume = Monogatari.preference ('Volume').Video;
+
 		$_(element).data ('video', this.name);
 		$_(element).data ('mode', this.mode);
 

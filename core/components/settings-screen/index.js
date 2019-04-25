@@ -166,6 +166,8 @@ class SettingsScreen extends ScreenComponent {
 						<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="sound">
 						<span data-string="Voice">Voice Volume:</span>
 						<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="voice">
+						<span data-string="Video">Video Volume:</span>
+						<input type="range" min="0.0" max="1.0" step="0.1" data-action="set-volume" data-target="video">
 					</div>
 				</div>
 

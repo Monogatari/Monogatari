@@ -44,12 +44,19 @@ export class Play extends Action {
 
 		// Volume bars listeners
 		$_(`${selector} [data-action="set-volume"]`).on ('change mouseover', function () {
-			const target = $_(this).data('target');
-			const value = $_(this).value();
-			const players = Monogatari.mediaPlayers (target);
+			const target = this.dataset.target;
+			const value = this.value;
 
-			for (const player of players) {
-				player.volume = value;
+			if (target === 'video') {
+				$_('[data-video]').each ((element) => {
+					element.volume = value;
+				});
+			} else {
+				const players = Monogatari.mediaPlayers (target);
+
+				for (const player of players) {
+					player.volume = value;
+				}
 			}
 
 			Monogatari.preference ('Volume')[Text.capitalize (target)] = value;

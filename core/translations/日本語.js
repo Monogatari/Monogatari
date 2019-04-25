@@ -84,6 +84,7 @@ Monogatari.translation ('日本語', {
 
 	'TextSpeed': 'テキストスピード',
 
+	'Video': 'Video Volume',
 	'Voice': 'ボイスの音量',
 
 	'Windowed': '窓'

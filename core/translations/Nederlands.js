@@ -84,6 +84,7 @@ Monogatari.translation ('Nederlands', {
 
 	'TextSpeed': 'Tekst snelheid',
 
+	'Video': 'Video Volume',
 	'Voice': 'Stem Volume',
 
 	'Windowed': 'Window modus'

@@ -84,6 +84,7 @@ Monogatari.translation('Русский', {
 
 	'TextSpeed': 'Скорость текста',
 
+	'Video': 'Video Volume',
 	'Voice': 'Громкость голоса',
 
 	'Windowed': 'Оконный режим',
