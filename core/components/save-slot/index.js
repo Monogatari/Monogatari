@@ -98,7 +98,7 @@ class SaveSlot extends Component {
 		const hasImage = this.props.image && this.engine.asset ('scenes', this.props.image);
 
 		if (hasImage) {
-			background = `url(${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').scenes}/${this.props.image})`;
+			background = `url(${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').scenes}/${this.engine.asset ('scenes', this.props.image)})`;
 		} else if (this.data.game.state.scene) {
 			background = this.data.game.state.scene;
 
