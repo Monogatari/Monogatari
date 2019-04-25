@@ -163,7 +163,7 @@ export class Play extends Action {
 		if (player.volume !== 1 && player.dataset.fade === 'in') {
 			if (player.volume + volume > 1) {
 				player.volume = 1;
-				delete this.player.dataset.fade;
+				delete player.dataset.fade;
 				resolve ();
 			} else {
 				player.volume += volume;
