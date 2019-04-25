@@ -1236,7 +1236,7 @@ class Monogatari {
 		} else if (this.state ('step') >= 1) {
 			actionToRevert = this.label ()[this.state ('step') - 1];
 		} else {
-			const jump = this.history ('jump').reverse ().find (o => {
+			const jump = [...this.history ('jump')].reverse ().find (o => {
 				return o.destination.label === this.state ('label') && o.destination.step === 0;
 			});
 
@@ -1246,6 +1246,9 @@ class Monogatari {
 					step: jump.source.step
 				});
 				actionToRevert = this.label ()[this.state ('step')];
+				this.debug.debug ('Will revert to previous label.');
+			} else {
+				this.debug.debug ('Will not revert since this is the beginning of the game.');
 			}
 		}
 
