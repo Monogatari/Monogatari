@@ -141,13 +141,16 @@ export class Stop extends Action {
 
 	revert () {
 		if (typeof this.media !== 'undefined') {
-			const last = Monogatari.history (this.type).reverse ().find ((m) => m.indexOf (`play ${this.type} ${this.media}`) > -1);
+			const last = [...Monogatari.history (this.type)].reverse ().find ((m) => m.indexOf (`play ${this.type} ${this.media}`) > -1);
 
-			const promise = Monogatari.run (last, false).then (() => {
-				Monogatari.history (this.type).pop ();
-			});
+			if (typeof last !== 'undefined') {
+				const promise = Monogatari.run (last, false).then (() => {
+					Monogatari.history (this.type).pop ();
+					return Promise.resolve ();
+				});
 
-			return promise;
+				return promise;
+			}
 
 		} else {
 			const statements = Monogatari.history (this.type).pop ();
@@ -161,6 +164,8 @@ export class Stop extends Action {
 			}
 			return Promise.all (promises);
 		}
+
+		return Promise.resolve ();
 	}
 
 	didRevert () {
