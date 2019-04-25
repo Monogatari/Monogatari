@@ -40,7 +40,7 @@ export class HideVideo extends Action {
 	didApply () {
 		for (let i = Monogatari.state ('videos').length - 1; i >= 0; i--) {
 			const last = Monogatari.state ('videos')[i];
-			const [show, video, mode, name] = last.split (' ');
+			const [show, video, name, mode] = last.split (' ');
 			if (name === this.name) {
 				Monogatari.state ('videos').splice (i, 1);
 				break;
@@ -52,7 +52,7 @@ export class HideVideo extends Action {
 	revert () {
 		for (let i = Monogatari.history ('video').length - 1; i >= 0; i--) {
 			const last = Monogatari.history ('video')[i];
-			const [show, video, mode, name] = last.split (' ');
+			const [show, video, name, mode] = last.split (' ');
 			if (name === this.name) {
 				Monogatari.history ('video').splice (i, 1);
 				return Monogatari.run (last, false);

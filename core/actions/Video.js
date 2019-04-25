@@ -85,6 +85,7 @@ export class Video extends Action {
 			element.onended = () => {
 				Monogatari.element ().find (`[data-video="${this.name}"]`).remove ();
 				if (this.mode === 'immersive') {
+					Monogatari.state ('videos').pop ();
 					Monogatari.global ('block', false);
 					Monogatari.proceed ();
 				}
