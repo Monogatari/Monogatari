@@ -13,7 +13,7 @@ centered-dialog {
 	position: absolute;
 
 	[data-content="wrapper"] {
-		justify-content: center;
-		flex-direction: column;
+		display: block;
+		text-align: center;
 	}
 }

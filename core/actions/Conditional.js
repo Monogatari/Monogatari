@@ -4,7 +4,7 @@ import { Util } from '@aegis-framework/artemis';
 
 export class Conditional extends Action {
 
-	static setup (selector) {
+	static setup () {
 		Monogatari.history ('conditional');
 	}
 

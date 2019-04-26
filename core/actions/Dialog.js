@@ -99,8 +99,8 @@ export class Dialog extends Action {
 
 		// Detect scroll on the text element to remove the unread class used when
 		// there's text not being shown in NVL mode.
-		$_(`${selector} text-box`).on ('scroll', () => {
-			this.engine.element ().find ('text-box').removeClass ('unread');
+		$_(`${selector} [data-component="text-box"]`).on ('scroll', () => {
+			this.engine.element ().find ('[data-component="text-box"]').removeClass ('unread');
 		});
 		return Promise.resolve ();
 	}
@@ -124,9 +124,9 @@ export class Dialog extends Action {
 			this.engine.global ('textObject').destroy ();
 		}
 
-		this.engine.element ().find ('text-box').removeClass ('nvl');
+		this.engine.element ().find ('[data-component="text-box"]').removeClass ('nvl');
 
-		this.engine.element ().find ('text-box').data ('speaking', '');
+		this.engine.element ().find ('[data-component="text-box"]').data ('speaking', '');
 
 		this.engine.element ().find ('[data-ui="who"]').style ('color', '');
 
@@ -209,14 +209,14 @@ export class Dialog extends Action {
 	}
 
 	displayNvlDialog (dialog, character, animation) {
-		if (!this.engine.element ().find ('text-box').hasClass ('nvl')) {
+		if (!this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
 			Dialog.reset ();
-			this.engine.element ().find ('text-box').addClass ('nvl');
+			this.engine.element ().find ('[data-component="text-box"]').addClass ('nvl');
 		}
 
 		// Remove contents from the dialog area.
-		const previous = this.engine.element ().find ('text-box').data ('speaking');
-		this.engine.element ().find ('text-box').data ('speaking', character);
+		const previous = this.engine.element ().find ('[data-component="text-box"]').data ('speaking');
+		this.engine.element ().find ('[data-component="text-box"]').data ('speaking', character);
 
 		// Check if the typing animation flag is set to true in order to show it
 		if (animation === true && this.engine.setting ('TypeAnimation') === true && this.engine.setting ('NVLTypeAnimation') === true) {
@@ -258,10 +258,10 @@ export class Dialog extends Action {
 
 	displayDialog (dialog, character, animation) {
 		if (this.nvl === false) {
-			if (this.engine.element ().find ('text-box').hasClass ('nvl') && this._cycle === 'Application') {
+			if (this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl') && this._cycle === 'Application') {
 				this.engine.history ('nvl').push (this.engine.element ().find ('text-box [data-ui="say"]').html ());
 			}
-			this.engine.element ().find ('text-box').removeClass ('nvl');
+			this.engine.element ().find ('[data-component="text-box"]').removeClass ('nvl');
 
 			// Destroy the previous textObject so the text is rewritten.
 			// If not destroyed, the text would be appended instead of replaced.
@@ -271,7 +271,7 @@ export class Dialog extends Action {
 
 			// Remove contents from the dialog area.
 			this.engine.element ().find ('[data-ui="say"]').html ('');
-			this.engine.element ().find ('text-box').data ('speaking', character);
+			this.engine.element ().find ('[data-component="text-box"]').data ('speaking', character);
 
 			// Check if the typing animation flag is set to true in order to show it
 			if (animation === true && this.engine.setting ('TypeAnimation') === true) {
@@ -368,7 +368,7 @@ export class Dialog extends Action {
 		// Check if the dialog to replay is a NVL one or not
 		if (this.nvl === true) {
 			//  Check if the NVL screen is currently being shown
-			if (Monogatari.element ().find ('text-box').hasClass ('nvl')) {
+			if (Monogatari.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
 				// If it is being shown, then to go back, we need to remove the last dialog from it
 				Monogatari.element ().find ('text-box [data-ui="say"] [data-spoke]').last ().remove ();
 				return Promise.resolve ();
@@ -376,7 +376,7 @@ export class Dialog extends Action {
 				// If it is not shown right now, then we need to recover the dialogs
 				// that were being shown the last time we hid it
 				if (Monogatari.history ('nvl').length > 0) {
-					Monogatari.element ().find ('text-box').addClass ('nvl');
+					Monogatari.element ().find ('[data-component="text-box"]').addClass ('nvl');
 					Monogatari.element ().find ('text-box [data-ui="say"]').html (Monogatari.history ('nvl').pop ());
 					return Promise.resolve ();
 				}

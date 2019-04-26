@@ -382,7 +382,7 @@ video {
 /** Medium Devices, Desktops (768px)**/
 @media screen and (min-width: 48em) {
 	body {
-		font-size: 1.5rem;
+		font-size: 1.2rem;
 	}
 
 	button {
@@ -397,6 +397,11 @@ video {
 
 /** Medium Devices, Desktops (992px)**/
 @media screen and (min-width: 62em) {
+
+	body {
+		font-size: 1.35rem;
+	}
+
 	h1,
 	h2 {
 		font-size: 3.5rem;
@@ -409,6 +414,10 @@ video {
 
 /** HD Screen, Large Devices, Wide Screens (1200px) **/
 @media screen and (min-width: 75em) {
+	body {
+		font-size: 1.5rem;
+	}
+
 	.modal > * {
 		width: 40%;
 	}

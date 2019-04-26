@@ -35,6 +35,8 @@ class Component extends HTMLElement {
 
 	static _explicitPropTypes = ['boolean', 'string', 'number'];
 
+	static _template = null;
+
 	/**
 	 * Each component can define its initial HTML structure, which should be used on
 	 * the setup or rendering functions of the cycle, adding to the DOM.
@@ -121,10 +123,33 @@ class Component extends HTMLElement {
 	 * @return {Promise} - Result of the setup operation
 	 */
 	static setup () {
-		// for (const child of this._children) {
-		// 	child.setup ();
-		// }
+		const template = document.getElementById (this._id);
+
+		if (template !== null) {
+			this.template (template.innerHTML);
+		}
+
 		return Promise.resolve ();
+	}
+
+	static template (html = null, context = null) {
+		if (html !== null) {
+			this._template = html;
+			this.instances ((instance) => {
+				if (instance._isReady) {
+					instance.forceRender ();
+				}
+			});
+		} else {
+
+			// Check if no parameters were set but the HTML is still a function to be called
+			if (typeof this._template === 'function') {
+				return this._template.call (context);
+			}
+
+			// If this is reached, the HTML was just a string
+			return this._template;
+		}
 	}
 
 	/**
@@ -199,9 +224,6 @@ class Component extends HTMLElement {
 	 * @return {Promise} - Result of the binding operation
 	 */
 	static bind () {
-		// for (const child of this._children) {
-		// 	child.bind ();
-		// }
 		return Promise.resolve ();
 	}
 
@@ -214,9 +236,6 @@ class Component extends HTMLElement {
 	 * @return {Promise} - Result of the initialization operation
 	 */
 	static init () {
-		// for (const child of this._children) {
-		// 	child.init ();
-		// }
 		return Promise.resolve ();
 	}
 
@@ -349,6 +368,8 @@ class Component extends HTMLElement {
 		this._ready = [];
 
 		this._connected = false;
+		this._isReady = false;
+
 	}
 
 	/**
@@ -441,39 +462,20 @@ class Component extends HTMLElement {
 		}
 	}
 
-	// /**
-	//  * @static html - A simple function providing access to the basic HTML
-	//  * structure of the component.
-	//  *
-	//  * @param {function|string} html - A string or function that renders the
-	//  * component into a valid HTML structure.
-	//  * @param {*} params - Any additional params that should be used when calling
-	//  * the rendering function
-	//  *
-	//  * @returns {void|string} - Void or the HTML structure in a string
-	//  */
-	// template (html = null) {
-	// 	if (html !== null) {
-	// 		this._template = html;
-	// 	} else {
-	// 		// Check if additional parameters have been sent to a rendering function
-	// 		if (params.length > 0 && typeof this._html === 'function') {
-	// 			if (html === null) {
-	// 				return this._html.call (this, ...params);
-	// 			} else {
-	// 				return this._html.call (html, ...params);
-	// 			}
-	// 		}
-
-	// 		// Check if no parameters were set but the HTML is still a function to be called
-	// 		if (params.length === 0 && html === null && typeof this._html === 'function') {
-	// 			return this._html.call (this);
-	// 		}
-
-	// 		// If this is reached, the HTML was just a string
-	// 		return this._html;
-	// 	}
-	// }
+	/**
+	 * @static template - A simple function providing access to the basic HTML
+	 * structure of the component.
+	 *
+	 * @param {function|string} html - A string or function that renders the
+	 * component into a valid HTML structure.
+	 * @param {*} params - Any additional params that should be used when calling
+	 * the rendering function
+	 *
+	 * @returns {void|string} - Void or the HTML structure in a string
+	 */
+	template (html = null) {
+		return this.constructor.template (html, this);
+	}
 
 	shouldProceed () {
 		return Promise.resolve ();
@@ -575,7 +577,13 @@ class Component extends HTMLElement {
 	}
 
 	_render () {
-		return Util.callAsync (this.render, this).then ((html) => {
+		let render = this.render;
+
+		if (this.constructor._template !== null) {
+			render = this.template;
+		}
+
+		return Util.callAsync (render, this).then ((html) => {
 			this.innerHTML = html;
 		});
 	}
@@ -590,6 +598,7 @@ class Component extends HTMLElement {
 		return this.willMount ().then (() => {
 			return this._render ().then (() => {
 				return this.didMount ().then (() => {
+					this._isReady = true;
 					for (const callback of this._ready) {
 						callback.call (this);
 					}

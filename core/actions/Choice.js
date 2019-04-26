@@ -15,7 +15,7 @@ export class Choice extends Action {
 		return Promise.resolve ();
 	}
 
-	static bind (selector) {
+	static bind () {
 		// Bind the click event on data-do elements. This property is used for
 		// every choice button.
 		this.engine.on ('click', '[data-choice]', function (event) {
