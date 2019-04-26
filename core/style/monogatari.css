@@ -85,8 +85,11 @@ button {
 	background-position: center;
 }
 
-button:hover {
-	background-color: var(--main-color);
+button {
+	&:hover,
+	&:focus {
+		background-color: var(--main-color);
+	}
 }
 
 input,
