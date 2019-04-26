@@ -1,6 +1,5 @@
 import { Action } from '../lib/Action';
 import { Monogatari } from '../monogatari';
-import { $_, Util } from '@aegis-framework/artemis';
 
 export class Canvas extends Action {
 
@@ -43,7 +42,7 @@ export class Canvas extends Action {
 		// Go through each canvas element being shown so it can be properly
 		// stopped and then removed.
 		Monogatari.element ().find ('[data-canvas]').each ((element) => {
-			const name = $_(element).data ('canvas');
+			const name = element.dataset.canvas;
 			promises.push (Util.callAsync (Canvas.objects (name).stop, Monogatari).then (() => {
 				Monogatari.element ().find (`[data-canvas="${this.name}"]`).remove ();
 			}));

@@ -78,8 +78,8 @@ export class Video extends Action {
 
 		element.volume = Monogatari.preference ('Volume').Video;
 
-		$_(element).data ('video', this.name);
-		$_(element).data ('mode', this.mode);
+		element.dataset.video = this.name;
+		element.dataset.mode = this.mode;
 
 		$_(element).attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').video}/${this.src}`);
 
