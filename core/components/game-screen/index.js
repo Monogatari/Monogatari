@@ -3,6 +3,13 @@ import { Monogatari } from './../../monogatari';
 
 class GameScreen extends ScreenComponent {
 
+	static shouldProceed () {
+		if (this.engine.element ().find ('[data-screen="game"]').isVisible ()) {
+			return Promise.resolve ();
+		}
+		return Promise.reject ('Game screen is not visible.');
+	}
+
 	static bind (selector) {
 		this.engine.on ('click', '[data-screen="game"] *:not([data-choice])', function () {
 			Monogatari.debug.debug ('Next Statement Listener');

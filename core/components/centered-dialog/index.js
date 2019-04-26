@@ -24,7 +24,6 @@ class CenteredDialog extends Component {
 	}
 
 	didMount () {
-		this.engine.element ().find ('[data-component="text-box"]').hide ();
 		return Promise.resolve ();
 	}
 

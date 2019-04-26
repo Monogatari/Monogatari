@@ -1684,13 +1684,12 @@ class Monogatari {
 		// playing or is looking at some menu and thus the game should not
 		// proceed. The game will not proceed if it's blocked or if the distraction
 		// free mode is enabled.
-		if ($_('[data-screen="game"]').isVisible ()
-			&& !$_('.modal').isVisible ()
+		if (!$_('.modal').isVisible ()
 			&& !this.global ('distraction_free')
 			&& !this.global ('block')) {
 			promises.push (Promise.resolve ());
 		} else {
-			promises.push (Promise.reject ());
+			promises.push (Promise.reject ('Extra condition check failed.'));
 		}
 
 		return Promise.all (promises).then ((...args) => {
