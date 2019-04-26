@@ -26,6 +26,7 @@ export class InputModal extends Action {
 	}
 
 	apply () {
+		this.engine.global ('block', true);
 
 		const input = document.createElement ('text-input');
 
@@ -41,8 +42,6 @@ export class InputModal extends Action {
 				this.engine.proceed ();
 			}
 		});
-
-		this.engine.global ('block', true);
 
 		this.engine.element ().find ('[data-screen="game"]').append (input);
 		return Promise.resolve ();

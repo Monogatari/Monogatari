@@ -13,6 +13,7 @@ game-screen {
 	overflow-y: hidden;
 	position: relative;
 	background-color: #000000;
+	user-select: none;
 
 	img {
 		position: absolute;

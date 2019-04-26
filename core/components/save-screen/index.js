@@ -30,7 +30,7 @@ class SaveScreen extends ScreenComponent {
 				<button data-string="Save" data-action="save">Save</button>
 			</div>
 			<div data-ui="slots" data-content="slots" class="row row--spaced padded">
-			<slot-list label=${this.engine.setting ('SaveLabel')} type="save"></slot-list>
+			<slot-container label=${this.engine.setting ('SaveLabel')} type="save"></slot-container>
 			</div>
 		`;
 	}

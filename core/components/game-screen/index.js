@@ -42,7 +42,6 @@ class GameScreen extends ScreenComponent {
 			<div data-content="visuals">
 				<div id="particles-js" data-ui="particles"></div>
 				<div id="background" data-ui="background"></div>
-				<div id='components'></div>
 			</div>
 		`;
 	}

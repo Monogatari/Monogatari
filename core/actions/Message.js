@@ -9,6 +9,7 @@ export class Message extends Action {
 		// The close action removes the active class from the element it
 		// points to.
 		this.engine.on ('click', '[data-component="message-modal"] [data-action="close"]', () => {
+			this.engine.global ('block', false);
 			this.engine.element ().find ('[data-component="message-modal"]').remove ();
 			this.engine.proceed ();
 		});
@@ -84,6 +85,8 @@ export class Message extends Action {
 
 	apply () {
 
+		this.engine.global ('block', true);
+
 		const element = document.createElement ('message-modal');
 
 		element.setProps ({
@@ -92,11 +95,12 @@ export class Message extends Action {
 			body: this.engine.replaceVariables (this.message.body),
 		});
 
-		this.engine.element ().find ('[data-screen="game"]').append (element);
-
 		for (const newClass of this.classes) {
 			element.classList.add (newClass);
 		}
+
+		this.engine.element ().find ('[data-screen="game"]').append (element);
+
 
 		return Promise.resolve ();
 	}

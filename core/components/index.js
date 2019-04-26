@@ -15,7 +15,7 @@ export * from './message-modal';
 export * from './save-screen';
 export * from './save-slot';
 export * from './settings-screen';
-export * from './slot-list';
+export * from './slot-container';
 export * from './quick-menu';
 export * from './text-box';
 export * from './text-input';

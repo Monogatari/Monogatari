@@ -79,21 +79,17 @@ class GalleryScreen extends ScreenComponent {
 		return Promise.resolve ();
 	}
 
-	renderImage (image) {
-		const directory = `${this.engine.setting ('AssetsPath').root}/ ${this.engine.setting ('AssetsPath').gallery}/`;
-
-		// Check if the image has been unlocked or not, if it hasn't then a
-		// lock will be shown instead of the image.
-		if (this.state.unlocked.includes (image)) {
-			return `<figure class='card--depth--2 row__column row__column--6 row__column--tablet--4 row__column--desktop--3' data-image='${image}' style='background-image: url('${directory}${this.engine.asset ('gallery', image)}')'></figure>`;
-		} else {
-			return '<figure class="card--depth--2 row__column row__column--6 row__column--tablet--4 row__column--desktop--3"><span class="fas fa-lock"></span></figure>';
-		}
-	}
-
 	render () {
 		const images = Object.keys (this.engine.assets ('gallery')).map ((image) => {
-			return this.renderImage (image);
+			const directory = `${this.engine.setting ('AssetsPath').root}/ ${this.engine.setting ('AssetsPath').gallery}/`;
+
+			// Check if the image has been unlocked or not, if it hasn't then a
+			// lock will be shown instead of the image.
+			if (this.state.unlocked.includes (image)) {
+				return `<figure class='card--depth--2 row__column row__column--6 row__column--tablet--4 row__column--desktop--3' data-image='${image}' style='background-image: url('${directory}${this.engine.asset ('gallery', image)}')'></figure>`;
+			} else {
+				return '<figure class="card--depth--2 row__column row__column--6 row__column--tablet--4 row__column--desktop--3"><span class="fas fa-lock"></span></figure>';
+			}
 		}).join ('');
 
 		return `

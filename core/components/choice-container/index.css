@@ -18,6 +18,16 @@ choice-container {
 	transform: translate(-50%, -50%);
 	position: absolute;
 
+	.nvl & {
+		top: initial;
+		left: initial;
+		transform: none;
+
+		[data-content="wrapper"] {
+			flex-direction: row;
+		}
+	}
+
 	[data-content="wrapper"] {
 		display: flex;
 		flex-direction: column;

@@ -67,6 +67,7 @@ quick-menu {
 
 		& button {
 			color: #f7f7f7;
+			margin: 0 0.25rem;
 
 			&:hover,
 			&:focus, {
@@ -79,10 +80,6 @@ quick-menu {
 
 			& > [data-string] {
 				display: inline-block;
-			}
-
-			& > .fas {
-				display: none;
 			}
 		}
 	}

@@ -24,6 +24,8 @@ export class Choice extends Action {
 			event.stopPropagation ();
 			event.preventDefault ();
 
+			Monogatari.global ('block', false);
+
 			const doAction = this.dataset.do;
 
 			// Check that the data property was not created with
@@ -75,7 +77,7 @@ export class Choice extends Action {
 	}
 
 	apply () {
-
+		this.engine.global ('block', true);
 		// Save a reference to the choice object globally. Since the choice buttons
 		// are set a data-do property to know what the choice should do, it is
 		// limited to a string and thus object or function actions would not be
@@ -104,7 +106,7 @@ export class Choice extends Action {
 							}).catch (() => {
 								// The condition wasn't met
 							}).finally (() => {
-								Monogatari.global ('block', false);
+								//Monogatari.global ('block', false);
 							});
 						})
 					);
@@ -126,8 +128,8 @@ export class Choice extends Action {
 				this.engine.run (dialog, false);
 			}
 
-			if (Monogatari.element ().find ('text-box').hasClass ('nvl')) {
-				this.engine.element ().find ('[data-component="text-box"]').append (element);
+			if (Monogatari.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
+				this.engine.element ().find ('[data-component="text-box"]').get (0).content ('text').append (element);
 			} else {
 				this.engine.element ().find ('[data-screen="game"]').append (element);
 			}

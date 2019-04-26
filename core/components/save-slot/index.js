@@ -32,7 +32,7 @@ class SaveSlot extends Component {
 
 		const engine = this.engine;
 
-		this.engine.on ('click', '[data-component="slot-list"] [data-delete]', function (event) {
+		this.engine.on ('click', '[data-component="slot-container"] [data-delete]', function (event) {
 			Monogatari.debug.debug ('Registered Click on Slot Delete Button');
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();

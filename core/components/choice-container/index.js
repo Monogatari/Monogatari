@@ -37,13 +37,9 @@ class ChoiceContainer extends Component {
 		return Promise.resolve ();
 	}
 
-	renderChoice (choice) {
-		return `<button data-do="${choice.Do}" ${ choice.Class ? `class="${choice.Class}"`: ''} data-choice="${choice._key}">${choice.Text}</button>`;
-	}
-
 	render () {
 		const choices = this.props.choices.map ((choice) => {
-			return this.renderChoice (choice);
+			return `<button data-do="${choice.Do}" ${ choice.Class ? `class="${choice.Class}"`: ''} data-choice="${choice._key}">${choice.Text}</button>`;
 		}).join ('');
 
 		return `

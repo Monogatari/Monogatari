@@ -2,7 +2,7 @@ import Component from './../../lib/Component';
 import { Monogatari } from './../../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
-class SlotList extends Component {
+class SlotContainer extends Component {
 
 	static shouldRollback () {
 		return Promise.resolve ();
@@ -157,6 +157,6 @@ class SlotList extends Component {
 	}
 }
 
-SlotList._id = 'slot-list';
+SlotContainer._id = 'slot-container';
 
-Monogatari.registerComponent(SlotList);
+Monogatari.registerComponent(SlotContainer);
