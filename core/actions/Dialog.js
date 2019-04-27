@@ -158,19 +158,11 @@ export class Dialog extends Action {
 
 			if (typeof expression !== 'undefined') {
 				if (typeof this.character.expressions !== 'undefined') {
-					if (typeof this.character.directory !== 'undefined') {
-						this.image = `${this.character.directory}/${this.character.expressions[expression]}`;
-					} else {
-						this.image = this.character.expressions[expression];
-					}
+					this.image = this.character.expressions[expression];
 				}
 
 			} else if (typeof this.character.default_expression !== 'undefined') {
-				if (typeof this.character.directory !== 'undefined') {
-					this.image = `${this.character.directory}/${this.character.default_expression}`;
-				} else {
-					this.image = this.character.default_expression;
-				}
+				this.image = this.character.default_expression;
 			}
 		} else if (id === 'centered') {
 			this.id = 'centered';
@@ -316,7 +308,7 @@ export class Dialog extends Action {
 		// display it
 		if (typeof this.image !== 'undefined' && !this.nvl) {
 			`${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}`;
-			Monogatari.element ().find ('[data-ui="face"]').attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}/${directory}${this.image}`);
+			Monogatari.element ().find ('[data-ui="face"]').attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}`);
 			Monogatari.element ().find ('[data-ui="face"]').show ();
 		}
 
