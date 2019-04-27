@@ -15,8 +15,8 @@ const files = [
 	'manifest.json',
 
 	// Engine Files
-	'engine/monogatari.css',
-	'engine/monogatari.js',
+	'engine/core/monogatari.css',
+	'engine/core/monogatari.js',
 
 	// HTML Files
 	'index.html',
