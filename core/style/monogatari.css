@@ -169,10 +169,10 @@ video {
 		background-repeat: no-repeat;
 		background-position: center;
 	}
+}
 
-	[data-content="wrapper"] {
-		display: flex;
-	}
+[data-content="wrapper"] {
+	display: flex;
 }
 
 [data-screen] {
