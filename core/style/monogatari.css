@@ -319,6 +319,11 @@ video {
 	margin: 0;
 }
 
+[data-ui='say'],
+[data-content="dialog"] {
+	padding: 0 1rem;
+}
+
 [data-ui='say'] span {
 	padding: 0;
 	margin: 0;
