@@ -80,6 +80,7 @@ export class Message extends Action {
 				}
 			);
 		}
+
 		return Promise.reject ();
 	}
 
@@ -89,11 +90,23 @@ export class Message extends Action {
 
 		const element = document.createElement ('message-modal');
 
-		element.setProps ({
-			title: this.engine.replaceVariables (this.message.title),
-			subtitle: this.engine.replaceVariables (this.message.subtitle),
-			body: this.engine.replaceVariables (this.message.body),
-		});
+		if (typeof this.message.title === 'string') {
+			element.setProps ({
+				title: this.engine.replaceVariables (this.message.title)
+			});
+		}
+
+		if (typeof this.message.subtitle === 'string') {
+			element.setProps ({
+				subtitle: this.engine.replaceVariables (this.message.subtitle)
+			});
+		}
+
+		if (typeof this.message.body === 'string') {
+			element.setProps ({
+				body: this.engine.replaceVariables (this.message.body)
+			});
+		}
 
 		for (const newClass of this.classes) {
 			element.classList.add (newClass);
