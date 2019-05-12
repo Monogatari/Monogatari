@@ -104,7 +104,7 @@ export class Choice extends Action {
 							Monogatari.assertAsync (this.statement[i].Condition, Monogatari).then (() => {
 								resolve (this.statement[i]);
 							}).catch (() => {
-								// The condition wasn't met
+								resolve()
 							}).finally (() => {
 								//Monogatari.global ('block', false);
 							});
@@ -119,7 +119,7 @@ export class Choice extends Action {
 		return Promise.all (promises).then ((choices) => {
 			const element = document.createElement ('choice-container');
 			element.setProps ({
-				choices
+				choices: choices.filter(c => typeof c !== 'undefined')
 			});
 
 			const dialog = this.statement.Dialog;
