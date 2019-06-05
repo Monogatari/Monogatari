@@ -85,6 +85,6 @@ QuickMenu._configuration = {
 	]
 };
 
-QuickMenu._id = 'quick-menu';
+QuickMenu.tag = 'quick-menu';
 
 Monogatari.registerComponent (QuickMenu);

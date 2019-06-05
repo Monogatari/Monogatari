@@ -39,7 +39,7 @@ class MenuComponent extends Component {
 	}
 
 	static onConfigurationUpdate () {
-		const elements = document.querySelectorAll (this._id);
+		const elements = document.querySelectorAll (this.tag);
 
 		for (const element of elements) {
 			element.innerHTML = element.render ();

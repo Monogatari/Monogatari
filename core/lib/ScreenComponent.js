@@ -11,7 +11,7 @@ class ScreenComponent extends Component {
 	}
 
 	willMount () {
-		this.dataset.screen = this.constructor._id.replace ('-screen', '');
+		this.dataset.screen = this.constructor.tag.replace ('-screen', '');
 		return Promise.resolve ();
 	}
 

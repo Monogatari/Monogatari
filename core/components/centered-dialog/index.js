@@ -34,7 +34,7 @@ class CenteredDialog extends Component {
 	}
 }
 
-CenteredDialog._id = 'centered-dialog';
+CenteredDialog.tag = 'centered-dialog';
 
 
 Monogatari.registerComponent (CenteredDialog);

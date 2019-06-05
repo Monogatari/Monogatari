@@ -157,6 +157,6 @@ class SlotContainer extends Component {
 	}
 }
 
-SlotContainer._id = 'slot-container';
+SlotContainer.tag = 'slot-container';
 
 Monogatari.registerComponent(SlotContainer);

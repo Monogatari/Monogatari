@@ -1,4 +1,5 @@
-import { $_, Util } from '@aegis-framework/artemis';
+import { $_ } from '@aegis-framework/artemis';
+import { Component as PandoraComponent } from '@aegis-framework/pandora';
 
 /**
  * A component represents an object or content in the game such as screens, menus
@@ -24,69 +25,16 @@ import { $_, Util } from '@aegis-framework/artemis';
  *
  * @class Component
  */
-class Component extends HTMLElement {
-
-
-	static _registered = false;
+class Component extends PandoraComponent {
 
 	static _priority = 0;
 
-	//static _children = [];
-
-	static _explicitPropTypes = ['boolean', 'string', 'number'];
-
-	static _template = null;
-
-	/**
-	 * Each component can define its initial HTML structure, which should be used on
-	 * the setup or rendering functions of the cycle, adding to the DOM.
-	*/
-	static _html = '';
-
-	/**
-	 * If needed, every component should declare its configuration as follows. This
-	 * configuration object should be used to store component-specific settings as well
-	 * as other objects/assets used by the component. If any specific object needs
-	 * recurrent access such as the declarations in the script.js file, providing
-	 * a static function for that specific object could be great.
-	 */
-	static _configuration = {};
-
-	/**
-	 * @static configuration - A simple function providing access to the configuration
-	 * object of the function. If the component has a configuration object it must
-	 * also include this method.
-	 *
-	 * @param  {Object|string} [object = null] - Object with which current
-	 * configuration will be updated with (i.e. Object.assign) or a string to access
-	 * a property.
-	 *
-	 * @return {any} - If the parameter sent was a string, the function will
-	 * return the value of the property whose name matches the parameter. If no
-	 * parameter was sent, then the function will return the whole configuration
-	 * object.
-	 */
-	static configuration (object = null) {
-		if (object !== null) {
-			if (typeof object === 'string') {
-				return this._configuration[object];
-			} else {
-				this._configuration = Object.assign ({}, this._configuration, object);
-				this.onConfigurationUpdate ().then (() => {
-					this.onUpdate ();
-				});
-			}
-		} else {
-			return this._configuration;
-		}
-	}
-
 	static all () {
-		return $_(this._id);
+		return $_(this.tag);
 	}
 
 	static get (id) {
-		return $_(`${this._id} [data-instance="${id}"]`);
+		return $_(`${this.tag} [data-instance="${id}"]`);
 	}
 
 	/**
@@ -118,39 +66,12 @@ class Component extends HTMLElement {
 	 * @static setup - The setup is the first step of the Mounting cycle, all
 	 * operations required for the component's setup should be implemented here.
 	 *
-	 * @param  {string} selector - The CSS selector with which Monogatari has been
-	 *                             initialized
 	 * @return {Promise} - Result of the setup operation
 	 */
 	static setup () {
-		const template = document.getElementById (this._id);
-
-		if (template !== null) {
-			this.template (template.innerHTML);
-		}
-
 		return Promise.resolve ();
 	}
 
-	static template (html = null, context = null) {
-		if (html !== null) {
-			this._template = html;
-			this.instances ((instance) => {
-				if (instance._isReady) {
-					instance.forceRender ();
-				}
-			});
-		} else {
-
-			// Check if no parameters were set but the HTML is still a function to be called
-			if (typeof this._template === 'function') {
-				return this._template.call (context);
-			}
-
-			// If this is reached, the HTML was just a string
-			return this._template;
-		}
-	}
 
 	/**
 	 * @static shouldProceed - Either when the user clicks in the game to proceed or
@@ -239,17 +160,6 @@ class Component extends HTMLElement {
 		return Promise.resolve ();
 	}
 
-	/**
-	 * @static onConfigurationUpdate - Every time the configuration object is
-	 * changed through the configuration () method, this function will be called.
-	 * Ideal for components that need to update their UI or other things when their
-	 * configuration is changed.
-	 *
-	 * @return {Promise} - Result of the onConfigurationUpdate operation.
-	 */
-	static onConfigurationUpdate () {
-		return Promise.resolve ();
-	}
 
 	/**
 	 * @static onSave - This function acts as an event listener for when a game
@@ -305,23 +215,16 @@ class Component extends HTMLElement {
 		this.parentNode.removeChild (this);
 	}
 
-	instanceSelector () {
-		return $_(`${this.constructor._id}[data-${this.constructor.name.toLowerCase ()}`);
-	}
-
 	static instances (callback = null) {
 		if (typeof callback === 'function') {
-			return $_(this._id).each (callback);
+			return $_(this.tag).each (callback);
 		}
-		return $_(this._id);
+		return $_(this.tag);
 	}
 
-	// static instance (id) {
-
-	// }
 
 	instance (id) {
-		return $_(`${this.constructor._id}[data-${this.constructor.name.toLowerCase ()}="${id}"`);
+		return $_(`${this.constructor.tag}[data-${this.constructor.name.toLowerCase ()}="${id}"`);
 	}
 
 	/**
@@ -344,137 +247,12 @@ class Component extends HTMLElement {
 		}
 	}
 
-	static register () {
-		window.customElements.define (this._id, this);
-		this._registered = true;
-	}
-
-	static instantiate (props) {
-		if (this._registered === false) {
-			this.register ();
-		}
-
-		const element = document.createElement (this._id);
-		element._setProps (props);
-
-		return element;
-	}
-
-	constructor () {
-		super ();
-
-		this._state = {};
-		this._props = {};
-		this._ready = [];
-
-		this._connected = false;
-		this._isReady = false;
-
-	}
-
-	/**
-	 * width - Determines the real (computed) width of the element
-	 *
-	 * @return {int} - Computed Width of the element on pixels
-	 */
-	get width () {
-		return parseInt (getComputedStyle(this).width.replace ('px', ''));
-	}
-
-	set width (value) {
-		this.style.width = value;
-	}
-
-	/**
-	 * height - Determines the real (computed) height of the element
-	 *
-	 * @return {int} - Computed height of the element on pixels
-	 */
-	get height () {
-		return parseInt (getComputedStyle(this).height.replace ('px', ''));
-	}
-
-	set height (value) {
-		this.style.height = value;
-	}
-
 	get engine () {
 		return this.constructor.engine;
 	}
 
 	set engine (value) {
 		throw new Error ('Component engine reference is hold at static level and cannot be modified.');
-	}
-
-	get static () {
-		return new Proxy (this.constructor, {});
-	}
-
-	set static (value) {
-		throw new Error ('Component static property cannot be reassigned.');
-	}
-
-	get props () {
-		return new Proxy (this, {
-			get: (target, key) => {
-				if (this.hasAttribute (key)) {
-					return this.getAttribute (key);
-				} else if (key in this._props) {
-					return this._props[key];
-				}
-				return null;
-			},
-			set: (target, key, value) => {
-				throw new Error ('Component props should be set using the `setProps` function.');
-			}
-		});
-	}
-
-	set props (value) {
-		if (this._connected === false) {
-			this._props = Object.assign ({}, this._props, value);
-		} else {
-			throw new Error ('Component props cannot be directly assigned. Use the `setProps` function instead.');
-		}
-	}
-
-	get state () {
-		return new Proxy (this._state, {
-			get: (target, key) => {
-				return target[key];
-			},
-			set: (target, key, value) => {
-				if (this._connected === false) {
-					return target[key] = value;
-				} else {
-					throw new Error ('Component state should be set using the `setState`.');
-				}
-
-			}
-		});
-	}
-
-	set state (value) {
-		if (this._connected === false) {
-			this._state = Object.assign ({}, this._state, value);
-		} else {
-			throw new Error ('Component state should be set using the `setState` function.');
-		}
-	}
-
-	/**
-	 * @static template - A simple function providing access to the basic HTML
-	 * structure of the component.
-	 *
-	 * @param {function|string} html - A string or function that renders the
-	 * component into a valid HTML structure.
-	 * @param {*} params - Any additional params that should be used when calling
-	 * the rendering function
-	 *
-	 * @returns {void|string} - Void or the HTML structure in a string
-	 */
-	template (html = null) {
-		return this.constructor.template (html, this);
 	}
 
 	shouldProceed () {
@@ -491,155 +269,6 @@ class Component extends HTMLElement {
 
 	willRollback () {
 		return Promise.resolve ();
-	}
-
-	setState (state) {
-		if (typeof state === 'object') {
-			const oldState = Object.assign ({}, this._state);
-
-			this._state = Object.assign ({}, this._state, state);
-
-			for (const key of Object.keys (state)) {
-				this.updateCallback (key, oldState[key], this._state[key], 'state', oldState, this._state);
-			}
-		}
-	}
-
-	setProps (props) {
-		if (typeof props === 'object') {
-			const oldProps = Object.assign ({}, this._props);
-
-			this._props = Object.assign ({}, this._props, props);
-
-			for (const key of Object.keys (props)) {
-				this.updateCallback (key, oldProps[key], this._props[key], 'props', oldProps, this._props);
-			}
-			this._setPropAttributes ();
-		}
-	}
-
-	_setPropAttributes () {
-		for (const key of Object.keys (this.props)) {
-			const value = this.props[key];
-
-			if (this.static._explicitPropTypes.indexOf (typeof value) > -1) {
-				this.setAttribute (key, this.props[key]);
-			}
-		}
-	}
-
-	willUpdate (origin, property, oldValue, newValue, oldObject, newObject) {
-		return Promise.resolve ();
-	}
-
-	update (origin, property, oldValue, newValue, oldObject, newObject) {
-		return Promise.resolve ();
-	}
-
-	didUpdate (origin, property, oldValue, newValue, oldObject, newObject) {
-		return Promise.resolve ();
-	}
-
-	onStateUpdate (property, oldValue, newValue, oldObject, newObject) {
-		return Promise.resolve ();
-	}
-
-	onPropsUpdate (property, oldValue, newValue, oldObject, newObject) {
-		return Promise.resolve ();
-	}
-
-	willMount () {
-		return Promise.resolve ();
-	}
-
-	didMount () {
-		return Promise.resolve ();
-	}
-
-	willUnmount () {
-		return Promise.resolve ();
-	}
-
-	unmount () {
-		return Promise.resolve ();
-	}
-
-	didUnmount () {
-		return Promise.resolve ();
-	}
-
-	forceRender () {
-		return this._render ();
-	}
-
-	render () {
-		return '';
-	}
-
-	_render () {
-		let render = this.render;
-
-		if (this.constructor._template !== null) {
-			render = this.template;
-		}
-
-		return Util.callAsync (render, this).then ((html) => {
-			this.innerHTML = html;
-		});
-	}
-
-	connectedCallback () {
-		this._connected = true;
-		this.dataset.component = this.static._id;
-		this.classList.add ('animated');
-
-		this._setPropAttributes ();
-
-		return this.willMount ().then (() => {
-			return this._render ().then (() => {
-				return this.didMount ().then (() => {
-					this._isReady = true;
-					for (const callback of this._ready) {
-						callback.call (this);
-					}
-				});
-			});
-		});
-	}
-
-	ready (callback) {
-		this._ready.push (callback);
-	}
-
-	disconnectedCallback () {
-		return this.willUnmount ().then (() => {
-			return this.unmount ().then (() => {
-				return this.didUnmount ();
-			});
-		});
-	}
-
-	updateCallback (property, oldValue, newValue, origin = 'props', oldObject = {}, newObject = {}) {
-		return this.willUpdate (origin, property, oldValue, newValue, oldObject, newObject).then (() => {
-			return this.update (origin, property, oldValue, newValue, oldObject, newObject).then (() => {
-				let promise;
-				if (origin === 'state') {
-					promise = this.onStateUpdate (property, oldValue, newValue, oldObject, newObject);
-				} else {
-					promise = this.onPropsUpdate (property, oldValue, newValue, oldObject, newObject);
-				}
-				return promise.then (() => {
-					return this.didUpdate (origin, property, oldValue, newValue, oldObject, newObject);
-				});
-			});
-		}).catch ((e) => {
-			console.error (e);
-			// Component should not update
-		});
-	}
-
-	attributeChangedCallback (property, oldValue, newValue) {
-
 	}
 }
 

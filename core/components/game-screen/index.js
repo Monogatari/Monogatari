@@ -48,6 +48,6 @@ class GameScreen extends ScreenComponent {
 
 }
 
-GameScreen._id = 'game-screen';
+GameScreen.tag = 'game-screen';
 
 Monogatari.registerComponent (GameScreen);

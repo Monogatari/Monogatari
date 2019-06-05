@@ -201,7 +201,7 @@ class SettingsScreen extends ScreenComponent {
 	}
 }
 
-SettingsScreen._id = 'settings-screen';
+SettingsScreen.tag = 'settings-screen';
 
 
 Monogatari.registerComponent (SettingsScreen);

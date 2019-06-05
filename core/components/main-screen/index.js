@@ -5,6 +5,6 @@ class MainScreen extends ScreenComponent {
 
 }
 
-MainScreen._id = 'main-screen';
+MainScreen.tag = 'main-screen';
 
 Monogatari.registerComponent (MainScreen);

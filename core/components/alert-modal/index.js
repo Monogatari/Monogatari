@@ -44,6 +44,6 @@ class AlertDialog extends Component {
 }
 
 
-AlertDialog._id = 'alert-modal';
+AlertDialog.tag = 'alert-modal';
 
 Monogatari.registerComponent (AlertDialog);

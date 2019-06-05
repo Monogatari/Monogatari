@@ -71,7 +71,7 @@ class CreditsScreen extends ScreenComponent {
 	}
 }
 
-CreditsScreen._id = 'credits-screen';
+CreditsScreen.tag = 'credits-screen';
 
 CreditsScreen._configuration = {
 	credits: {}

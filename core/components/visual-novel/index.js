@@ -13,6 +13,6 @@ class VisualNovel extends Component {
 
 }
 
-VisualNovel._id = 'visual-novel';
+VisualNovel.tag = 'visual-novel';
 
 Monogatari.registerComponent (VisualNovel);

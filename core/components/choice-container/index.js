@@ -50,7 +50,7 @@ class ChoiceContainer extends Component {
 	}
 }
 
-ChoiceContainer._id = 'choice-container';
+ChoiceContainer.tag = 'choice-container';
 
 
 Monogatari.registerComponent (ChoiceContainer);

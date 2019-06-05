@@ -36,6 +36,6 @@ class TextBox extends Component {
 	}
 }
 
-TextBox._id = 'text-box';
+TextBox.tag = 'text-box';
 
 Monogatari.registerComponent (TextBox);

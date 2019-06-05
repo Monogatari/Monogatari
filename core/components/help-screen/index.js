@@ -160,7 +160,7 @@ class HelpScreen extends ScreenComponent {
 	}
 }
 
-HelpScreen._id = 'help-screen';
+HelpScreen.tag = 'help-screen';
 
 
 Monogatari.registerComponent (HelpScreen);

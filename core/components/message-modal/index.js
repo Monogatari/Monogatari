@@ -56,7 +56,7 @@ class MessageModal extends Component {
 	}
 }
 
-MessageModal._id = 'message-modal';
+MessageModal.tag = 'message-modal';
 
 
 Monogatari.registerComponent (MessageModal);

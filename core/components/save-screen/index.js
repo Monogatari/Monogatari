@@ -36,6 +36,6 @@ class SaveScreen extends ScreenComponent {
 	}
 }
 
-SaveScreen._id = 'save-screen';
+SaveScreen.tag = 'save-screen';
 
 Monogatari.registerComponent (SaveScreen);

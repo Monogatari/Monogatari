@@ -115,6 +115,6 @@ class SaveSlot extends Component {
 	}
 }
 
-SaveSlot._id = 'save-slot';
+SaveSlot.tag = 'save-slot';
 
 Monogatari.registerComponent (SaveSlot);

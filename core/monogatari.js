@@ -322,7 +322,7 @@ class Monogatari {
 	static component (id) {
 		const normalizedId = id.toLowerCase ();
 
-		return this.components ().find ((c) => c._id === normalizedId);
+		return this.components ().find ((c) => c.tag === normalizedId);
 	}
 
 	/**
@@ -1670,9 +1670,9 @@ class Monogatari {
 				// Check component by component if they will allow the game to proceed
 				for (const component of this.components ()) {
 					promises.push (component.shouldProceed ().then (() => {
-						this.debug.debug (`OK ${component._id}`);
+						this.debug.debug (`OK ${component.tag}`);
 					}).catch ((e) => {
-						this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
+						this.debug.debug (`FAIL ${component.tag}\nReason: ${e}`);
 						return Promise.reject (e);
 					}));
 				}
@@ -1722,9 +1722,9 @@ class Monogatari {
 			// Check component by component if they will allow the game to proceed
 			for (const component of this.components ()) {
 				promises.push (component.willProceed ().then (() => {
-					this.debug.debug (`OK ${component._id}`);
+					this.debug.debug (`OK ${component.tag}`);
 				}).catch ((e) => {
-					this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
+					this.debug.debug (`FAIL ${component.tag}\nReason: ${e}`);
 					return Promise.reject (e);
 				}));
 			}
@@ -1781,9 +1781,9 @@ class Monogatari {
 				// Check component by component if they will allow the game to revert
 				for (const component of this.components ()) {
 					promises.push (component.shouldRollback ().then (() => {
-						this.debug.debug (`OK ${component._id}`);
+						this.debug.debug (`OK ${component.tag}`);
 					}).catch ((e) => {
-						this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
+						this.debug.debug (`FAIL ${component.tag}\nReason: ${e}`);
 						return Promise.reject (e);
 					}));
 				}
@@ -1832,9 +1832,9 @@ class Monogatari {
 			// Check component by component if they will allow the game to revert
 			for (const component of this.components ()) {
 				promises.push (component.willRollback ().then (() => {
-					this.debug.debug (`OK ${component._id}`);
+					this.debug.debug (`OK ${component.tag}`);
 				}).catch ((e) => {
-					this.debug.debug (`FAIL ${component._id}\nReason: ${e}`);
+					this.debug.debug (`FAIL ${component.tag}\nReason: ${e}`);
 					return Promise.reject (e);
 				}));
 			}

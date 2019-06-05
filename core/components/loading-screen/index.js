@@ -71,6 +71,6 @@ class LoadingScreen extends ScreenComponent {
 	}
 }
 
-LoadingScreen._id = 'loading-screen';
+LoadingScreen.tag = 'loading-screen';
 
 Monogatari.registerComponent (LoadingScreen);

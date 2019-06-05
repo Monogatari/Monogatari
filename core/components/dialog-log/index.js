@@ -92,7 +92,7 @@ class DialogLog extends Component {
 	}
 }
 
-DialogLog._id = 'dialog-log';
+DialogLog.tag = 'dialog-log';
 
 
 Monogatari.registerComponent (DialogLog);

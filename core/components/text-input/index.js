@@ -88,6 +88,6 @@ class TextInput extends Component {
 }
 
 
-TextInput._id = 'text-input';
+TextInput.tag = 'text-input';
 
 Monogatari.registerComponent (TextInput);

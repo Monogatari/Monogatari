@@ -105,6 +105,6 @@ class GalleryScreen extends ScreenComponent {
 	}
 }
 
-GalleryScreen._id = 'gallery-screen';
+GalleryScreen.tag = 'gallery-screen';
 
 Monogatari.registerComponent (GalleryScreen);

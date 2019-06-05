@@ -54,6 +54,6 @@ MainMenu._configuration = {
 	]
 };
 
-MainMenu._id = 'main-menu';
+MainMenu.tag = 'main-menu';
 
 Monogatari.registerComponent (MainMenu);
