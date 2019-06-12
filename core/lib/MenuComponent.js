@@ -1,4 +1,4 @@
-import Component from './Component';
+import { Component } from './Component';
 
 class MenuComponent extends Component {
 
@@ -75,4 +75,4 @@ MenuComponent._configuration = {
 	buttons: [],
 };
 
-export default MenuComponent;
+export { MenuComponent };

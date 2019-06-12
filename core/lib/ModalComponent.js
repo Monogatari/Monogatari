@@ -28,4 +28,4 @@ class ModalComponent extends ShadowComponent {
 	}
 }
 
-export default ModalComponent;
+export { ModalComponent };

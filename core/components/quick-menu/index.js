@@ -1,4 +1,4 @@
-import MenuComponent from './../../lib/MenuComponent';
+import { MenuComponent } from './../../lib/MenuComponent';
 import { Monogatari } from './../../monogatari';
 
 class QuickMenu extends MenuComponent {

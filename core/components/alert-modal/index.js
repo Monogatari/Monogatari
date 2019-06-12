@@ -1,4 +1,4 @@
-import Component from '../../lib/Component';
+import { Component } from '../../lib/Component';
 import { Monogatari } from '../../monogatari';
 
 class AlertDialog extends Component {
@@ -6,7 +6,7 @@ class AlertDialog extends Component {
 	constructor () {
 		super ();
 
-		this._props = {
+		this.props = {
 			active: true,
 			message: '',
 			context: '',

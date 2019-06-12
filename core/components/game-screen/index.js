@@ -1,4 +1,4 @@
-import ScreenComponent from './../../lib/ScreenComponent';
+import { ScreenComponent } from './../../lib/ScreenComponent';
 import { Monogatari } from './../../monogatari';
 
 class GameScreen extends ScreenComponent {

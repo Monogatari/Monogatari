@@ -1,4 +1,4 @@
-import Component from './../../lib/Component';
+import { Component } from './../../lib/Component';
 import { Monogatari } from './../../monogatari';
 
 class CenteredDialog extends Component {

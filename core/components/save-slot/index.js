@@ -1,4 +1,4 @@
-import Component from './../../lib/Component';
+import { Component } from './../../lib/Component';
 import { Monogatari } from './../../monogatari';
 import { Text } from '@aegis-framework/artemis';
 import moment from 'moment';

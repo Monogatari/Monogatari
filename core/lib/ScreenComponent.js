@@ -1,4 +1,4 @@
-import Component from './Component';
+import { Component } from './Component';
 
 class ScreenComponent extends Component {
 
@@ -31,4 +31,4 @@ class ScreenComponent extends Component {
 	}
 }
 
-export default ScreenComponent;
+export { ScreenComponent };
