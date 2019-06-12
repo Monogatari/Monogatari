@@ -287,7 +287,7 @@ class Monogatari {
 	 */
 	static registerComponent (component) {
 		component.engine = this;
-		component.register ();
+		window.customElements.define (component.tag, component);
 		this._components.push (component);
 	}
 
@@ -510,6 +510,14 @@ class Monogatari {
 			}
 		} else {
 			return this._preferences;
+		}
+	}
+
+	static configuration (object = null) {
+		if (object !== null) {
+			this._configuration = merge (this._configuration, object);
+		} else {
+			return this._configuration;
 		}
 	}
 
@@ -2722,6 +2730,8 @@ Monogatari.globals ({
 });
 
 Monogatari._listeners = [];
+
+Monogatari._configuration = {};
 
 Monogatari._templates = {};
 
