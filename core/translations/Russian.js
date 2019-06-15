@@ -6,16 +6,17 @@
  * Translators:
  *
  * Sergey Kuznetsov <https://github.com/Amaimersion>
+ * Patience Daur <https://github.com/patiencedaur>
  */
 
 import { Monogatari } from './../monogatari';
 
 Monogatari.translation('Русский', {
 	'AdvanceHelp': 'Чтобы играть, нажимайте на пробел или на левую кнопку мыши.',
-	'AllowPlayback': 'Click here to allow audio playback',
+	'AllowPlayback': 'Включить звуковое сопровождение',
 	'Audio': 'Звук',
 	'AutoPlay': 'Авто',
-	'AutoPlayButton': 'Enable auto play',
+	'AutoPlayButton': 'Включить авточтение',
 	'AutoPlaySpeed': 'Скорость авточтения',
 
 	'Back': 'Назад',
@@ -24,14 +25,14 @@ Monogatari.translation('Русский', {
 	'Cancel': 'Отмена',
 	'Close': 'Закрыть',
 	'Confirm': 'Вы действительно хотите выйти?',
-	'Credits': 'Credits',
+	'Credits': 'Авторы',
 
 	'Delete': 'Удалить',
-	'DialogLogButton': 'Show the dialog log',
+	'DialogLogButton': 'Показать журнал диалогов',
 
 	'FullScreen': 'Полный экран',
 
-	'Gallery': 'Gallery',
+	'Gallery': 'Галерея',
 
 	'Help': 'Помощь',
 	'Hide': 'Скрыть',
@@ -39,30 +40,30 @@ Monogatari.translation('Русский', {
 
 	'iOSAudioWarning': 'Настройки звука не поддерживаются на iOS.',
 
-	'KeyboardShortcuts': 'Keyboard Shortcuts',
+	'KeyboardShortcuts': 'Горячие клавиши',
 
 	'Language': 'Язык',
 	'Load': 'Загрузить',
 	'LoadAutoSaveSlots': 'Автосохранённые игры',
 	'LoadButton': 'Открыть меню загрузки',
 	'Loading': 'Загрузка',
-	'LoadingMessage': 'Подождите, пожалуйста, игровые файлы загружаются',
+	'LoadingMessage': 'Подождите, пожалуйста, игра загружается',
 	'LoadSlots': 'Сохранённые игры',
-	'LocalStorageWarning': 'Локальное хранилище не доступно в этом браузере.',
-	'Log': 'Log',
+	'LocalStorageWarning': 'Локальное хранилище недоступно в этом браузере.',
+	'Log': 'Журнал',
 
 	'Music': 'Громкость музыки',
 
-	'NewContent': 'There is new content available, reload the page to get the latest version',
-	'NoSavedGames': 'Нет сохранённых игр.',
-	'NoAutoSavedGames': 'Нет автосохранённых игр.',
-	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up',
+	'NewContent': 'Доступно обновление, перезагрузите страницу',
+	'NoSavedGames': 'Нет сохранённых игр',
+	'NoAutoSavedGames': 'Нет автосохранённых игр',
+	'NoDialogsAvailable': 'Нет диалогов. Диалоги будут появляться здесь по мере прохождения игры',
 
 	'OrientationWarning': 'Чтобы играть, пожалуйста, поверните Ваше устройство',
 	'Overwrite': 'Перезаписать',
 
 	'QuickButtons': 'Кнопки быстрого меню',
-	'QuickMenu': 'Quick Menu',
+	'QuickMenu': 'Быстрое меню',
 	'Quit': 'Выйти',
 	'QuitButton': 'Выйти из игры',
 
@@ -70,21 +71,21 @@ Monogatari.translation('Русский', {
 
 	'Save': 'Сохранить',
 	'SaveButton': 'Открыть меню сохранения',
-	'SaveInSlot': 'Сохранить в слот',
+	'SaveInSlot': 'Сохранить',
 	'Settings': 'Настройки',
 	'SettingsButton': 'Открыть меню настроек',
 	'Show': 'Показать',
-	'Skip': 'Skip',
-	'SkipButton': 'Enter skip mode',
-	'SlotDeletion': 'Вы действительно хотите удалить этот слот?',
-	'SlotOverwrite': 'Вы действительно хотите перезаписать этот слот?',
-	'Sound': 'Громкость звука',
+	'Skip': 'Пропустить',
+	'SkipButton': 'Автопереход',
+	'SlotDeletion': 'Вы действительно хотите удалить это сохранение?',
+	'SlotOverwrite': 'Вы действительно хотите перезаписать это сохранение?',
+	'Sound': 'Громкость эффектов',
 	'Start': 'Начать игру',
 	'Stop': 'Стоп',
 
 	'TextSpeed': 'Скорость текста',
 
-	'Video': 'Video Volume',
+	'Video': 'Громкость видео',
 	'Voice': 'Громкость голоса',
 
 	'Windowed': 'Оконный режим',
