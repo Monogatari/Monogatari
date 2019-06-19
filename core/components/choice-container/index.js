@@ -7,7 +7,8 @@ class ChoiceContainer extends Component {
 		super ();
 
 		this.props = {
-			choices: []
+			choices: [],
+			classes: ''
 		};
 	}
 
@@ -21,6 +22,7 @@ class ChoiceContainer extends Component {
 		// If a choice is visible right now, we can simply remove it and let the
 		// game revert to the previous statement.
 		this.remove ();
+
 		return Promise.resolve ();
 	}
 
@@ -30,6 +32,12 @@ class ChoiceContainer extends Component {
 	}
 
 	willMount () {
+		// Check if a list of classes has been defined and if the list is not empty
+		if (typeof this.props.classes === 'string' && this.props.classes !== '') {
+			this.props.classes.split (' ').forEach ((className) => {
+				this.classList.add (className);
+			});
+		}
 		return Promise.resolve ();
 	}
 

@@ -118,8 +118,13 @@ export class Choice extends Action {
 
 		return Promise.all (promises).then ((choices) => {
 			const element = document.createElement ('choice-container');
+
+			// Check if the choice object defined a list of class names
+			const classes = typeof this.statement.Class === 'string' ?  this.statement.Class.trim () : '';
+
 			element.setProps ({
-				choices: choices.filter(c => typeof c !== 'undefined')
+				choices: choices.filter(c => typeof c !== 'undefined'),
+				classes
 			});
 
 			const dialog = this.statement.Dialog;

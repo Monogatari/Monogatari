@@ -319,6 +319,13 @@ class Component extends PandoraComponent {
 	willRollback () {
 		return Promise.resolve ();
 	}
+
+	connectedCallback () {
+		// Always add the animated class for all the components
+		this.classList.add ('animated');
+
+		return super.connectedCallback ();
+	}
 }
 
 export { Component };
