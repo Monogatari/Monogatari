@@ -18,7 +18,7 @@ export class Choice extends Action {
 	static bind () {
 		// Bind the click event on data-do elements. This property is used for
 		// every choice button.
-		this.engine.on ('click', '[data-choice]', function (event) {
+		this.engine.on ('click', '[data-choice]:not([disabled])', function (event) {
 			Monogatari.debug.debug ('Registered Click on Choice Button');
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();

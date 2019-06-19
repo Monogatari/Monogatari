@@ -47,14 +47,24 @@ class ChoiceContainer extends Component {
 
 	render () {
 		const choices = this.props.choices.map ((choice) => {
-			return `<button data-do="${choice.Do}" ${ choice.Class ? `class="${choice.Class}"`: ''} data-choice="${choice._key}">${choice.Text}</button>`;
-		}).join ('');
+			if (typeof choice.Clickable === 'function') {
+				return new Promise ((resolve, reject) => {
+					this.engine.assertAsync (choice.Clickable, this.engine).then (() => {
+						resolve (`<button data-do="${choice.Do}" ${ choice.Class ? `class="${choice.Class}"`: ''} data-choice="${choice._key}">${choice.Text}</button>`);
+					}).catch (() => {
+						resolve (`<button data-do="${choice.Do}" ${ choice.Class ? `class="${choice.Class}"`: ''} data-choice="${choice._key}" disabled>${choice.Text}</button>`);
+					});
 
-		return `
+				});
+			}
+			return Promise.resolve (`<button data-do="${choice.Do}" ${ choice.Class ? `class="${choice.Class}"`: ''} data-choice="${choice._key}">${choice.Text}</button>`);
+		});
+
+		return Promise.all (choices).then ((choices) => `
 			<div data-content="wrapper">
-				${choices}
+				${ choices.join('') }
 			</div>
-		`;
+		`);
 	}
 }
 
