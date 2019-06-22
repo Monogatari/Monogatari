@@ -130,13 +130,23 @@ export class Choice extends Action {
 			const dialog = this.statement.Dialog;
 
 			if (typeof dialog === 'string') {
-				this.engine.run (dialog, false);
-			}
-
-			if (Monogatari.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
-				this.engine.element ().find ('[data-component="text-box"]').get (0).content ('text').append (element);
+				// If there's a dialog, we'll wait until showing that up to show
+				// the choices, in order to avoid showing the choices in an incorrect
+				// format if the dialog was NVL or not
+				this.engine.run (dialog, false).then (() => {
+					if (Monogatari.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
+						this.engine.element ().find ('[data-component="text-box"]').get (0).content ('text').append (element);
+					} else {
+						this.engine.element ().find ('[data-screen="game"]').append (element);
+					}
+				});
 			} else {
-				this.engine.element ().find ('[data-screen="game"]').append (element);
+				// If there's no dialog, we can just show the choices right away
+				if (Monogatari.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
+					this.engine.element ().find ('[data-component="text-box"]').get (0).content ('text').append (element);
+				} else {
+					this.engine.element ().find ('[data-screen="game"]').append (element);
+				}
 			}
 		});
 	}
