@@ -8,7 +8,7 @@ export class Clear extends Action {
 	}
 
 	apply () {
-		Monogatari.action ('Dialog').reset ();
+		Monogatari.action ('Dialog').reset ({ keepNVL: true });
 		return Promise.resolve ();
 	}
 

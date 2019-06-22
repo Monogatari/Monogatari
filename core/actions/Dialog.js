@@ -119,12 +119,15 @@ export class Dialog extends Action {
 		return Promise.resolve ();
 	}
 
-	static reset () {
+	static reset ({ keepNVL = false } = {}) {
+
 		if (this.engine.global ('textObject') !== null) {
 			this.engine.global ('textObject').destroy ();
 		}
 
-		this.engine.element ().find ('[data-component="text-box"]').removeClass ('nvl');
+		if (keepNVL !== true) {
+			this.engine.element ().find ('[data-component="text-box"]').removeClass ('nvl');
+		}
 
 		this.engine.element ().find ('[data-component="text-box"]').data ('speaking', '');
 
@@ -132,6 +135,7 @@ export class Dialog extends Action {
 
 		this.engine.element ().find ('[data-ui="who"]').html ('');
 		this.engine.element ().find ('[data-ui="say"]').html ('');
+
 		return Promise.resolve ();
 	}
 
