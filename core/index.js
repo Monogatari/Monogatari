@@ -7,10 +7,13 @@
 /**
  * Import Global Vendor Libraries, these are third party libraries that must be
  * globally imported in order for Monogatari to work correctly.
- *
- * TODO: Find a way to import Font Awesome in a better way
  */
-import '@babel/polyfill';
+
+// Make babel use the polyfill as the package has been deprecated in favor of this:
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+
+// TODO: Find a way to import Font Awesome in a better way
 import './../node_modules/@fortawesome/fontawesome-free/js/all.js';
 
 /**
