@@ -21,8 +21,10 @@ export * from './Pause';
 export * from './Play';
 export * from './Scene';
 
+export * from './ShowBackground';
 export * from './ShowCharacter';
 export * from './ShowImage';
+
 
 export * from './Stop';
 export * from './Vibrate';

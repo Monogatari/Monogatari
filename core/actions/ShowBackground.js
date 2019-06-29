@@ -1,27 +1,25 @@
 import { Action } from './../lib/Action';
 import { Monogatari } from '../monogatari';
 import { Text } from '@aegis-framework/artemis';
-import { ShowBackground } from './ShowBackground';
 
-export class Scene extends Action {
+export class ShowBackground extends Action {
 
 	static setup () {
-		Monogatari.history ('scene');
-		Monogatari.history ('sceneElements');
+		Monogatari.history ('background');
 
 		Monogatari.state ({
-			scene: ''
+			background: ''
 		});
 		return Promise.resolve ();
 	}
 
 	static onLoad () {
-		const { scene } = Monogatari.state ();
-		if (scene !== '') {
-			Monogatari.run (scene, false);
+		const { background } = Monogatari.state ();
+		if (background !== '') {
+			Monogatari.run (background, false);
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
-			Monogatari.history ('scene').pop ();
+			Monogatari.history ('background').pop ();
 		}
 		return Promise.resolve ();
 	}
@@ -33,34 +31,36 @@ export class Scene extends Action {
 		background.style ('background-color', 'initial');
 
 		Monogatari.state ({
-			scene: ''
+			background: ''
 		});
+
 		return Promise.resolve ();
 	}
 
 	static matchString ([ show, type ]) {
-		return show === 'show' && type === 'scene';
+		return show === 'show' && type === 'background';
 	}
 
-	constructor ([ show, type, scene, ...classes ]) {
+	constructor ([ show, type, background, ...classes ]) {
 		super ();
-		this.scene = scene;
+		this.background = background;
 		this.property = 'background-image';
-		if (typeof Monogatari.asset ('scenes', scene) !== 'undefined') {
-			this.value = `url(${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${Monogatari.asset ('scenes', scene)})`;
+		if (typeof Monogatari.asset ('scenes', background) !== 'undefined') {
+			this.value = `url(${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${Monogatari.asset ('scenes', background)})`;
 		} else {
-			const rest = [scene, ...classes].join (' ');
+			const rest = [background, ...classes].join (' ');
 			if (classes.indexOf ('with') > -1) {
 				this.value = Text.prefix ('with', rest);
 			} else {
 				this.value = rest;
 			}
+			console.log(this.value);
 
 			const isColorProperty = ['#', 'rgb', 'hsl'].findIndex ((color) => {
 				return this.value.indexOf (color) === 0;
 			}) > -1;
 
-			const isNamed = this.value.indexOf (' ') > -1 ? false : new RegExp('\w+').test (this.value);
+			const isNamed = this.value.indexOf (' ') > -1 ? false : new RegExp(/\w+/).test (this.value);
 
 			if (isColorProperty === true || isNamed === true) {
 				this.property = 'background-color';
@@ -75,27 +75,22 @@ export class Scene extends Action {
 	}
 
 	willApply () {
-		const scene_elements = [];
-		Monogatari.element ().find ('[data-screen="game"] img:not([data-ui="face"]):not([data-visibility="invisible"])').each ((element) => {
-			scene_elements.push (element.outerHTML);
-		});
+		const background = Monogatari.element ().find ('[data-ui="background"]');
 
-		Monogatari.history ('sceneElements').push (scene_elements);
+		background.removeClass ();
+		void background.get (0).offsetWidth;
 
-		Monogatari.element ().find ('[data-character]').remove ();
-		Monogatari.element ().find ('[data-image]').remove ();
-		Monogatari.element ().find ('[data-ui="background"]').removeClass ();
-		void Monogatari.element ().find ('[data-ui="background"]').get (0).offsetWidth;
 		return Promise.resolve ();
 	}
 
 	apply () {
 		const background = Monogatari.element ().find ('[data-ui="background"]');
 
-		background.style ('background-image', 'initial');
-		background.style ('background-color', 'initial');
-		background.style ('animation-duration', '');
-		background.style (this.property, this.value);
+		Monogatari.element ().find ('[data-ui="background"]').style ('background-image', 'initial');
+		Monogatari.element ().find ('[data-ui="background"]').style ('background-color', 'initial');
+		Monogatari.element ().find ('[data-ui="background"]').style ('animation-duration', '');
+		console.log (this.property, this.value);
+		Monogatari.element ().find ('[data-ui="background"]').style (this.property, this.value);
 
 		const durationPosition = this.classes.indexOf ('duration');
 
@@ -112,27 +107,26 @@ export class Scene extends Action {
 
 	didApply () {
 		Monogatari.state ({
-			scene: this._statement
+			background: this._statement
 		});
-		Monogatari.history ('scene').push (this._statement);
+		Monogatari.history ('background').push (this._statement);
 
-		Monogatari.action ('Dialog').reset ();
 		return Promise.resolve ({ advance: true });
 	}
 
 	willRevert () {
-		Monogatari.element ().find ('[data-character]').remove ();
-		Monogatari.element ().find ('[data-image]').remove ();
 		Monogatari.element ().find ('[data-ui="background"]').removeClass ();
 		return Promise.resolve ();
 	}
 
 	revert () {
-		Monogatari.history ('scene').pop ();
+		const history = Monogatari.history ('background');
 
-		if (Monogatari.history ('scene').length > 0) {
+		history.pop ();
+
+		if (history.length > 0) {
 			const background = Monogatari.element ().find ('[data-ui="background"]');
-			const last = Monogatari.history ('scene')[Monogatari.history ('scene').length - 1];
+			const last = history[history.length - 1];
 			this.constructor (last.split (' '));
 
 			background.style ('background-image', 'initial');
@@ -144,19 +138,8 @@ export class Scene extends Action {
 			}
 
 			Monogatari.state ({
-				scene: last
+				background: last
 			});
-
-			if (Monogatari.history ('sceneElements').length > 0) {
-				const scene_elements = Monogatari.history  ('sceneElements').pop ();
-
-				if (typeof scene_elements === 'object') {
-					for (const element of scene_elements) {
-						Monogatari.element ().find ('[data-screen="game"]').append (element);
-					}
-				}
-			}
-			Monogatari.action ('Dialog').reset ();
 		}
 		return Promise.resolve ();
 	}
@@ -166,6 +149,6 @@ export class Scene extends Action {
 	}
 }
 
-Scene.id = 'Scene';
+ShowBackground.id = 'Show::Background';
 
-Monogatari.registerAction (Scene);
+Monogatari.registerAction (ShowBackground);
