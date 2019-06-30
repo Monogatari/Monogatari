@@ -16,7 +16,7 @@ export class Gallery extends Action {
 	apply () {
 		if (this.mode === 'unlock') {
 
-			this.engine.instances ((instance) => {
+			this.engine.component ('gallery-screen').instances ((instance) => {
 				const unlocked = [...instance.state.unlocked, this.asset];
 				instance.setState ({
 					unlocked
@@ -25,7 +25,7 @@ export class Gallery extends Action {
 
 
 		} else if (this.mode === 'lock') {
-			this.engine.instances ((instance) => {
+			this.engine.component ('gallery-screen').instances ((instance) => {
 				const unlocked = instance.state.unlocked.filter ((item) => item !== this.asset);
 				instance.setState ({
 					unlocked
@@ -33,6 +33,10 @@ export class Gallery extends Action {
 			});
 		}
 		return Promise.resolve ();
+	}
+
+	didApply () {
+		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {

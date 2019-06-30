@@ -26,6 +26,10 @@ monogatari.action ('Particles').particles ({
 
 });
 
+monogatari.assets ('gallery', {
+
+});
+
 // Define the music used in the game.
 monogatari.assets ('music', {
 

@@ -20,6 +20,7 @@ export * from './Particles';
 export * from './Pause';
 export * from './Play';
 export * from './Scene';
+export * from './Gallery';
 
 export * from './ShowBackground';
 export * from './ShowCharacter';
