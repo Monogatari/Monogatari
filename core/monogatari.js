@@ -978,7 +978,6 @@ class Monogatari {
 				if (id === null) {
 					id = max + 1;
 				}
-
 				return this.Storage.set (`${this.setting (prefix)}_${id}`, {
 					name,
 					date,
@@ -1255,7 +1254,7 @@ class Monogatari {
 	 *
 	 * @returns {Promise} - Whether the game was able to go back or not
 	 */
-	static revert (statement = null, shouldAdvance = true) {
+	static revert (statement = null, shouldAdvance = true, shouldStepBack = true) {
 
 		this.debug.groupCollapsed ('Revert Cycle');
 
@@ -1318,7 +1317,7 @@ class Monogatari {
 
 					// The original statement is set just in case the action needs
 					// access to it
-					act._setStatement (actionStatement);
+					act._setStatement (actionToRevert);
 
 					// The current cycle is also set just in case the action needs to
 					// know what cycle it's currently being performed.
@@ -1345,7 +1344,7 @@ class Monogatari {
 								this.debug.debug ('Action Did Revert');
 								// Since we reverted correctly, the step should
 								// go back.
-								if (step === true) {
+								if (step === true && shouldStepBack === true) {
 									this.state ({
 										step: this.state ('step') - 1
 									});
