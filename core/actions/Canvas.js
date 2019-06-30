@@ -1,5 +1,6 @@
 import { Action } from '../lib/Action';
 import { Monogatari } from '../monogatari';
+import { Util } from '@aegis-framework/artemis';
 
 export class Canvas extends Action {
 
@@ -107,6 +108,9 @@ export class Canvas extends Action {
 				Monogatari.element ().find (`[data-canvas="${this.name}"].background`).each ((canvas) => {
 					canvas.width = Monogatari.width ();
 					canvas.height = Monogatari.height ();
+					if (typeof this.object.resize === 'function') {
+						Util.callAsync (this.object.resize, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+					}
 				});
 			});
 			return Util.callAsync (this.object.start, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
@@ -121,6 +125,9 @@ export class Canvas extends Action {
 				Monogatari.element ().find (`[data-canvas="${this.name}"].background`).each ((canvas) => {
 					canvas.width = Monogatari.width ();
 					canvas.height = Monogatari.height ();
+					if (typeof this.object.resize === 'function') {
+						Util.callAsync (this.object.resize, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+					}
 				});
 			});
 			return Util.callAsync (this.object.start, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);

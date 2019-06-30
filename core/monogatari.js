@@ -88,6 +88,26 @@ class Monogatari {
 	}
 
 	/**
+	 * @static width - Determines the real width of the Monogatari element, pretty
+	 * useful when dealing with canvas or other things that require specific measurements.
+	 *
+	 * @return {number} - Computed Width of the element
+	 */
+	static width () {
+		return  parseInt (getComputedStyle(this.element (true)).width.replace ('px', ''));
+	}
+
+	/**
+	 * @static height - Determines the real height of the Monogatari element, pretty
+	 * useful when dealing with canvas or other things that require specific measurements.
+	 *
+	 * @return {number} - Computed Width of the element
+	 */
+	static height () {
+		return getComputedStyle(this.element (true)).height.replace ('px', '');
+	}
+
+	/**
 	 * @static debug - If the Monogatari debug file is present, this function
 	 * will give access to the debug tools that are a replacement for the console
 	 * log functions.
