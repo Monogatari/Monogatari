@@ -1,7 +1,5 @@
 import { Action } from './../lib/Action';
 import { Monogatari } from '../monogatari';
-import { Text } from '@aegis-framework/artemis';
-import { ShowBackground } from './ShowBackground';
 
 export class Scene extends Action {
 
@@ -27,14 +25,10 @@ export class Scene extends Action {
 	}
 
 	static reset () {
-		const background = Monogatari.element ().find ('[data-ui="background"]');
-
-		background.style ('background-image', 'initial');
-		background.style ('background-color', 'initial');
-
 		Monogatari.state ({
 			scene: ''
 		});
+
 		return Promise.resolve ();
 	}
 
@@ -45,120 +39,69 @@ export class Scene extends Action {
 	constructor ([ show, type, scene, ...classes ]) {
 		super ();
 		this.scene = scene;
-		this.property = 'background-image';
-		if (typeof Monogatari.asset ('scenes', scene) !== 'undefined') {
-			this.value = `url(${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${Monogatari.asset ('scenes', scene)})`;
-		} else {
-			const rest = [scene, ...classes].join (' ');
-			if (classes.indexOf ('with') > -1) {
-				this.value = Text.prefix ('with', rest);
-			} else {
-				this.value = rest;
-			}
-
-			const isColorProperty = ['#', 'rgb', 'hsl'].findIndex ((color) => {
-				return this.value.indexOf (color) === 0;
-			}) > -1;
-
-			const isNamed = this.value.indexOf (' ') > -1 ? false : new RegExp('\w+').test (this.value);
-
-			if (isColorProperty === true || isNamed === true) {
-				this.property = 'background-color';
-			}
-		}
-
-		if (typeof classes !== 'undefined') {
-			this.classes = ['animated', ...classes];
-		} else {
-			this.classes = [];
-		}
 	}
 
 	willApply () {
+		return Promise.resolve ();
+	}
+
+	apply () {
 		const scene_elements = [];
 		Monogatari.element ().find ('[data-screen="game"] img:not([data-ui="face"]):not([data-visibility="invisible"])').each ((element) => {
 			scene_elements.push (element.outerHTML);
 		});
 
-		Monogatari.history ('sceneElements').push (scene_elements);
+		return Monogatari.run (this._statement.replace('show scene', 'show background'), false).then(() => {
+			Monogatari.history ('sceneElements').push (scene_elements);
 
-		Monogatari.element ().find ('[data-character]').remove ();
-		Monogatari.element ().find ('[data-image]').remove ();
-		Monogatari.element ().find ('[data-ui="background"]').removeClass ();
-		void Monogatari.element ().find ('[data-ui="background"]').get (0).offsetWidth;
-		return Promise.resolve ();
-	}
-
-	apply () {
-		const background = Monogatari.element ().find ('[data-ui="background"]');
-
-		background.style ('background-image', 'initial');
-		background.style ('background-color', 'initial');
-		background.style ('animation-duration', '');
-		background.style (this.property, this.value);
-
-		const durationPosition = this.classes.indexOf ('duration');
-
-		if (durationPosition > -1) {
-			background.style ('animation-duration', this.classes[durationPosition + 1]);
-		}
-
-		for (const newClass of this.classes) {
-			background.addClass (newClass);
-		}
-
-		return Promise.resolve ();
+			Monogatari.element ().find ('[data-character]').remove ();
+			Monogatari.element ().find ('[data-image]').remove ();
+		});
 	}
 
 	didApply () {
+
 		Monogatari.state ({
 			scene: this._statement
 		});
+
 		Monogatari.history ('scene').push (this._statement);
 
 		Monogatari.action ('Dialog').reset ();
+
 		return Promise.resolve ({ advance: true });
 	}
 
 	willRevert () {
 		Monogatari.element ().find ('[data-character]').remove ();
 		Monogatari.element ().find ('[data-image]').remove ();
-		Monogatari.element ().find ('[data-ui="background"]').removeClass ();
 		return Promise.resolve ();
 	}
 
 	revert () {
-		Monogatari.history ('scene').pop ();
+		console.log(this._statement, this);
+		return Monogatari.revert (this._statement.replace('show scene', 'show background'), false, false).then(() => {
+			//Monogatari.history ('scene').pop ();
 
-		if (Monogatari.history ('scene').length > 0) {
-			const background = Monogatari.element ().find ('[data-ui="background"]');
-			const last = Monogatari.history ('scene')[Monogatari.history ('scene').length - 1];
-			this.constructor (last.split (' '));
+			if (Monogatari.history ('scene').length > 0) {
+				const last = Monogatari.history ('scene')[Monogatari.history ('scene').length - 1];
 
-			background.style ('background-image', 'initial');
-			background.style ('background-color', 'initial');
-			background.style (this.property, this.value);
+				Monogatari.state ({
+					scene: last
+				});
 
-			for (const newClass of this.classes) {
-				background.addClass (newClass);
-			}
+				if (Monogatari.history ('sceneElements').length > 0) {
+					const scene_elements = Monogatari.history  ('sceneElements').pop ();
 
-			Monogatari.state ({
-				scene: last
-			});
-
-			if (Monogatari.history ('sceneElements').length > 0) {
-				const scene_elements = Monogatari.history  ('sceneElements').pop ();
-
-				if (typeof scene_elements === 'object') {
-					for (const element of scene_elements) {
-						Monogatari.element ().find ('[data-screen="game"]').append (element);
+					if (typeof scene_elements === 'object') {
+						for (const element of scene_elements) {
+							Monogatari.element ().find ('[data-screen="game"]').append (element);
+						}
 					}
 				}
+				return Monogatari.action ('Dialog').reset ();
 			}
-			Monogatari.action ('Dialog').reset ();
-		}
-		return Promise.resolve ();
+		});
 	}
 
 	didRevert () {

@@ -14,8 +14,8 @@ export class ShowBackground extends Action {
 	}
 
 	static onLoad () {
-		const { background } = Monogatari.state ();
-		if (background !== '') {
+		const { background, scene } = Monogatari.state ();
+		if (background !== '' && scene === '') {
 			Monogatari.run (background, false);
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
@@ -120,13 +120,18 @@ export class ShowBackground extends Action {
 	}
 
 	revert () {
-		const history = Monogatari.history ('background');
+		let history = Monogatari.history ('background');
 
 		history.pop ();
 
+		if (history.length === 0) {
+			history = Monogatari.history ('scene');
+			history.pop ();
+		}
+
 		if (history.length > 0) {
 			const background = Monogatari.element ().find ('[data-ui="background"]');
-			const last = history[history.length - 1];
+			const last = history[history.length - 1].replace ('show scene', 'show background');
 			this.constructor (last.split (' '));
 
 			background.style ('background-image', 'initial');
