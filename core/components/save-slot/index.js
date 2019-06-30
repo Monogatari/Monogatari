@@ -103,8 +103,19 @@ class SaveSlot extends Component {
 			background = this.data.game.state.scene;
 
 			if (background.indexOf (' with ') > -1) {
-				background = Text.suffix ('show scene', Text.prefix (' with ', background));
+				background = Text.prefix (' with ', background);
 			}
+
+			background = Text.suffix ('show scene', background);
+
+		} else if (this.data.game.state.background) {
+			background = this.data.game.state.background;
+
+			if (background.indexOf (' with ') > -1) {
+				background = Text.prefix (' with ', background);
+			}
+
+			background = Text.suffix ('show background', background);
 		}
 		return `
 			<button data-delete='${this.props.slot}'><span class='fas fa-times'></span></button>
