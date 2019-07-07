@@ -1,7 +1,7 @@
 /* global monogatari */
 
 // Define the messages used in the game.
-monogatari.action ('Message').messages ({
+monogatari.action ('message').messages ({
 	'Help': {
 		title: 'Help',
 		subtitle: 'Some useful Links',
@@ -13,7 +13,7 @@ monogatari.action ('Message').messages ({
 });
 
 // Define the notifications used in the game
-monogatari.action ('Notification').notifications ({
+monogatari.action ('notification').notifications ({
 	'Welcome': {
 		title: 'Welcome',
 		body: 'This is the Monogatari VN Engine',
@@ -22,7 +22,7 @@ monogatari.action ('Notification').notifications ({
 });
 
 // Define the Particles JS Configurations used in the game
-monogatari.action ('Particles').particles ({
+monogatari.action ('particles').particles ({
 
 });
 

@@ -294,7 +294,7 @@ class Monogatari {
 	 * @return {Action} - Returns the action that matches the given ID
 	 */
 	static action (id) {
-		return this._actions.find ((a) => a.id === id);
+		return this._actions.find ((a) => a.id.toLowerCase () === id.toLocaleLowerCase ());
 	}
 
 	/**
