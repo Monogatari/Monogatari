@@ -29,7 +29,7 @@ class DialogLog extends Component {
 	}
 
 	onReset () {
-		this.content ('log').html ('<div class="text--center padded" data-string="NoDialogsAvailable">No dialogs available. Dialogs will appear here as they show up.</div>');
+		this.content ('log').html ('<div class="text--center padded" data-string="NoDialogsAvailable" data-content="placeholder">No dialogs available. Dialogs will appear here as they show up.</div>');
 		return Promise.resolve ();
 	}
 
