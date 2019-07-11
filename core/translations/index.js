@@ -1,3 +1,4 @@
+export * from './Belarusian';
 export * from './Deutsch';
 export * from './English';
 export * from './Español';
