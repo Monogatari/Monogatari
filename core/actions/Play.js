@@ -217,48 +217,50 @@ export class Play extends Action {
 	}
 
 	apply () {
-		// Check if the audio should have a fade time
-		const fadePosition = this.props.indexOf ('fade');
+		if (this.player) {
+			// Check if the audio should have a fade time
+			const fadePosition = this.props.indexOf ('fade');
 
-		if (this.player instanceof Audio) {
-			// Make the audio loop if it was provided as a prop
-			if (this.props.indexOf ('loop') > -1) {
-				this.player.loop = true;
-			}
-
-			this.player.src = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting('AssetsPath')[this.type]}/${this.media}`;
-
-			Monogatari.history (this.type).push (this._statement);
-
-			const state = {};
-			state[this.type] = [...Monogatari.state (this.type), this._statement];
-			Monogatari.state (state);
-
-			this.player.onended = () => {
-				const endState = {};
-				endState[this.type] = Monogatari.state (this.type).filter ((s) => s !== this._statement);
-				Monogatari.state (endState);
-				Monogatari.removeMediaPlayer (this.type, this.mediaKey);
-			};
-
-			if (fadePosition > -1) {
-				Play.fadeIn (this.props[fadePosition + 1], this.player);
-			}
-
-			return this.player.play ();
-		} else if (this.player instanceof Array) {
-			const promises = [];
-			for (const player of this.player) {
-				if (player.paused && !player.ended) {
-					if (fadePosition > -1) {
-						Play.fadeIn (this.props[fadePosition + 1], player);
-					}
-					promises.push (player.play ());
+			if (this.player instanceof Audio) {
+				// Make the audio loop if it was provided as a prop
+				if (this.props.indexOf ('loop') > -1) {
+					this.player.loop = true;
 				}
-			}
-			return Promise.all (promises);
-		}
 
+				this.player.src = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting('AssetsPath')[this.type]}/${this.media}`;
+
+				Monogatari.history (this.type).push (this._statement);
+
+				const state = {};
+				state[this.type] = [...Monogatari.state (this.type), this._statement];
+				Monogatari.state (state);
+
+				this.player.onended = () => {
+					const endState = {};
+					endState[this.type] = Monogatari.state (this.type).filter ((s) => s !== this._statement);
+					Monogatari.state (endState);
+					Monogatari.removeMediaPlayer (this.type, this.mediaKey);
+				};
+
+				if (fadePosition > -1) {
+					Play.fadeIn (this.props[fadePosition + 1], this.player);
+				}
+
+				return this.player.play ();
+			} else if (this.player instanceof Array) {
+				const promises = [];
+				for (const player of this.player) {
+					if (player.paused && !player.ended) {
+						if (fadePosition > -1) {
+							Play.fadeIn (this.props[fadePosition + 1], player);
+						}
+						promises.push (player.play ());
+					}
+				}
+				return Promise.all (promises);
+			}
+		}
+		return Promise.reject('An error occurred, you probably have a typo on the media you want to play.');
 	}
 
 	didApply () {

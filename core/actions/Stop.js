@@ -17,8 +17,13 @@ export class Stop extends Action {
 	 */
 	static fadeOut (fadeTime, player) {
 		const time = parseFloat (fadeTime.match (/\d*(\.\d*)?/));
+
 		const increments = time / 0.1;
-		const maxVolume = parseFloat (player.dataset.maxVolume);
+		let maxVolume = parseFloat (player.dataset.maxVolume);
+
+		if (isNaN(maxVolume)) {
+			maxVolume = player.volume * 100;
+		}
 
 		const volume = (maxVolume / increments) / maxVolume;
 
@@ -55,7 +60,7 @@ export class Stop extends Action {
 		}
 
 		if (player.volume !== 0 && player.dataset.fade === 'out') {
-			if (player.volume - volume < 0) {
+			if ((player.volume - volume) < 0) {
 				resolve ();
 			} else {
 				player.volume -= volume;
@@ -74,8 +79,8 @@ export class Stop extends Action {
 		this.media = media;
 		this.props = props;
 
-		if (typeof media === 'undefined' && media !== 'with') {
-			this.player = Monogatari.mediaPlayers (type, true);
+		if (typeof media === 'undefined' || media === 'with') {
+			this.player = Monogatari.mediaPlayers (type);
 		} else {
 			this.player = Monogatari.mediaPlayer (type, media);
 		}
@@ -102,7 +107,7 @@ export class Stop extends Action {
 			if (typeof this.player === 'object' && !(this.player instanceof Audio)) {
 				if (fadePosition > -1) {
 					for (const player of this.player) {
-						Stop.fadeOut (this.props[fadePosition + 1], this.player).then (() => {
+						Stop.fadeOut (this.props[fadePosition + 1], player).then (() => {
 							Monogatari.removeMediaPlayer (this.type, player.dataset.key);
 						});
 					}

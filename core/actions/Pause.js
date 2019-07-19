@@ -14,21 +14,24 @@ export class Pause extends Action {
 		this.media = media;
 
 		if (typeof media === 'undefined') {
-			this.player = Monogatari.mediaPlayers (type, true);
+			this.player = Monogatari.mediaPlayers (type);
 		} else {
 			this.player = Monogatari.mediaPlayer (type, media);
 		}
 	}
 
 	apply () {
-		if (this.player instanceof Array) {
-			for (const player of this.player) {
-				player.pause ();
+		if (this.player) {
+			if (this.player instanceof Array) {
+				for (const player of this.player) {
+					player.pause ();
+				}
+			} else {
+				this.player.pause ();
 			}
-		} else {
-			this.player.pause ();
+			return Promise.resolve ();
 		}
-		return Promise.resolve ();
+		return Promise.reject ();
 	}
 
 	didApply () {
