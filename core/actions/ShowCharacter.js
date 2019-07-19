@@ -80,10 +80,21 @@ export class ShowCharacter extends Action {
 			directory += '/';
 		}
 
+		const sprite = Monogatari.element ().find (`[data-character="${this.asset}"]`);
+
 		if (Monogatari.element ().find (`[data-character="${this.asset}"]`).isVisible ()) {
 			Monogatari.element ().find (`[data-character="${this.asset}"]`).attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}`);
+
+			const classList = Monogatari.element ().find (`[data-character="${this.asset}"]`).get(0).classList;
+
+			for (const oldClass of classList) {
+				if (this.classes.indexOf (oldClass) === -1) {
+					sprite.removeClass (oldClass);
+				}
+			}
+
 			for (const newClass of this.classes) {
-				Monogatari.element ().find (`[data-character="${this.asset}"]`).addClass (newClass);
+				sprite.addClass (newClass);
 			}
 
 			const durationPosition = this.classes.indexOf ('duration');
@@ -93,6 +104,7 @@ export class ShowCharacter extends Action {
 			} else {
 				Monogatari.element ().find (`[data-character="${this.asset}"]`).style ('animation-duration', '');
 			}
+
 			Monogatari.element ().find (`[data-character="${this.asset}"]`).data ('sprite', this.sprite);
 
 		} else {

@@ -54,7 +54,6 @@ export class ShowBackground extends Action {
 			} else {
 				this.value = rest;
 			}
-			console.log(this.value);
 
 			const isColorProperty = ['#', 'rgb', 'hsl'].findIndex ((color) => {
 				return this.value.indexOf (color) === 0;
@@ -89,7 +88,7 @@ export class ShowBackground extends Action {
 		Monogatari.element ().find ('[data-ui="background"]').style ('background-image', 'initial');
 		Monogatari.element ().find ('[data-ui="background"]').style ('background-color', 'initial');
 		Monogatari.element ().find ('[data-ui="background"]').style ('animation-duration', '');
-		console.log (this.property, this.value);
+
 		Monogatari.element ().find ('[data-ui="background"]').style (this.property, this.value);
 
 		const durationPosition = this.classes.indexOf ('duration');
