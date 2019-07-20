@@ -79,7 +79,6 @@ export class Scene extends Action {
 	}
 
 	revert () {
-		console.log(this._statement, this);
 		return Monogatari.revert (this._statement.replace('show scene', 'show background'), false, false).then(() => {
 			//Monogatari.history ('scene').pop ();
 

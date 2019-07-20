@@ -2269,7 +2269,8 @@ class Monogatari {
 		const mainWidth = mainElement.offsetWidth;
 		const mainHeight = mainElement.offsetHeight;
 
-		const h = Math.floor (mainWidth * (proportionHeight/proportionWidth));
+		const h = Math.floor (mainWidth * (proportionHeight / proportionWidth));
+
 		let widthCss = '100%';
 		let heightCss = '100%';
 		let marginTopCss = 0;
@@ -2403,8 +2404,8 @@ class Monogatari {
 			const proportionWidth = parseInt(w);
 			const proportionHeight = parseInt(h);
 
-			this.resize(proportionWidth, proportionHeight);
-			$_(window).on ('resize', () => this.resize(proportionWidth, proportionHeight));
+			this.resize(null, proportionWidth, proportionHeight);
+			$_(window).on ('resize', () => this.resize(null, proportionWidth, proportionHeight));
 		}
 
 		const promises = [];
