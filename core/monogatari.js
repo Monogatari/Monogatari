@@ -1359,6 +1359,10 @@ class Monogatari {
 					// access all its functionalities
 					act.setContext (Monogatari);
 
+					this.trigger ('willRevertAction', {
+						action: act
+					});
+
 					// Run the willRevert method of the action first. This method
 					// is usually used to tell whether an action can be reverted
 					// or not.
@@ -1381,6 +1385,10 @@ class Monogatari {
 										step: this.state ('step') - 1
 									});
 								}
+
+								this.trigger ('didRevertAction', {
+									action: act
+								});
 
 								// Revert the previous statement if the action
 								// told us to.
@@ -1503,6 +1511,10 @@ class Monogatari {
 				// access all its functionalities
 				act.setContext (Monogatari);
 
+				this.trigger ('WillRunAction', {
+					action: act
+				});
+
 				// Run the willApply method of the action first
 				return act.willApply ().then (() => {
 					this.debug.debug ('Action Will Apply');
@@ -1517,6 +1529,11 @@ class Monogatari {
 						// next statement right away or if it should wait instead
 						return act.didApply ().then (({ advance }) => {
 							this.debug.debug ('Action Did Apply');
+
+							this.trigger ('didRunAction', {
+								action: act
+							});
+
 							if (advance === true && shouldAdvance === true) {
 								this.debug.debug ('Next action will be run right away');
 								this.next ();
