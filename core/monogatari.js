@@ -533,10 +533,33 @@ class Monogatari {
 		}
 	}
 
-	static configuration (object = null) {
-		if (object !== null) {
+	/**
+	 * Get or set the configuration.
+	 *
+	 * @param {string|object} key
+	 * @param {object} object
+	 */
+	static configuration (key, object) {
+		if (typeof key === 'string') {
+			if (typeof object !== 'undefined') {
+				this.trigger ('configurationElementWillUpdate');
+
+				this.trigger (`configurationElementUpdate::${key}`, {
+					newConfiguration: object,
+					oldConfiguration: this._configuration[key]
+				});
+
+				this._configuration[key] = merge (this._configuration[key], object);
+
+				this.trigger ('configurationElementDidUpdate');
+			}
+			return this._configuration[key];
+		} else if (typeof key === 'object') {
+			this.trigger ('configurationWillUpdate');
 			this._configuration = merge (this._configuration, object);
-		} else {
+			this.trigger ('configurationDidUpdate');
+			return this._configuration;
+		} else if (typeof key === 'undefined') {
 			return this._configuration;
 		}
 	}
@@ -2765,7 +2788,104 @@ Monogatari.globals ({
 
 Monogatari._listeners = [];
 
-Monogatari._configuration = {};
+Monogatari._configuration = {
+	'main-menu': {
+		buttons: [
+			{
+				string: 'Start',
+				data: {
+					action: 'start'
+				}
+			},
+			{
+				string: 'Load',
+				data: {
+					action: 'open-screen',
+					open: 'load'
+				}
+			},
+			{
+				string: 'Settings',
+				data: {
+					action: 'open-screen',
+					open: 'settings'
+				}
+			},
+			{
+				string: 'Help',
+				data: {
+					action: 'open-screen',
+					open: 'help'
+				}
+			}
+		]
+	},
+	'quick-menu': {
+		buttons: [
+			{
+				string: 'Back',
+				icon: 'fas fa-arrow-left',
+				link: '#',
+				data: {
+					action: 'back'
+				}
+			},
+			{
+				string: 'Hide',
+				icon: 'fas fa-eye',
+				data: {
+					action: 'distraction-free'
+				}
+			},
+			{
+				string: 'AutoPlay',
+				icon: 'fas fa-play-circle',
+				data: {
+					action: 'auto-play'
+				}
+			},
+			{
+				string: 'Skip',
+				icon: 'fas fa-fast-forward',
+				data: {
+					action: 'skip'
+				}
+			},
+			{
+				string: 'Save',
+				icon: 'fas fa-save',
+				data: {
+					action: 'open-screen',
+					open: 'save'
+				}
+			},
+			{
+				string: 'Load',
+				icon: 'fas fa-undo',
+				data: {
+					action: 'open-screen',
+					open: 'load'
+				}
+			},
+			{
+				string: 'Settings',
+				icon: 'fas fa-cog',
+				data: {
+					action: 'open-screen',
+					open: 'settings'
+				}
+			},
+			{
+				string: 'Quit',
+				icon: 'fas fa-times-circle',
+				data: {
+					action: 'end'
+				}
+			}
+		]
+	},
+	credits: {}
+};
 
 Monogatari._templates = {};
 

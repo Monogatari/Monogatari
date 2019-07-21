@@ -22,38 +22,6 @@ class MainMenu extends MenuComponent {
 
 }
 
-MainMenu._configuration = {
-	buttons: [
-		{
-			string: 'Start',
-			data: {
-				action: 'start'
-			}
-		},
-		{
-			string: 'Load',
-			data: {
-				action: 'open-screen',
-				open: 'load'
-			}
-		},
-		{
-			string: 'Settings',
-			data: {
-				action: 'open-screen',
-				open: 'settings'
-			}
-		},
-		{
-			string: 'Help',
-			data: {
-				action: 'open-screen',
-				open: 'help'
-			}
-		}
-	]
-};
-
 MainMenu.tag = 'main-menu';
 
 Monogatari.registerComponent (MainMenu);

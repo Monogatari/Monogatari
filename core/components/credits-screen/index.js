@@ -4,7 +4,7 @@ import { Monogatari } from './../../monogatari';
 class CreditsScreen extends ScreenComponent {
 
 	static init () {
-		if (Object.keys (this.configuration ().credits).length > 0) {
+		if (Object.keys (this.engine.configuration ('credits')).length > 0) {
 			this.engine.component ('main-menu').addButton ({
 				string: 'Credits',
 				data: {
@@ -27,7 +27,7 @@ class CreditsScreen extends ScreenComponent {
 	willMount () {
 		super.willMount ();
 		this.setProps ({
-			credits: this.static.configuration ().credits
+			credits: this.engine.configuration ('credits')
 		});
 		return Promise.resolve ();
 	}
@@ -72,10 +72,5 @@ class CreditsScreen extends ScreenComponent {
 }
 
 CreditsScreen.tag = 'credits-screen';
-
-CreditsScreen._configuration = {
-	credits: {}
-};
-
 
 Monogatari.registerComponent (CreditsScreen);

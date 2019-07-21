@@ -3,35 +3,53 @@ import { Component } from './Component';
 class MenuComponent extends Component {
 
 	static addButton (button) {
-		this.buttons ().push (button);
+		this.engine.configuration (this.tag, {
+			buttons: [...this.buttons (), button]
+		});
+
 		this.onConfigurationUpdate ();
 	}
 
 	static addButtonAfter (after, button) {
 		const index = this.buttons ().findIndex (b => b.string === after);
+		const buttons = [...this.buttons ()];
 
 		if (index > -1) {
-			this.buttons ().splice (index + 1, 0, button);
+			buttons.splice (index + 1, 0, button);
+
+			this.engine.configuration (this.tag, {
+				buttons
+			});
+
 			this.onConfigurationUpdate ();
 		}
 	}
 
 	static addButtonBefore (before, button) {
 		const index = this.buttons ().findIndex (b => b.string === before);
+		const buttons = [...this.buttons ()];
 
 		if (index > -1) {
-			this.buttons ().splice (index, 0, button);
+			buttons.splice (index + 1, 0, button);
+
+			this.engine.configuration (this.tag, {
+				buttons
+			});
+
 			this.onConfigurationUpdate ();
 		}
 	}
 
 	static removeButton (string) {
-		this._configuration.buttons = this.buttons ().filter ((button) => button.string !== string);
+		this.engine.configuration (this.tag, {
+			buttons: this.buttons ().filter ((button) => button.string !== string)
+		});
+
 		this.onConfigurationUpdate ();
 	}
 
 	static buttons () {
-		return this._configuration.buttons;
+		return this.engine.configuration (this.tag).buttons;
 	}
 
 	static button (string) {
@@ -44,6 +62,7 @@ class MenuComponent extends Component {
 		for (const element of elements) {
 			element.innerHTML = element.render ();
 		}
+
 		return Promise.resolve ();
 	}
 
@@ -70,9 +89,5 @@ class MenuComponent extends Component {
 		return element;
 	}
 }
-
-MenuComponent._configuration = {
-	buttons: [],
-};
 
 export { MenuComponent };

@@ -29,55 +29,6 @@ class Component extends PandoraComponent {
 
 	static _priority = 0;
 
-
-	/**
-	 * If needed, every component should declare its configuration as follows. This
-	 * configuration object should be used to store component-specific settings as well
-	 * as other objects/assets used by the component.
-	 */
-	static _configuration = {};
-
-	/**
-	 * @static configuration - A simple function providing access to the configuration
-	 * object of the function. If the component has a configuration object it must
-	 * also include this method.
-	 *
-	 * @param  {Object|string} [object = null] - Object with which current
-	 * configuration will be updated with (i.e. Object.assign) or a string to access
-	 * a property.
-	 *
-	 * @return {any} - If the parameter sent was a string, the function will
-	 * return the value of the property whose tag matches the parameter. If no
-	 * parameter was sent, then the function will return the whole configuration
-	 * object.
-	 */
-	static configuration (object = null) {
-		if (object !== null) {
-			if (typeof object === 'string') {
-				return this._configuration[object];
-			} else {
-				this._configuration = Object.assign ({}, this._configuration, object);
-				this.onConfigurationUpdate ().then (() => {
-					this.onUpdate ();
-				});
-			}
-		} else {
-			return this._configuration;
-		}
-	}
-
-	/**
-	 * @static onConfigurationUpdate - Every time the configuration object is
-	 * changed through the configuration () method, this function will be called.
-	 * Ideal for components that need to update their UI or other things when their
-	 * configuration is changed.
-	 *
-	 * @return {Promise} - Result of the onConfigurationUpdate operation.
-	 */
-	static onConfigurationUpdate () {
-		return Promise.resolve ();
-	}
-
 	static all () {
 		return $_(this.tag);
 	}

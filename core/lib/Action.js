@@ -73,6 +73,22 @@
 class Action {
 
 	/**
+	 * If needed, every action should declare its configuration as follows. This
+	 * configuration object should be used to store action-specific settings as well
+	 * as other objects/assets used by the action. If any specific object needs
+	 * recurrent access such as the declarations in the script.js file, provinding
+	 * a static function for that specific object could be great.
+	 */
+	static _configuration = {};
+
+	/**
+	 * All actions must have an ID, with this ID the developers will be able to
+	 * access the action classes, remove actions or register new ones. They must also
+	 * be unique.
+	 */
+	static id = 'Action';
+
+	/**
 	 * @static configuration - A simple function providing access to the configuration
 	 * object of the function. If the action has a configuration object it must
 	 * also include this method.
@@ -89,12 +105,12 @@ class Action {
 	static configuration (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {
-				return Action._configuration[object];
+				return this._configuration[object];
 			} else {
-				Action._configuration = Object.assign ({}, Action._configuration, object);
+				this._configuration = Object.assign ({}, this._configuration, object);
 			}
 		} else {
-			return Action._configuration;
+			return this._configuration;
 		}
 	}
 
@@ -281,6 +297,11 @@ class Action {
 
 	}
 
+	/**
+	 * The engine to which this action registered to.
+	 *
+	 * @type {Monogatari}
+	 */
 	get engine () {
 		return this.constructor.engine;
 	}
@@ -412,21 +433,5 @@ class Action {
 		});
 	}
 }
-
-/**
- * If needed, every action should declare its configuration as follows. This
- * configuration object should be used to store action-specific settings as well
- * as other objects/assets used by the action. If any specific object needs
- * recurrent access such as the declarations in the script.js file, provinding
- * a static function for that specific object could be great.
- */
-Action._configuration = {};
-
-/**
- * All actions must have an ID, with this ID the developers will be able to
- * access the action classes, remove actions or register new ones. They must also
- * be unique.
- */
-Action.id = 'Action';
 
 export { Action };
