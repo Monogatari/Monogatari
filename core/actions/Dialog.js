@@ -37,7 +37,10 @@ export class Dialog extends Action {
 	}
 
 	static willRollback () {
-		this.engine.global ('textObject').destroy ();
+		if (this.engine.global ('textObject') !== null) {
+			this.engine.global ('textObject').destroy ();
+		}
+
 		this.engine.global ('finished_typing', true);
 		this.engine.global ('_CurrentChoice', null);
 		this.engine.element ().find ('[data-component="text-box"]').show ('flex');
