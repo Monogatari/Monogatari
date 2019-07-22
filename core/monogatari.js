@@ -1237,6 +1237,10 @@ class Monogatari {
 		}
 	}
 
+	static unregisterListener (name) {
+		this._listeners = this._listeners.filter((l) => l.name.toLowerCase () !== name.toLowerCase ());
+	}
+
 	static runListener (name, element, event) {
 		const promises = [];
 
