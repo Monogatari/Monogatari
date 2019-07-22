@@ -279,7 +279,7 @@ class Monogatari {
 	 * have an unique ID.
 	 */
 	static unregisterAction (action) {
-		this._actions = this._actions.filter ((a) => !(a instanceof action));
+		this._actions = this._actions.filter ((a) => a.id.toLowerCase () !== action.toLowerCase ());
 	}
 
 	/**
@@ -298,7 +298,7 @@ class Monogatari {
 	 * @return {Action} - Returns the action that matches the given ID
 	 */
 	static action (id) {
-		return this._actions.find ((a) => a.id.toLowerCase () === id.toLocaleLowerCase ());
+		return this._actions.find ((a) => a.id.toLowerCase () === id.toLowerCase ());
 	}
 
 	/**
@@ -324,7 +324,7 @@ class Monogatari {
 	 * each component must have an unique ID.
 	 */
 	static unregisterComponent (component) {
-		this._components = this._actions.filter ((c) => !(c instanceof component));
+		this._components = this._components.filter ((c) => c.tag.toLowerCase() !== component.toLowerCase());
 	}
 
 	/**
