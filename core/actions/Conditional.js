@@ -74,4 +74,4 @@ export class Conditional extends Action {
 
 Conditional.id = 'Conditional';
 
-Monogatari.registerAction (Conditional);
+Monogatari.registerAction (Conditional, true);

@@ -69,4 +69,4 @@ export class HideVideo extends Action {
 
 HideVideo.id = 'Hide::Video';
 
-Monogatari.registerAction (HideVideo);
+Monogatari.registerAction (HideVideo, true);

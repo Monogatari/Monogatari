@@ -155,4 +155,4 @@ export class ShowBackground extends Action {
 
 ShowBackground.id = 'Show::Background';
 
-Monogatari.registerAction (ShowBackground);
+Monogatari.registerAction (ShowBackground, true);

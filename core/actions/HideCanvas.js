@@ -71,4 +71,4 @@ export class HideCanvas extends Action {
 
 HideCanvas.id = 'Hide::Canvas';
 
-Monogatari.registerAction (HideCanvas);
+Monogatari.registerAction (HideCanvas, true);

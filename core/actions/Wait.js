@@ -59,4 +59,4 @@ export class Wait extends Action {
 
 Wait.id = 'Wait';
 
-Monogatari.registerAction (Wait);
+Monogatari.registerAction (Wait, true);

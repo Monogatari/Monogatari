@@ -23,4 +23,4 @@ export class Clear extends Action {
 
 Clear.id = 'Clear';
 
-Monogatari.registerAction (Clear);
+Monogatari.registerAction (Clear, true);

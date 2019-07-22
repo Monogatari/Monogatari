@@ -57,4 +57,4 @@ export class Gallery extends Action {
 
 Gallery.id = 'Gallery';
 
-Monogatari.registerAction (Gallery);
+Monogatari.registerAction (Gallery, true);

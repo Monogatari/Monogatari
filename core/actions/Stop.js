@@ -180,4 +180,4 @@ export class Stop extends Action {
 
 Stop.id = 'Stop';
 
-Monogatari.registerAction (Stop);
+Monogatari.registerAction (Stop, true);

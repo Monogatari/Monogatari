@@ -172,4 +172,4 @@ Video._configuration = {
 	}
 };
 
-Monogatari.registerAction (Video);
+Monogatari.registerAction (Video, true);

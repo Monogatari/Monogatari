@@ -191,4 +191,4 @@ export class Choice extends Action {
 
 Choice.id = 'Choice';
 
-Monogatari.registerAction (Choice);
+Monogatari.registerAction (Choice, true);

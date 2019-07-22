@@ -196,4 +196,4 @@ Canvas._configuration = {
 	}
 };
 
-Monogatari.registerAction (Canvas);
+Monogatari.registerAction (Canvas, true);

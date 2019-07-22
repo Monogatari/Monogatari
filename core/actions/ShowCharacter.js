@@ -180,4 +180,4 @@ export class ShowCharacter extends Action {
 
 ShowCharacter.id = 'Show::Character';
 
-Monogatari.registerAction (ShowCharacter);
+Monogatari.registerAction (ShowCharacter, true);

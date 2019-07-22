@@ -67,4 +67,4 @@ export class InputModal extends Action {
 
 InputModal.id = 'Input';
 
-Monogatari.registerAction (InputModal);
+Monogatari.registerAction (InputModal, true);

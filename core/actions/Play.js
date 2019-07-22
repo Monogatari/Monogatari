@@ -294,4 +294,4 @@ export class Play extends Action {
 
 Play.id = 'Play';
 
-Monogatari.registerAction (Play);
+Monogatari.registerAction (Play, true);

@@ -77,4 +77,4 @@ export class HideCharacter extends Action {
 
 HideCharacter.id = 'Hide::Character';
 
-Monogatari.registerAction (HideCharacter);
+Monogatari.registerAction (HideCharacter, true);

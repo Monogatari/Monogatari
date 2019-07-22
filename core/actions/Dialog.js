@@ -398,4 +398,4 @@ export class Dialog extends Action {
 
 Dialog.id = 'Dialog';
 
-Monogatari.registerAction (Dialog);
+Monogatari.registerAction (Dialog, true);

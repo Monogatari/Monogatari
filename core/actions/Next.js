@@ -19,4 +19,4 @@ export class Next extends Action {
 
 Next.id = 'Next';
 
-Monogatari.registerAction (Next);
+Monogatari.registerAction (Next, true);

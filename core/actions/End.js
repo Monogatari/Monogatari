@@ -66,4 +66,4 @@ export class End extends Action {
 
 End.id = 'End';
 
-Monogatari.registerAction (End);
+Monogatari.registerAction (End, true);

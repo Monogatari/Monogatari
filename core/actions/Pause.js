@@ -57,4 +57,4 @@ export class Pause extends Action {
 
 Pause.id = 'Pause';
 
-Monogatari.registerAction (Pause);
+Monogatari.registerAction (Pause, true);

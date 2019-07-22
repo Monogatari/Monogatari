@@ -35,4 +35,4 @@ export class HideParticles extends Action {
 
 HideParticles.id = 'Hide::Particles';
 
-Monogatari.registerAction (HideParticles);
+Monogatari.registerAction (HideParticles, true);

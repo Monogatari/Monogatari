@@ -84,4 +84,4 @@ export class ReversibleFunction extends Action {
 
 ReversibleFunction.id = 'Function';
 
-Monogatari.registerAction (ReversibleFunction);
+Monogatari.registerAction (ReversibleFunction, true);

@@ -120,4 +120,4 @@ Particles._configuration = {
 	particles: {}
 };
 
-Monogatari.registerAction (Particles);
+Monogatari.registerAction (Particles, true);

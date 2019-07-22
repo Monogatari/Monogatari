@@ -107,4 +107,4 @@ export class Jump extends Action {
 
 Jump.id = 'Jump';
 
-Monogatari.registerAction (Jump);
+Monogatari.registerAction (Jump, true);

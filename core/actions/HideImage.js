@@ -73,4 +73,4 @@ export class HideImage extends Action {
 
 HideImage.id = 'Hide::Image';
 
-Monogatari.registerAction (HideImage);
+Monogatari.registerAction (HideImage, true);

@@ -261,9 +261,13 @@ class Monogatari {
 	 * @param  {Action} action - Action to register. Remember each action must
 	 * have an unique ID.
 	 */
-	static registerAction (action) {
+	static registerAction (action, naturalPosition = false) {
 		action.engine = this;
-		this._actions.push (action);
+		if (naturalPosition) {
+			this._actions.push (action);
+		} else {
+			this._actions.unshift (action);
+		}
 	}
 
 	/**

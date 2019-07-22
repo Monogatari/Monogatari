@@ -76,4 +76,4 @@ export class Vibrate extends Action {
 }
 
 Vibrate.id = 'Vibrate';
-Monogatari.registerAction (Vibrate);
+Monogatari.registerAction (Vibrate, true);

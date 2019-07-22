@@ -133,4 +133,4 @@ Message._configuration = {
 	messages: {}
 };
 
-Monogatari.registerAction (Message);
+Monogatari.registerAction (Message, true);

@@ -141,4 +141,4 @@ Notify._configuration = {
 	notifications: {}
 };
 
-Monogatari.registerAction (Notify);
+Monogatari.registerAction (Notify, true);

@@ -89,4 +89,4 @@ export class ShowImage extends Action {
 
 ShowImage.id = 'Show::Image';
 
-Monogatari.registerAction (ShowImage);
+Monogatari.registerAction (ShowImage, true);

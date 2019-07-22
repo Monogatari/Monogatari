@@ -110,4 +110,4 @@ export class Scene extends Action {
 
 Scene.id = 'Scene';
 
-Monogatari.registerAction (Scene);
+Monogatari.registerAction (Scene, true);
