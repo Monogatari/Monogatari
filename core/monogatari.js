@@ -2019,13 +2019,11 @@ class Monogatari {
 	// Start game automatically without going trough the main menu
 	static showMainScreen () {
 		if (!this.setting ('ShowMainScreen')) {
-			//this.stopAmbient ();
 			this.global ('playing', true);
 			this.showScreen ('game');
 			this.run (this.label ()[this.state ('step')]);
 		} else {
 			// Play the main menu song
-			//this.playAmbient ();
 			this.showScreen ('main');
 		}
 	}
