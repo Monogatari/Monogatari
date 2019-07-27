@@ -156,7 +156,7 @@ class Monogatari {
 							'_1': `
 								<pre>
 									<code class='language-javascript'>
-									Monogatari.translation ("YourLanguage", {
+									monogatari.translation ("YourLanguage", {
 										"SomeString": "Your Translation"
 									});
 									</code>
@@ -181,7 +181,7 @@ class Monogatari {
 						'_1': `
 							<pre>
 								<code class='language-javascript'>
-								Monogatari.translation ("YourLanguage", {
+								monogatari.translation ("YourLanguage", {
 									"SomeString": "Your Translation"
 								});
 								</code>
@@ -618,7 +618,7 @@ class Monogatari {
 								'_3': `
 									<pre>
 										<code class='language-javascript'>
-										this.script ({
+										monogatari.script ({
 											'English': {
 												'Start': [
 													'Hi, welcome to your first Visual Novel with Monogatari.'
@@ -2471,10 +2471,19 @@ class Monogatari {
 	}
 
 	static element (pure = false) {
+		let element = null;
+		let exists = false;
+
 		if (pure === true) {
-			return document.querySelector ('visual-novel');
+			element = document.querySelector ('visual-novel');
+			exists = element !== null;
+		} else {
+			element = $_('visual-novel');
 		}
-		return $_('visual-novel');
+
+
+
+		return element;
 	}
 
 	static on (event, target, callback) {
@@ -2496,7 +2505,14 @@ class Monogatari {
 	 */
 	static trigger (name, details = {}) {
 		const event = new CustomEvent (name, { bubbles: false, detail: details });
-		this.element ().get (0).dispatchEvent (event);
+
+		const element = this.element (true);
+
+		if (element) {
+			element.dispatchEvent (event);
+		} else {
+			element.ready (() => dispatchEvent (event));
+		}
 	}
 
 	static init (selector = '#monogatari') {

@@ -62,7 +62,7 @@ export class Message extends Action {
 						'_1':`
 							<pre>
 								<code class='language-javascript'>
-									Monogatari.action ('Message').mesages ({
+									monogatari.action ('message').mesages ({
 										'Welcome': {
 											title: 'Welcome!',
 											subtitle: 'This is the Monogatari VN Engine',
