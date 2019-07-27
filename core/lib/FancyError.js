@@ -1,4 +1,4 @@
-import { $_, Text, Util } from '@aegis-framework/artemis';
+import { $_, Text, Util, $_ready } from '@aegis-framework/artemis';
 /* global Prism */
 
 export class FancyError {
@@ -59,34 +59,36 @@ export class FancyError {
 			if ($_('[data-error]').isVisible ()) {
 				FancyError.queue.unshift (object);
 			} else {
-				$_('body').prepend (`
-					<div class='fancy-error modal modal--active' data-error='${id}'>
-						<div class='modal__content'>
-							<h2>${title}</h2>
-							<p>${message}</p>
-							<div class='padded  text--left'>
-								<h3>Details</h3>
-								${FancyError.render (props)}
-								<hr class='separator--material'/>
-								<h3>Need More Help?</h3>
-								<div class='error-section'>
-									<p>Remember you can always ask for more help if you need it at:</p>
-									<p><b>Discord</b>: <a href='https://discord.gg/gWSeDTz' target='_blank'>https://discord.gg/gWSeDTz</a></p>
-									<p><b>GitHub</b>: <a href='https://github.com/Monogatari/Monogatari/issues/' target='_blank'>https://github.com/Monogatari/Monogatari/issues/</a></p>
-									<p><b>Twitter</b>: <a href='https://twitter.com/monogatari' target='_blank'>https://twitter.com/monogatari</a></p>
+				$_ready (() => {
+					$_('body').prepend (`
+						<div class='fancy-error modal modal--active' data-error='${id}'>
+							<div class='modal__content'>
+								<h2>${title}</h2>
+								<p>${message}</p>
+								<div class='padded  text--left'>
+									<h3>Details</h3>
+									${FancyError.render (props)}
+									<hr class='separator--material'/>
+									<h3>Need More Help?</h3>
+									<div class='error-section'>
+										<p>Remember you can always ask for more help if you need it at:</p>
+										<p><b>Discord</b>: <a href='https://discord.gg/gWSeDTz' target='_blank'>https://discord.gg/gWSeDTz</a></p>
+										<p><b>GitHub</b>: <a href='https://github.com/Monogatari/Monogatari/issues/' target='_blank'>https://github.com/Monogatari/Monogatari/issues/</a></p>
+										<p><b>Twitter</b>: <a href='https://twitter.com/monogatari' target='_blank'>https://twitter.com/monogatari</a></p>
+									</div>
+									<button>Ok</button>
 								</div>
-								<button>Ok</button>
+
 							</div>
-
 						</div>
-					</div>
-				`);
+					`);
 
-				$_(`[data-error="${id}"] button`).click (function () {
-					$_(`[data-error="${id}"]`).remove ();
-					FancyError.pop ();
+					$_(`[data-error="${id}"] button`).click (function () {
+						$_(`[data-error="${id}"]`).remove ();
+						FancyError.pop ();
+					});
+					Prism.highlightAll ();
 				});
-				Prism.highlightAll ();
 			}
 		}
 	}
