@@ -2479,10 +2479,33 @@ class Monogatari {
 			exists = element !== null;
 		} else {
 			element = $_('visual-novel');
+			exists = element.length > 0;
 		}
 
-
-
+		// In some cases, the user might be trying to execute an action using the
+		// main element when the DOM has not been loaded yet, thus causing an
+		// error since the element does not exists yet.
+		if (exists === false) {
+			FancyError.show (
+				'Main element is not ready yet',
+				'Monogatari attempted to execute a function when the main element was not fully loaded yet.',
+				{
+					'Trace': 'You should be able to see an error with the order in which functions were executed in your browser\'s console (Ctrl + Shift + i). The last one should be part of your code and that\'s the one that needs to be changed.',
+					'Help': {
+						'_': 'Please wrap or move your code into a $_ready () function block to wait for the page to be fully loaded before executing it.',
+						'_1': `
+							<pre>
+								<code class='language-javascript'>
+								$_ready (() => {
+									// Your code should go here
+								});
+								</code>
+							</pre>
+						`
+					}
+				}
+			);
+		}
 		return element;
 	}
 
