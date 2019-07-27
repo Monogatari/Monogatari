@@ -86,10 +86,6 @@ class MenuComponent extends Component {
 			element.setAttribute ('icon', button.icon);
 			element.setAttribute ('string', button.string);
 
-			if (button.element === 'button') {
-				element.innerHTML = this.engine.string (button.string);
-			}
-
 			return element.outerHTML;
 		}).join (' ');
 	}
