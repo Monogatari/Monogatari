@@ -97,9 +97,9 @@ export class Dialog extends Action {
 
 		// Add listener for the text speed setting
 		$_(`${selector} [data-action="set-text-speed"]`).on ('change mouseover', function () {
-			const value =  this.engine.setting ('maxTextSpeed') - parseInt(this.value);
-			self.global ('typedConfiguration').typeSpeed = value;
-			self.preference ('TextSpeed', value);
+			const value =  self.engine.setting ('maxTextSpeed') - parseInt(this.value);
+			self.engine.global ('typedConfiguration').typeSpeed = value;
+			self.engine.preference ('TextSpeed', value);
 		});
 
 		// Detect scroll on the text element to remove the unread class used when
