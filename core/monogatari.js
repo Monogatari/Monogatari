@@ -2023,7 +2023,6 @@ class Monogatari {
 			this.showScreen ('game');
 			this.run (this.label ()[this.state ('step')]);
 		} else {
-			// Play the main menu song
 			this.showScreen ('main');
 		}
 	}
@@ -2038,16 +2037,14 @@ class Monogatari {
 				});
 
 				$_('[data-component="quick-menu"]').hide ();
+
 				this.showScreen ('game');
 				this.run (this.label ()[this.state ('step')]);
-			} else {
-				this.showMainScreen ();
+				return;
 			}
-		} else {
-			this.showMainScreen ();
 		}
+		this.showMainScreen ();
 	}
-
 
 	/**
 	 * @static autoPlay - Enable or disable the autoplay feature which allows the
@@ -2187,7 +2184,6 @@ class Monogatari {
 		// and the game starts
 		this.registerListener ('start', {
 			callback: () => {
-				//this.stopAmbient();
 				this.global ('playing', true);
 
 				this.onStart ().then (() => {
