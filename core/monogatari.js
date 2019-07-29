@@ -953,11 +953,11 @@ class Monogatari {
 								}
 							}
 						);
+						return '';
 					}
 				}
 				statement = statement.replace (match, data);
 			}
-
 			return this.replaceVariables (statement);
 		}
 		return statement;
@@ -1350,6 +1350,12 @@ class Monogatari {
 
 		if (actionToRevert !== null) {
 
+			let interpolatedStatement = null;
+
+			if (typeof statement === 'string') {
+				interpolatedStatement = this.replaceVariables (actionToRevert).split (' ');
+			}
+
 			// Iterate over all the registered actions to find one that matches with
 			// the statement to revert.
 			for (const action of this.actions ()) {
@@ -1363,7 +1369,7 @@ class Monogatari {
 				if (typeof actionStatement === 'string') {
 
 					// Split the statement into an array using the space separations
-					actionStatement = this.replaceVariables (actionStatement).split (' ');
+					actionStatement = interpolatedStatement;
 
 					// Check if it matches using the matchString method
 					matches = action.matchString (actionStatement);
@@ -1492,6 +1498,12 @@ class Monogatari {
 
 		this.debug.debug ('Running Action', statement);
 
+		let interpolatedStatement = null;
+
+		if (typeof statement === 'string') {
+			interpolatedStatement = this.replaceVariables (statement).split (' ');
+		}
+
 		// Iterate over all the registered actions to find one that matches with
 		// the statement to run.
 		for (const action of this.actions ()) {
@@ -1503,7 +1515,7 @@ class Monogatari {
 			// is a function, it will simply be run.
 			if (typeof statement === 'string') {
 				// Split the statement into an array using the space separations
-				actionStatement = this.replaceVariables (statement).split (' ');
+				actionStatement = interpolatedStatement;
 
 				// Check if it matches using the matchString method
 				matches = action.matchString (actionStatement);
