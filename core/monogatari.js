@@ -2597,12 +2597,14 @@ class Monogatari {
 					}
 				});
 
+				const init = [];
+
 				for (const component of this.components ()) {
-					component.init (selector);
+					init.push (component.init (selector));
 				}
 
 				for (const action of this.actions ()) {
-					action.init (selector);
+					init.push (action.init (selector));
 				}
 
 				if (this.setting ('AutoSave') != 0 && typeof this.setting ('AutoSave') === 'number') {
@@ -2629,7 +2631,10 @@ class Monogatari {
 					this.element ().find ('[data-screen="load"] [data-ui="autoSaveSlots"]').hide ();
 				}
 
-				this.trigger ('didInit');
+				return Promise.all (init, () => {
+					this.trigger ('didInit');
+				});
+
 			});
 		});
 	}
