@@ -1229,16 +1229,21 @@ class Monogatari {
 
 			if (index > -1) {
 				this._listeners[index] = listener;
-			} else {
-				this._listeners.push (listener);
+				return;
 			}
-		} else {
-			this._listeners.push (listener);
 		}
+		this._listeners.push (listener);
 	}
 
 	static unregisterListener (name) {
-		this._listeners = this._listeners.filter((l) => l.name.toLowerCase () !== name.toLowerCase ());
+		const listener = this._listeners.find((l) => l.name.toLowerCase () === name.toLowerCase ());
+
+		if (listener) {
+			if (listener.keys) {
+				mousetrap.unbind (listener.keys);
+			}
+			this._listeners = this._listeners.filter((l) => l.name.toLowerCase () !== name.toLowerCase ());
+		}
 	}
 
 	static runListener (name, element, event) {
@@ -2551,13 +2556,13 @@ class Monogatari {
 
 		this.trigger ('willSetup');
 
-		this.setup (selector).then (() => {
+		return this.setup (selector).then (() => {
 
 			this.trigger ('didSetup');
 
 			this.trigger ('willBind');
 
-			this.bind (selector).then (() => {
+			return this.bind (selector).then (() => {
 
 				this.trigger ('didBind');
 
