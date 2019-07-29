@@ -56,6 +56,7 @@ export class End extends Action {
 		this.engine.global ('playing', false);
 		this.engine.resetGame ();
 		this.engine.showMainScreen ();
+		this.engine.element ().find ('quick-menu').removeClass ('splash-screen');
 		return Promise.resolve ();
 	}
 

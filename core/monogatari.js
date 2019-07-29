@@ -2071,7 +2071,7 @@ class Monogatari {
 					label: labelName
 				});
 
-				$_('[data-component="quick-menu"]').hide ();
+				this.element ().find ('quick-menu').addClass ('splash-screen');
 
 				this.showScreen ('game');
 				this.run (this.label ()[this.state ('step')]);
