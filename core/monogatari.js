@@ -2594,6 +2594,18 @@ class Monogatari {
 				}).finally (() => {
 					if (this.label ()) {
 						this.showSplashScreen ();
+					} else {
+						FancyError.show (
+							`"${this.setting ('Label')}" Label was not found`,
+							'Monogatari tried to get your start label but it couldn\'t find it in your script.',
+							{
+								'Start Label on your Settings': this.setting ('Label'),
+								'Labels Available': Object.keys (this.script ()),
+								'Help': {
+									'_': 'Please check that the label exists in your script.'
+								}
+							}
+						);
 					}
 				});
 
