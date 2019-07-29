@@ -133,7 +133,7 @@ export class FancyError {
 			} else if (props[key] instanceof Array) {
 				html += `<details open><summary><b>${key}</b>:</summary><ul>`;
 				for (const item of props[key]) {
-					html += `<li>${props[key].toString ().replace (/,/g, ', ')}</li>`;
+					html += `<li>${item}</li>`;
 				}
 				html += '</ul></details></p>';
 			} else if (props[key] instanceof NodeList) {
@@ -156,7 +156,11 @@ export class FancyError {
 						if (typeof props[key][property] === 'string' || typeof props[key][property] === 'number') {
 							html += `<p><b>${property}</b>: ${props[key][property]}</p>`;
 						} else if (props[key][property] instanceof Array) {
-							html += `<p><b>${property}</b>: ${props[key][property].toString ().replace (/,/g, ', ')}</p>`;
+							html += `<details open><summary><b>${key}</b>:</summary><ul>`;
+							for (const item of props[key]) {
+								html += `<li>${item}</li>`;
+							}
+							html += '</ul></details></p>';
 						} else if (props[key][property] instanceof NodeList) {
 							html += `<p><b>${property}</b>:<br><pre>`;
 							for (const item of props[key][property]) {
