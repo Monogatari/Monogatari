@@ -932,10 +932,28 @@ class Monogatari {
 			for (const match of matches) {
 				const path = match.replace ('{{', '').replace ('}}', '').split ('.');
 
-				let data = this.storage (path[0]);
+				let data = this.storage ();
 
-				for (let j = 1; j < path.length; j++) {
-					data = data[path[j]];
+				for (let j = 0; j < path.length; j++) {
+					const name = path[j];
+					if (name in data) {
+						data = data[name];
+					} else {
+						FancyError.show (
+							`Variable "${match}" does not exists in your storage`,
+							'Monogatari attempted to interpolate a variable from your storage but it doesn\'t exists.',
+							{
+								'Script Statement': statement,
+								'Part Not Found': name,
+								'Variables Available in Storage': Object.keys (data),
+								'Help': {
+									'_': 'Please check your storage object and make sure the variable you are using exists.',
+									'_1': 'You should also make sure that there is no typo in your script and that the variable names in your script and storage match.',
+									'Documentation': '<a href="https://developers.monogatari.io/documentation/script/storage" target="_blank">Storage</a>'
+								}
+							}
+						);
+					}
 				}
 				statement = statement.replace (match, data);
 			}
