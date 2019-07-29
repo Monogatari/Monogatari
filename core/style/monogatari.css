@@ -112,6 +112,17 @@ video {
 	display: block;
 }
 
+.fancy-error {
+	& li {
+		display: list-item;
+		list-style-type: initial;
+	}
+
+	& summary {
+		cursor: pointer;
+	}
+}
+
 /**
  * ===========================
  * Support Classes and IDs
