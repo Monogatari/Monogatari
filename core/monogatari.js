@@ -1117,16 +1117,20 @@ class Monogatari {
 	 * @returns {void}
 	 */
 	static previous () {
-		setTimeout (() => {
-			this.revert.call (Monogatari);
-		}, 0);
-		// this.revert ().catch (() => {
-		// 	// The game could not be reverted, either because an
-		// 	// action prevented it or because there are no statements
-		// 	// left to revert to.
-		// });
-
-		return Promise.resolve ();
+		return new Promise ((resolve, reject) => {
+			setTimeout (() => {
+				this.revert.call (Monogatari). then (() => {
+					this.global ('_engine_block', false);
+					resolve ();
+				}).catch (() => {
+					// The game could not be reverted, either because an
+					// action prevented it or because there are no statements
+					// left to revert to.
+					resolve ();
+				});
+			}, 0);
+		});
+		// return Promise.resolve ();
 	}
 
 	static resetGame () {
@@ -1603,10 +1607,6 @@ class Monogatari {
 		this.debug.groupEnd ();
 	}
 
-	////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////
-
 	static alert (id, options) {
 		const alert = document.createElement ('alert-modal');
 		alert.setProps (options);
@@ -1746,8 +1746,10 @@ class Monogatari {
 
 	static rollback () {
 		return this.shouldRollback ().then (() => {
+			this.global ('_engine_block', true);
 			return this.willRollback ().then (() => {
-				return this.previous ();
+				return this.previous ().then (() => {
+				});
 			});
 		});
 	}
@@ -1882,7 +1884,8 @@ class Monogatari {
 		// revert. The game will not revert if it's blocked or if the distraction
 		// free mode is enabled.
 		if (!this.global ('distraction_free')
-			&& !this.global ('block')) {
+			&& !this.global ('block')
+			&& !this.global ('_engine_block')) {
 			const promises = [];
 
 			this.debug.groupCollapsed ('shouldRollback Check');
@@ -2144,8 +2147,6 @@ class Monogatari {
 			}
 		}
 	}
-
-
 
 	static setup (selector) {
 		// Set the initial settings if they don't exist or load them from the
