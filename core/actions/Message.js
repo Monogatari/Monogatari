@@ -119,7 +119,7 @@ export class Message extends Action {
 	}
 
 	revert () {
-		Monogatari.component ('mesage-dialog').instances ().remove ();
+		Monogatari.component ('message-modal').instances ().remove ();
 		return this.apply ();
 	}
 
