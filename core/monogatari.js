@@ -1356,7 +1356,7 @@ class Monogatari {
 
 			let interpolatedStatement = null;
 
-			if (typeof statement === 'string') {
+			if (typeof actionToRevert === 'string') {
 				interpolatedStatement = this.replaceVariables (actionToRevert).split (' ');
 			}
 
@@ -1377,7 +1377,7 @@ class Monogatari {
 
 					// Check if it matches using the matchString method
 					matches = action.matchString (actionStatement);
-				} else if (typeof actionStatement === 'object') {
+				} else if (typeof actionStatement === 'object' && actionStatement !== null) {
 					// Check if it matches using the matchObject method
 					matches = action.matchObject (actionStatement);
 				}
