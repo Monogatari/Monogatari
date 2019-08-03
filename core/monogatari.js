@@ -2680,10 +2680,9 @@ class Monogatari {
 					this.element ().find ('[data-screen="load"] [data-ui="autoSaveSlots"]').hide ();
 				}
 
-				return Promise.all (init, () => {
+				return Promise.all (init).then (() => {
 					this.trigger ('didInit');
 				});
-
 			});
 		});
 	}
