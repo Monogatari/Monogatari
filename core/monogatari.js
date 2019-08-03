@@ -1102,13 +1102,18 @@ class Monogatari {
 			step: this.state ('step') + 1
 		});
 
-		// Clear the Stack using a Time Out instead of calling the function
-		// directly, preventing an Overflow
-		setTimeout ((...params) => {
-			this.run.call (Monogatari, ...params);
-		}, 0, this.label ()[this.state ('step')]);
-
-		return Promise.resolve ();
+		return new Promise ((resolve, reject) => {
+			// Clear the Stack using a Time Out instead of calling the function
+			// directly, preventing an Overflow
+			setTimeout ((...params) => {
+				this.run.call (Monogatari, ...params).then (() => {
+					this.global ('_engine_block', false);
+					resolve ();
+				}).catch (() => {
+					resolve ();
+				});
+			}, 0, this.label ()[this.state ('step')]);
+		});
 	}
 
 	/**
@@ -1738,6 +1743,7 @@ class Monogatari {
 
 	static proceed () {
 		return this.shouldProceed ().then (() => {
+			this.global ('_engine_block', true);
 			return this.willProceed ().then (() => {
 				return this.next ();
 			});
@@ -2894,7 +2900,8 @@ Monogatari.globals ({
 	_auto_play_timer: null,
 	skip: null,
 	_log: [],
-	_auto_save_interval: null
+	_auto_save_interval: null,
+	_engine_block: false
 });
 
 Monogatari._listeners = [];
