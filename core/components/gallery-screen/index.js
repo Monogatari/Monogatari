@@ -75,9 +75,14 @@ class GalleryScreen extends ScreenComponent {
 
 	onStateUpdate (property, oldValue, newValue) {
 		super.onStateUpdate (property, oldValue, newValue);
+
 		this.engine.Storage.set ('gallery', {
 			unlocked: this.state.unlocked
 		});
+
+		// Update the gallery when an image gets unlocked or locked
+		this.forceRender ();
+
 		return Promise.resolve ();
 	}
 
