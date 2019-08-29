@@ -43,8 +43,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
-    "electron": "^4.1.4",
-    "electron-builder": "^20.39.0",
+    "electron": "^6.0.5",
+    "electron-builder": "^21.2.0",
     "parcel": "^1.12.3"
   }
 }
