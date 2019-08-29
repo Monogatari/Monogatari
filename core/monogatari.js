@@ -1,4 +1,4 @@
-import { $_, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, Text, Debug } from '@aegis-framework/artemis';
+import { $_, $_ready, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, Text, Debug } from '@aegis-framework/artemis';
 import moment from 'moment';
 import mousetrap from 'mousetrap';
 import { FancyError } from './lib/FancyError';
@@ -552,6 +552,10 @@ class Monogatari {
 					newConfiguration: object,
 					oldConfiguration: this._configuration[key]
 				});
+
+				if (typeof this._configuration[key] !== 'object' || this._configuration[key] === null) {
+					this._configuration[key] = {};
+				}
 
 				this._configuration[key] = merge (this._configuration[key], object);
 
@@ -2512,7 +2516,18 @@ class Monogatari {
 		});
 	}
 
-	static element (pure = false) {
+	/**
+	 * @static element - Get the main visual-novel element
+	 *
+	 * @param {boolean} pure - Wether to get an Artemis DOM instance of the element
+	 * or a pure HTML element
+	 * @param {boolean} handled - Wether the case of the element not existing is
+	 * being handled in some way or not. If it doesn't exist and it is not being
+	 * handled, an error will be shown.
+	 *
+	 * @returns {DOM | HTMLElement}
+	 */
+	static element (pure = false, handled = false) {
 		let element = null;
 		let exists = false;
 
@@ -2527,7 +2542,7 @@ class Monogatari {
 		// In some cases, the user might be trying to execute an action using the
 		// main element when the DOM has not been loaded yet, thus causing an
 		// error since the element does not exists yet.
-		if (exists === false) {
+		if (exists === false && handled === false) {
 			FancyError.show (
 				'Main element is not ready yet',
 				'Monogatari attempted to execute a function when the main element was not fully loaded yet.',
@@ -2571,12 +2586,12 @@ class Monogatari {
 	static trigger (name, details = {}) {
 		const event = new CustomEvent (name, { bubbles: false, detail: details });
 
-		const element = this.element (true);
+		const element = this.element (true, true);
 
 		if (element) {
 			element.dispatchEvent (event);
 		} else {
-			element.ready (() => dispatchEvent (event));
+			$_ready (() => dispatchEvent (event));
 		}
 	}
 

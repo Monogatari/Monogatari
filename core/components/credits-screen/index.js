@@ -8,7 +8,7 @@ class CreditsScreen extends ScreenComponent {
 			this.engine.component ('main-menu').addButton ({
 				string: 'Credits',
 				data: {
-					action: 'open-menu',
+					action: 'open-screen',
 					open: 'credits'
 				}
 			});
@@ -45,14 +45,20 @@ class CreditsScreen extends ScreenComponent {
 			}
 
 			for (const key of Object.keys (content)) {
+				let value = content[key];
+
+				if (value instanceof Array) {
+					value = value.join (', ');
+				}
+
 				if (key.indexOf ('_') === 0) {
 					html += `<p class='row row--spaced'>
-								<span class="row__column row__column--phone--12">${content[key]}</span>
+								<span class="row__column row__column--phone--12">${value}</span>
 							</p>`;
 				} else {
 					html += `<p class='row row--spaced'>
 								<b class="row__column row__column--phone--6">${key}</b>
-								<span class="row__column row__column--phone--6">${content[key]}</span>
+								<span class="row__column row__column--phone--6">${value}</span>
 							</p>`;
 				}
 
