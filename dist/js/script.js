@@ -6,7 +6,7 @@ monogatari.action ('message').messages ({
 		title: 'Help',
 		subtitle: 'Some useful Links',
 		body: `
-			<p><a href='https://monogatari.io/documentation/'>Documentation</a> - Everything you need to know.</p>
+			<p><a href='https://developers.monogatari.io/documentation/'>Documentation</a> - Everything you need to know.</p>
 			<p><a href='https://monogatari.io/demo/'>Demo</a> - A simple Demo.</p>
 		`
 	}

@@ -163,7 +163,7 @@ class Monogatari {
 								</pre>
 							`,
 							'_2': 'You may also want to check if the [data-string] property of the HTML elements above is correct or if they have a typo.',
-							'Documentation': '<a href="https://this.io/documentation/configuration/internationalization/" target="_blank">Internationalization</a>'
+							'Documentation': '<a href="https://developers.monogatari.io/documentation/v/develop/configuration-options/game-configuration/internationalization/" target="_blank">Internationalization</a>'
 						}
 					}
 				);
@@ -195,7 +195,7 @@ class Monogatari {
 								</code>
 							</pre>
 						`,
-						'Documentation': '<a href="https://this.io/documentation/configuration/internationalization/" target="_blank">Internationalization</a>'
+						'Documentation': '<a href="https://developers.monogatari.io/documentation/v/develop/configuration-options/game-configuration/internationalization/" target="_blank">Internationalization</a>'
 					}
 				}
 			);
@@ -637,7 +637,7 @@ class Monogatari {
 										</code>
 									</pre>
 								`,
-								'Documentation': '<a href="https://this.io/documentation/configuration/internationalization/" target="_blank">Internationalization</a>',
+								'Documentation': '<a href="https://developers.monogatari.io/documentation/v/develop/configuration-options/game-configuration/internationalization/" target="_blank">Internationalization</a>',
 								'_4': `If ${this.preference ('Language')} should not be the default language, you can change that preference on your options.js file.`,
 								'_5': `
 									<pre>

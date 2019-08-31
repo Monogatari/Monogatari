@@ -4,7 +4,7 @@ Hey there! The very fact that you are reading this is awesome! It means you are
 a bit interested in contributing to Monogatari. If you want to contribute, please
 keep in mind the following guidelines! Please note these guidelines are just for
 contributing to the project, not for creating your game. If you need instructions
-on programming your own Visual Novel, you'll find useful resources in the [documentation](https://monogatari.io/documentation).
+on programming your own Visual Novel, you'll find useful resources in the [documentation](https://developers.monogatari.io/documentation/).
 
 ## Development Culture
 A very important part is to get into Monogatari's development culture, and it's
@@ -165,5 +165,5 @@ Monogatari ships with configurations for the following linters:
 Whenever possible, make sure to use the linters and comply with the
 specified rules on these files.
 
-There's also an `.editorconfig` file shipped so if your editor 
+There's also an `.editorconfig` file shipped so if your editor
 supports it, it should take care of some of the formatting.
