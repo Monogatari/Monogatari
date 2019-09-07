@@ -16,10 +16,12 @@ export class Scene extends Action {
 	static onLoad () {
 		const { scene } = Monogatari.state ();
 		if (scene !== '') {
-			Monogatari.run (scene, false);
+			const promise = Monogatari.run (scene, false);
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
 			Monogatari.history ('scene').pop ();
+
+			return promise;
 		}
 		return Promise.resolve ();
 	}

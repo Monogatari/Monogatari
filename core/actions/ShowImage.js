@@ -19,13 +19,19 @@ export class ShowImage extends Action {
 
 	static onLoad () {
 		const { images } = Monogatari.state ();
+		const promises = [];
 
 		for (const item of images) {
-			Monogatari.run (item, false);
+			promises.push (Monogatari.run (item, false));
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
 			Monogatari.history ('image').pop ();
 		}
+
+		if (promises.length > 0) {
+			return Promise.all (promises);
+		}
+
 		return Promise.resolve ();
 	}
 

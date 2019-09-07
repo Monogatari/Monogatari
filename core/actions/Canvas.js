@@ -19,11 +19,13 @@ export class Canvas extends Action {
 	static onLoad () {
 		if (Monogatari.state ('canvas').length > 0) {
 			for (const canvas of Monogatari.state ('canvas')) {
-				Monogatari.run (canvas, false);
+				const promise = Monogatari.run (canvas, false);
 				// TODO: Find a way to prevent the histories from filling up on loading
 				// So there's no need for this pop.
 				Monogatari.history ('canvas').pop ();
 				Monogatari.state ('canvas').pop ();
+
+				return promise;
 			}
 		}
 		return Promise.resolve ();

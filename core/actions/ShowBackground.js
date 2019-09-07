@@ -16,10 +16,12 @@ export class ShowBackground extends Action {
 	static onLoad () {
 		const { background, scene } = Monogatari.state ();
 		if (background !== '' && scene === '') {
-			Monogatari.run (background, false);
+			const promise = Monogatari.run (background, false);
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
 			Monogatari.history ('background').pop ();
+
+			return promise;
 		}
 		return Promise.resolve ();
 	}

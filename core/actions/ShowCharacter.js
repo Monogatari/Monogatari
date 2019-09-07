@@ -23,12 +23,17 @@ export class ShowCharacter extends Action {
 
 	static onLoad () {
 		const { characters } = Monogatari.state ();
+		const promises = [];
 
 		for (const item of characters) {
-			Monogatari.run (item, false);
+			promises.push (Monogatari.run (item, false));
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
 			Monogatari.history ('character').pop ();
+		}
+
+		if (promises.length > 0) {
+			return Promise.all (promises);
 		}
 
 		return Promise.resolve ();

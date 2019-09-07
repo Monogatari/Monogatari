@@ -49,10 +49,12 @@ export class Particles extends Action {
 	static onLoad () {
 		const { particles } = Monogatari.state ();
 		if (particles !== '') {
-			Monogatari.run (particles, false);
+			 const promise = Monogatari.run (particles, false);
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
 			Monogatari.history ('particle').pop ();
+
+			return promise;
 		}
 		return Promise.resolve ();
 	}

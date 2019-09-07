@@ -18,12 +18,18 @@ export class Video extends Action {
 
 	static onLoad () {
 		if (Monogatari.state ('videos').length > 0) {
+			const promises = [];
+
 			for (const video of Monogatari.state ('videos')) {
-				Monogatari.run (video, false);
+				promises.push (Monogatari.run (video, false));
 				// TODO: Find a way to prevent the histories from filling up on loading
 				// So there's no need for this pop.
 				Monogatari.history ('video').pop ();
 				Monogatari.state ('videos').pop ();
+			}
+
+			if (promises.length > 0) {
+				return Promise.all (promises);
 			}
 		}
 		return Promise.resolve ();

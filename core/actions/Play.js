@@ -75,6 +75,7 @@ export class Play extends Action {
 
 	static onLoad () {
 		const mediaPlayers = Object.keys (Monogatari.mediaPlayers ());
+		const promises = [];
 
 		for (const mediaType of mediaPlayers) {
 			const state =  Monogatari.state (mediaType);
@@ -82,13 +83,17 @@ export class Play extends Action {
 			if (typeof state !== 'undefined') {
 				if (state.length > 0) {
 					for (const statement of state) {
-						Monogatari.run (statement, false);
+						promises.push (Monogatari.run (statement, false));
 						// TODO: Find a way to prevent the histories from filling up on loading
 						// So there's no need for this pop.
 						Monogatari.history (mediaType).pop ();
 					}
 				}
 			}
+		}
+
+		if (promises.length > 0) {
+			return Promise.all (promises);
 		}
 		return Promise.resolve ();
 	}
