@@ -1778,7 +1778,8 @@ class Monogatari {
 		// free mode is enabled.
 		if (!$_('.modal').isVisible ()
 			&& !this.global ('distraction_free')
-			&& !this.global ('block')) {
+			&& !this.global ('block')
+			&& !this.global ('_engine_block')) {
 			const promises = [];
 
 			this.debug.groupCollapsed ('shouldProceed Check');
