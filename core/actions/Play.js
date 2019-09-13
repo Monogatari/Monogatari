@@ -190,6 +190,14 @@ export class Play extends Action {
 	constructor ([ action, type, media, ...props ]) {
 		super ();
 		this.type = type;
+
+		if (this.type === 'music') {
+			this.directory = this.type;
+		} else {
+			// Directories are always plural so we need to add an "s"
+			this.directory = this.type + 's';
+		}
+
 		this.mediaKey = media;
 		this.props = props;
 

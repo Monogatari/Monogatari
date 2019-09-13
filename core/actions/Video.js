@@ -73,8 +73,8 @@ export class Video extends Action {
 		this.name = name;
 		this.props = props;
 
-		if (typeof Monogatari.asset ('video', name) !== 'undefined') {
-			this.src = Monogatari.asset ('video', name);
+		if (typeof Monogatari.asset ('videos', name) !== 'undefined') {
+			this.src = Monogatari.asset ('videos', name);
 		}
 	}
 
@@ -87,7 +87,7 @@ export class Video extends Action {
 		element.dataset.video = this.name;
 		element.dataset.mode = this.mode;
 
-		$_(element).attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').video}/${this.src}`);
+		$_(element).attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').videos}/${this.src}`);
 
 		if (this.props.indexOf ('close') > -1) {
 			element.onended = () => {

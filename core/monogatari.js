@@ -847,7 +847,7 @@ class Monogatari {
 							this.trigger ('assetLoaded', {
 								name: image,
 								type: 'image',
-								category: 'character'
+								category: 'characters'
 							});
 						}));
 					}
@@ -859,7 +859,7 @@ class Monogatari {
 							this.trigger ('assetLoaded', {
 								name: image,
 								type: 'image',
-								category: 'character'
+								category: 'characters'
 							});
 						}));
 					}
@@ -870,7 +870,7 @@ class Monogatari {
 						this.trigger ('assetLoaded', {
 							name: character.default_expression,
 							type: 'image',
-							category: 'character'
+							category: 'characters'
 						});
 					}));
 				}
@@ -2852,10 +2852,10 @@ Monogatari._settings = {
 		'images': 'images',
 		'music': 'music',
 		'scenes': 'scenes',
-		'sound': 'sound',
+		'sounds': 'sounds',
 		'ui': 'ui',
-		'video': 'video',
-		'voice': 'voice',
+		'videos': 'videos',
+		'voices': 'voices',
 		'gallery': 'gallery'
 	},
 

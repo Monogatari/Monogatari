@@ -99,10 +99,10 @@ monogatari.settings({
 		'images': 'images',
 		'music': 'music',
 		'scenes': 'scenes',
-		'sound': 'sound',
+		'sounds': 'sounds',
 		'ui': 'ui',
-		'video': 'video',
-		'voice': 'voice',
+		'videos': 'videos',
+		'voices': 'voices',
 		'gallery': 'gallery'
 	},
 
