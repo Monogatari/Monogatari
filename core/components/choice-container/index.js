@@ -47,17 +47,19 @@ class ChoiceContainer extends Component {
 
 	render () {
 		const choices = this.props.choices.map ((choice) => {
+			const choiceText = this.engine.replaceVariables (choice.Text);
+
 			if (typeof choice.Clickable === 'function') {
 				return new Promise ((resolve, reject) => {
 					this.engine.assertAsync (choice.Clickable, this.engine).then (() => {
-						resolve (`<button data-do="${choice.Do}" ${ choice.Class ? `class="${choice.Class}"`: ''} data-choice="${choice._key}">${choice.Text}</button>`);
+						resolve (`<button data-do="${choice.Do}" ${ choice.Class ? `class="${choice.Class}"`: ''} data-choice="${choice._key}">${choiceText}</button>`);
 					}).catch (() => {
-						resolve (`<button data-do="${choice.Do}" ${ choice.Class ? `class="${choice.Class}"`: ''} data-choice="${choice._key}" disabled>${choice.Text}</button>`);
+						resolve (`<button data-do="${choice.Do}" ${ choice.Class ? `class="${choice.Class}"`: ''} data-choice="${choice._key}" disabled>${choiceText}</button>`);
 					});
 
 				});
 			}
-			return Promise.resolve (`<button data-do="${choice.Do}" ${ choice.Class ? `class="${choice.Class}"`: ''} data-choice="${choice._key}">${choice.Text}</button>`);
+			return Promise.resolve (`<button data-do="${choice.Do}" ${ choice.Class ? `class="${choice.Class}"`: ''} data-choice="${choice._key}">${choiceText}</button>`);
 		});
 
 		return Promise.all (choices).then ((choices) => `

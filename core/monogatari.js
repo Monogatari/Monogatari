@@ -2754,9 +2754,9 @@ Monogatari._status = {
 
 Monogatari._assets = {
 	music: {},
-	voice: {},
-	sound: {},
-	video: {},
+	voices: {},
+	sounds: {},
+	videos: {},
 	images: {},
 	scenes: {},
 	gallery: {}

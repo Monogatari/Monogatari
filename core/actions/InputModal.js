@@ -33,7 +33,7 @@ export class InputModal extends Action {
 		const { Text, Warning, Save, Validation } = this.statement;
 
 		input.setProps ({
-			text: Text,
+			text: this.engine.replaceVariables (Text),
 			warning: Warning,
 			onSubmit: Save,
 			validate: Validation,
