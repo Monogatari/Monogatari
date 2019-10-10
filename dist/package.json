@@ -35,10 +35,10 @@
   "scripts": {
     "serve": "parcel serve index.html --open",
     "start": "electron . --enable-logging",
-    "build": "build -mwl",
-    "build:windows": "build -w",
-    "build:mac": "build -m",
-    "build:linux": "build -l",
+    "build": "electron-builder -mwl",
+    "build:windows": "electron-builder -w",
+    "build:mac": "electron-builder -m",
+    "build:linux": "electron-builder -l",
     "build:web": "parcel build index.html"
   },
   "devDependencies": {
