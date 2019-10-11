@@ -9,7 +9,7 @@ class AlertDialog extends Component {
 		this.props = {
 			active: true,
 			message: '',
-			context: '',
+			context: null,
 			editable: false,
 			actions: []
 		};
