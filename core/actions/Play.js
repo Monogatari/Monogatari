@@ -203,8 +203,8 @@ export class Play extends Action {
 
 		// Check if a media was defined or just a `play music` was stated
 		if (typeof media !== 'undefined' && media !== 'with') {
-			if (typeof Monogatari.asset (type, media) !== 'undefined') {
-				this.media = Monogatari.asset (type, media);
+			if (typeof Monogatari.asset (this.directory, media) !== 'undefined') {
+				this.media = Monogatari.asset (this.directory, media);
 			} else {
 				this.media = media;
 			}
@@ -240,7 +240,7 @@ export class Play extends Action {
 					this.player.loop = true;
 				}
 
-				this.player.src = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting('AssetsPath')[this.type]}/${this.media}`;
+				this.player.src = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting('AssetsPath')[this.directory]}/${this.media}`;
 
 				Monogatari.history (this.type).push (this._statement);
 
