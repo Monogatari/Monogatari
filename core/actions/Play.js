@@ -243,7 +243,7 @@ export class Play extends Action {
 				}
 
 				if (this.props.indexOf ('volume') > -1) {
-					this.player.volume = parseInt (this.props[this.props.indexOf ('volume') + 1]) * this.mediaVolume;
+					this.player.volume = (parseInt (this.props[this.props.indexOf ('volume') + 1]) * this.mediaVolume) / 100;
 				}
 
 				this.player.src = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting('AssetsPath')[this.directory]}/${this.media}`;
