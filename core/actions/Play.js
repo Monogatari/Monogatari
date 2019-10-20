@@ -201,6 +201,8 @@ export class Play extends Action {
 		this.mediaKey = media;
 		this.props = props;
 
+		this.mediaVolume = Monogatari.preference ('Volume')[Text.capitalize (this.type)];
+
 		// Check if a media was defined or just a `play music` was stated
 		if (typeof media !== 'undefined' && media !== 'with') {
 			if (typeof Monogatari.asset (this.directory, media) !== 'undefined') {
@@ -212,7 +214,7 @@ export class Play extends Action {
 			let player = Monogatari.mediaPlayer (this.type, this.mediaKey);
 			if (typeof player === 'undefined') {
 				player = new Audio ();
-				player.volume = Monogatari.preference ('Volume')[Text.capitalize (this.type)];
+				player.volume = this.mediaVolume;
 				this.player = Monogatari.mediaPlayer (this.type, this.mediaKey, player);
 			} else {
 				this.player = player;
@@ -238,6 +240,10 @@ export class Play extends Action {
 				// Make the audio loop if it was provided as a prop
 				if (this.props.indexOf ('loop') > -1) {
 					this.player.loop = true;
+				}
+
+				if (this.props.indexOf ('volume') > -1) {
+					this.player.volume = parseInt (this.props.split (' ')[this.props.indexOf ('volume') + 1]) * this.mediaVolume;
 				}
 
 				this.player.src = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting('AssetsPath')[this.directory]}/${this.media}`;

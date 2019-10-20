@@ -5,6 +5,8 @@
  */
 
 message-modal {
+
+
 	& div {
 		width: auto;
 		padding: 1rem;
@@ -17,5 +19,9 @@ message-modal {
 	& [data-ui='message-content'] {
 		text-align: left;
 		max-width: 100%;
+
+		& * {
+			user-select: text;
+		}
 	}
 }
