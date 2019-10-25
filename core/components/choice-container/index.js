@@ -35,7 +35,9 @@ class ChoiceContainer extends Component {
 		// Check if a list of classes has been defined and if the list is not empty
 		if (typeof this.props.classes === 'string' && this.props.classes !== '') {
 			this.props.classes.split (' ').forEach ((className) => {
-				this.classList.add (className);
+				if (className) {
+					this.classList.add (className);
+				}
 			});
 		}
 		return Promise.resolve ();

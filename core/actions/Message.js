@@ -109,7 +109,9 @@ export class Message extends Action {
 		}
 
 		for (const newClass of this.classes) {
-			element.classList.add (newClass);
+			if (newClass) {
+				element.classList.add (newClass);
+			}
 		}
 
 		this.engine.element ().find ('[data-screen="game"]').append (element);
