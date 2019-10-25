@@ -70,6 +70,8 @@ class TextInput extends Component {
 				this.content ('warning').text (this.props.warning);
 			});
 		});
+
+		this.content ('field').get (0).focus ();
 		return Promise.resolve ();
 	}
 
