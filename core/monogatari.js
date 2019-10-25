@@ -480,11 +480,14 @@ class Monogatari {
 	}
 
 	static translation (language, strings) {
-		if (typeof this._translations[language] !== 'undefined') {
-			this._translations[language] = Object.assign ({}, this._translations[language], strings);
-		} else {
-			this._translations[language] = strings;
+		if (typeof strings !== 'undefined') {
+			if (typeof this._translations[language] !== 'undefined') {
+				this._translations[language] = Object.assign ({}, this._translations[language], strings);
+			} else {
+				this._translations[language] = strings;
+			}
 		}
+		return this._translations[language];
 	}
 
 	static setting (key, value = null) {
