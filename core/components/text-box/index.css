@@ -51,12 +51,21 @@ text-box {
 
 	[data-ui='face'] {
 		float: left;
-		max-height: 20vh !important;
+		_max-height: 20vh !important;
 		position: initial !important;
 	}
 
 	[data-content="text"] {
 		width: 100%;
+	}
+
+	[data-content="wrapper"] {
+		flex-grow: 1;
+	}
+
+	[data-content="side-image"] {
+		display: flex;
+		align-items: center;
 	}
 }
 
