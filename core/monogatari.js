@@ -2376,8 +2376,7 @@ class Monogatari {
 			marginTopCss = marginTop + 'px';
 			heightCss = h + 'px';
 
-		}
-		else {
+		} else {
 			const w = Math.floor (mainHeight * (proportionWidth/proportionHeight));
 			widthCss = w + 'px';
 		}
@@ -2499,9 +2498,10 @@ class Monogatari {
 			const [w, h] = Monogatari.setting ('AspectRatio').split (':');
 			const proportionWidth = parseInt(w);
 			const proportionHeight = parseInt(h);
-
-			this.resize(null, proportionWidth, proportionHeight);
-			$_(window).on ('resize', () => this.resize(null, proportionWidth, proportionHeight));
+			if (!(Platform.electron () && forceAspectRatio === 'Global')) {
+				this.resize (null, proportionWidth, proportionHeight);
+				$_(window).on ('resize', () => this.resize (null, proportionWidth, proportionHeight));
+			}
 		}
 
 		const promises = [];

@@ -16,7 +16,7 @@ class SettingsScreen extends ScreenComponent {
 	}
 
 	electron (selector) {
-		this.element ().find ('[data-action="set-resolution"]').value (Monogatari.preference ('Resolution'));
+		this.element ().find ('[data-action="set-resolution"]').value (this.engine.preference ('Resolution'));
 
 		window.onbeforeunload = (event) => {
 			event.preventDefault ();
@@ -37,15 +37,15 @@ class SettingsScreen extends ScreenComponent {
 		};
 
 		window.ipcRendererSend ('window-info-request', {
-			title: Monogatari.setting ('Name'),
-			resizable: Monogatari.setting ('ForceAspectRatio') !== 'Global'
+			title: this.engine.setting ('Name'),
+			resizable: this.engine.setting ('ForceAspectRatio') !== 'Global'
 		});
 
 		window.ipcRendererReceive ('window-info-reply', (event, args) => {
 			const { resizable, minWidth, maxWidth, minHeight, maxHeight } = args;
 
 			if (!resizable) {
-				const aspectRatio = Monogatari.setting ('AspectRatio').split (':');
+				const aspectRatio = this.engine.setting ('AspectRatio').split (':');
 				const aspectRatioWidth = parseInt (aspectRatio[0]);
 				const aspectRatioHeight = parseInt (aspectRatio[1]);
 
@@ -54,13 +54,13 @@ class SettingsScreen extends ScreenComponent {
 					const calculatedHeight = aspectRatioHeight * i;
 
 					if (calculatedWidth >= minWidth && calculatedHeight >= minHeight && calculatedWidth <= maxWidth && calculatedHeight <= maxHeight) {
-						this.element ().find ('[data-action="set-resolution"]').append(`<option value="${calculatedWidth}x${calculatedHeight}">${Monogatari.string ('Windowed')} ${calculatedWidth}x${calculatedHeight}</option>`);
+						this.element ().find ('[data-action="set-resolution"]').append(`<option value="${calculatedWidth}x${calculatedHeight}">${this.engine.string ('Windowed')} ${calculatedWidth}x${calculatedHeight}</option>`);
 					}
 				}
 
-				this.element ().find ('[data-action="set-resolution"]').append(`<option value="fullscreen">${Monogatari.string ('FullScreen')}</option>`);
+				this.element ().find ('[data-action="set-resolution"]').append(`<option value="fullscreen">${this.engine.string ('FullScreen')}</option>`);
 
-				this.changeWindowResolution (Monogatari.preference ('Resolution'));
+				this.changeWindowResolution (this.engine.preference ('Resolution'));
 				this.element ().find ('[data-action="set-resolution"]').change ((event) => {
 					const size = event.target.value;
 					this.changeWindowResolution (size);
@@ -75,9 +75,9 @@ class SettingsScreen extends ScreenComponent {
 			const { width, height, fullscreen } = args;
 
 			if (fullscreen) {
-				Monogatari.preference ('Resolution', 'fullscreen');
+				this.engine.preference ('Resolution', 'fullscreen');
 			} else {
-				Monogatari.preference ('Resolution', `${width}x${height}`);
+				this.engine.preference ('Resolution', `${width}x${height}`);
 			}
 		});
 	}
