@@ -7,8 +7,8 @@ class MessageModal extends Component {
 		super ();
 
 		this.props = {
-			title: '',
-			subtitle: '',
+			title: null,
+			subtitle: null,
 			body: ''
 		};
 	}
@@ -44,9 +44,9 @@ class MessageModal extends Component {
 		return `
 			<div class="modal__content">
 				<div data-ui="message-content" >
-					${ title ? `<h3 data-content="title">${title}</h3>` : '' }
-					${ subtitle ? `<p data-content="subtitle">${subtitle}</p>` : '' }
-					${ body ? `<p data-content="body">${body}</p>` : '' }
+					${ typeof title === 'string' && title ? `<h3 data-content="title">${title}</h3>` : '' }
+					${ typeof subtitle === 'string' && subtitle ? `<p data-content="subtitle">${subtitle}</p>` : '' }
+					${ typeof body === 'string' && body ? `<p data-content="body">${body}</p>` : '' }
 				</div>
 				<div class="horizontal horizontal--center" data-ui="inner-menu">
 					<button data-action="close" data-close="message-modal" data-string="Close">Close</button>
