@@ -54,6 +54,10 @@ text-box {
 		max-height: 20vh !important;
 		position: initial !important;
 	}
+
+	[data-content="text"] {
+		width: 100%;
+	}
 }
 
 /** Medium Screens, Tablets (601px) **/
