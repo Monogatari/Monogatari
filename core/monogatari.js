@@ -1693,7 +1693,7 @@ class Monogatari {
 						for (const element of show) {
 							if (element.trim () !== '') {
 								const div = document.createElement ('div');
-								div.innerHTML =  element;
+								div.innerHTML =  element.replace ('img/', 'assets/');
 								const item = $_(div.firstChild);
 								if (element.indexOf ('data-character') > -1) {
 									this.state ('characters').push (`show character ${item.data ('character')} ${item.data ('sprite')} ${item.get (0).className}`);
@@ -1711,7 +1711,14 @@ class Monogatari {
 						music: data.Engine.MusicHistory,
 						sound: data.Engine.SoundHistory,
 						image: data.Engine.ImageHistory,
-						character: data.Engine.CharacterHistory,
+						character: data.Engine.CharacterHistory.map ((character) => {
+							const div = document.createElement ('div');
+							div.innerHTML = character.replace ('img/', 'assets/');
+							const item = $_(div.firstChild);
+							const classes = item.get (0).classList;
+							classes.remove ('animated');
+							return `show character ${item.data ('character')} ${item.data ('sprite')} with ${classes.toString ()}`;
+						}),
 						scene: data.Engine.SceneHistory.map ((scene) => {
 							return `show scene ${scene}`;
 						}),
