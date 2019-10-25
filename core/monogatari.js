@@ -1509,6 +1509,8 @@ class Monogatari {
 
 		// Don't allow null as a valid statement
 		if (statement === null) {
+			this.debug.trace ();
+			this.debug.groupEnd ();
 			return Promise.reject ();
 		}
 
@@ -1547,6 +1549,8 @@ class Monogatari {
 				return Util.callAsync (actionStatement, Monogatari).finally (() => {
 					this.global ('block', false);
 					if (shouldAdvance) {
+						this.debug.trace ();
+						this.debug.groupEnd ();
 						return this.next ();
 					}
 				});
