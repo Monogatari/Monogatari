@@ -2446,6 +2446,8 @@ class Monogatari {
 
 		});
 
+		const self = this;
+
 		// Add listeners for the data-action properties
 		this.on ('click', '[data-action]', function (event) {
 			const element = $_(this);
@@ -2453,7 +2455,7 @@ class Monogatari {
 			const action = element.data ('action');
 
 			if (action) {
-				Monogatari.runListener (action, element, event);
+				self.runListener (action, element, event);
 			}
 
 			return false;
@@ -2488,7 +2490,7 @@ class Monogatari {
 			}
 		});
 
-		const forceAspectRatio = Monogatari.setting ('ForceAspectRatio');
+		const forceAspectRatio = this.setting ('ForceAspectRatio');
 		let forceAspectRatioFlag = true;
 
 		switch (forceAspectRatio) {
@@ -2505,7 +2507,7 @@ class Monogatari {
 		}
 
 		if (forceAspectRatioFlag) {
-			const [w, h] = Monogatari.setting ('AspectRatio').split (':');
+			const [w, h] = this.setting ('AspectRatio').split (':');
 			const proportionWidth = parseInt(w);
 			const proportionHeight = parseInt(h);
 			if (!(Platform.electron () && forceAspectRatio === 'Global')) {
@@ -2691,7 +2693,7 @@ class Monogatari {
 
 				if (this.setting ('AutoSave') != 0 && typeof this.setting ('AutoSave') === 'number') {
 					this.debug.debug ('Automatic save is enabled, setting up timeout');
-					this.global ('_auto_save_interval', setInterval(function () {
+					this.global ('_auto_save_interval', setInterval(() => {
 						this.debug.groupCollapsed ('Automatic Save');
 						const id = this.global ('current_auto_save_slot');
 
