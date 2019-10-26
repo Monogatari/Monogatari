@@ -1,8 +1,8 @@
 {
   "name": "@monogatari/core",
-  "version": "2.0.0-alpha.7",
-  "main": "./dist/engine/monogatari.js",
-  "module": "./core/index.js",
+  "version": "2.0.0-alpha.8",
+  "main": "./dist/engine/core/monogatari.js",
+  "module": "./src/index.js",
   "description": "Monogatari is a simple web visual novel engine created to bring Visual Novels to the web.",
   "repository": {
     "type": "git",
@@ -18,12 +18,12 @@
     "start": "parcel serve index.html --open --no-cache",
     "build": "parcel build ./src/index.html",
     "build:core": "yarn run build:js && yarn build:css",
-    "build:js": "parcel build ./core/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine/core --no-cache --public-url .",
+    "build:js": "parcel build ./src/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine/core --no-cache --public-url .",
     "build:debug": "parcel build ./debug/index.js --global MonogatariDebug --out-file debug.js --out-dir dist/engine/debug --no-cache --public-url .",
-    "build:css": "parcel build ./core/index.css --out-file monogatari.css --out-dir dist/engine/core --no-cache --no-source-maps",
-    "eslint": "eslint ./core/index.js ./core/actions/* ./core/translations/*",
-    "watch:js": "parcel watch ./core/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine/core --no-cache --public-url .",
-    "watch:css": "parcel watch ./core/index.css --out-file monogatari.css --out-dir dist/engine/core --no-cache --no-source-maps"
+    "build:css": "parcel build ./src/index.css --out-file monogatari.css --out-dir dist/engine/core --no-cache --no-source-maps",
+    "eslint": "eslint ./src/index.js ./src/actions/* ./src/translations/*",
+    "watch:js": "parcel watch ./src/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine/core --no-cache --public-url .",
+    "watch:css": "parcel watch ./src/index.css --out-file monogatari.css --out-dir dist/engine/core --no-cache --no-source-maps"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
@@ -33,7 +33,7 @@
     "autoprefixer": "^9.7.0",
     "babel-eslint": "^10.0.3",
     "core-js": "^3.3.4",
-    "eslint": "^6.5.1",
+    "eslint": "^6.6.0",
     "htmlhint": "^0.11.0",
     "jsdoc": "^3.6.3",
     "parcel": "^1.12.4",
@@ -57,8 +57,11 @@
     "typed.js": "^2.0.11"
   },
   "files": [
-    "index.js",
-    "core/*",
-    "dist/*"
+    "README.md",
+    "LICENSE",
+    "package.json",
+    "yarn.lock",
+    "src/*",
+    "dist/engine/core/*"
   ]
 }
