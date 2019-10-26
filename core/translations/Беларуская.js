@@ -8,9 +8,7 @@
  * Yakauleu "Wiedy Mi" Uladzislau <u.yakauleu@gmail.com>
  */
 
-import { Monogatari } from '../monogatari';
-
-Monogatari.translation ('Беларуская', {
+export default {
 	'AdvanceHelp': 'Каб гуляць, націсніце на прабел або леваю кнопку мышы',
 	'AllowPlayback': 'Націсніце тут, каб дазволіць прайграванне аўдыя',
 	'Audio': 'Аўдыя',
@@ -88,4 +86,4 @@ Monogatari.translation ('Беларуская', {
 	'Voice': 'Гучнасць голасу',
 
 	'Windowed': 'Аконны рэжым'
-});
+};

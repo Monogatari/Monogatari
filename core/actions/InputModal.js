@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import { Util } from '@aegis-framework/artemis';
 
 export class InputModal extends Action {
@@ -55,7 +54,7 @@ export class InputModal extends Action {
 	}
 
 	revert () {
-		return Util.callAsync (this.statement.Revert, Monogatari).then (() => {
+		return Util.callAsync (this.statement.Revert, this.engine).then (() => {
 			return this.apply ();
 		});
 	}
@@ -67,4 +66,4 @@ export class InputModal extends Action {
 
 InputModal.id = 'Input';
 
-Monogatari.registerAction (InputModal, true);
+export default InputModal;

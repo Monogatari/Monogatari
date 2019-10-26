@@ -1,19 +1,18 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import { FancyError } from '../lib/FancyError';
 
 export class Jump extends Action {
 
 	static setup () {
-		Monogatari.history ('label');
-		Monogatari.history ('jump');
+		this.engine.history ('label');
+		this.engine.history ('jump');
 		return Promise.resolve ();
 	}
 
 	static bind (selector) {
-		Monogatari.registerListener ('jump', {
+		this.engine.registerListener ('jump', {
 			callback: (element) => {
-				Monogatari.run (`jump ${element.data('jump')}`, false);
+				this.engine.run (`jump ${element.data('jump')}`, false);
 			}
 		});
 		return Promise.resolve ();
@@ -29,8 +28,8 @@ export class Jump extends Action {
 	}
 
 	willApply () {
-		if (typeof Monogatari.script (this.label) !== 'undefined') {
-			Monogatari.stopAmbient ();
+		if (typeof this.engine.script (this.label) !== 'undefined') {
+			this.engine.stopAmbient ();
 			this.engine.showScreen ('game');
 			return Promise.resolve ();
 		} else {
@@ -39,10 +38,10 @@ export class Jump extends Action {
 				`Monogatari attempted to jump to the label named "${this.label}" but it wasn't found on the script.`,
 				{
 					'Missing Label': this.label,
-					'You may have meant one of these': Object.keys (Monogatari.script ()),
+					'You may have meant one of these': Object.keys (this.engine.script ()),
 					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
-					'Label': Monogatari.state ('label'),
-					'Step': Monogatari.state ('step'),
+					'Label': this.engine.state ('label'),
+					'Step': this.engine.state ('step'),
 					'Help': {
 						'_': 'Check if the label in your jump statement is correct and that you have also defined it correctly.'
 					}
@@ -53,43 +52,43 @@ export class Jump extends Action {
 	}
 
 	apply () {
-		Monogatari.history ('jump').push ({
+		this.engine.history ('jump').push ({
 			source: {
-				label: Monogatari.state ('label'),
-				step: Monogatari.state ('step')
+				label: this.engine.state ('label'),
+				step: this.engine.state ('step')
 			},
 			destination: {
 				label: this.label,
 				step: 0
 			}
 		});
-		Monogatari.state ({
+		this.engine.state ({
 			step: 0,
 			label: this.label
 		});
 
-		if (!Monogatari.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
-			Monogatari.action ('Dialog').reset ();
+		if (!this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
+			this.engine.action ('Dialog').reset ();
 		}
 
-		Monogatari.run (Monogatari.label ()[Monogatari.state ('step')]);
-		Monogatari.history ('label').push (this.label);
+		this.engine.run (this.engine.label ()[this.engine.state ('step')]);
+		this.engine.history ('label').push (this.label);
 
 		return Promise.resolve ();
 	}
 
 	// Jump is right now not reversible due to complications with the logic for it
 	willRevert () {
-		if (Monogatari.history ('jump').length > 0) {
+		if (this.engine.history ('jump').length > 0) {
 			return Promise.resolve ();
 		}
 		return Promise.reject ('No elements in history available.');
 	}
 
 	revert () {
-		const last = Monogatari.history ('jump')[Monogatari.history ('jump').length - 1];
+		const last = this.engine.history ('jump')[this.engine.history ('jump').length - 1];
 		if (typeof last !== 'undefined') {
-			Monogatari.state ({
+			this.engine.state ({
 				step: last.source.step,
 				label: last.source.label
 			});
@@ -99,12 +98,12 @@ export class Jump extends Action {
 	}
 
 	didRevert () {
-		Monogatari.history ('jump').pop ();
-		Monogatari.history ('label').pop ();
+		this.engine.history ('jump').pop ();
+		this.engine.history ('label').pop ();
 		return Promise.resolve ({ advance: true, step: false });
 	}
 }
 
 Jump.id = 'Jump';
 
-Monogatari.registerAction (Jump, true);
+export default Jump;

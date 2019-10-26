@@ -10,7 +10,7 @@
 
 import { Monogatari } from './../monogatari';
 
-Monogatari.translation ('日本語', {
+export default {
 	'AdvanceHelp': 'ゲームを進めるためには、スペースキーを押すかクリックします',
 	'AllowPlayback': 'Click here to allow audio playback',
 	'Audio': 'オーディオ',
@@ -88,4 +88,4 @@ Monogatari.translation ('日本語', {
 	'Voice': 'ボイスの音量',
 
 	'Windowed': '窓'
-});
+};

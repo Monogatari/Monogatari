@@ -1,25 +1,24 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 
 export class Scene extends Action {
 
 	static setup () {
-		Monogatari.history ('scene');
-		Monogatari.history ('sceneElements');
+		this.engine.history ('scene');
+		this.engine.history ('sceneElements');
 
-		Monogatari.state ({
+		this.engine.state ({
 			scene: ''
 		});
 		return Promise.resolve ();
 	}
 
 	static onLoad () {
-		const { scene } = Monogatari.state ();
+		const { scene } = this.engine.state ();
 		if (scene !== '') {
-			const promise = Monogatari.run (scene, false);
+			const promise = this.engine.run (scene, false);
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
-			Monogatari.history ('scene').pop ();
+			this.engine.history ('scene').pop ();
 
 			return promise;
 		}
@@ -27,7 +26,7 @@ export class Scene extends Action {
 	}
 
 	static reset () {
-		Monogatari.state ({
+		this.engine.state ({
 			scene: ''
 		});
 
@@ -49,58 +48,58 @@ export class Scene extends Action {
 
 	apply () {
 		const scene_elements = [];
-		Monogatari.element ().find ('[data-screen="game"] img:not([data-ui="face"]):not([data-visibility="invisible"])').each ((element) => {
+		this.engine.element ().find ('[data-screen="game"] img:not([data-ui="face"]):not([data-visibility="invisible"])').each ((element) => {
 			scene_elements.push (element.outerHTML);
 		});
 
-		return Monogatari.run (this._statement.replace('show scene', 'show background'), false).then(() => {
-			Monogatari.history ('sceneElements').push (scene_elements);
+		return this.engine.run (this._statement.replace('show scene', 'show background'), false).then(() => {
+			this.engine.history ('sceneElements').push (scene_elements);
 
-			Monogatari.element ().find ('[data-character]').remove ();
-			Monogatari.element ().find ('[data-image]').remove ();
+			this.engine.element ().find ('[data-character]').remove ();
+			this.engine.element ().find ('[data-image]').remove ();
 		});
 	}
 
 	didApply () {
 
-		Monogatari.state ({
+		this.engine.state ({
 			scene: this._statement
 		});
 
-		Monogatari.history ('scene').push (this._statement);
+		this.engine.history ('scene').push (this._statement);
 
-		Monogatari.action ('Dialog').reset ();
+		this.engine.action ('Dialog').reset ();
 
 		return Promise.resolve ({ advance: true });
 	}
 
 	willRevert () {
-		Monogatari.element ().find ('[data-character]').remove ();
-		Monogatari.element ().find ('[data-image]').remove ();
+		this.engine.element ().find ('[data-character]').remove ();
+		this.engine.element ().find ('[data-image]').remove ();
 		return Promise.resolve ();
 	}
 
 	revert () {
-		return Monogatari.revert (this._statement.replace('show scene', 'show background'), false, false).then(() => {
-			//Monogatari.history ('scene').pop ();
+		return this.engine.revert (this._statement.replace('show scene', 'show background'), false, false).then(() => {
+			//this.engine.history ('scene').pop ();
 
-			if (Monogatari.history ('scene').length > 0) {
-				const last = Monogatari.history ('scene')[Monogatari.history ('scene').length - 1];
+			if (this.engine.history ('scene').length > 0) {
+				const last = this.engine.history ('scene')[this.engine.history ('scene').length - 1];
 
-				Monogatari.state ({
+				this.engine.state ({
 					scene: last
 				});
 
-				if (Monogatari.history ('sceneElements').length > 0) {
-					const scene_elements = Monogatari.history  ('sceneElements').pop ();
+				if (this.engine.history ('sceneElements').length > 0) {
+					const scene_elements = this.engine.history  ('sceneElements').pop ();
 
 					if (typeof scene_elements === 'object') {
 						for (const element of scene_elements) {
-							Monogatari.element ().find ('[data-screen="game"]').append (element);
+							this.engine.element ().find ('[data-screen="game"]').append (element);
 						}
 					}
 				}
-				return Monogatari.action ('Dialog').reset ();
+				return this.engine.action ('Dialog').reset ();
 			}
 		});
 	}
@@ -112,4 +111,4 @@ export class Scene extends Action {
 
 Scene.id = 'Scene';
 
-Monogatari.registerAction (Scene, true);
+export default Scene;

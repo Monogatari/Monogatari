@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 
 export class HideParticles extends Action {
 
@@ -12,7 +11,7 @@ export class HideParticles extends Action {
 	}
 
 	apply () {
-		Monogatari.action ('Particles').stop ();
+		this.engine.action ('Particles').stop ();
 		return Promise.resolve ();
 	}
 
@@ -21,9 +20,9 @@ export class HideParticles extends Action {
 	}
 
 	revert () {
-		if (Monogatari.history ('particle').length > 0) {
-			const last = Monogatari.history ('particle').pop ();
-			return Monogatari.run (last, false);
+		if (this.engine.history ('particle').length > 0) {
+			const last = this.engine.history ('particle').pop ();
+			return this.engine.run (last, false);
 		}
 		return Promise.resolve ();
 	}
@@ -35,4 +34,4 @@ export class HideParticles extends Action {
 
 HideParticles.id = 'Hide::Particles';
 
-Monogatari.registerAction (HideParticles, true);
+export default HideParticles;

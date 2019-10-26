@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import { Util } from '@aegis-framework/artemis';
 
 export class HideCanvas extends Action {
@@ -12,7 +11,7 @@ export class HideCanvas extends Action {
 	constructor ([ hide, type, name, separator, ...classes ]) {
 		super ();
 		this.name = name;
-		this.object = Monogatari.action ('Canvas').objects (name);
+		this.object = this.engine.action ('Canvas').objects (name);
 		if (typeof classes !== 'undefined') {
 			this.classes = classes;
 		} else {
@@ -21,30 +20,30 @@ export class HideCanvas extends Action {
 	}
 
 	apply () {
-		return Util.callAsync (this.object.stop, Monogatari).then (() => {
+		return Util.callAsync (this.object.stop, this.engine).then (() => {
 			if (this.classes.length > 0) {
-				Monogatari.element ().find (`[data-canvas="${this.name}"]`).addClass ('animated');
+				this.engine.element ().find (`[data-canvas="${this.name}"]`).addClass ('animated');
 				for (const newClass of this.classes) {
-					Monogatari.element ().find (`[data-canvas="${this.name}"]`).addClass (newClass);
+					this.engine.element ().find (`[data-canvas="${this.name}"]`).addClass (newClass);
 				}
 
 				// Remove item after a while to prevent it from showing randomly
 				// when coming from a menu to the game because of its animation
 				setTimeout (() => {
-					Monogatari.element ().find (`[data-canvas="${this.name}"]`).remove ();
+					this.engine.element ().find (`[data-canvas="${this.name}"]`).remove ();
 				}, 10000);
 			} else {
-				Monogatari.element ().find (`[data-canvas="${this.name}"]`).remove ();
+				this.engine.element ().find (`[data-canvas="${this.name}"]`).remove ();
 			}
 		});
 	}
 
 	didApply () {
-		for (let i = Monogatari.state ('canvas').length - 1; i >= 0; i--) {
-			const last = Monogatari.state ('canvas')[i];
+		for (let i = this.engine.state ('canvas').length - 1; i >= 0; i--) {
+			const last = this.engine.state ('canvas')[i];
 			const [show, type, mode, name] = last.split (' ');
 			if (name === this.name) {
-				Monogatari.state ('canvas').splice (i, 1);
+				this.engine.state ('canvas').splice (i, 1);
 				break;
 			}
 		}
@@ -52,12 +51,12 @@ export class HideCanvas extends Action {
 	}
 
 	revert () {
-		for (let i = Monogatari.history ('canvas').length - 1; i >= 0; i--) {
-			const last = Monogatari.history ('canvas')[i];
+		for (let i = this.engine.history ('canvas').length - 1; i >= 0; i--) {
+			const last = this.engine.history ('canvas')[i];
 			const [show, canvas, mode, name] = last.split (' ');
 			if (name === this.name) {
-				Monogatari.history ('canvas').splice (i, 1);
-				return Monogatari.run (last, false);
+				this.engine.history ('canvas').splice (i, 1);
+				return this.engine.run (last, false);
 
 			}
 		}
@@ -71,4 +70,4 @@ export class HideCanvas extends Action {
 
 HideCanvas.id = 'Hide::Canvas';
 
-Monogatari.registerAction (HideCanvas, true);
+export default HideCanvas;

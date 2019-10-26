@@ -1,5 +1,4 @@
 import { MenuComponent } from './../../lib/MenuComponent';
-import { Monogatari } from './../../monogatari';
 
 class QuickMenu extends MenuComponent {
 
@@ -32,7 +31,7 @@ class QuickMenu extends MenuComponent {
 
 			element.innerHTML = `
 				<span class="${button.icon}"></span>
-				<span data-string="${button.string}">${Monogatari.string (button.string)}</span>
+				<span data-string="${button.string}">${this.engine.string (button.string)}</span>
 			`;
 
 			return element.outerHTML;
@@ -43,4 +42,5 @@ class QuickMenu extends MenuComponent {
 
 QuickMenu.tag = 'quick-menu';
 
-Monogatari.registerComponent (QuickMenu);
+
+export default QuickMenu;

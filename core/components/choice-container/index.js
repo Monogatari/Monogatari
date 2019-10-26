@@ -1,5 +1,4 @@
 import { Component } from './../../lib/Component';
-import { Monogatari } from './../../monogatari';
 
 class ChoiceContainer extends Component {
 
@@ -75,4 +74,5 @@ class ChoiceContainer extends Component {
 ChoiceContainer.tag = 'choice-container';
 
 
-Monogatari.registerComponent (ChoiceContainer);
+
+export default ChoiceContainer;

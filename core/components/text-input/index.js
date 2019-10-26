@@ -1,5 +1,4 @@
 import { Component } from './../../lib/Component';
-import { Monogatari } from './../../monogatari';
 
 class TextInput extends Component {
 
@@ -92,4 +91,5 @@ class TextInput extends Component {
 
 TextInput.tag = 'text-input';
 
-Monogatari.registerComponent (TextInput);
+
+export default TextInput;

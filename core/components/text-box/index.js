@@ -1,5 +1,4 @@
 import { Component } from './../../lib/Component';
-import { Monogatari } from './../../monogatari';
 
 class TextBox extends Component {
 
@@ -38,4 +37,5 @@ class TextBox extends Component {
 
 TextBox.tag = 'text-box';
 
-Monogatari.registerComponent (TextBox);
+
+export default TextBox;

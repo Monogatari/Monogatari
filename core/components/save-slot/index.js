@@ -1,5 +1,4 @@
 import { Component } from './../../lib/Component';
-import { Monogatari } from './../../monogatari';
 import { Text } from '@aegis-framework/artemis';
 import moment from 'moment';
 
@@ -33,7 +32,7 @@ class SaveSlot extends Component {
 		const engine = this.engine;
 
 		this.engine.on ('click', '[data-component="slot-container"] [data-delete]', function (event) {
-			Monogatari.debug.debug ('Registered Click on Slot Delete Button');
+			engine.debug.debug ('Registered Click on Slot Delete Button');
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();
 			event.preventDefault ();
@@ -128,4 +127,5 @@ class SaveSlot extends Component {
 
 SaveSlot.tag = 'save-slot';
 
-Monogatari.registerComponent (SaveSlot);
+
+export default SaveSlot;

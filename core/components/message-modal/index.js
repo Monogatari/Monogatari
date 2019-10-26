@@ -1,5 +1,4 @@
 import { Component } from './../../lib/Component';
-import { Monogatari } from './../../monogatari';
 
 class MessageModal extends Component {
 
@@ -59,4 +58,5 @@ class MessageModal extends Component {
 MessageModal.tag = 'message-modal';
 
 
-Monogatari.registerComponent (MessageModal);
+
+export default MessageModal;

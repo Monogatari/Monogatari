@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 
 export class Gallery extends Action {
 
@@ -57,4 +56,4 @@ export class Gallery extends Action {
 
 Gallery.id = 'Gallery';
 
-Monogatari.registerAction (Gallery, true);
+export default Gallery;

@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import { Util } from '@aegis-framework/artemis';
 import { FancyError } from '../lib/FancyError';
 
@@ -21,8 +20,8 @@ export class ReversibleFunction extends Action {
 		// automatically and the game will wait for user interaction or some other
 		// code inside the function to keep going. Any other returnValue will
 		// allow the game to keep going right away.
-		return Util.callAsync (this.statement.Apply, Monogatari).then ((returnValue) => {
-			Monogatari.global ('block', false);
+		return Util.callAsync (this.statement.Apply, this.engine).then ((returnValue) => {
+			this.engine.global ('block', false);
 			if (returnValue === false) {
 				this.shouldContinue = false;
 			}
@@ -34,8 +33,8 @@ export class ReversibleFunction extends Action {
 					'Error Mesage': e.message,
 					'File Name': e.fileName,
 					'Line Number': e.lineNumber,
-					'Label': Monogatari.state ('label'),
-					'Step': Monogatari.state ('step'),
+					'Label': this.engine.state ('label'),
+					'Step': this.engine.state ('step'),
 					'Help': {
 						'_': 'Check the code for your function, there may be additional information in the console.',
 					}
@@ -54,8 +53,8 @@ export class ReversibleFunction extends Action {
 		// automatically and the game will wait for user interaction or some other
 		// code inside the function to keep going. Any other returnValue will
 		// allow the game to keep going right away.
-		return Util.callAsync (this.statement.Reverse, Monogatari).then ((returnValue) => {
-			Monogatari.global ('block', false);
+		return Util.callAsync (this.statement.Reverse, this.engine).then ((returnValue) => {
+			this.engine.global ('block', false);
 			if (returnValue === false) {
 				this.shouldContinue = false;
 			}
@@ -67,8 +66,8 @@ export class ReversibleFunction extends Action {
 					'Error Mesage': e.message,
 					'File Name': e.fileName,
 					'Line Number': e.lineNumber,
-					'Label': Monogatari.state ('label'),
-					'Step': Monogatari.state ('step'),
+					'Label': this.engine.state ('label'),
+					'Step': this.engine.state ('step'),
 					'Help': {
 						'_': 'Check the code for your function, there may be additional information in the console.',
 					}
@@ -84,4 +83,4 @@ export class ReversibleFunction extends Action {
 
 ReversibleFunction.id = 'Function';
 
-Monogatari.registerAction (ReversibleFunction, true);
+export default ReversibleFunction;

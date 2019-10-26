@@ -1,5 +1,4 @@
 import { Component } from './../../lib/Component';
-import { Monogatari } from './../../monogatari';
 
 class CenteredDialog extends Component {
 
@@ -37,4 +36,5 @@ class CenteredDialog extends Component {
 CenteredDialog.tag = 'centered-dialog';
 
 
-Monogatari.registerComponent (CenteredDialog);
+
+export default CenteredDialog;

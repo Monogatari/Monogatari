@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import { FancyError } from './../lib/FancyError';
 
 export class Notify extends Action {
@@ -40,8 +39,8 @@ export class Notify extends Action {
 							{
 								'Specified time': time,
 								'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
-								'Label': Monogatari.state ('label'),
-								'Step': Monogatari.state ('step'),
+								'Label': this.engine.state ('label'),
+								'Step': this.engine.state ('step'),
 								'Help': {
 									'_': 'Check if the value you provided is actually an integer (whole number). Remember the value used must be given in milliseconds and must not be mixed with characters other than numbers.',
 									'_1': 'For example, the following statement would make a notification go away after 5 seconds:',
@@ -60,14 +59,14 @@ export class Notify extends Action {
 					{
 						'Notification': name,
 						'You may have meant': Object.keys (Notify.notifications ()),
-						'Label': Monogatari.state ('label'),
-						'Step': Monogatari.state ('step'),
+						'Label': this.engine.state ('label'),
+						'Step': this.engine.state ('step'),
 						'Help': {
 							'_': 'Check the notification\'s name is correct and that you have defined it previously. A Notification is defined as follows:',
 							'_1':`
 								<pre>
 									<code class='language-javascript'>
-										monogatari.action ('notify').notifications ({
+										this.engine.action ('notify').notifications ({
 											'Welcome': {
 												title: 'Welcome!',
 												body: 'This is the Monogatari VN Engine',
@@ -141,4 +140,4 @@ Notify._configuration = {
 	notifications: {}
 };
 
-Monogatari.registerAction (Notify, true);
+export default Notify;

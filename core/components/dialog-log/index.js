@@ -1,5 +1,4 @@
 import { Component } from './../../lib/Component';
-import { Monogatari } from './../../monogatari';
 
 class DialogLog extends Component {
 
@@ -39,7 +38,7 @@ class DialogLog extends Component {
 			const { name, color } = character;
 			this.content ('log').append (`
 				<div data-spoke="${id}" class="named">
-					<span style="color:${color};">${Monogatari.replaceVariables (name)} </span>
+					<span style="color:${color};">${this.engine.replaceVariables (name)} </span>
 					<p>${dialog}</p>
 				</div>
 			`);
@@ -95,4 +94,5 @@ class DialogLog extends Component {
 DialogLog.tag = 'dialog-log';
 
 
-Monogatari.registerComponent (DialogLog);
+
+export default DialogLog;

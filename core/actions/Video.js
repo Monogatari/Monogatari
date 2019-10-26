@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
 export class Video extends Action {
@@ -17,15 +16,15 @@ export class Video extends Action {
 	}
 
 	static onLoad () {
-		if (Monogatari.state ('videos').length > 0) {
+		if (this.engine.state ('videos').length > 0) {
 			const promises = [];
 
-			for (const video of Monogatari.state ('videos')) {
-				promises.push (Monogatari.run (video, false));
+			for (const video of this.engine.state ('videos')) {
+				promises.push (this.engine.run (video, false));
 				// TODO: Find a way to prevent the histories from filling up on loading
 				// So there's no need for this pop.
-				Monogatari.history ('video').pop ();
-				Monogatari.state ('videos').pop ();
+				this.engine.history ('video').pop ();
+				this.engine.state ('videos').pop ();
 			}
 
 			if (promises.length > 0) {
@@ -36,19 +35,19 @@ export class Video extends Action {
 	}
 
 	static setup () {
-		Monogatari.history ('video');
-		Monogatari.state ({
+		this.engine.history ('video');
+		this.engine.state ({
 			videos: []
 		});
 		return Promise.resolve ();
 	}
 
 	static reset () {
-		Monogatari.element ().find ('[data-video]').remove ();
-		Monogatari.history ({
+		this.engine.element ().find ('[data-video]').remove ();
+		this.engine.history ({
 			video: []
 		});
-		Monogatari.state ({
+		this.engine.state ({
 			videos: []
 		});
 		return Promise.resolve ();
@@ -73,8 +72,8 @@ export class Video extends Action {
 		this.name = name;
 		this.props = props;
 
-		if (typeof Monogatari.asset ('videos', name) !== 'undefined') {
-			this.src = Monogatari.asset ('videos', name);
+		if (typeof this.engine.asset ('videos', name) !== 'undefined') {
+			this.src = this.engine.asset ('videos', name);
 		}
 	}
 
@@ -82,20 +81,20 @@ export class Video extends Action {
 		// TODO: Find a way to remove the resize listeners once the video is stopped
 		const element = document.createElement ('video');
 
-		element.volume = Monogatari.preference ('Volume').Video;
+		element.volume = this.engine.preference ('Volume').Video;
 
 		element.dataset.video = this.name;
 		element.dataset.mode = this.mode;
 
-		$_(element).attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').videos}/${this.src}`);
+		$_(element).attribute ('src', `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').videos}/${this.src}`);
 
 		if (this.props.indexOf ('close') > -1) {
 			element.onended = () => {
-				Monogatari.element ().find (`[data-video="${this.name}"]`).remove ();
+				this.engine.element ().find (`[data-video="${this.name}"]`).remove ();
 				if (this.mode === 'immersive') {
-					Monogatari.state ('videos').pop ();
-					Monogatari.global ('block', false);
-					Monogatari.proceed ();
+					this.engine.state ('videos').pop ();
+					this.engine.global ('block', false);
+					this.engine.proceed ();
 				}
 			};
 		}
@@ -109,23 +108,23 @@ export class Video extends Action {
 		}
 
 		if (this.mode === 'background') {
-			Monogatari.element ().find ('[data-ui="background"]').append (element);
+			this.engine.element ().find ('[data-ui="background"]').append (element);
 		} else if (this.mode === 'immersive') {
-			Monogatari.global ('block', true);
-			Monogatari.element ().find ('[data-screen="game"]').prepend (element);
+			this.engine.global ('block', true);
+			this.engine.element ().find ('[data-screen="game"]').prepend (element);
 		} else if (this.mode === 'fullscreen') {
 			if (element.requestFullscreen) {
-				Monogatari.element ().find ('[data-screen="game"]').append (element);
+				this.engine.element ().find ('[data-screen="game"]').append (element);
 				element.requestFullscreen ();
 			} else {
-				Monogatari.global ('block', true);
+				this.engine.global ('block', true);
 				$_(element).data ('mode','immersive');
-				Monogatari.element ().find ('[data-screen="game"]').prepend (element);
+				this.engine.element ().find ('[data-screen="game"]').prepend (element);
 			}
 		} else if (this.mode === 'displayable') {
-			Monogatari.element ().find ('[data-screen="game"]').append (element);
+			this.engine.element ().find ('[data-screen="game"]').append (element);
 		} else {
-			Monogatari.element ().find ('[data-screen="game"]').append (element);
+			this.engine.element ().find ('[data-screen="game"]').append (element);
 		}
 
 		element.play ();
@@ -134,8 +133,8 @@ export class Video extends Action {
 	}
 
 	didApply () {
-		Monogatari.state ('videos').push (this._statement);
-		Monogatari.history ('video').push (this._statement);
+		this.engine.state ('videos').push (this._statement);
+		this.engine.history ('video').push (this._statement);
 
 		if (this.mode === 'background' || this.mode === 'modal' || this.mode === 'displayable') {
 			return Promise.resolve ({ advance: true });
@@ -145,25 +144,25 @@ export class Video extends Action {
 	}
 
 	revert () {
-		Monogatari.element ().find (`[data-video="${this.name}"]`).remove ();
+		this.engine.element ().find (`[data-video="${this.name}"]`).remove ();
 		return Promise.resolve ();
 	}
 
 	didRevert () {
-		for (let i = Monogatari.state ('videos').length - 1; i >= 0; i--) {
-			const last = Monogatari.state ('videos')[i];
+		for (let i = this.engine.state ('videos').length - 1; i >= 0; i--) {
+			const last = this.engine.state ('videos')[i];
 			const [show, video, mode, name] = last.split (' ');
 			if (name === this.name) {
-				Monogatari.state ('videos').splice (i, 1);
+				this.engine.state ('videos').splice (i, 1);
 				break;
 			}
 		}
 
-		for (let i = Monogatari.history ('video').length - 1; i >= 0; i--) {
-			const last = Monogatari.history ('video')[i];
+		for (let i = this.engine.history ('video').length - 1; i >= 0; i--) {
+			const last = this.engine.history ('video')[i];
 			const [show, video, mode, name] = last.split (' ');
 			if (name === this.name) {
-				Monogatari.history ('video').splice (i, 1);
+				this.engine.history ('video').splice (i, 1);
 				break;
 			}
 		}
@@ -178,4 +177,4 @@ Video._configuration = {
 	}
 };
 
-Monogatari.registerAction (Video, true);
+export default Video;

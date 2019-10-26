@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 
 export class Next extends Action {
 
@@ -19,4 +18,4 @@ export class Next extends Action {
 
 Next.id = 'Next';
 
-Monogatari.registerAction (Next, true);
+export default Next;

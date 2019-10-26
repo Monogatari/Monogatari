@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 
 export class HideVideo extends Action {
 
@@ -21,28 +20,28 @@ export class HideVideo extends Action {
 	apply () {
 
 		if (this.classes.length > 0) {
-			Monogatari.element ().find (`[data-video="${this.name}"]`).addClass ('animated');
+			this.engine.element ().find (`[data-video="${this.name}"]`).addClass ('animated');
 			for (const newClass of this.classes) {
-				Monogatari.element ().find (`[data-video="${this.name}"]`).addClass (newClass);
+				this.engine.element ().find (`[data-video="${this.name}"]`).addClass (newClass);
 			}
 
 			// Remove item after a while to prevent it from showing randomly
 			// when coming from a menu to the game because of its animation
 			setTimeout (() => {
-				Monogatari.element ().find (`[data-video="${this.name}"]`).remove ();
+				this.engine.element ().find (`[data-video="${this.name}"]`).remove ();
 			}, 10000);
 		} else {
-			Monogatari.element ().find (`[data-video="${this.name}"]`).remove ();
+			this.engine.element ().find (`[data-video="${this.name}"]`).remove ();
 		}
 		return Promise.resolve ();
 	}
 
 	didApply () {
-		for (let i = Monogatari.state ('videos').length - 1; i >= 0; i--) {
-			const last = Monogatari.state ('videos')[i];
+		for (let i = this.engine.state ('videos').length - 1; i >= 0; i--) {
+			const last = this.engine.state ('videos')[i];
 			const [show, video, name, mode] = last.split (' ');
 			if (name === this.name) {
-				Monogatari.state ('videos').splice (i, 1);
+				this.engine.state ('videos').splice (i, 1);
 				break;
 			}
 		}
@@ -50,12 +49,12 @@ export class HideVideo extends Action {
 	}
 
 	revert () {
-		for (let i = Monogatari.history ('video').length - 1; i >= 0; i--) {
-			const last = Monogatari.history ('video')[i];
+		for (let i = this.engine.history ('video').length - 1; i >= 0; i--) {
+			const last = this.engine.history ('video')[i];
 			const [show, video, name, mode] = last.split (' ');
 			if (name === this.name) {
-				Monogatari.history ('video').splice (i, 1);
-				return Monogatari.run (last, false);
+				this.engine.history ('video').splice (i, 1);
+				return this.engine.run (last, false);
 
 			}
 		}
@@ -69,4 +68,4 @@ export class HideVideo extends Action {
 
 HideVideo.id = 'Hide::Video';
 
-Monogatari.registerAction (HideVideo, true);
+export default HideVideo;

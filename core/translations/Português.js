@@ -8,9 +8,7 @@
  * fsvieira <sv.filipe@gmail.com>
  */
 
-import { Monogatari } from './../monogatari';
-
-Monogatari.translation ('Português', {
+export default {
 	'AdvanceHelp': 'Pode avançar no jogo usando o botão esquerdo do rato, tocar em qualquer sitío do ecrã de jogo ou carregar na barra de espaço.',
 	'AllowPlayback': 'Clique aqui para permitir a reprodução de áudio',
 	'Audio': 'Áudio',
@@ -88,4 +86,4 @@ Monogatari.translation ('Português', {
 	'Voice': 'Volume de Voz',
 
 	'Windowed': 'Em Janela'
-});
+};

@@ -1,30 +1,30 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import { Util } from '@aegis-framework/artemis';
 
 export class Choice extends Action {
 
 	static setup () {
-		Monogatari.global ('_CurrentChoice', null);
-		Monogatari.history ('choice');
+		this.engine.global ('_CurrentChoice', null);
+		this.engine.history ('choice');
 		return Promise.resolve ();
 	}
 
 	static willRollback () {
-		Monogatari.global ('_CurrentChoice', null);
+		this.engine.global ('_CurrentChoice', null);
 		return Promise.resolve ();
 	}
 
 	static bind () {
+		const engine = this.engine;
 		// Bind the click event on data-do elements. This property is used for
 		// every choice button.
 		this.engine.on ('click', '[data-choice]:not([disabled])', function (event) {
-			Monogatari.debug.debug ('Registered Click on Choice Button');
+			engine.debug.debug ('Registered Click on Choice Button');
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();
 			event.preventDefault ();
 
-			Monogatari.global ('block', false);
+			engine.global ('block', false);
 
 			const doAction = this.dataset.do;
 
@@ -33,29 +33,29 @@ export class Choice extends Action {
 			if (doAction != 'null') {
 
 				// Remove all the choices
-				Monogatari.element ().find ('choice-container').remove ();
+				engine.element ().find ('choice-container').remove ();
 				const choice = this.dataset.choice;
 
 				// Remove the reference to the current choice object
-				if (Monogatari.global ('_CurrentChoice') !== null) {
-					if (typeof Monogatari.global ('_CurrentChoice')[choice] !== 'undefined') {
-						if (typeof Monogatari.global ('_CurrentChoice')[choice].onChosen === 'function') {
-							Util.callAsync (Monogatari.global ('_CurrentChoice')[choice].onChosen, Monogatari).then (() => {
-								Monogatari.run (Monogatari.global ('_CurrentChoice')[choice].Do, false);
-								Monogatari.global ('_CurrentChoice', null);
+				if (engine.global ('_CurrentChoice') !== null) {
+					if (typeof engine.global ('_CurrentChoice')[choice] !== 'undefined') {
+						if (typeof engine.global ('_CurrentChoice')[choice].onChosen === 'function') {
+							Util.callAsync (engine.global ('_CurrentChoice')[choice].onChosen, engine).then (() => {
+								engine.run (engine.global ('_CurrentChoice')[choice].Do, false);
+								engine.global ('_CurrentChoice', null);
 							});
 						} else {
-							Monogatari.run (Monogatari.global ('_CurrentChoice')[choice].Do, false);
-							Monogatari.global ('_CurrentChoice', null);
+							engine.run (engine.global ('_CurrentChoice')[choice].Do, false);
+							engine.global ('_CurrentChoice', null);
 						}
-						Monogatari.history ('choice').push (choice);
+						engine.history ('choice').push (choice);
 					} else {
-						Monogatari.run (doAction, false);
-						Monogatari.global ('_CurrentChoice', null);
+						engine.run (doAction, false);
+						engine.global ('_CurrentChoice', null);
 					}
 				} else {
-					Monogatari.run (doAction, false);
-					Monogatari.global ('_CurrentChoice', null);
+					engine.run (doAction, false);
+					engine.global ('_CurrentChoice', null);
 				}
 			}
 		});
@@ -63,7 +63,7 @@ export class Choice extends Action {
 	}
 
 	static reset () {
-		Monogatari.global ('_CurrentChoice', null);
+		this.engine.global ('_CurrentChoice', null);
 		return Promise.resolve ();
 	}
 
@@ -82,7 +82,7 @@ export class Choice extends Action {
 		// are set a data-do property to know what the choice should do, it is
 		// limited to a string and thus object or function actions would not be
 		// able to be used in choices.
-		Monogatari.global ('_CurrentChoice', this.statement);
+		this.engine.global ('_CurrentChoice', this.statement);
 
 		const promises = [];
 
@@ -101,12 +101,12 @@ export class Choice extends Action {
 					promises.push (
 						new Promise ((resolve) => {
 							// First check if the condition is met before we add the button
-							Monogatari.assertAsync (this.statement[i].Condition, Monogatari).then (() => {
+							this.engine.assertAsync (this.statement[i].Condition, this.engine).then (() => {
 								resolve (this.statement[i]);
 							}).catch (() => {
 								resolve()
 							}).finally (() => {
-								//Monogatari.global ('block', false);
+								//this.engine.global ('block', false);
 							});
 						})
 					);
@@ -134,7 +134,7 @@ export class Choice extends Action {
 				// the choices, in order to avoid showing the choices in an incorrect
 				// format if the dialog was NVL or not
 				this.engine.run (dialog, false).then (() => {
-					if (Monogatari.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
+					if (this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
 						this.engine.element ().find ('[data-component="text-box"]').get (0).content ('text').append (element);
 					} else {
 						this.engine.element ().find ('[data-screen="game"]').append (element);
@@ -142,7 +142,7 @@ export class Choice extends Action {
 				});
 			} else {
 				// If there's no dialog, we can just show the choices right away
-				if (Monogatari.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
+				if (this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
 					this.engine.element ().find ('[data-component="text-box"]').get (0).content ('text').append (element);
 				} else {
 					this.engine.element ().find ('[data-screen="game"]').append (element);
@@ -154,8 +154,8 @@ export class Choice extends Action {
 	// Revert is disabled for choices since we still don't have a way to know what
 	// a choice did
 	willRevert () {
-		if (Monogatari.history ('choice').length > 0) {
-			const choice = Monogatari.history ('choice')[Monogatari.history ('choice').length - 1];
+		if (this.engine.history ('choice').length > 0) {
+			const choice = this.engine.history ('choice')[this.engine.history ('choice').length - 1];
 			if (this.statement[choice] !== 'undefined') {
 
 				// Check if the choice had an onChosen function with it's matching
@@ -172,10 +172,10 @@ export class Choice extends Action {
 	}
 
 	revert () {
-		const choice = Monogatari.history ('choice')[Monogatari.history ('choice').length - 1];
-		return Monogatari.revert (this.statement[choice].Do, false).then (() => {
+		const choice = this.engine.history ('choice')[this.engine.history ('choice').length - 1];
+		return this.engine.revert (this.statement[choice].Do, false).then (() => {
 			if (typeof this.statement[choice].onRevert === 'function') {
-				return Util.callAsync (this.statement[choice].onRevert, Monogatari).then (() => {
+				return Util.callAsync (this.statement[choice].onRevert, this.engine).then (() => {
 					return this.apply ();
 				});
 			}
@@ -184,11 +184,11 @@ export class Choice extends Action {
 	}
 
 	didRevert () {
-		Monogatari.history ('choice').pop ();
+		this.engine.history ('choice').pop ();
 		return Promise.resolve ({ advance: false, step: false });
 	}
 }
 
 Choice.id = 'Choice';
 
-Monogatari.registerAction (Choice, true);
+export default Choice;

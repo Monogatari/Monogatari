@@ -1,25 +1,24 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import { Text } from '@aegis-framework/artemis';
 
 export class ShowBackground extends Action {
 
 	static setup () {
-		Monogatari.history ('background');
+		this.engine.history ('background');
 
-		Monogatari.state ({
+		this.engine.state ({
 			background: ''
 		});
 		return Promise.resolve ();
 	}
 
 	static onLoad () {
-		const { background, scene } = Monogatari.state ();
+		const { background, scene } = this.engine.state ();
 		if (background !== '' && scene === '') {
-			const promise = Monogatari.run (background, false);
+			const promise = this.engine.run (background, false);
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
-			Monogatari.history ('background').pop ();
+			this.engine.history ('background').pop ();
 
 			return promise;
 		}
@@ -27,12 +26,12 @@ export class ShowBackground extends Action {
 	}
 
 	static reset () {
-		const background = Monogatari.element ().find ('[data-ui="background"]');
+		const background = this.engine.element ().find ('[data-ui="background"]');
 
 		background.style ('background-image', 'initial');
 		background.style ('background-color', 'initial');
 
-		Monogatari.state ({
+		this.engine.state ({
 			background: ''
 		});
 
@@ -47,8 +46,8 @@ export class ShowBackground extends Action {
 		super ();
 		this.background = background;
 		this.property = 'background-image';
-		if (typeof Monogatari.asset ('scenes', background) !== 'undefined') {
-			this.value = `url(${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').scenes}/${Monogatari.asset ('scenes', background)})`;
+		if (typeof this.engine.asset ('scenes', background) !== 'undefined') {
+			this.value = `url(${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').scenes}/${this.engine.asset ('scenes', background)})`;
 		} else {
 			const rest = [background, ...classes].join (' ');
 			if (classes.indexOf ('with') > -1) {
@@ -76,7 +75,7 @@ export class ShowBackground extends Action {
 	}
 
 	willApply () {
-		const background = Monogatari.element ().find ('[data-ui="background"]');
+		const background = this.engine.element ().find ('[data-ui="background"]');
 
 		background.removeClass ();
 		void background.get (0).offsetWidth;
@@ -85,13 +84,13 @@ export class ShowBackground extends Action {
 	}
 
 	apply () {
-		const background = Monogatari.element ().find ('[data-ui="background"]');
+		const background = this.engine.element ().find ('[data-ui="background"]');
 
-		Monogatari.element ().find ('[data-ui="background"]').style ('background-image', 'initial');
-		Monogatari.element ().find ('[data-ui="background"]').style ('background-color', 'initial');
-		Monogatari.element ().find ('[data-ui="background"]').style ('animation-duration', '');
+		this.engine.element ().find ('[data-ui="background"]').style ('background-image', 'initial');
+		this.engine.element ().find ('[data-ui="background"]').style ('background-color', 'initial');
+		this.engine.element ().find ('[data-ui="background"]').style ('animation-duration', '');
 
-		Monogatari.element ().find ('[data-ui="background"]').style (this.property, this.value);
+		this.engine.element ().find ('[data-ui="background"]').style (this.property, this.value);
 
 		const durationPosition = this.classes.indexOf ('duration');
 
@@ -107,31 +106,31 @@ export class ShowBackground extends Action {
 	}
 
 	didApply () {
-		Monogatari.state ({
+		this.engine.state ({
 			background: this._statement
 		});
-		Monogatari.history ('background').push (this._statement);
+		this.engine.history ('background').push (this._statement);
 
 		return Promise.resolve ({ advance: true });
 	}
 
 	willRevert () {
-		Monogatari.element ().find ('[data-ui="background"]').removeClass ();
+		this.engine.element ().find ('[data-ui="background"]').removeClass ();
 		return Promise.resolve ();
 	}
 
 	revert () {
-		let history = Monogatari.history ('background');
+		let history = this.engine.history ('background');
 
 		history.pop ();
 
 		if (history.length === 0) {
-			history = Monogatari.history ('scene');
+			history = this.engine.history ('scene');
 			history.pop ();
 		}
 
 		if (history.length > 0) {
-			const background = Monogatari.element ().find ('[data-ui="background"]');
+			const background = this.engine.element ().find ('[data-ui="background"]');
 			const last = history[history.length - 1].replace ('show scene', 'show background');
 			this.constructor (last.split (' '));
 
@@ -143,7 +142,7 @@ export class ShowBackground extends Action {
 				background.addClass (newClass);
 			}
 
-			Monogatari.state ({
+			this.engine.state ({
 				background: last
 			});
 		}
@@ -157,4 +156,4 @@ export class ShowBackground extends Action {
 
 ShowBackground.id = 'Show::Background';
 
-Monogatari.registerAction (ShowBackground, true);
+export default ShowBackground;

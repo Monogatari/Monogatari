@@ -1,5 +1,4 @@
 import { ScreenComponent } from '../../lib/ScreenComponent';
-import { Monogatari } from '../../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
 class GalleryScreen extends ScreenComponent {
@@ -114,4 +113,5 @@ class GalleryScreen extends ScreenComponent {
 
 GalleryScreen.tag = 'gallery-screen';
 
-Monogatari.registerComponent (GalleryScreen);
+
+export default GalleryScreen;

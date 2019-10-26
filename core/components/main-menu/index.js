@@ -1,5 +1,4 @@
 import { MenuComponent } from './../../lib/MenuComponent';
-import { Monogatari } from './../../monogatari';
 
 class MainMenu extends MenuComponent {
 
@@ -33,7 +32,7 @@ class MainMenu extends MenuComponent {
 
 			element.innerHTML = `
 				<span class="${button.icon}"></span>
-				<span data-string="${button.string}">${Monogatari.string (button.string)}</span>
+				<span data-string="${button.string}">${this.engine.string (button.string)}</span>
 			`;
 
 			return element.outerHTML;
@@ -44,4 +43,5 @@ class MainMenu extends MenuComponent {
 
 MainMenu.tag = 'main-menu';
 
-Monogatari.registerComponent (MainMenu);
+
+export default MainMenu;

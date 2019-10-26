@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 
 export class HideImage extends Action {
 
@@ -11,7 +10,7 @@ export class HideImage extends Action {
 		super ();
 		this.asset = asset;
 
-		this.element = Monogatari.element ().find (`[data-image="${this.asset}"]`);
+		this.element = this.engine.element ().find (`[data-image="${this.asset}"]`);
 
 		if (typeof classes !== 'undefined') {
 			this.classes = classes;
@@ -45,24 +44,24 @@ export class HideImage extends Action {
 	}
 
 	didApply () {
-		const show = Monogatari.state ('images').filter ((item) => {
+		const show = this.engine.state ('images').filter ((item) => {
 			const [ show, type, asset, ] = item.split (' ');
 			return asset !== this.asset;
 		});
 
-		Monogatari.state ({ images: show });
+		this.engine.state ({ images: show });
 		return Promise.resolve ({ advance: true });
 	}
 
 	willRevert () {
-		if (Monogatari.history ('image').length <= 0) {
+		if (this.engine.history ('image').length <= 0) {
 			return Promise.reject ();
 		}
 		return Promise.resolve ();
 	}
 
 	revert () {
-		Monogatari.run (Monogatari.history ('image').pop (), false);
+		this.engine.run (this.engine.history ('image').pop (), false);
 		return Promise.resolve ();
 	}
 
@@ -73,4 +72,4 @@ export class HideImage extends Action {
 
 HideImage.id = 'Hide::Image';
 
-Monogatari.registerAction (HideImage, true);
+export default HideImage;

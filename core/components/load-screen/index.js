@@ -1,5 +1,4 @@
 import { ScreenComponent } from './../../lib/ScreenComponent';
-import { Monogatari } from './../../monogatari';
 
 class LoadScreen extends ScreenComponent {
 
@@ -27,4 +26,5 @@ class LoadScreen extends ScreenComponent {
 
 LoadScreen.tag = 'load-screen';
 
-Monogatari.registerComponent (LoadScreen);
+
+export default LoadScreen;

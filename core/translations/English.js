@@ -8,9 +8,9 @@
  * Hyuchia <diego@hyuchia.com>
  */
 
-import { Monogatari } from '../monogatari';
 
-Monogatari.translation ('English', {
+
+export default {
 	'AdvanceHelp': 'To advance through the game, left-click or tap anywhere on the game screen or press the space key',
 	'AllowPlayback': 'Click here to allow audio playback',
 	'Audio': 'Audio',
@@ -88,4 +88,4 @@ Monogatari.translation ('English', {
 	'Voice': 'Voice Volume',
 
 	'Windowed': 'Windowed'
-});
+};

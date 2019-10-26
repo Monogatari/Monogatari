@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import { $_, Text } from '@aegis-framework/artemis';
 
 export class Play extends Action {
@@ -15,10 +14,10 @@ export class Play extends Action {
 	}
 
 	static setup () {
-		Monogatari.history ('music');
-		Monogatari.history ('sound');
-		Monogatari.history ('voice');
-		Monogatari.state ({
+		this.engine.history ('music');
+		this.engine.history ('sound');
+		this.engine.history ('voice');
+		this.engine.state ({
 			music: [],
 			sound: [],
 			voice: []
@@ -28,12 +27,12 @@ export class Play extends Action {
 
 	static init (selector) {
 
-		const mediaPlayers = Object.keys (Monogatari.mediaPlayers ());
+		const mediaPlayers = Object.keys (this.engine.mediaPlayers ());
 		// Set the volume of all the media components on the settings screen
 		for (const mediaType of mediaPlayers) {
 			const element = document.querySelector (`${selector} [data-target="${mediaType}"]`);
 			if (element !== null) {
-				element.value = Monogatari.preference ('Volume')[Text.capitalize (mediaType)];
+				element.value = this.engine.preference ('Volume')[Text.capitalize (mediaType)];
 			}
 		}
 
@@ -41,6 +40,7 @@ export class Play extends Action {
 	}
 
 	static bind (selector) {
+		const engine = this.engine;
 
 		// Volume bars listeners
 		$_(`${selector} [data-action="set-volume"]`).on ('change mouseover', function () {
@@ -52,19 +52,19 @@ export class Play extends Action {
 					element.volume = value;
 				});
 			} else {
-				const players = Monogatari.mediaPlayers (target);
+				const players = engine.mediaPlayers (target);
 
 				for (const player of players) {
 					player.volume = value;
 				}
 			}
 
-			Monogatari.preference ('Volume')[Text.capitalize (target)] = value;
+			engine.preference ('Volume')[Text.capitalize (target)] = value;
 
-			Monogatari.preferences (Monogatari.preferences (), true);
+			engine.preferences (engine.preferences (), true);
 		});
 
-		Monogatari.state ({
+		this.engine.state ({
 			music: [],
 			sound: [],
 			voice: [],
@@ -74,19 +74,19 @@ export class Play extends Action {
 	}
 
 	static onLoad () {
-		const mediaPlayers = Object.keys (Monogatari.mediaPlayers ());
+		const mediaPlayers = Object.keys (this.engine.mediaPlayers ());
 		const promises = [];
 
 		for (const mediaType of mediaPlayers) {
-			const state =  Monogatari.state (mediaType);
+			const state =  this.engine.state (mediaType);
 
 			if (typeof state !== 'undefined') {
 				if (state.length > 0) {
 					for (const statement of state) {
-						promises.push (Monogatari.run (statement, false));
+						promises.push (this.engine.run (statement, false));
 						// TODO: Find a way to prevent the histories from filling up on loading
 						// So there's no need for this pop.
-						Monogatari.history (mediaType).pop ();
+						this.engine.history (mediaType).pop ();
 					}
 				}
 			}
@@ -100,11 +100,11 @@ export class Play extends Action {
 
 	static reset () {
 
-		const players = Monogatari.mediaPlayers ();
+		const players = this.engine.mediaPlayers ();
 
 		// Stop and remove all the media players
 		for (const playerType of Object.keys (players)) {
-			Monogatari.removeMediaPlayer (playerType);
+			this.engine.removeMediaPlayer (playerType);
 		}
 
 		return Promise.resolve ();
@@ -116,9 +116,9 @@ export class Play extends Action {
 
 	// Stop the voice player
 	static shutUp () {
-		const players = Monogatari.mediaPlayers ('voice', true);
+		const players = this.engine.mediaPlayers ('voice', true);
 		for (const media of Object.keys (players)) {
-			Monogatari.removeMediaPlayer ('voice', media);
+			this.engine.removeMediaPlayer ('voice', media);
 		}
 	}
 
@@ -201,26 +201,26 @@ export class Play extends Action {
 		this.mediaKey = media;
 		this.props = props;
 
-		this.mediaVolume = Monogatari.preference ('Volume')[Text.capitalize (this.type)];
+		this.mediaVolume = this.engine.preference ('Volume')[Text.capitalize (this.type)];
 
 		// Check if a media was defined or just a `play music` was stated
 		if (typeof media !== 'undefined' && media !== 'with') {
-			if (typeof Monogatari.asset (this.directory, media) !== 'undefined') {
-				this.media = Monogatari.asset (this.directory, media);
+			if (typeof this.engine.asset (this.directory, media) !== 'undefined') {
+				this.media = this.engine.asset (this.directory, media);
 			} else {
 				this.media = media;
 			}
 
-			let player = Monogatari.mediaPlayer (this.type, this.mediaKey);
+			let player = this.engine.mediaPlayer (this.type, this.mediaKey);
 			if (typeof player === 'undefined') {
 				player = new Audio ();
 				player.volume = this.mediaVolume;
-				this.player = Monogatari.mediaPlayer (this.type, this.mediaKey, player);
+				this.player = this.engine.mediaPlayer (this.type, this.mediaKey, player);
 			} else {
 				this.player = player;
 			}
 		} else {
-			this.player = Monogatari.mediaPlayer (this.type);
+			this.player = this.engine.mediaPlayer (this.type);
 		}
 	}
 
@@ -246,19 +246,19 @@ export class Play extends Action {
 					this.player.volume = (parseInt (this.props[this.props.indexOf ('volume') + 1]) * this.mediaVolume) / 100;
 				}
 
-				this.player.src = `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting('AssetsPath')[this.directory]}/${this.media}`;
+				this.player.src = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting('AssetsPath')[this.directory]}/${this.media}`;
 
-				Monogatari.history (this.type).push (this._statement);
+				this.engine.history (this.type).push (this._statement);
 
 				const state = {};
-				state[this.type] = [...Monogatari.state (this.type), this._statement];
-				Monogatari.state (state);
+				state[this.type] = [...this.engine.state (this.type), this._statement];
+				this.engine.state (state);
 
 				this.player.onended = () => {
 					const endState = {};
-					endState[this.type] = Monogatari.state (this.type).filter ((s) => s !== this._statement);
-					Monogatari.state (endState);
-					Monogatari.removeMediaPlayer (this.type, this.mediaKey);
+					endState[this.type] = this.engine.state (this.type).filter ((s) => s !== this._statement);
+					this.engine.state (endState);
+					this.engine.removeMediaPlayer (this.type, this.mediaKey);
 				};
 
 				if (fadePosition > -1) {
@@ -288,13 +288,13 @@ export class Play extends Action {
 
 	revert () {
 		if (typeof this.mediaKey !== 'undefined') {
-			Monogatari.removeMediaPlayer (this.type, this.mediaKey);
+			this.engine.removeMediaPlayer (this.type, this.mediaKey);
 
-			Monogatari.history (this.type).pop ();
+			this.engine.history (this.type).pop ();
 
 			const state = {};
-			state[this.type] = Monogatari.state (this.type).filter ((m) => m !== this._statement);
-			Monogatari.state (state);
+			state[this.type] = this.engine.state (this.type).filter ((m) => m !== this._statement);
+			this.engine.state (state);
 		} else {
 			for (const player of this.player) {
 				if (!player.paused && !player.ended) {
@@ -313,4 +313,4 @@ export class Play extends Action {
 
 Play.id = 'Play';
 
-Monogatari.registerAction (Play, true);
+export default Play;

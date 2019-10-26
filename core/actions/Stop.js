@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 
 export class Stop extends Action {
 
@@ -80,9 +79,9 @@ export class Stop extends Action {
 		this.props = props;
 
 		if (typeof media === 'undefined' || media === 'with') {
-			this.player = Monogatari.mediaPlayers (type);
+			this.player = this.engine.mediaPlayers (type);
 		} else {
-			this.player = Monogatari.mediaPlayer (type, media);
+			this.player = this.engine.mediaPlayer (type, media);
 		}
 	}
 
@@ -108,20 +107,20 @@ export class Stop extends Action {
 				if (fadePosition > -1) {
 					for (const player of this.player) {
 						Stop.fadeOut (this.props[fadePosition + 1], player).then (() => {
-							Monogatari.removeMediaPlayer (this.type, player.dataset.key);
+							this.engine.removeMediaPlayer (this.type, player.dataset.key);
 						});
 					}
 				} else {
-					Monogatari.removeMediaPlayer (this.type);
+					this.engine.removeMediaPlayer (this.type);
 				}
 			} else {
 
 				if (fadePosition > -1) {
 					Stop.fadeOut (this.props[fadePosition + 1], this.player).then (() => {
-						Monogatari.removeMediaPlayer (this.type, this.media);
+						this.engine.removeMediaPlayer (this.type, this.media);
 					});
 				} else {
-					Monogatari.removeMediaPlayer (this.type, this.mediaKey);
+					this.engine.removeMediaPlayer (this.type, this.mediaKey);
 				}
 			}
 		}
@@ -133,24 +132,24 @@ export class Stop extends Action {
 		const state = {};
 
 		if (typeof this.media !== 'undefined') {
-			state[this.type] = Monogatari.state (this.type).filter ((m) => m.indexOf (`play ${this.type} ${this.media}`) <= -1);
+			state[this.type] = this.engine.state (this.type).filter ((m) => m.indexOf (`play ${this.type} ${this.media}`) <= -1);
 		} else {
-			Monogatari.history (this.type).push (Monogatari.state (this.type));
+			this.engine.history (this.type).push (this.engine.state (this.type));
 			state[this.type] = [];
 		}
 
-		Monogatari.state (state);
+		this.engine.state (state);
 
 		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
 		if (typeof this.media !== 'undefined') {
-			const last = [...Monogatari.history (this.type)].reverse ().find ((m) => m.indexOf (`play ${this.type} ${this.media}`) > -1);
+			const last = [...this.engine.history (this.type)].reverse ().find ((m) => m.indexOf (`play ${this.type} ${this.media}`) > -1);
 
 			if (typeof last !== 'undefined') {
-				const promise = Monogatari.run (last, false).then (() => {
-					Monogatari.history (this.type).pop ();
+				const promise = this.engine.run (last, false).then (() => {
+					this.engine.history (this.type).pop ();
 					return Promise.resolve ();
 				});
 
@@ -158,12 +157,12 @@ export class Stop extends Action {
 			}
 
 		} else {
-			const statements = Monogatari.history (this.type).pop ();
+			const statements = this.engine.history (this.type).pop ();
 
 			const promises = [];
 			for (const statement of statements) {
-				promises.push (Monogatari.run (statement, false).then (() => {
-					Monogatari.history (this.type).pop ();
+				promises.push (this.engine.run (statement, false).then (() => {
+					this.engine.history (this.type).pop ();
 					return Promise.resolve ();
 				}));
 			}
@@ -180,4 +179,4 @@ export class Stop extends Action {
 
 Stop.id = 'Stop';
 
-Monogatari.registerAction (Stop, true);
+export default Stop;

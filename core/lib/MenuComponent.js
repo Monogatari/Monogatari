@@ -60,7 +60,9 @@ class MenuComponent extends Component {
 		const elements = document.querySelectorAll (this.tag);
 
 		for (const element of elements) {
-			element.innerHTML = element.render ();
+			if (element instanceof Component) {
+				element.innerHTML = element.render ();
+			}
 		}
 
 		return Promise.resolve ();

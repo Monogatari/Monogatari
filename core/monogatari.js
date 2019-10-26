@@ -2174,6 +2174,7 @@ class Monogatari {
 	}
 
 	static setup (selector) {
+
 		// Set the initial settings if they don't exist or load them from the
 		// Storage if they do.
 		this.Storage.get ('Settings').then ((local_settings) => {
@@ -2299,10 +2300,12 @@ class Monogatari {
 		const promises = [];
 
 		for (const component of this.components ()) {
+			component.engine = this;
 			promises.push (component.setup (selector));
 		}
 
 		for (const action of this.actions ()) {
+			action.engine = this;
 			promises.push (action.setup (selector));
 		}
 		return Promise.all (promises);
@@ -3046,4 +3049,4 @@ Monogatari.version = '2.0.0';
 
 Monogatari._id = 'visual-novel';
 
-export { Monogatari };
+export default Monogatari;

@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 
 export class Clear extends Action {
 
@@ -8,7 +7,7 @@ export class Clear extends Action {
 	}
 
 	apply () {
-		Monogatari.action ('Dialog').reset ({ keepNVL: true });
+		this.engine.action ('Dialog').reset ({ keepNVL: true });
 		return Promise.resolve ();
 	}
 
@@ -23,4 +22,4 @@ export class Clear extends Action {
 
 Clear.id = 'Clear';
 
-Monogatari.registerAction (Clear, true);
+export default Clear;

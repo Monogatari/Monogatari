@@ -10,7 +10,7 @@
 
 import { Monogatari } from './../monogatari';
 
-Monogatari.translation ('简体中文', {
+export default {
 	'AdvanceHelp': '按下空格键或点击屏幕以继续',
 	'AllowPlayback': '点击这里以启用语音回放',
 	'Audio': '音效',
@@ -88,4 +88,4 @@ Monogatari.translation ('简体中文', {
 	'Voice': '语音音量',
 
 	'Windowed': '窗口'
-});
+};

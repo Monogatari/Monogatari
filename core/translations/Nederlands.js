@@ -10,7 +10,7 @@
 
 import { Monogatari } from './../monogatari';
 
-Monogatari.translation ('Nederlands', {
+export default {
 	'AdvanceHelp': 'Gebruik de spatiebalk of linker muisknop om te spelen',
 	'AllowPlayback': 'Click here to allow audio playback',
 	'Audio': 'Audio',
@@ -88,4 +88,4 @@ Monogatari.translation ('Nederlands', {
 	'Voice': 'Stem Volume',
 
 	'Windowed': 'Window modus'
-});
+};

@@ -1,5 +1,4 @@
 import { ScreenComponent } from './../../lib/ScreenComponent';
-import { Monogatari } from './../../monogatari';
 
 class GameScreen extends ScreenComponent {
 
@@ -11,9 +10,11 @@ class GameScreen extends ScreenComponent {
 	}
 
 	static bind (selector) {
+		const self = this;
+
 		this.engine.on ('click', '[data-screen="game"] *:not([data-choice])', function () {
-			Monogatari.debug.debug ('Next Statement Listener');
-			Monogatari.proceed ().then (() => {
+			self.engine.debug.debug ('Next Statement Listener');
+			self.engine.proceed ().then (() => {
 				// Nothing to do here
 			}).catch (() => {
 				// An action waiting for user interaction or something else
@@ -21,11 +22,11 @@ class GameScreen extends ScreenComponent {
 			});
 		});
 
-		Monogatari.registerListener ('back', {
+		this.engine.registerListener ('back', {
 			keys: 'left',
 			callback: () => {
-				Monogatari.global ('block', false);
-				Monogatari.rollback ().then (() => {
+				this.engine.global ('block', false);
+				this.engine.rollback ().then (() => {
 					// Nothing to do here
 				}).catch ((e) => {
 					// An action waiting for user interaction or something else
@@ -50,4 +51,5 @@ class GameScreen extends ScreenComponent {
 
 GameScreen.tag = 'game-screen';
 
-Monogatari.registerComponent (GameScreen);
+
+export default GameScreen;

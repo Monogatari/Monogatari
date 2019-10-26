@@ -1,5 +1,4 @@
 import { ScreenComponent } from './../../lib/ScreenComponent';
-import { Monogatari } from './../../monogatari';
 
 class CreditsScreen extends ScreenComponent {
 
@@ -79,4 +78,5 @@ class CreditsScreen extends ScreenComponent {
 
 CreditsScreen.tag = 'credits-screen';
 
-Monogatari.registerComponent (CreditsScreen);
+
+export default CreditsScreen;

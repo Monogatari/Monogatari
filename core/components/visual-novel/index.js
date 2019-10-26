@@ -1,5 +1,4 @@
 import { Component } from './../../lib/Component';
-import { Monogatari } from './../../monogatari';
 
 class VisualNovel extends Component {
 
@@ -11,8 +10,13 @@ class VisualNovel extends Component {
 		return Promise.resolve ();
 	}
 
+	render () {
+		return '';
+	}
+
 }
 
 VisualNovel.tag = 'visual-novel';
 
-Monogatari.registerComponent (VisualNovel);
+
+export default VisualNovel;

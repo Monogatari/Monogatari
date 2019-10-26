@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 
 export class End extends Action {
 
@@ -67,4 +66,4 @@ export class End extends Action {
 
 End.id = 'End';
 
-Monogatari.registerAction (End, true);
+export default End;

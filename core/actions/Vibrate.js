@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import { FancyError } from './../lib/FancyError';
 
 export class Vibrate extends Action {
@@ -28,8 +27,8 @@ export class Vibrate extends Action {
 							{
 								'Specified time': time[i],
 								'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
-								'Label': Monogatari.state ('label'),
-								'Step': Monogatari.state ('step'),
+								'Label': this.engine.state ('label'),
+								'Step': this.engine.state ('step'),
 								'Help': {
 									'_': 'Check if the value you provided is actually an integer (whole number). Remember the value used must be given in milliseconds and must not be mixed with characters other than numbers.',
 									'_1': 'For example, the following statement would make the device vibrate for 5 seconds:',
@@ -76,4 +75,5 @@ export class Vibrate extends Action {
 }
 
 Vibrate.id = 'Vibrate';
-Monogatari.registerAction (Vibrate, true);
+
+export default Vibrate;

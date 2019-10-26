@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 
 export class Pause extends Action {
 
@@ -14,9 +13,9 @@ export class Pause extends Action {
 		this.media = media;
 
 		if (typeof media === 'undefined') {
-			this.player = Monogatari.mediaPlayers (type);
+			this.player = this.engine.mediaPlayers (type);
 		} else {
-			this.player = Monogatari.mediaPlayer (type, media);
+			this.player = this.engine.mediaPlayer (type, media);
 		}
 	}
 
@@ -57,4 +56,4 @@ export class Pause extends Action {
 
 Pause.id = 'Pause';
 
-Monogatari.registerAction (Pause, true);
+export default Pause;

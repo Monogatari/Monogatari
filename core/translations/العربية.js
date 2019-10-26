@@ -8,9 +8,9 @@
  * Ren <admin@fatafeet.net>
  */
 
-import { Monogatari } from '../monogatari';
 
-Monogatari.translation ('اللغه العربية', {
+
+export default {
 	'AdvanceHelp': 'للتقدم في القصة انقز بزر الفأره الأيسر او المس الشاشه في اي مكان او اضغط زر المسافة',
 	'AllowPlayback': 'أضغط هنا لتفعيل امكانية تشغيل الصوت',
 	'Audio': 'الأصوات',
@@ -88,4 +88,4 @@ Monogatari.translation ('اللغه العربية', {
 	'Voice': 'مقدار صوت الكلام المنطوق',
 
 	'Windowed': 'نافذة'
-});
+};

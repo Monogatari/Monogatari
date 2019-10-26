@@ -1,5 +1,4 @@
 import { Action } from '../lib/Action';
-import { Monogatari } from '../monogatari';
 import { Util } from '@aegis-framework/artemis';
 
 export class Canvas extends Action {
@@ -17,13 +16,13 @@ export class Canvas extends Action {
 	}
 
 	static onLoad () {
-		if (Monogatari.state ('canvas').length > 0) {
-			for (const canvas of Monogatari.state ('canvas')) {
-				const promise = Monogatari.run (canvas, false);
+		if (this.engine.state ('canvas').length > 0) {
+			for (const canvas of this.engine.state ('canvas')) {
+				const promise = this.engine.run (canvas, false);
 				// TODO: Find a way to prevent the histories from filling up on loading
 				// So there's no need for this pop.
-				Monogatari.history ('canvas').pop ();
-				Monogatari.state ('canvas').pop ();
+				this.engine.history ('canvas').pop ();
+				this.engine.state ('canvas').pop ();
 
 				return promise;
 			}
@@ -32,8 +31,8 @@ export class Canvas extends Action {
 	}
 
 	static setup () {
-		Monogatari.history ('canvas');
-		Monogatari.state ({
+		this.engine.history ('canvas');
+		this.engine.state ({
 			canvas: []
 		});
 		return Promise.resolve ();
@@ -44,16 +43,16 @@ export class Canvas extends Action {
 
 		// Go through each canvas element being shown so it can be properly
 		// stopped and then removed.
-		Monogatari.element ().find ('[data-canvas]').each ((element) => {
+		this.engine.element ().find ('[data-canvas]').each ((element) => {
 			const name = element.dataset.canvas;
-			promises.push (Util.callAsync (Canvas.objects (name).stop, Monogatari).then (() => {
-				Monogatari.element ().find (`[data-canvas="${this.name}"]`).remove ();
+			promises.push (Util.callAsync (Canvas.objects (name).stop, this.engine).then (() => {
+				this.engine.element ().find (`[data-canvas="${this.name}"]`).remove ();
 			}));
 		});
-		Monogatari.history ({
+		this.engine.history ({
 			canvas: []
 		});
-		Monogatari.state ({
+		this.engine.state ({
 			canvas: []
 		});
 		return Promise.all (promises);
@@ -100,49 +99,49 @@ export class Canvas extends Action {
 	show (mode) {
 		// TODO: Find a way to remove the resize listeners once the canvas is stopped
 		if (mode === 'background') {
-			Monogatari.element ().find ('[data-ui="background"]').append (`
+			this.engine.element ().find ('[data-ui="background"]').append (`
 				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}'></canvas>
 			`);
 
-			Monogatari.element ().find (`[data-canvas="${this.name}"]`).get (0).width = Monogatari.width ();
-			Monogatari.element ().find (`[data-canvas="${this.name}"]`).get (0).height = Monogatari.height ();
+			this.engine.element ().find (`[data-canvas="${this.name}"]`).get (0).width = this.engine.width ();
+			this.engine.element ().find (`[data-canvas="${this.name}"]`).get (0).height = this.engine.height ();
 			window.addEventListener ('resize', () => {
-				Monogatari.element ().find (`[data-canvas="${this.name}"].background`).each ((canvas) => {
-					canvas.width = Monogatari.width ();
-					canvas.height = Monogatari.height ();
+				this.engine.element ().find (`[data-canvas="${this.name}"].background`).each ((canvas) => {
+					canvas.width = this.engine.width ();
+					canvas.height = this.engine.height ();
 					if (typeof this.object.resize === 'function') {
-						Util.callAsync (this.object.resize, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+						Util.callAsync (this.object.resize, this.engine, this.engine.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 					}
 				});
 			});
-			return Util.callAsync (this.object.start, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+			return Util.callAsync (this.object.start, this.engine, this.engine.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'immersive') {
-			Monogatari.element ().find ('[data-screen="game"]').prepend (`
+			this.engine.element ().find ('[data-screen="game"]').prepend (`
 				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}'></canvas>
 			`);
 
-			Monogatari.element ().find (`[data-canvas="${this.name}"]`).get (0).width = Monogatari.width ();
-			Monogatari.element ().find (`[data-canvas="${this.name}"]`).get (0).height = Monogatari.height ();
+			this.engine.element ().find (`[data-canvas="${this.name}"]`).get (0).width = this.engine.width ();
+			this.engine.element ().find (`[data-canvas="${this.name}"]`).get (0).height = this.engine.height ();
 			window.addEventListener ('resize', () => {
-				Monogatari.element ().find (`[data-canvas="${this.name}"].background`).each ((canvas) => {
-					canvas.width = Monogatari.width ();
-					canvas.height = Monogatari.height ();
+				this.engine.element ().find (`[data-canvas="${this.name}"].background`).each ((canvas) => {
+					canvas.width = this.engine.width ();
+					canvas.height = this.engine.height ();
 					if (typeof this.object.resize === 'function') {
-						Util.callAsync (this.object.resize, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+						Util.callAsync (this.object.resize, this.engine, this.engine.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 					}
 				});
 			});
-			return Util.callAsync (this.object.start, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+			return Util.callAsync (this.object.start, this.engine, this.engine.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'displayable') {
-			Monogatari.element ().find ('[data-screen="game"]').append (`
+			this.engine.element ().find ('[data-screen="game"]').append (`
 				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}'></canvas>
 			`);
-			return Util.callAsync (this.object.start, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+			return Util.callAsync (this.object.start, this.engine, this.engine.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		} else if (mode === 'character') {
-			Monogatari.element ().find ('[data-screen="game"]').append (`
+			this.engine.element ().find ('[data-screen="game"]').append (`
 				<canvas data-canvas="${this.name}" class='${mode} ${this.classes.join (' ')}' data-character='${this.name}'></canvas>
 			`);
-			return Util.callAsync (this.object.start, Monogatari, Monogatari.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
+			return Util.callAsync (this.object.start, this.engine, this.engine.element ().find (`[data-canvas="${this.name}"]`), `[data-canvas="${this.name}"]`);
 		}
 	}
 
@@ -158,32 +157,32 @@ export class Canvas extends Action {
 	}
 
 	didApply () {
-		Monogatari.history ('canvas').push (this._statement);
-		Monogatari.state ('canvas').push (this._statement);
+		this.engine.history ('canvas').push (this._statement);
+		this.engine.state ('canvas').push (this._statement);
 		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
-		return Util.callAsync (this.object.stop, Monogatari).then (() => {
-			Monogatari.element ().find (`[data-canvas="${this.name}"]`).remove ();
+		return Util.callAsync (this.object.stop, this.engine).then (() => {
+			this.engine.element ().find (`[data-canvas="${this.name}"]`).remove ();
 		});
 	}
 
 	didRevert () {
-		for (let i = Monogatari.state ('canvas').length - 1; i >= 0; i--) {
-			const last = Monogatari.state ('canvas')[i];
+		for (let i = this.engine.state ('canvas').length - 1; i >= 0; i--) {
+			const last = this.engine.state ('canvas')[i];
 			const [show, canvas, mode, name] = last.split (' ');
 			if (name === this.name) {
-				Monogatari.state ('canvas').splice (i, 1);
+				this.engine.state ('canvas').splice (i, 1);
 				break;
 			}
 		}
 
-		for (let i = Monogatari.history ('canvas').length - 1; i >= 0; i--) {
-			const last = Monogatari.history ('canvas')[i];
+		for (let i = this.engine.history ('canvas').length - 1; i >= 0; i--) {
+			const last = this.engine.history ('canvas')[i];
 			const [show, canvas, mode, name] = last.split (' ');
 			if (name === this.name) {
-				Monogatari.history ('canvas').splice (i, 1);
+				this.engine.history ('canvas').splice (i, 1);
 				break;
 			}
 		}
@@ -198,4 +197,4 @@ Canvas._configuration = {
 	}
 };
 
-Monogatari.registerAction (Canvas, true);
+export default Canvas;

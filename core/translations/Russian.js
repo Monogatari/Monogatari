@@ -9,9 +9,7 @@
  * Patience Daur <https://github.com/patiencedaur>
  */
 
-import { Monogatari } from './../monogatari';
-
-Monogatari.translation('Русский', {
+export default {
 	'AdvanceHelp': 'Чтобы играть, нажимайте на пробел или на левую кнопку мыши.',
 	'AllowPlayback': 'Включить звуковое сопровождение',
 	'Audio': 'Звук',
@@ -88,5 +86,5 @@ Monogatari.translation('Русский', {
 	'Video': 'Громкость видео',
 	'Voice': 'Громкость голоса',
 
-	'Windowed': 'Оконный режим',
-});
+	'Windowed': 'Оконный режим'
+};

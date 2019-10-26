@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import Typed from 'typed.js';
 import { $_ } from '@aegis-framework/artemis';
 
@@ -62,24 +61,24 @@ export class Dialog extends Action {
 	}
 
 	static setup () {
-		Monogatari.globals ({
+		this.engine.globals ({
 			textObject: null,
 			finished_typing: true,
 			typedConfiguration: {
 				strings: [],
-				typeSpeed: Monogatari.preference ('TextSpeed'),
+				typeSpeed: this.engine.preference ('TextSpeed'),
 				fadeOut: true,
 				loop: false,
 				showCursor: false,
 				contentType: 'html',
 				preStringTyped: () => {
-					Monogatari.global ('finished_typing', false);
+					this.engine.global ('finished_typing', false);
 				},
 				onStringTyped: () => {
-					Monogatari.global ('finished_typing', true);
+					this.engine.global ('finished_typing', true);
 				},
 				onDestroy () {
-					Monogatari.global ('finished_typing', true);
+					this.engine.global ('finished_typing', true);
 				}
 			}
 		});
@@ -87,7 +86,7 @@ export class Dialog extends Action {
 		// The NVL mode has its own history so that when going back, all dialogs
 		// that were shown on screen can be shown again instead of just showing
 		// the last one.
-		Monogatari.history ('nvl');
+		this.engine.history ('nvl');
 
 		return Promise.resolve ();
 	}
@@ -157,8 +156,8 @@ export class Dialog extends Action {
 
 		this.nvl = false;
 
-		if (typeof Monogatari.character (id) !== 'undefined') {
-			this.character = Monogatari.character (id);
+		if (typeof this.engine.character (id) !== 'undefined') {
+			this.character = this.engine.character (id);
 			this.id = id;
 
 			if (typeof this.character.nvl !== 'undefined') {
@@ -297,7 +296,7 @@ export class Dialog extends Action {
 	characterDialog () {
 		// Check if the character has a name to show
 		if (typeof this.character.name !== 'undefined' && !this.nvl) {
-			Monogatari.element ().find ('[data-ui="who"]').html (Monogatari.replaceVariables (this.character.name));
+			this.engine.element ().find ('[data-ui="who"]').html (this.engine.replaceVariables (this.character.name));
 		}
 
 		let directory = this.character.directory;
@@ -310,15 +309,15 @@ export class Dialog extends Action {
 
 		// Focus the character's sprite and colorize it's name with the defined
 		// color on its declaration
-		Monogatari.element ().find (`[data-character="${this.id}"]`).addClass ('focus');
-		Monogatari.element ().find ('[data-ui="who"]').style ('color', this.character.color);
+		this.engine.element ().find (`[data-character="${this.id}"]`).addClass ('focus');
+		this.engine.element ().find ('[data-ui="who"]').style ('color', this.character.color);
 
 		// Check if an expression or face image was used and if it exists and
 		// display it
 		if (typeof this.image !== 'undefined' && !this.nvl) {
-			`${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}`;
-			Monogatari.element ().find ('[data-ui="face"]').attribute ('src', `${Monogatari.setting ('AssetsPath').root}/${Monogatari.setting ('AssetsPath').characters}/${directory}${this.image}`);
-			Monogatari.element ().find ('[data-ui="face"]').show ();
+			`${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`;
+			this.engine.element ().find ('[data-ui="face"]').attribute ('src', `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`);
+			this.engine.element ().find ('[data-ui="face"]').show ();
 		}
 
 		// Check if the character object defines if the type animation should be used.
@@ -331,7 +330,7 @@ export class Dialog extends Action {
 
 	apply () {
 		try {
-			const dialogLog = Monogatari.component ('dialog-log');
+			const dialogLog = this.engine.component ('dialog-log');
 			if (typeof dialogLog !== 'undefined') {
 				if (this._cycle === 'Application') {
 					dialogLog.instances (instance => instance.write ({
@@ -369,16 +368,16 @@ export class Dialog extends Action {
 		// Check if the dialog to replay is a NVL one or not
 		if (this.nvl === true) {
 			//  Check if the NVL screen is currently being shown
-			if (Monogatari.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
+			if (this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
 				// If it is being shown, then to go back, we need to remove the last dialog from it
-				Monogatari.element ().find ('text-box [data-ui="say"] [data-spoke]').last ().remove ();
+				this.engine.element ().find ('text-box [data-ui="say"] [data-spoke]').last ().remove ();
 				return Promise.resolve ();
 			} else {
 				// If it is not shown right now, then we need to recover the dialogs
 				// that were being shown the last time we hid it
-				if (Monogatari.history ('nvl').length > 0) {
-					Monogatari.element ().find ('[data-component="text-box"]').addClass ('nvl');
-					Monogatari.element ().find ('text-box [data-ui="say"]').html (Monogatari.history ('nvl').pop ());
+				if (this.engine.history ('nvl').length > 0) {
+					this.engine.element ().find ('[data-component="text-box"]').addClass ('nvl');
+					this.engine.element ().find ('text-box [data-ui="say"]').html (this.engine.history ('nvl').pop ());
 					return Promise.resolve ();
 				}
 				return Promise.reject ('No more dialogs on history from where to recover previous state.');
@@ -398,4 +397,4 @@ export class Dialog extends Action {
 
 Dialog.id = 'Dialog';
 
-Monogatari.registerAction (Dialog, true);
+export default Dialog;

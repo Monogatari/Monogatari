@@ -1,5 +1,4 @@
 import { ScreenComponent } from './../../lib/ScreenComponent';
-import { Monogatari } from './../../monogatari';
 import moment from 'moment';
 
 class SaveScreen extends ScreenComponent {
@@ -38,4 +37,5 @@ class SaveScreen extends ScreenComponent {
 
 SaveScreen.tag = 'save-screen';
 
-Monogatari.registerComponent (SaveScreen);
+
+export default SaveScreen;

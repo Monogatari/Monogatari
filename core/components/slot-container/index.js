@@ -1,5 +1,4 @@
 import { Component } from './../../lib/Component';
-import { Monogatari } from './../../monogatari';
 import { $_ } from '@aegis-framework/artemis';
 
 class SlotContainer extends Component {
@@ -153,10 +152,11 @@ class SlotContainer extends Component {
 			return slots;
 		}
 
-		return `<p data-string="NoSavedGames">${Monogatari.string('NoSavedGames')}</p>`;
+		return `<p data-string="NoSavedGames">${this.engine.string('NoSavedGames')}</p>`;
 	}
 }
 
 SlotContainer.tag = 'slot-container';
 
-Monogatari.registerComponent(SlotContainer);
+
+export default SlotContainer;

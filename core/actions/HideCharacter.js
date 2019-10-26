@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 
 export class HideCharacter extends Action {
 
@@ -11,8 +10,8 @@ export class HideCharacter extends Action {
 		super ();
 		this.asset = asset;
 
-		if (typeof Monogatari.character (this.asset) !== 'undefined') {
-			this.element = Monogatari.element ().find (`[data-character="${this.asset}"]`);
+		if (typeof this.engine.character (this.asset) !== 'undefined') {
+			this.element = this.engine.element ().find (`[data-character="${this.asset}"]`);
 		} else {
 			// TODO: Add FancyError for when the character does not exist
 		}
@@ -49,24 +48,24 @@ export class HideCharacter extends Action {
 	}
 
 	didApply () {
-		const show = Monogatari.state ('characters').filter ((item) => {
+		const show = this.engine.state ('characters').filter ((item) => {
 			const [ show, type, asset, ] = item.split (' ');
 			return asset !== this.asset;
 		});
 
-		Monogatari.state ({ characters: show });
+		this.engine.state ({ characters: show });
 		return Promise.resolve ({ advance: true });
 	}
 
 	willRevert () {
-		if (Monogatari.history ('character').length <= 0) {
+		if (this.engine.history ('character').length <= 0) {
 			return Promise.reject ();
 		}
 		return Promise.resolve ();
 	}
 
 	revert () {
-		Monogatari.run (Monogatari.history ('character').pop (), false);
+		this.engine.run (this.engine.history ('character').pop (), false);
 		return Promise.resolve ();
 	}
 
@@ -77,4 +76,4 @@ export class HideCharacter extends Action {
 
 HideCharacter.id = 'Hide::Character';
 
-Monogatari.registerAction (HideCharacter, true);
+export default HideCharacter;

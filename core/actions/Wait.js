@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import { FancyError } from './../lib/FancyError';
 
 export class Wait extends Action {
@@ -20,8 +19,8 @@ export class Wait extends Action {
 				{
 					'Specified time': time,
 					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
-					'Label': Monogatari.state ('label'),
-					'Step': Monogatari.state ('step'),
+					'Label': this.engine.state ('label'),
+					'Step': this.engine.state ('step'),
 					'Help': {
 						'_': 'Check if the value you provided is actually an integer (whole number). Remember the value used must be given in milliseconds and must not be mixed with characters other than numbers.',
 						'_1': 'For example, the following statement would make the game wait for 5 seconds:',
@@ -37,12 +36,12 @@ export class Wait extends Action {
 	apply () {
 		return new Promise ((resolve) => {
 			// Block the game so the player can't advance
-			Monogatari.global ('block', true);
+			this.engine.global ('block', true);
 
 			// Set the timeout for the specified time
 			setTimeout (() => {
 				// Unlock the game when the timeout ends.
-				Monogatari.global ('block', false);
+				this.engine.global ('block', false);
 				resolve ();
 			}, this.time);
 		});
@@ -59,4 +58,4 @@ export class Wait extends Action {
 
 Wait.id = 'Wait';
 
-Monogatari.registerAction (Wait, true);
+export default Wait;

@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 
 /* global particlesJS, pJSDom */
 
@@ -24,35 +23,35 @@ export class Particles extends Action {
 			console.error ('An error ocurred while trying to stop particle system.');
 		}
 
-		Monogatari.state ({
+		this.engine.state ({
 			particles: ''
 		});
-		Monogatari.element ().find ('#particles-js').html ('');
+		this.engine.element ().find ('#particles-js').html ('');
 	}
 
 
 	static setup () {
-		Monogatari.history ('particle');
-		Monogatari.state ({
+		this.engine.history ('particle');
+		this.engine.state ({
 			particles: ''
 		});
 		return Promise.resolve ();
 	}
 
 	static reset () {
-		Monogatari.state ({
+		this.engine.state ({
 			particles: ''
 		});
 		return Promise.resolve ();
 	}
 
 	static onLoad () {
-		const { particles } = Monogatari.state ();
+		const { particles } = this.engine.state ();
 		if (particles !== '') {
-			 const promise = Monogatari.run (particles, false);
+			 const promise = this.engine.run (particles, false);
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
-			Monogatari.history ('particle').pop ();
+			this.engine.history ('particle').pop ();
 
 			return promise;
 		}
@@ -99,8 +98,8 @@ export class Particles extends Action {
 	}
 
 	didApply () {
-		Monogatari.history ('particle').push (this._statement);
-		Monogatari.state ({
+		this.engine.history ('particle').push (this._statement);
+		this.engine.state ({
 			particles: this._statement
 		});
 		return Promise.resolve ({ advance: true });
@@ -112,7 +111,7 @@ export class Particles extends Action {
 	}
 
 	didRevert () {
-		Monogatari.history ('particle').pop ();
+		this.engine.history ('particle').pop ();
 		return Promise.resolve ({ advance: true, step: true });
 	}
 }
@@ -122,4 +121,4 @@ Particles._configuration = {
 	particles: {}
 };
 
-Monogatari.registerAction (Particles, true);
+export default Particles;

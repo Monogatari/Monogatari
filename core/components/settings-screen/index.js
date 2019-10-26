@@ -1,5 +1,4 @@
 import { ScreenComponent } from './../../lib/ScreenComponent';
-import { Monogatari } from './../../monogatari';
 import { Platform, Text } from '@aegis-framework/artemis';
 
 class SettingsScreen extends ScreenComponent {
@@ -204,4 +203,5 @@ class SettingsScreen extends ScreenComponent {
 SettingsScreen.tag = 'settings-screen';
 
 
-Monogatari.registerComponent (SettingsScreen);
+
+export default SettingsScreen;

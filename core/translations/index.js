@@ -1,4 +1,6 @@
-export * from './Belarusian';
+import * as belarusian from './Belarusian';
+export { belarusian };
+
 export * from './Deutsch';
 export * from './English';
 export * from './Español';

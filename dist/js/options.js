@@ -10,7 +10,7 @@
 'use strict';
 /* global Monogatari */
 
-const { Monogatari: monogatari } = Monogatari;
+const monogatari  = Monogatari.default;
 
 monogatari.settings({
 

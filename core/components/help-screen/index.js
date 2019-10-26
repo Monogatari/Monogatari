@@ -1,5 +1,4 @@
 import { ScreenComponent } from './../../lib/ScreenComponent';
-import { Monogatari } from './../../monogatari';
 
 class HelpScreen extends ScreenComponent {
 
@@ -163,4 +162,5 @@ class HelpScreen extends ScreenComponent {
 HelpScreen.tag = 'help-screen';
 
 
-Monogatari.registerComponent (HelpScreen);
+
+export default HelpScreen;

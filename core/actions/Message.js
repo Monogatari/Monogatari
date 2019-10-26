@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-import { Monogatari } from '../monogatari';
 import { FancyError } from './../lib/FancyError';
 
 
@@ -55,14 +54,14 @@ export class Message extends Action {
 				{
 					'Message': this.id,
 					'You may have meant': Object.keys (Message.messages ()),
-					'Label': Monogatari.state ('label'),
-					'Step': Monogatari.state ('step'),
+					'Label': this.engine.state ('label'),
+					'Step': this.engine.state ('step'),
 					'Help': {
 						'_': 'Check the message name is correct and that you have defined it previously. A Message is defined as follows:',
 						'_1':`
 							<pre>
 								<code class='language-javascript'>
-									monogatari.action ('message').mesages ({
+									this.engine.action ('message').mesages ({
 										'Welcome': {
 											title: 'Welcome!',
 											subtitle: 'This is the Monogatari VN Engine',
@@ -121,7 +120,7 @@ export class Message extends Action {
 	}
 
 	revert () {
-		Monogatari.component ('message-modal').instances ().remove ();
+		this.engine.component ('message-modal').instances ().remove ();
 		return this.apply ();
 	}
 
@@ -135,4 +134,4 @@ Message._configuration = {
 	messages: {}
 };
 
-Monogatari.registerAction (Message, true);
+export default Message;
