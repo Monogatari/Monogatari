@@ -1,0 +1,10 @@
+/**
+ * ===========================
+ * Slot List Component
+ * ===========================
+ */
+
+slot-container {
+	width: 100%;
+	justify-content: center;
+}

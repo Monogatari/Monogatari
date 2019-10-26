@@ -1,0 +1,55 @@
+/**
+ * ===========================
+ * Loading Screen Component
+ * ===========================
+ */
+
+loading-screen {
+	align-items: center;
+	justify-content: center;
+
+	[data-content="wrapper"] {
+		display: flex;
+		flex-direction: column;
+	}
+
+	[data-content="progress"] {
+		appearance: none;
+		border: none;
+		margin: 1em auto;
+		display: block;
+		border-radius: 3px;
+		box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2) inset;
+		background: transparent;
+		width: 50%;
+
+		&::-webkit-progress-bar {
+			background: transparent;
+			box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2) inset;
+			border-radius: 3px;
+		}
+
+		&::-webkit-progress-value {
+			background-color: #f16272;
+			border-radius: 3px;
+		}
+
+		&::-moz-progress-bar {
+			background-color: #f16272;
+			border-radius: 3px;
+		}
+	}
+
+	div {
+		width: 90%;
+	}
+}
+
+/** Medium Screens, Tablets (601px) **/
+@media screen and (min-width: 37.56255em) {
+	loading-screen {
+		[data-content="progress"] {
+			width: 80%;
+		}
+	}
+}

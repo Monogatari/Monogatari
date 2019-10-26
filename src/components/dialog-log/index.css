@@ -1,0 +1,61 @@
+/**
+ * ===========================
+ * Dialog Log Component
+ * ===========================
+ */
+
+dialog-log {
+
+	& .modal__content {
+		width: 95%;
+		height: 95%;
+		max-height: 95%;
+		max-width: 1000px;
+		overflow: hidden;
+		padding: 0;
+		color: var(--text-color);
+
+		& [data-content="log"] {
+			text-align: left;
+			padding: 1rem;
+
+			height: 93%;
+			max-height: 93%;
+
+			overflow: auto;
+
+			& [data-spoke] {
+				font-size: 1rem;
+				padding: 0.5rem 0;
+				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+				& span {
+					font-size: 0.9rem;
+				}
+
+				& > p {
+					font-size: 1rem;
+					margin: 0.5rem 0;
+				}
+
+				&[data-spoke="narrator"] > p {
+					color: var(--main-color);
+				}
+
+				&[data-spoke="centered"] > p {
+					text-align: center;
+					font-weight: bold;
+				}
+			}
+		}
+	}
+}
+
+/** Medium Devices, Desktops (768px)**/
+@media screen and (min-width: 48em) {
+	dialog-log button {
+		width: 8rem;
+		height: 2.5rem;
+		font-size: 1rem;
+	}
+}

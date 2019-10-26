@@ -1,0 +1,23 @@
+/**
+ * ===========================
+ * Settings Screen Component
+ * ===========================
+ */
+
+settings-screen {
+	input,
+	select {
+		margin: 2rem;
+		background-color: transparent;
+	}
+
+	.horizontal {
+		justify-content: center;
+	}
+
+	[data-content="audio-settings"] {
+		& > h3 {
+			margin-bottom: 1rem;
+		}
+	}
+}

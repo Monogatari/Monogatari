@@ -1,0 +1,47 @@
+/**
+ * ==============================
+ * Monogatari Core Styles
+ * ==============================
+ */
+
+/**
+ * Animation and Icon libraries. These are used for the characters animations and
+ * background transitions. Icons are used overal for buttons.
+ */
+@import 'animate.css';
+@import './style/csshake.min.css';
+@import './../node_modules/@fortawesome/fontawesome-free/css/svg-with-js.css';
+
+/**
+ * CSS Base Library from Aegis Framework
+ */
+@import '@aegis-framework/kayros.css';
+
+/**
+ * Monogatari main styling
+ */
+@import './style/monogatari.css';
+
+/**
+ * Components custom styling
+ */
+@import './components/alert-modal/index.css';
+@import './components/choice-container/index.css';
+@import './components/centered-dialog/index.css';
+@import './components/dialog-log/index.css';
+@import './components/game-screen/index.css';
+@import './components/help-screen/index.css';
+@import './components/gallery-screen/index.css';
+@import './components/load-screen/index.css';
+@import './components/loading-screen/index.css';
+@import './components/main-menu/index.css';
+@import './components/main-screen/index.css';
+@import './components/message-modal/index.css';
+@import './components/quick-menu/index.css';
+@import './components/save-screen/index.css';
+@import './components/save-slot/index.css';
+@import './components/settings-screen/index.css';
+@import './components/slot-container/index.css';
+@import './components/text-box/index.css';
+@import './components/text-input/index.css';
+@import './components/visual-novel/index.css';

@@ -1,0 +1,12 @@
+/**
+ * ===========================
+ * Save Screen Component
+ * ===========================
+ */
+
+save-screen {
+	input {
+		background-color: #fff;
+		border: 1px solid #666;
+	}
+}
