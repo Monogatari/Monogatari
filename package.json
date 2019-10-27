@@ -60,7 +60,6 @@
     "README.md",
     "LICENSE",
     "package.json",
-    "yarn.lock",
     "src/*",
     "dist/engine/core/*"
   ]
