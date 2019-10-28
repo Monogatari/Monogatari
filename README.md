@@ -58,6 +58,31 @@ You can take a look at the documentation in https://developers.monogatari.io/
 
 You can also contribute to it in the [Documentation repository](https://github.com/Monogatari/Documentation)
 
+## Monogatari as a Module
+Monogatari's core functionality is also released as an UMD module, therefore it's possible to use it either on a browser as a global library, using es6 modules or nodejs modules.
+
+#### Browser
+
+```html
+<script src='./monogatari.js'></script>
+```
+
+```javascript
+const monogatari = Monogatari.default;
+```
+
+#### Es6 Modules
+
+```javascript
+import Monogatari from '@monogatari/core';
+```
+
+#### Node JS
+
+```javascript
+const Monogatari = require ('@monogatari/core');
+```
+
 ## Contributing
 Contributions are always welcome! Read the [CONTRIBUTING file](https://github.com/Monogatari/Monogatari/blob/develop/CONTRIBUTING.md) to get started.
 
