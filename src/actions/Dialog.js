@@ -77,7 +77,7 @@ export class Dialog extends Action {
 				onStringTyped: () => {
 					this.engine.global ('finished_typing', true);
 				},
-				onDestroy () {
+				onDestroy: () => {
 					this.engine.global ('finished_typing', true);
 				}
 			}
