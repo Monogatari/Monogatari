@@ -15,11 +15,11 @@ jobs:
       - name: Install Dependencies
         uses: Borales/actions-yarn@v2.0.0
         with:
-          cmd: install --cwd dist # will run `yarn install` command
+          cmd: install # will run `yarn install` command
       - name: Build Core
         uses: Borales/actions-yarn@v2.0.0
         with:
-          cmd: build:core --cwd dist # will run `yarn build:core` command
+          cmd: build:core # will run `yarn build:core` command
       - name: Commit changed files
         uses: stefanzweifel/git-auto-commit-action@v2.2.0
         with:
