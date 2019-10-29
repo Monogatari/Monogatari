@@ -27,7 +27,6 @@ Recommended Software:
 You are free to choose your development environment regarding text editors or
 additional tools, however I recommend using either [Atom](https://atom.io/) or [Visual Studio Code](https://code.visualstudio.com/).
 
-
 ## Getting Ready
 
 Ok, so you've installed everything you need to start contributing to Monogatari,
@@ -79,7 +78,7 @@ yarn run build:core
    your changes.
 
 ```bash
-git commit <List of files to commit> -m "A message describing what you did in present tense"
+git commit <List of files to commit> -m "A message describing what you did in present tense, should start with a capital letter."
 ```
 
 8) Push the modified code to your Fork

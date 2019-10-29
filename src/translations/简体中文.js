@@ -8,8 +8,6 @@
  * RuolinZheng08
  */
 
-import { Monogatari } from './../monogatari';
-
 export default {
 	'AdvanceHelp': '按下空格键或点击屏幕以继续',
 	'AllowPlayback': '点击这里以启用语音回放',

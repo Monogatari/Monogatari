@@ -1,4 +1,4 @@
-import { Action } from './../lib/Action';
+import { Action } from '../lib/Action';
 import { Util } from '@aegis-framework/artemis';
 
 export class Choice extends Action {
@@ -104,7 +104,7 @@ export class Choice extends Action {
 							this.engine.assertAsync (this.statement[i].Condition, this.engine).then (() => {
 								resolve (this.statement[i]);
 							}).catch (() => {
-								resolve()
+								resolve ();
 							}).finally (() => {
 								//this.engine.global ('block', false);
 							});

@@ -8,8 +8,6 @@
  *
  */
 
-import { Monogatari } from './../monogatari';
-
 export default {
 	'AdvanceHelp': 'ゲームを進めるためには、スペースキーを押すかクリックします',
 	'AllowPlayback': 'Click here to allow audio playback',

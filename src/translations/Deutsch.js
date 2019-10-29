@@ -9,7 +9,7 @@
  * KazutoSensei
  */
 
- export default {
+export default {
 	'AdvanceHelp': 'Um dich durch das Spiel zu navigieren, drücke die Leertaste oder klicke',
 	'AllowPlayback': 'Click here to allow audio playback',
 	'Audio': 'Audio',

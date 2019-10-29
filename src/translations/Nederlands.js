@@ -8,8 +8,6 @@
  * Natsukeep
  */
 
-import { Monogatari } from './../monogatari';
-
 export default {
 	'AdvanceHelp': 'Gebruik de spatiebalk of linker muisknop om te spelen',
 	'AllowPlayback': 'Click here to allow audio playback',

@@ -1,3 +1,4 @@
+/* global require */
 const { ipcRenderer } = require ('electron');
 
 window.ipcRendererSend = function (...args) {

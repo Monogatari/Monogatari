@@ -1,4 +1,4 @@
-import { Action } from './../lib/Action';
+import { Action } from '../lib/Action';
 
 /* global particlesJS, pJSDom */
 
@@ -48,7 +48,7 @@ export class Particles extends Action {
 	static onLoad () {
 		const { particles } = this.engine.state ();
 		if (particles !== '') {
-			 const promise = this.engine.run (particles, false);
+			const promise = this.engine.run (particles, false);
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
 			this.engine.history ('particle').pop ();

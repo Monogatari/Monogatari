@@ -8,8 +8,6 @@
  * Hyuchia <diego@hyuchia.com>
  */
 
-import { Monogatari } from './../monogatari';
-
 export default {
 	'AdvanceHelp': 'Para avanzar en el juego, presiona espacio o haz click',
 	'AllowPlayback': 'Click here to allow audio playback',
