@@ -4,9 +4,27 @@ on:
   push:
     branches:
       - develop
+    paths: 
+      - '.htmlhintrc'
+      - '.postcssrc'
+      - '.stylelintrc'  
+      - '**.html'
+      - '**.js'
+      - '**.json' 
+      - '**.css'
+      - '!dist/engine/core/**'
   pull_request:
     branches: 
       - develop
+    paths: 
+      - '.htmlhintrc'
+      - '.postcssrc'
+      - '.stylelintrc'  
+      - '**.html'
+      - '**.js'
+      - '**.json' 
+      - '**.css'
+      - '!dist/engine/core/**'
 
 jobs:
   lint:
