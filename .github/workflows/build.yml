@@ -25,6 +25,6 @@ jobs:
         with:
           commit_message: Update engine core
           branch: ${{ github.head_ref }}
-          file_pattern: dist/engine/core/*
+          file_pattern: dist/engine/core/\*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
