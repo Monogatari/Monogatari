@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - develop
+    paths: 
+      - '**.js'
+      - '**.json'
+      - '**.css'
+      - '!dist/**' 
 
 jobs:
   build:
