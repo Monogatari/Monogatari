@@ -1,0 +1,30 @@
+name: Code Quality Check
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  lint:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Dependencies
+        uses: Borales/actions-yarn@v2.0.0
+        with:
+          cmd: install # will run `yarn install` command
+      - name: Lint HTML
+        uses: Borales/actions-yarn@v2.0.0
+        with:
+          cmd: lint:html # will run `yarn lint:html` command
+      - name: Lint JavaScript
+        uses: Borales/actions-yarn@v2.0.0
+        with:
+          cmd: lint:js # will run `yarn lint:js` command
+      - name: Lint CSS
+        uses: Borales/actions-yarn@v2.0.0
+        with:
+          cmd: lint:css # will run `yarn lint:css` command
