@@ -15,15 +15,15 @@
   },
   "homepage": "https://monogatari.io",
   "scripts": {
-    "start": "parcel serve index.html --open --no-cache",
-    "build": "parcel build ./src/index.html",
+    "start": "yarn parcel serve index.html --open --no-cache",
+    "build": "yarn parcel build ./src/index.html",
     "build:core": "yarn run build:js && yarn build:css",
-    "build:js": "parcel build ./src/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine/core --no-cache --public-url .",
-    "build:debug": "parcel build ./debug/index.js --global MonogatariDebug --out-file debug.js --out-dir dist/engine/debug --no-cache --public-url .",
-    "build:css": "parcel build ./src/index.css --out-file monogatari.css --out-dir dist/engine/core --no-cache --no-source-maps",
-    "eslint": "eslint ./src/index.js ./src/actions/* ./src/translations/*",
-    "watch:js": "parcel watch ./src/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine/core --no-cache --public-url .",
-    "watch:css": "parcel watch ./src/index.css --out-file monogatari.css --out-dir dist/engine/core --no-cache --no-source-maps"
+    "build:js": "yarn parcel build ./src/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine/core --no-cache --public-url .",
+    "build:debug": "yarn parcel build ./debug/index.js --global MonogatariDebug --out-file debug.js --out-dir dist/engine/debug --no-cache --public-url .",
+    "build:css": "yarn parcel build ./src/index.css --out-file monogatari.css --out-dir dist/engine/core --no-cache --no-source-maps",
+    "eslint": "yarn eslint ./src/index.js ./src/actions/* ./src/translations/*",
+    "watch:js": "yarn parcel watch ./src/index.js --global Monogatari --out-file monogatari.js --out-dir dist/engine/core --no-cache --public-url .",
+    "watch:css": "yarn parcel watch ./src/index.css --out-file monogatari.css --out-dir dist/engine/core --no-cache --no-source-maps"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
