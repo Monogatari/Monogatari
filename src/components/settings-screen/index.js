@@ -65,6 +65,8 @@ class SettingsScreen extends ScreenComponent {
 					this.changeWindowResolution (size);
 				});
 
+				this.element ().find ('[data-action="set-resolution"]').value (this.engine.preference ('Resolution'));
+
 			} else {
 				this.element ().find ('[data-settings="resolution"]').hide ();
 			}
@@ -119,9 +121,15 @@ class SettingsScreen extends ScreenComponent {
 				this.content ('language-settings').remove ();
 			}
 
-
 			for (const mediaType of Object.keys (this.engine.mediaPlayers ())) {
 				this.content (`${mediaType}-audio-controller`).value ('value', this.engine.preference ('Volume')[Text.capitalize (mediaType)]);
+			}
+
+			// Set the electron quit handler.
+			if (Platform.electron () || (typeof window.ipcRendererReceive === 'function' && typeof window.ipcRendererSend === 'function')) {
+				this.electron ();
+			} else {
+				this.element ().find ('[data-platform="electron"]').remove ();
 			}
 		});
 
@@ -140,13 +148,6 @@ class SettingsScreen extends ScreenComponent {
 
 		this.engine.setting ('MaxAutoPlaySpeed', parseInt (this.content ('auto-play-speed-controller').property ('max')));
 		this.content ('auto-play-speed-controller').value (this.engine.preference ('AutoPlaySpeed'));
-
-		// Set the electron quit handler.
-		if (Platform.electron () || (typeof window.ipcRendererReceive === 'function' && typeof window.ipcRendererSend === 'function')) {
-			this.electron ();
-		} else {
-			this.element ().find ('[data-platform="electron"]').remove ();
-		}
 
 		return Promise.resolve ();
 	}
