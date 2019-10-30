@@ -1723,7 +1723,7 @@ class Monogatari {
 						scene: data.Engine.SceneHistory.map ((scene) => {
 							return `show scene ${scene}`;
 						}),
-						sceneElements: data.Engine.SceneElements.map ((elements) => {
+						sceneElements: data.Engine.SceneElementsHistory.map ((elements) => {
 							return elements.map (element => element.replace ('img/', 'assets/'));
 						}),
 						particle: data.Engine.ParticlesHistory.map ((particles) => {
