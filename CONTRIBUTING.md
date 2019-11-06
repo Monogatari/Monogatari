@@ -61,7 +61,7 @@ cd Monogatari
 git checkout develop
 ```
 
-5) Install all dependencies using [Yarn](https://yarnpkg.com/en/)`
+5) Install all dependencies using [Yarn](https://yarnpkg.com/en/)
 
 ```bash
 yarn install
