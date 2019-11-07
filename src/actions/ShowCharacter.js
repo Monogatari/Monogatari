@@ -89,10 +89,7 @@ export class ShowCharacter extends Action {
 		if (this.engine.element ().find (`[data-character="${this.asset}"]`).isVisible ()) {
 			this.engine.element ().find (`[data-character="${this.asset}"]`).attribute ('src', `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`);
 
-			const classList = [];
-			this.engine.element ().find (`[data-character="${this.asset}"]`).get(0).classList.forEach(oldClass => {
-				classList.push (oldClass);
-			});
+			const classList = [...this.engine.element ().find (`[data-character="${this.asset}"]`).get(0).classList];
 
 			for (const oldClass of classList) {
 				if (this.classes.indexOf (oldClass) === -1) {
