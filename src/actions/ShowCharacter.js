@@ -87,46 +87,31 @@ export class ShowCharacter extends Action {
 		const sprite = this.engine.element ().find (`[data-character="${this.asset}"]`);
 		const image = document.createElement ('img');
 		const imgSrc = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`;
-		const haveTheFadeTransitionLabel = this.classes.indexOf ("fadeTransition") !== -1
+		let spriteVisible = sprite.isVisible ();
 
-		if (sprite.isVisible ()) {
-			if (haveTheFadeTransitionLabel){
-				// Will add a fadeOut Transition to the actual sprite and delete it
-				// do the same action as if sprite is not visible
-				sprite.addClass ("fadeOut");
-				sprite.on("animationend", function(){
-					console.log("animation end");
-					sprite.remove();
-				});
-				$_(image).attribute ('src', imgSrc);
-				$_(image).addClass ('animated', 'fadeIn');
-				$_(image).data ('character', this.asset);
-				$_(image).data ('sprite', this.sprite);
+		if (this.classes.indexOf ("fadeTransition") !== -1){
+			// Will add a fadeOut Transition to the actual sprite and delete it
+			sprite.addClass ("fadeOut");
+			sprite.on("animationend", function(){
+				console.log("animation end");
+				sprite.remove();
+			});
+			// Because the actual sprite will be deleted, we should add a new sprite.
+			spriteVisible = false;
+		}
 
-				for (const className of this.classes) {
-					if (className != "fadeTransition") {
-						image.classList.add (className);
-					}
-				}
+		if (spriteVisible) {
+			sprite.attribute ('src', imgSrc);
+			sprite.data ('sprite', this.sprite);
 
-				const durationPosition = this.classes.indexOf ('duration');
-				if (durationPosition > -1) {
-					$_(image).style ('animation-duration', this.classes[durationPosition + 1]);
+			const classList = sprite.get(0).classList;
+			for (const oldClass of classList) {
+				if (this.classes.indexOf (oldClass) === -1) {
+					sprite.removeClass (oldClass);
 				}
-				this.engine.element ().find ('[data-screen="game"] [data-content="visuals"]').append (image);
-			} else {
-				sprite.attribute ('src', imgSrc);
-				sprite.data ('sprite', this.sprite);
-				const classList = sprite.get(0).classList;
-
-				for (const oldClass of classList) {
-					if (this.classes.indexOf (oldClass) === -1) {
-						sprite.removeClass (oldClass);
-					}
-				}
-				for (const newClass of this.classes) {
-					sprite.addClass (newClass);
-				}
+			}
+			for (const newClass of this.classes) {
+				sprite.addClass (newClass);
 			}
 
 			const durationPosition = this.classes.indexOf ('duration');
@@ -143,20 +128,20 @@ export class ShowCharacter extends Action {
 			$_(image).data ('sprite', this.sprite);
 
 			for (const className of this.classes) {
-				if (className) {
+				if (className !== "fadeTransition") {
 					image.classList.add (className);
 				}
 			}
 
 			const durationPosition = this.classes.indexOf ('duration');
-
 			if (durationPosition > -1) {
 				$_(image).style ('animation-duration', this.classes[durationPosition + 1]);
 			}
 
 			sprite.remove ();
+			this.engine.element ().find ('[data-screen="game"] [data-content="visuals"]').append (image);
 		}
-		this.engine.element ().find ('[data-screen="game"] [data-content="visuals"]').append (image);
+
 		return Promise.resolve ();
 	}
 
