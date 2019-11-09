@@ -75,6 +75,12 @@ export class Video extends Action {
 		if (typeof this.engine.asset ('videos', name) !== 'undefined') {
 			this.src = this.engine.asset ('videos', name);
 		}
+
+		if (typeof props !== 'undefined') {
+			this.classes = ['animated', ...props.filter((item) => item !== 'with')];
+		} else {
+			this.classes = [];
+		}
 	}
 
 	apply () {
@@ -85,6 +91,10 @@ export class Video extends Action {
 
 		element.dataset.video = this.name;
 		element.dataset.mode = this.mode;
+
+		for (const newClass of this.classes) {
+			element.classList.add (newClass);
+		}
 
 		$_(element).attribute ('src', `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').videos}/${this.src}`);
 
