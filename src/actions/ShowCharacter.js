@@ -93,14 +93,14 @@ export class ShowCharacter extends Action {
 
 			for (const oldClass of sprite.get(0).classList) {
 				let matches = oldClass.match (/end-([A-Za-z]+)/); // end-[someLetters]
-				
+
 				if ( matches === null ) {
 					before = oldClass;
 				} else {
 					sprite.removeClass (before);
 					sprite.addClass (matches[1]);
 					sprite.on ("animationend", function(){
-						sprite.remove();
+						sprite.remove ();
 					});
 
 					oneSpriteOnly = false;
