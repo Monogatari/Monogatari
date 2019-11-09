@@ -75,41 +75,38 @@ export class ShowCharacter extends Action {
 		// show [character] [expression]
 		//   0      1             2
 
-
 		let directory = this.character.directory;
-
 		if (typeof directory == 'undefined') {
 			directory = '';
 		} else {
 			directory += '/';
 		}
 
+		let oneSpriteOnly = true;
+
 		const sprite = this.engine.element ().find (`[data-character="${this.asset}"]`);
 		const image = document.createElement ('img');
 		const imgSrc = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`;
-		let spriteVisible = sprite.isVisible ();
 
-		if (this.classes.indexOf ("fadeTransition") !== -1){
-			// Will add a fadeOut Transition to the actual sprite and delete it
-			sprite.addClass ("fadeOut");
-			sprite.on("animationend", function(){
-				console.log("animation end");
-				sprite.remove();
-			});
-			// Because the actual sprite will be deleted, we should add a new sprite.
-			spriteVisible = false;
+		if (sprite.isVisible ()){
+			for (const oldClass of sprite.get(0).classList) {
+				let matches = oldClass.match (/end-([A-Za-z]+)/); // end-[someLetters]
+				if ( matches !== null ) {
+					sprite.addClass (matches[1]);
+					sprite.on ("animationend", function(){
+						sprite.remove();
+					});
+
+					oneSpriteOnly = false;
+					break;
+				}
+			}
 		}
 
-		if (spriteVisible) {
+		if (oneSpriteOnly && sprite.isVisible ()) {
 			sprite.attribute ('src', imgSrc);
 			sprite.data ('sprite', this.sprite);
 
-			const classList = sprite.get(0).classList;
-			for (const oldClass of classList) {
-				if (this.classes.indexOf (oldClass) === -1) {
-					sprite.removeClass (oldClass);
-				}
-			}
 			for (const newClass of this.classes) {
 				sprite.addClass (newClass);
 			}
@@ -128,9 +125,7 @@ export class ShowCharacter extends Action {
 			$_(image).data ('sprite', this.sprite);
 
 			for (const className of this.classes) {
-				if (className !== "fadeTransition") {
-					image.classList.add (className);
-				}
+				image.classList.add (className);
 			}
 
 			const durationPosition = this.classes.indexOf ('duration');
@@ -138,7 +133,6 @@ export class ShowCharacter extends Action {
 				$_(image).style ('animation-duration', this.classes[durationPosition + 1]);
 			}
 
-			sprite.remove ();
 			this.engine.element ().find ('[data-screen="game"] [data-content="visuals"]').append (image);
 		}
 
