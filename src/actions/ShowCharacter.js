@@ -88,18 +88,18 @@ export class ShowCharacter extends Action {
 		const image = document.createElement ('img');
 		const imgSrc = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`;
 
-		if (sprite.isVisible ()){
-			let before = "";
+		if (sprite.isVisible ()) {
+			let before = '';
 
 			for (const oldClass of sprite.get(0).classList) {
-				let matches = oldClass.match (/end-([A-Za-z]+)/); // end-[someLetters]
+				const matches = oldClass.match (/end-([A-Za-z]+)/); // end-[someLetters]
 
 				if ( matches === null ) {
 					before = oldClass;
 				} else {
 					sprite.removeClass (before);
 					sprite.addClass (matches[1]);
-					sprite.on ("animationend", function(){
+					sprite.on ('animationend', function () {
 						sprite.remove ();
 					});
 
