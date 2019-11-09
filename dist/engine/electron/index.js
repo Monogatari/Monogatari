@@ -10,7 +10,7 @@
 /* global process */
 /* global __dirname */
 
-const { app, BrowserWindow } = require ('electron');
+const { app, BrowserWindow, Menu } = require ('electron');
 const path = require ('path');
 const url = require ('url');
 const { ipcMain } = require('electron');
@@ -123,6 +123,9 @@ function createWindow () {
 	ipcMain.on ('quit-request', (event, args) => {
 		win.destroy ();
 	});
+
+	// Disable application menu
+	Menu.setApplicationMenu (null);
 }
 
 // This method will be called when Electron has finished
