@@ -75,64 +75,72 @@ export class ShowCharacter extends Action {
 		// show [character] [expression]
 		//   0      1             2
 
-
 		let directory = this.character.directory;
-
 		if (typeof directory == 'undefined') {
 			directory = '';
 		} else {
 			directory += '/';
 		}
 
+		let oneSpriteOnly = true;
+
 		const sprite = this.engine.element ().find (`[data-character="${this.asset}"]`);
+		const image = document.createElement ('img');
+		const imgSrc = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`;
 
-		if (this.engine.element ().find (`[data-character="${this.asset}"]`).isVisible ()) {
-			this.engine.element ().find (`[data-character="${this.asset}"]`).attribute ('src', `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`);
+		if (sprite.isVisible ()){
+			let before = "";
 
-			const classList = [...this.engine.element ().find (`[data-character="${this.asset}"]`).get(0).classList];
+			for (const oldClass of sprite.get(0).classList) {
+				let matches = oldClass.match (/end-([A-Za-z]+)/); // end-[someLetters]
+				
+				if ( matches === null ) {
+					before = oldClass;
+				} else {
+					sprite.removeClass (before);
+					sprite.addClass (matches[1]);
+					sprite.on ("animationend", function(){
+						sprite.remove();
+					});
 
-			for (const oldClass of classList) {
-				if (this.classes.indexOf (oldClass) === -1) {
-					sprite.removeClass (oldClass);
+					oneSpriteOnly = false;
+					break;
 				}
 			}
+		}
+
+		if (oneSpriteOnly && sprite.isVisible ()) {
+			sprite.attribute ('src', imgSrc);
+			sprite.data ('sprite', this.sprite);
 
 			for (const newClass of this.classes) {
 				sprite.addClass (newClass);
 			}
 
 			const durationPosition = this.classes.indexOf ('duration');
-
 			if (durationPosition > -1) {
-				this.engine.element ().find (`[data-character="${this.asset}"]`).style ('animation-duration', this.classes[durationPosition + 1]);
+				sprite.style ('animation-duration', this.classes[durationPosition + 1]);
 			} else {
-				this.engine.element ().find (`[data-character="${this.asset}"]`).style ('animation-duration', '');
+				sprite.style ('animation-duration', '');
 			}
-
-			this.engine.element ().find (`[data-character="${this.asset}"]`).data ('sprite', this.sprite);
-
 		} else {
-			const image = document.createElement ('img');
-			$_(image).attribute ('src', `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`);
+			$_(image).attribute ('src', imgSrc);
 			$_(image).addClass ('animated');
 			$_(image).data ('character', this.asset);
 			$_(image).data ('sprite', this.sprite);
 
 			for (const className of this.classes) {
-				if (className) {
-					image.classList.add (className);
-				}
+				image.classList.add (className);
 			}
 
 			const durationPosition = this.classes.indexOf ('duration');
-
 			if (durationPosition > -1) {
 				$_(image).style ('animation-duration', this.classes[durationPosition + 1]);
 			}
 
-			this.engine.element ().find (`[data-character="${this.asset}"]`).remove ();
 			this.engine.element ().find ('[data-screen="game"] [data-content="visuals"]').append (image);
 		}
+
 		return Promise.resolve ();
 	}
 
