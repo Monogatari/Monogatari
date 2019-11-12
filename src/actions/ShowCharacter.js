@@ -109,6 +109,14 @@ export class ShowCharacter extends Action {
 				this.engine.element ().find (`[data-character="${this.asset}"]`).style ('animation-duration', '');
 			}
 
+			const transitionPosition = this.classes.indexOf ('transition');
+
+			if (transitionPosition > -1) {
+				this.engine.element ().find (`[data-character="${this.asset}"]`).style ('transition-duration', this.classes[transitionPosition + 1]);
+			} else {
+				this.engine.element ().find (`[data-character="${this.asset}"]`).style ('transition-duration', '');
+			}
+
 			this.engine.element ().find (`[data-character="${this.asset}"]`).data ('sprite', this.sprite);
 
 		} else {
