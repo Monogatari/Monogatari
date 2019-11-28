@@ -2025,6 +2025,11 @@ class Monogatari {
 			// Check if the music was defined in the music assets object
 			if (typeof this.asset ('music', this.setting ('MainScreenMusic')) !== 'undefined') {
 
+				// Check if the player is already playing music
+				if (!this.ambientPlayer.paused && !this.ambientPlayer.ended) {
+					return;
+				}
+
 				// Get the full path to the asset and set the src to the ambient player
 				this.ambientPlayer.src =  `${this.setting ('AssetsPath').root}/${this.setting ('AssetsPath').music}/${this.asset ('music', this.setting ('MainScreenMusic'))}`;
 
