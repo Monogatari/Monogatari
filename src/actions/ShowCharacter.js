@@ -98,6 +98,7 @@ export class ShowCharacter extends Action {
 					before = oldClass;
 				} else {
 					sprite.removeClass (before);
+					sprite.removeClass (oldClass);
 					sprite.addClass (matches[1]);
 					sprite.on ('animationend', function () {
 						sprite.remove ();
