@@ -25,7 +25,7 @@
 		"watch:css": "yarn parcel watch ./src/index.css --out-file monogatari.css --out-dir dist/engine/core --no-cache --no-source-maps",
 		"lint:html": "yarn htmlhint ./dist/index.html",
 		"lint:js": "yarn eslint ./src --ext .js --ignore-pattern *.min.js && yarn eslint ./dist/js --ext .js --ignore-pattern *.min.js && yarn eslint ./dist/engine/electron --ext .js  && yarn eslint ./dist/service-worker.js",
-		"lint:css": "yarn stylelint ./src/**/*.css ./dist/style/**/*.css --ignore-pattern *.min.css",
+		"lint:css": "yarn stylelint ./src/**/*.css ./src/components/**/*.css  ./dist/style/**/*.css --ignore-pattern *.min.css",
 		"lint": "yarn lint:html && yarn lint:js && yarn lint:css"
   	},
 	"devDependencies": {

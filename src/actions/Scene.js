@@ -52,11 +52,20 @@ export class Scene extends Action {
 			scene_elements.push (element.outerHTML);
 		});
 
-		return this.engine.run (this._statement.replace('show scene', 'show background'), false).then(() => {
-			this.engine.history ('sceneElements').push (scene_elements);
+		const restoringState = this.engine.global ('_restoring_state');
 
-			this.engine.element ().find ('[data-character]').remove ();
-			this.engine.element ().find ('[data-image]').remove ();
+		return this.engine.run (this._statement.replace('show scene', 'show background'), false).then(() => {
+			// Check if the engine is no loading a save file, since loading a file applies the actions on that state
+			// asynchronously, there's a chance this would run after a show image/character action and would remove them
+			// from the scene, which is something we don't want
+			if (restoringState === false) {
+				this.engine.history ('sceneElements').push (scene_elements);
+
+				this.engine.element ().find ('[data-character]').remove ();
+				this.engine.element ().find ('[data-image]').remove ();
+			}
+
+			return Promise.resolve ();
 		});
 	}
 
@@ -68,7 +77,10 @@ export class Scene extends Action {
 
 		this.engine.history ('scene').push (this._statement);
 
-		this.engine.action ('Dialog').reset ();
+
+		if (this.engine.global ('_restoring_state') === false) {
+			this.engine.action ('Dialog').reset ();
+		}
 
 		return Promise.resolve ({ advance: true });
 	}

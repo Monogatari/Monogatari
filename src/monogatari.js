@@ -77,15 +77,20 @@ class Monogatari {
 	static onLoad () {
 		const promises = [];
 
-		for (const component of this.components ()) {
-			promises.push (component.onLoad ());
-		}
+		this.global ('_restoring_state', true);
 
 		for (const action of this.actions ()) {
 			promises.push (action.onLoad ());
 		}
 
-		return Promise.all (promises);
+		for (const component of this.components ()) {
+			promises.push (component.onLoad ());
+		}
+
+		return Promise.all (promises).then ((promises) => {
+			this.global ('_restoring_state', false);
+			return Promise.resolve (promises);
+		});
 	}
 
 	/**
@@ -1740,18 +1745,7 @@ class Monogatari {
 					this.storage (storage);
 				}
 
-				// Run the onLoad event of all the actions
-				const promises = [];
-				for (const action of this.actions ()) {
-					promises.push (action.onLoad ());
-				}
-
-				// Run the onLoad event of all the components
-				for (const component of this.components ()) {
-					promises.push (component.onLoad ());
-				}
-
-				return Promise.all (promises).then (() => {
+				this.onLoad ().then (() => {
 					// Finally show the game and start playing
 					this.showScreen ('game');
 					document.body.style.cursor = 'auto';
@@ -2943,7 +2937,8 @@ Monogatari.globals ({
 	skip: null,
 	_log: [],
 	_auto_save_interval: null,
-	_engine_block: false
+	_engine_block: false,
+	_restoring_state: false,
 });
 
 Monogatari._listeners = [];
