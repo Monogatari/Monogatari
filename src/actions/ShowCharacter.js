@@ -100,8 +100,8 @@ export class ShowCharacter extends Action {
 					sprite.removeClass (before);
 					sprite.removeClass (oldClass);
 					sprite.addClass (matches[1]);
-					sprite.on ('animationend', function () {
-						sprite.remove ();
+					sprite.on ('animationend', (e) => {
+						e.target.remove ();
 					});
 
 					oneSpriteOnly = false;
