@@ -3,6 +3,8 @@
 		"block-closing-brace-empty-line-before": "never",
 		"block-closing-brace-newline-after": "always",
 		"declaration-block-semicolon-newline-after": "always",
+		"declaration-colon-space-after": "always",
+		"declaration-colon-space-before": "never",
 		"block-opening-brace-space-before": "always",
 		"color-hex-case": "lower",
 		"color-named": "never",
