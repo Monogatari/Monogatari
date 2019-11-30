@@ -24,7 +24,7 @@ help-screen {
 
 		[data-content='shortcut'] {
 			width: 1.5rem;
-			height:1.5rem;
+			height: 1.5rem;
 			min-width: 1.5rem;
 			display: block;
 			background-color: var(--text-color);
