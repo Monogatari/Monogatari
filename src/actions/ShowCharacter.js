@@ -85,7 +85,6 @@ export class ShowCharacter extends Action {
 		let oneSpriteOnly = true;
 
 		const sprite = this.engine.element ().find (`[data-character="${this.asset}"]`);
-		const image = document.createElement ('img');
 		const imgSrc = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`;
 
 		if (sprite.isVisible ()) {
@@ -135,6 +134,7 @@ export class ShowCharacter extends Action {
 
 			this.engine.element ().find (`[data-character="${this.asset}"]`).data ('sprite', this.sprite);
 		} else {
+			const image = document.createElement ('img');
 			$_(image).attribute ('src', imgSrc);
 			$_(image).addClass ('animated');
 			$_(image).data ('character', this.asset);
