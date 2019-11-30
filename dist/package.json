@@ -42,8 +42,8 @@
     "build:web": "parcel build index.html"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.4",
-    "electron": "^7.0.0",
+    "@babel/core": "^7.7.4",
+    "electron": "^7.1.2",
     "electron-builder": "^21.2.0",
     "parcel": "^1.12.4"
   }
