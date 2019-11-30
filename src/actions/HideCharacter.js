@@ -11,7 +11,7 @@ export class HideCharacter extends Action {
 		this.asset = asset;
 
 		if (typeof this.engine.character (this.asset) !== 'undefined') {
-			this.element = this.engine.element ().find (`[data-character="${this.asset}"]`);
+			this.element = this.engine.element ().find (`[data-character="${this.asset}"]`).last ();
 		} else {
 			// TODO: Add FancyError for when the character does not exist
 		}
@@ -25,7 +25,16 @@ export class HideCharacter extends Action {
 	}
 
 	apply () {
-		this.element.removeClass ();
+
+		for (const oldClass of this.element.get(0).classList) {
+			this.element.removeClass (oldClass);
+
+			const matches = oldClass.match (/end-([A-Za-z]+)/); // end-[someLetters]
+			if ( matches !== null ) {
+				this.element.addClass (matches[1]);
+			}
+		}
+
 		this.element.addClass ('animated');
 
 		const durationPosition = this.classes.indexOf ('duration');
@@ -41,6 +50,13 @@ export class HideCharacter extends Action {
 				this.element.addClass (newClass);
 			}
 			this.element.data ('visibility', 'invisible');
+
+			this.element.on ('animationend', (e) => {
+				if (e.target.dataset.visibility === 'invisible') {
+					// Remove only if the animation ends while the element is not visible
+					e.target.remove ();
+				}
+			});
 		} else {
 			this.element.remove ();
 		}
