@@ -21,6 +21,8 @@ export class Dialog extends Action {
 
 			this.engine.global ('finished_typing', true);
 
+			this.engine.trigger ('didFinishTyping');
+
 			return Promise.reject ('TypeWriter effect has not finished.');
 		}
 
@@ -76,6 +78,7 @@ export class Dialog extends Action {
 				},
 				onStringTyped: () => {
 					this.engine.global ('finished_typing', true);
+					this.engine.trigger ('didFinishTyping');
 				},
 				onDestroy: () => {
 					this.engine.global ('finished_typing', true);
@@ -202,6 +205,7 @@ export class Dialog extends Action {
 				this.engine.global ('textObject', new Typed (element.content ('wrapper').get (0), this.engine.global ('typedConfiguration')));
 			} else {
 				element.content ('wrapper').html (dialog);
+				this.engine.trigger ('didFinishTyping');
 			}
 		});
 
@@ -253,6 +257,7 @@ export class Dialog extends Action {
 				this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='unnamed'><p>${dialog}</p></div>`);
 			}
 			this.engine.global ('finished_typing', true);
+			this.engine.trigger ('didFinishTyping');
 		}
 	}
 
@@ -284,6 +289,7 @@ export class Dialog extends Action {
 			} else {
 				this.engine.element ().find ('[data-ui="say"]').html (dialog);
 				this.engine.global ('finished_typing', true);
+				this.engine.trigger ('didFinishTyping');
 			}
 		} else {
 			this.displayNvlDialog (dialog, character, animation);
