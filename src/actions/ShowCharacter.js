@@ -114,7 +114,9 @@ export class ShowCharacter extends Action {
 			sprite.data ('sprite', this.sprite);
 
 			for (const newClass of this.classes) {
-				sprite.addClass (newClass);
+				if (newClass) {
+					sprite.addClass (newClass);
+				}
 			}
 
 			const durationPosition = this.classes.indexOf ('duration');
@@ -141,7 +143,9 @@ export class ShowCharacter extends Action {
 			$_(image).data ('sprite', this.sprite);
 
 			for (const className of this.classes) {
-				image.classList.add (className);
+				if (className) {
+					image.classList.add (className);
+				}
 			}
 
 			const durationPosition = this.classes.indexOf ('duration');
