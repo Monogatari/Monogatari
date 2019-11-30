@@ -216,6 +216,7 @@ Monogatari._actions = [
  */
 export * from './lib/Action';
 export * from './lib/Component';
+export * from './lib/ShadowComponent';
 export * from './lib/ScreenComponent';
 export * from './lib/MenuComponent';
 export * from './lib/FancyError';
