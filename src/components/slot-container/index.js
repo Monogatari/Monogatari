@@ -42,11 +42,14 @@ class SlotContainer extends Component {
 	willMount () {
 		this.classList.add('row', 'row--spaced');
 		return this.engine.Storage.keys().then((keys) => {
+			const fullLabel = `${this.props.label}_`;
+
 			const savedData = keys.filter((key) => {
-				return key.indexOf(this.props.label) === 0;
+				return key.indexOf(fullLabel) === 0;
 			}).sort((a, b) => {
-				const aNumber = parseInt(a.split(this.props.label)[1]);
-				const bNumber = parseInt(b.split(this.props.label)[1]);
+
+				const aNumber = parseInt(a.split(fullLabel)[1]);
+				const bNumber = parseInt(b.split(fullLabel)[1]);
 
 				if (aNumber > bNumber) {
 					return 1;
