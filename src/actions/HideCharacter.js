@@ -1,4 +1,5 @@
 import { Action } from './../lib/Action';
+import { FancyError } from './../lib/FancyError';
 
 export class HideCharacter extends Action {
 
@@ -13,7 +14,20 @@ export class HideCharacter extends Action {
 		if (typeof this.engine.character (this.asset) !== 'undefined') {
 			this.element = this.engine.element ().find (`[data-character="${this.asset}"]`).last ();
 		} else {
-			// TODO: Add FancyError for when the character does not exist
+			FancyError.show (
+				`The character "${this.asset}" does not exist`,
+				`Monogatari attempted to get information about the character "${this.asset}" but it wasn't found on the characters object.`,
+				{
+					'Missing Character': this.asset,
+					'You may have meant one of these': Object.keys (this.engine.characters ()),
+					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
+					'Label': this.engine.state ('label'),
+					'Step': this.engine.state ('step'),
+					'Help': {
+						'_': 'Check your characters object and your script to make sure the character exists and that it does not have a typo in it.'
+					}
+				}
+			);
 		}
 
 		if (typeof classes !== 'undefined') {
@@ -24,9 +38,33 @@ export class HideCharacter extends Action {
 		this.classes = this.classes.filter ((c) => (c !== 'at' && c !== 'with'));
 	}
 
+	willApply () {
+
+		if (!this.element) {
+			FancyError.show (
+				`The character "${this.asset}" can't hide because it's not being shown`,
+				`Monogatari attempted to hide the character "${this.asset}" but it was not being shown.`,
+				{
+					'Missing Character': this.asset,
+					'You may have meant one of these': Object.keys (this.engine.script ()),
+					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
+					'Label': this.engine.state ('label'),
+					'Step': this.engine.state ('step'),
+					'Help': {
+						'_': 'Check that before this hide action you have a show action that shows the character you want to hide.'
+					}
+				}
+			);
+			return Promise.reject ('Attempted to hide a character that was not being shown.');
+		}
+
+		return Promise.resolve ();
+	}
+
+
 	apply () {
 
-		for (const oldClass of this.element.get(0).classList) {
+		for (const oldClass of this.element.classList) {
 			this.element.removeClass (oldClass);
 
 			const matches = oldClass.match (/end-([A-Za-z]+)/); // end-[someLetters]
