@@ -46,7 +46,7 @@ export class HideCharacter extends Action {
 				`Monogatari attempted to hide the character "${this.asset}" but it was not being shown.`,
 				{
 					'Missing Character': this.asset,
-					'You may have meant one of these': Object.keys (this.engine.script ()),
+					'You may have meant one of these': Object.keys (this.engine.characters ()),
 					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
 					'Label': this.engine.state ('label'),
 					'Step': this.engine.state ('step'),
