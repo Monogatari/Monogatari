@@ -42,7 +42,21 @@ game-screen {
 	}
 
 	[data-sprite] {
-		left: 50%;
+		margin: 0 auto;
+		left: 0;
+		right: 0;
+
+		&.right {
+			left: initial;
+			right: 0;
+		}
+
+		&.left {
+			left: 0;
+			right: initial;
+		}
+
+		/* left: 50%;
 		transform: translateX(-50%);
 
 		&.right {
@@ -56,8 +70,8 @@ game-screen {
 		}
 
 		&.move {
-			transition: all 0.2s ease;
-		}
+			transition:all 0.2s ease;
+		} */
 	}
 
 	[data-canvas] {
