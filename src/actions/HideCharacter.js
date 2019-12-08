@@ -64,7 +64,7 @@ export class HideCharacter extends Action {
 
 	apply () {
 
-		for (const oldClass of this.element.classList) {
+		for (const oldClass of this.element.get (0).classList) {
 			this.element.removeClass (oldClass);
 
 			const matches = oldClass.match (/end-([A-Za-z]+)/); // end-[someLetters]
