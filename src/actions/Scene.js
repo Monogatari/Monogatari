@@ -5,6 +5,7 @@ export class Scene extends Action {
 	static setup () {
 		this.engine.history ('scene');
 		this.engine.history ('sceneElements');
+		this.engine.history ('sceneState');
 
 		this.engine.state ({
 			scene: ''
@@ -48,6 +49,7 @@ export class Scene extends Action {
 
 	apply () {
 		const scene_elements = [];
+
 		this.engine.element ().find ('[data-screen="game"] img:not([data-ui="face"]):not([data-visibility="invisible"])').each ((element) => {
 			scene_elements.push (element.outerHTML);
 		});
@@ -60,6 +62,16 @@ export class Scene extends Action {
 			// from the scene, which is something we don't want
 			if (restoringState === false) {
 				this.engine.history ('sceneElements').push (scene_elements);
+
+				this.engine.history ('sceneState').push ({
+					characters: this.engine.state ('characters'),
+					images: this.engine.state ('images')
+				});
+
+				this.engine.state ({
+					characters: [],
+					images: []
+				});
 
 				this.engine.element ().find ('[data-character]').remove ();
 				this.engine.element ().find ('[data-image]').remove ();
@@ -109,6 +121,14 @@ export class Scene extends Action {
 						for (const element of scene_elements) {
 							this.engine.element ().find ('[data-screen="game"]').append (element);
 						}
+					}
+				}
+
+				if (this.engine.history ('sceneState').length > 0) {
+					const scene_state = this.engine.history  ('sceneState').pop ();
+
+					if (typeof scene_state === 'object') {
+						this.engine.state (scene_state);
 					}
 				}
 				return this.engine.action ('Dialog').reset ();
