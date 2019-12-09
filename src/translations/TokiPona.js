@@ -14,7 +14,7 @@ export default {
 	'AdvanceHelp': 'sina ken musi e musi ni kepeken ilo luka anu nena palisa pi ilo sitelen.',
 	'AllowPlayback': 'sina wile kute e musi ni la o luka e mi.',
 	'Audio': 'kalama',
-	'AutoPlay': 'musi kepeken jan ala',
+	'AutoPlay': 'musi kepeken luka ala',
 	'AutoPlayButton': 'o ken e musi kepeken luka ala',
 	'AutoPlaySpeed': 'o wawa ala wawa e ken musi kepeken luka ala',
 
