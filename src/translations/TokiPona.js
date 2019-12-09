@@ -1,11 +1,11 @@
 /**
  * ============================================================
- * English
+ * Toki Ponaow to
  * ============================================================
  *
  * Translators:
  *
- * Hyuchia <diego@hyuchia.com>
+ * jan Inkepa <analytic@gmail.com>
  */
 
 
@@ -14,7 +14,7 @@ export default {
 	'AdvanceHelp': 'sina ken musi e musi ni kepeken ilo luka anu nena palisa pi ilo sitelen.',
 	'AllowPlayback': 'sina wile kute e musi ni la o luka e mi.',
 	'Audio': 'kalama',
-	'AutoPlay': 'Auto',
+	'AutoPlay': 'musi kepeken jan ala',
 	'AutoPlayButton': 'o ken e musi kepeken luka ala',
 	'AutoPlaySpeed': 'o wawa ala wawa e ken musi kepeken luka ala',
 
@@ -51,7 +51,7 @@ export default {
 	'LocalStorageWarning': 'mi ken ala kepeken e ken Local Storage lon ilo ni',
 	'Log': 'lipu toki pi tenpo pini',
 
-	'Music': 'suli pi kalama musi',
+	'Music': 'kalama musi',
 
 	'NewContent': 'musi ni li kama sin! sina wile musi e musi sin, la o kama sin tawa lipu ni.',
 	'NoSavedGames': 'musi ni li jo ala e musi pi tenpo pini.',
@@ -78,14 +78,14 @@ export default {
 	'SkipButton': 'ken pi tawa tenpo kama',
 	'SlotDeletion': 'sina wile ala wile weka e awen musi ni?',
 	'SlotOverwrite': 'sina wile ala wile ante e awen musi ni?',
-	'Sound': 'suli pi kalama lili',
+	'Sound': 'kalama ijo',
 	'Start': 'open',
 	'Stop': 'pini',
 
-	'TextSpeed': 'wawa pi sitelen toki',
+	'TextSpeed': 'tenpo pi sitelen toki',
 
-	'Video': 'wawa kalama pi sitelen tawa',
-	'Voice': 'wawa kalama pi toki jan',
+	'Video': 'kalama pi sitelen tawa',
+	'Voice': 'kalama toki',
 
 	'Windowed': 'ma lili pi ilo lukin',
 };
