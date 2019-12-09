@@ -56,6 +56,8 @@ export default {
 	'NoAutoSavedGames': 'Aucune partie enregistrée automatiquement',
 	'NoDialogsAvailable': 'Aucun dialogue disponible. Les boîtes de dialogue apparaîtront ici au fur et à mesure qu\'elles s\'afficheront.',
 
+	'OK': 'OK',
+
 	'OrientationWarning': 'Changez l\'orientation de votre appareil pour jouer.',
 	'Overwrite': 'Écraser',
 

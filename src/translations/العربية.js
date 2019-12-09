@@ -58,6 +58,8 @@ export default {
 	'NoAutoSavedGames': 'لا توجد خانات حفظ تلقائي',
 	'NoDialogsAvailable': 'لا توجد حوارات. ستظهر الحوارات هنا عندما يتم كتابتها',
 
+	'OK': 'موافق',
+
 	'OrientationWarning': 'الرجاء وضع الجهاز على الجانب الآخر لتستطيع اللعب',
 	'Overwrite': 'الاستبدال',
 

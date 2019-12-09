@@ -85,7 +85,7 @@ class DialogLog extends Component {
 				<div data-content="log">
 					<div class="text--center padded" data-string="NoDialogsAvailable" data-content="placeholder">No dialogs available. Dialogs will appear here as they show up.</div>
 				</div>
-				<button data-action="dialog-log">Close</button>
+				<button data-string="Close" data-action="dialog-log">Close</button>
 			</div>
 		`;
 	}

@@ -56,6 +56,8 @@ export default {
 	'NoAutoSavedGames': '自動的に保存されたゲームはありません',
 	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up',
 
+	'OK': 'OK',
+
 	'OrientationWarning': 'Please rotate your device to play',
 	'Overwrite': '上書き',
 
