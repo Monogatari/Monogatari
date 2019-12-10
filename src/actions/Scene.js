@@ -27,14 +27,15 @@ export class Scene extends Action {
 							const div = document.createElement ('div');
 							div.innerHTML =  element;
 							const image = $_(div.firstChild);
-
-							return `show character ${image.data('character')} ${image.data('sprite')} with ${image.get(0).classList.toString ().replace ('animated ', '').trim ()}`;
+							const classes = image.get(0).classList.toString ().replace ('animated', '').trim ();
+							return `show character ${image.data('character')} ${image.data('sprite')}${ classes.length > 0 ? ` with ${classes}`: ''}`;
 						}),
 						images: elements.filter(element => element.indexOf ('data-image=') > -1).map ((element) => {
 							const div = document.createElement ('div');
 							div.innerHTML =  element;
 							const image = $_(div.firstChild);
-							return `show image ${image.data('image')} with ${image.get(0).classList.toString ().replace ('animated ', '').trim ()}`;
+							const classes = image.get(0).classList.toString ().replace ('animated', '').trim ();
+							return `show image ${image.data('image')}${ classes.length > 0 ? ` with ${classes}`: ''}`;
 						}),
 					};
 				}
