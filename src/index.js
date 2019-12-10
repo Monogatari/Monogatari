@@ -57,6 +57,7 @@ import korean from './translations/한국어';
 import portuguese from './translations/Português';
 import russian from './translations/Russian';
 import spanish from './translations/Español';
+import tokipona from './translations/tokipona';
 
 
 Monogatari._translations = {
@@ -72,6 +73,7 @@ Monogatari._translations = {
 	'한국어': korean,
 	'日本語': japanese,
 	'简体中文': chinese,
+	'toki pona': tokipona,
 };
 
 /**
