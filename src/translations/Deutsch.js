@@ -57,6 +57,7 @@ export default {
 	'NoAutoSavedGames': 'Keine automatisch gespeicherten Spiele',
 	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up',
 
+	'OK': 'OK',
 	'OrientationWarning': 'Um das Spiel zu spielen, Bitte drehen sie Ihr Gerät',
 	'Overwrite': 'Überschreiben',
 

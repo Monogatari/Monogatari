@@ -58,6 +58,7 @@ export default {
 	'NoAutoSavedGames': '자동으로 저장된 게임이 없습니다',
 	'NoDialogsAvailable': '대화 상자를 사용할 수 없습니다. 사용할 수 있게 되면 여기에 대화 상자가 나타납니다',
 
+	'OK': '확인',
 	'OrientationWarning': '플레이를 위해 기기를 회전해주세요',
 	'Overwrite': '덮어쓰기',
 

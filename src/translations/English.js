@@ -58,6 +58,7 @@ export default {
 	'NoAutoSavedGames': 'No automatically saved games',
 	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up',
 
+	'OK': 'OK',
 	'OrientationWarning': 'Please rotate your device to play',
 	'Overwrite': 'Overwrite',
 

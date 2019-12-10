@@ -56,6 +56,7 @@ export default {
 	'NewContent': '有新的内容可供使用，重新加载页面以获取最新版本',
 	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up',
 
+	'OK': '確定',
 	'OrientationWarning': '请将设备旋转以体验游戏内容',
 	'Overwrite': '覆盖',
 

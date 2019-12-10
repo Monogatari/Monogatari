@@ -81,7 +81,7 @@ class TextInput extends Component {
 				<input data-content="field" type="text">
 				<small data-content="warning" class="block"></small>
 				<div>
-					<button type='submit'>Ok</button>
+					<button type='submit'>${this.engine.string ('OK')}</button>
 				</div>
 			<form>
 		`;

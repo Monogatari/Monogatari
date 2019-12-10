@@ -56,6 +56,7 @@ export default {
 	'NoAutoSavedGames': 'Nenhum jogo salvo automaticamente',
 	'NoDialogsAvailable': 'Não há diálogos disponíveis. Os diálogos aparecerão aqui quando ocorrerem no jogo',
 
+	'OK': 'OK',
 	'OrientationWarning': 'Por favor rode o seu dispositivo para jogar',
 	'Overwrite': 'Substituir',
 

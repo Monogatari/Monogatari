@@ -56,6 +56,7 @@ export default {
 	'NoAutoSavedGames': 'Geen automatsch opgeslagen spellen',
 	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up',
 
+	'OK': 'OK',
 	'OrientationWarning': 'Please rotate your device to play',
 	'Overwrite': 'Overschrijven',
 
