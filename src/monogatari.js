@@ -1711,6 +1711,10 @@ class Monogatari {
 						}
 					}
 
+					const sceneElements = data.Engine.SceneElementsHistory.map ((elements) => {
+						return elements.map (element => element.replace ('img/', 'assets/'));
+					});
+
 					// Set all the history variables with the ones from the old
 					// format
 					this.history ({
@@ -1728,8 +1732,29 @@ class Monogatari {
 						scene: data.Engine.SceneHistory.map ((scene) => {
 							return `show scene ${scene}`;
 						}),
-						sceneElements: data.Engine.SceneElementsHistory.map ((elements) => {
-							return elements.map (element => element.replace ('img/', 'assets/'));
+						sceneElements: sceneElements,
+						sceneState: sceneElements.map ((elements) => {
+							if (elements.length > 0) {
+								return {
+									characters: elements.filter(element => element.indexOf ('data-character=') > -1).map ((element) => {
+										const div = document.createElement ('div');
+										div.innerHTML =  element;
+										const image = $_(div.firstChild);
+										return `show character ${image.data('character')} ${image.data('sprite')} with ${image.get(0).classList.toString ().replace ('animated ', '').trim ()}`;
+									}),
+									images: elements.filter(element => element.indexOf ('data-image=') > -1).map ((element) => {
+										const div = document.createElement ('div');
+										div.innerHTML =  element;
+										const image = $_(div.firstChild);
+										return `show image ${image.data('image')} with ${image.get(0).classList.toString ().replace ('animated ', '').trim ()}`;
+									}),
+								};
+							}
+
+							return {
+								characters: [],
+								images: []
+							};
 						}),
 						particle: data.Engine.ParticlesHistory.map ((particles) => {
 							return `show particles ${particles}`;

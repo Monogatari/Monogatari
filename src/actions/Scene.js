@@ -1,3 +1,4 @@
+import { $_ } from '@aegis-framework/artemis';
 import { Action } from './../lib/Action';
 
 export class Scene extends Action {
@@ -10,10 +11,45 @@ export class Scene extends Action {
 		this.engine.state ({
 			scene: ''
 		});
+
 		return Promise.resolve ();
 	}
 
 	static onLoad () {
+		const sceneState = this.engine.history ('sceneState');
+		const sceneElements = this.engine.history ('sceneElements');
+
+		if (sceneState.length !== sceneElements.length) {
+			const states = sceneElements.map ((elements) => {
+				if (elements.length > 0) {
+					return {
+						characters: elements.filter(element => element.indexOf ('data-character=') > -1).map ((element) => {
+							const div = document.createElement ('div');
+							div.innerHTML =  element;
+							const image = $_(div.firstChild);
+
+							return `show character ${image.data('character')} ${image.data('sprite')} with ${image.get(0).classList.toString ().replace ('animated ', '').trim ()}`;
+						}),
+						images: elements.filter(element => element.indexOf ('data-image=') > -1).map ((element) => {
+							const div = document.createElement ('div');
+							div.innerHTML =  element;
+							const image = $_(div.firstChild);
+							return `show image ${image.data('image')} with ${image.get(0).classList.toString ().replace ('animated ', '').trim ()}`;
+						}),
+					};
+				}
+
+				return {
+					characters: [],
+					images: []
+				};
+			});
+
+			for (const state of states) {
+				this.engine.history ('sceneState').push (state);
+			}
+		}
+
 		const { scene } = this.engine.state ();
 		if (scene !== '') {
 			const promise = this.engine.run (scene, false);
