@@ -57,7 +57,6 @@ export default {
 	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up',
 
 	'OK': '確定',
-	
 	'OrientationWarning': '请将设备旋转以体验游戏内容',
 	'Overwrite': '覆盖',
 

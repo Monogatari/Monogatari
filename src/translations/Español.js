@@ -57,7 +57,6 @@ export default {
 	'NoDialogsAvailable': 'No hay dialogos disponibles. Los dialogos aparecerán aqui una vez que ocurran en el juego',
 
 	'OK': 'Aceptar',
-
 	'OrientationWarning': 'Por favor rota tu dispositivo para jugar',
 	'Overwrite': 'Sobreescribir',
 
