@@ -59,7 +59,6 @@ export default {
 	'NoDialogsAvailable': 'tenpo pini la toki jan li lon ala. jan li toki, la sina ken lukin ni lon lipu ni.',
 
 	'OK' : 'pona',
-	
 	'OrientationWarning': 'sina wile musi, la o sike e ilo sona sina.',
 	'Overwrite': 'ante',
 
