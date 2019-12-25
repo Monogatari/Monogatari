@@ -26,7 +26,8 @@
 		"lint:html": "yarn htmlhint ./dist/index.html",
 		"lint:js": "yarn eslint ./src --ext .js --ignore-pattern *.min.js && yarn eslint ./dist/js --ext .js --ignore-pattern *.min.js && yarn eslint ./dist/engine/electron --ext .js  && yarn eslint ./dist/service-worker.js",
 		"lint:css": "yarn stylelint ./src/**/*.css ./dist/style/**/*.css --ignore-pattern *.min.css",
-		"lint": "yarn lint:html && yarn lint:js && yarn lint:css"
+		"lint": "yarn lint:html && yarn lint:js && yarn lint:css",
+		"test": "yarn lint && yarn run cypress open"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.7.5",
@@ -35,14 +36,15 @@
 		"@babel/preset-env": "^7.7.6",
 		"autoprefixer": "^9.7.3",
 		"babel-eslint": "^10.0.3",
-		"core-js": "^3.4.7",
-		"eslint": "^6.7.2",
+		"core-js": "^3.6.1",
+		"cypress": "^3.8.0",
+		"eslint": "^6.8.0",
 		"htmlhint": "^0.11.0",
 		"jsdoc": "^3.6.3",
 		"parcel": "^1.12.4",
 		"postcss-calc": "^7.0.1",
 		"precss": "^4.0.0",
-		"stylelint": "^12.0.0",
+		"stylelint": "^12.0.1",
 		"stylelint-config-standard": "^19.0.0"
 	},
 	"dependencies": {
@@ -52,7 +54,7 @@
 		"@fortawesome/fontawesome-free": "^5.12.0",
 		"animate.css": "^3.7.2",
 		"deeply": "^3.1.0",
-		"electron": "^7.1.3",
+		"electron": "^7.1.7",
 		"mixins.css": "^1.0.0",
 		"moment": "^2.24.0",
 		"mousetrap": "^1.6.3",
