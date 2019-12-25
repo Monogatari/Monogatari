@@ -107,6 +107,12 @@ export class Play extends Action {
 			this.engine.removeMediaPlayer (playerType);
 		}
 
+		this.engine.state ({
+			music: [],
+			sound: [],
+			voice: []
+		});
+
 		return Promise.resolve ();
 	}
 

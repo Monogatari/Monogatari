@@ -13,6 +13,11 @@ export class ShowImage extends Action {
 
 	static reset () {
 		this.engine.element ().find ('[data-screen="game"] [data-image]').remove ();
+
+		this.engine.state ({
+			images: []
+		});
+
 		return Promise.resolve ();
 	}
 

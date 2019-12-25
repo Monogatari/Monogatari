@@ -44,12 +44,15 @@ export class Video extends Action {
 
 	static reset () {
 		this.engine.element ().find ('[data-video]').remove ();
+
 		this.engine.history ({
 			video: []
 		});
+
 		this.engine.state ({
 			videos: []
 		});
+
 		return Promise.resolve ();
 	}
 

@@ -17,6 +17,11 @@ export class ShowCharacter extends Action {
 
 	static reset () {
 		this.engine.element ().find ('[data-screen="game"] [data-character]').remove ();
+
+		this.engine.state ({
+			characters: []
+		});
+
 		return Promise.resolve ();
 	}
 
