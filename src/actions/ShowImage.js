@@ -30,6 +30,7 @@ export class ShowImage extends Action {
 			// TODO: Find a way to prevent the histories from filling up on loading
 			// So there's no need for this pop.
 			this.engine.history ('image').pop ();
+			this.engine.state ('images').shift ();
 		}
 
 		if (promises.length > 0) {
