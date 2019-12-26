@@ -1,5 +1,5 @@
 import { $_, $_ready, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, Text, Debug } from '@aegis-framework/artemis';
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
 import mousetrap from 'mousetrap';
 import { FancyError } from './lib/FancyError';
 import merge  from 'deeply';
@@ -785,6 +785,10 @@ class Monogatari {
 	 */
 	static localize () {
 		this.trigger ('willLocalize');
+
+		// Setup the correct locale for the momentjs dates
+		moment.locale (this._languageCodes[this.preference ('Language')]);
+
 		this.element ().find ('[data-string]').each ((element) => {
 			const string_translation = this.string ($_(element).data ('string'));
 

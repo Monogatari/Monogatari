@@ -76,6 +76,22 @@ Monogatari._translations = {
 	'toki pona': tokipona,
 };
 
+Monogatari._languageCodes = {
+	'Беларуская': 'be',
+	'Deutsch': 'de',
+	'English': 'en',
+	'Español': 'es',
+	'Français': 'fr',
+	'Nederlands': 'en',
+	'Português': 'pt',
+	'Русский': 'ru',
+	'اللغه العربية': 'ar',
+	'한국어': 'ko',
+	'日本語': 'ja',
+	'简体中文': 'zh',
+	'toki pona': 'en',
+};
+
 /**
  * =============================================================================
  * Components

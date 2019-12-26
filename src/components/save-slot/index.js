@@ -1,6 +1,6 @@
 import { Component } from './../../lib/Component';
 import { Text } from '@aegis-framework/artemis';
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
 
 class SaveSlot extends Component {
 
@@ -120,7 +120,7 @@ class SaveSlot extends Component {
 			<button data-delete='${this.props.slot}'><span class='fas fa-times'></span></button>
 			<small class='badge'>${this.props.name}</small>
 			<div data-content="background" style="${hasImage ? 'background-image' : 'background'}: ${background}"></div>
-			<figcaption>${moment (this.props.date).format ('MMMM Do YYYY, h:mm:ss a')}</figcaption>
+			<figcaption>${moment (this.props.date).format ('LL LTS')}</figcaption>
 		`;
 	}
 }

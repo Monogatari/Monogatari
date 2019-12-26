@@ -138,6 +138,10 @@ class SlotContainer extends Component {
 			}
 		});
 
+		this.engine.on ('didLocalize', () => {
+			this.forceRender ();
+		});
+
 		return Promise.resolve();
 	}
 
