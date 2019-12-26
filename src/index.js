@@ -82,7 +82,7 @@ Monogatari._languageCodes = {
 	'English': 'en',
 	'Español': 'es',
 	'Français': 'fr',
-	'Nederlands': 'en',
+	'Nederlands': 'nl',
 	'Português': 'pt',
 	'Русский': 'ru',
 	'اللغه العربية': 'ar',
