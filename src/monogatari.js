@@ -2281,6 +2281,9 @@ class Monogatari {
 			callback: () => {
 				this.global ('playing', true);
 
+				// Remove the play main menu audio broadcast message if it's present
+				this.element ().find ('[data-ui="broadcast"]').remove ();
+
 				this.onStart ().then (() => {
 					this.element ().find ('[data-screen]').each ((screen) => {
 						screen.setState ({ open: false });
