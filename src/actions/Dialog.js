@@ -170,10 +170,12 @@ export class Dialog extends Action {
 			if (typeof expression !== 'undefined') {
 				if (typeof this.character.expressions !== 'undefined') {
 					this.image = this.character.expressions[expression];
+					this.expression = expression;
 				}
 
 			} else if (typeof this.character.default_expression !== 'undefined') {
 				this.image = this.character.default_expression;
+				this.expression = 'default';
 			}
 		} else if (id === 'centered') {
 			this.id = 'centered';
@@ -190,7 +192,11 @@ export class Dialog extends Action {
 	willApply () {
 		this.engine.element ().find ('[data-character]').removeClass ('focus');
 		this.engine.element ().find ('[data-ui="face"]').hide ();
+
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
+
+		delete this.engine.element ().find ('[data-component="text-box"]').get (0).dataset.expression;
+
 		return Promise.resolve ();
 	}
 
@@ -324,6 +330,7 @@ export class Dialog extends Action {
 			`${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`;
 			this.engine.element ().find ('[data-ui="face"]').attribute ('src', `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`);
 			this.engine.element ().find ('[data-ui="face"]').show ();
+			this.engine.element ().find ('[data-component="text-box"]').data ('expression', this.expression);
 		}
 
 		// Check if the character object defines if the type animation should be used.
