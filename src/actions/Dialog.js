@@ -195,7 +195,7 @@ export class Dialog extends Action {
 
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
 
-		delete this.engine.element ().find ('[data-component="text-box"]').get (0).dataset.expression;
+		this.engine.element ().find ('[data-component="text-box"]').removeData ('expression');
 
 		return Promise.resolve ();
 	}
