@@ -1158,10 +1158,17 @@ class Monogatari {
 					this.global ('_engine_block', false);
 					resolve ();
 				}).catch (() => {
+					this.global ('_engine_block', false);
 					// The game could not be reverted, either because an
 					// action prevented it or because there are no statements
 					// left to revert to.
-					resolve ();
+					this.state ({
+						step: this.state ('step') - 1
+					});
+
+					this.proceed ().then (() => {
+						resolve ();
+					});
 				});
 			}, 0);
 		});
