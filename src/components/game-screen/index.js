@@ -38,6 +38,17 @@ class GameScreen extends ScreenComponent {
 		return Promise.resolve ();
 	}
 
+
+	didMount () {
+		this.engine.on ('didUpdateState', ({ detail: {newState: { label }}}) => {
+			if (label) {
+				this.element ().data ('label', label);
+			}
+		});
+
+		return Promise.resolve ();
+	}
+
 	render () {
 		return `
 			<div data-content="visuals">
