@@ -2127,6 +2127,8 @@ class Monogatari {
 
 	// Start game automatically without going trough the main menu
 	static showMainScreen () {
+		this.global ('on_splash_screen', false);
+
 		if (!this.setting ('ShowMainScreen')) {
 			this.global ('playing', true);
 			this.showScreen ('game');
@@ -2141,11 +2143,15 @@ class Monogatari {
 		if (typeof labelName === 'string' && labelName !== '') {
 			const label = this.label (labelName);
 			if (typeof label !== 'undefined') {
+				this.global ('on_splash_screen', true);
+
 				this.state ({
 					label: labelName
 				});
 
-				this.element ().find ('quick-menu').addClass ('splash-screen');
+				this.element ().find ('[data-component="game-screen"]').addClass ('splash-screen');
+
+				this.element ().find ('[data-component="quick-menu"]').addClass ('splash-screen');
 
 				this.showScreen ('game');
 
@@ -2488,7 +2494,7 @@ class Monogatari {
 					screen.setState ({ open: false });
 				});
 
-				if (this.global ('playing')) {
+				if (this.global ('playing') || this.global ('on_splash_screen')) {
 					this.element ().find ('[data-screen="game"]').get (0).setState ({ open: true });
 				} else {
 					this.element ().find ('[data-screen="main"]').get (0).setState ({ open: true });
@@ -2988,6 +2994,7 @@ Monogatari.globals ({
 	_auto_save_interval: null,
 	_engine_block: false,
 	_restoring_state: false,
+	on_splash_screen: false,
 });
 
 Monogatari._listeners = [];

@@ -53,9 +53,13 @@ export class End extends Action {
 
 	apply () {
 		this.engine.global ('playing', false);
+
 		this.engine.resetGame ();
 		this.engine.showMainScreen ();
-		this.engine.element ().find ('quick-menu').removeClass ('splash-screen');
+
+		this.engine.element ().find ('[data-component="quick-menu"]').removeClass ('splash-screen');
+		this.engine.element ().find ('[data-component="game-screen"]').removeClass ('splash-screen');
+
 		return Promise.resolve ();
 	}
 
