@@ -252,7 +252,20 @@ class Monogatari {
 			if (typeof object === 'string') {
 				return this._state[object];
 			} else {
-				this._state = merge (this._state, object);
+				const oldState = Object.assign ({}, this._state);
+				const newState = merge (this._state, object);
+
+				this.trigger ('willUpdateState', {
+					oldState,
+					newState
+				});
+
+				this._state = newState;
+
+				this.trigger ('didUpdateState', {
+					oldState,
+					newState: this._state
+				});
 			}
 		} else {
 			return this._state;
@@ -2135,7 +2148,9 @@ class Monogatari {
 				this.element ().find ('quick-menu').addClass ('splash-screen');
 
 				this.showScreen ('game');
+
 				this.run (this.label ()[this.state ('step')]);
+
 				return;
 			}
 		}
