@@ -119,7 +119,7 @@ class SlotContainer extends Component {
 		this.engine.Storage.onCreate ((key, value) => {
 			if (key.indexOf (`${this.props.label}_`) === 0) {
 				this.setState ({
-					slots: [...this.state.slots, key]
+					slots: [...new Set([...this.state.slots, key])]
 				});
 			}
 		});
