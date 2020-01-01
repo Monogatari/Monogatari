@@ -716,6 +716,31 @@ class Monogatari {
 		}
 	}
 
+	/**
+	 * Placeholders. Saves up an action (any kind of action) for later use within
+	 * the game in a key-value manner.
+	 *
+	 * @param {string} name - The name with which the action will be saved and later used
+	 * @param {any} value - The value (an action) to save up
+	 *
+	 * @returns {(any|void)} - The value of an action given its name, the whole
+	 * object if both params are missing and void if used for assigning the value.
+	 *
+	 */
+	static $ (name, value) {
+		if (typeof name === 'string') {
+			if (typeof value !== 'undefined') {
+				this._$[name] = value;
+			} else {
+				return this._$[name];
+			}
+		} else if (typeof name === 'object') {
+			this._$ = Object.assign ({}, this._$, name);
+		} else if (typeof name === 'undefined') {
+			return this._$;
+		}
+	}
+
 	static globals (object = null) {
 		if (object !== null) {
 			this._globals = merge (this._globals, object);
@@ -2826,6 +2851,10 @@ Monogatari._globals = {
 };
 
 Monogatari._functions = {
+
+};
+
+Monogatari._$ = {
 
 };
 

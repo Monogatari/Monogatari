@@ -185,6 +185,7 @@ import Next from './actions/Next.js';
 import Notify from './actions/Notify.js';
 import Particles from './actions/Particles.js';
 import Pause from './actions/Pause.js';
+import Placeholder from './actions/Placeholder';
 import Play from './actions/Play.js';
 import Scene from './actions/Scene.js';
 import ShowBackground from './actions/ShowBackground.js';
@@ -216,6 +217,7 @@ Monogatari._actions = [
 	Particles,
 	Pause,
 	Play,
+	Placeholder,
 	Scene,
 	ShowBackground,
 	ShowCharacter,
