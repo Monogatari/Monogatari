@@ -1352,16 +1352,21 @@ class Monogatari {
 
 		for (const listener of this._listeners) {
 			if (listener.name === name) {
-				promises.push (this.assertAsync (listener.callback , Monogatari, [element, event]));
+				promises.push (Util.callAsync (listener.callback , Monogatari, element, event).then ((data) => {
+					if (data) {
+						return Promise.resolve ();
+					}
+					return Promise.reject ();
+				}));
 				this.debug.debug ('Running Listener', name);
 			}
 		}
 
-		Promise.all (promises).catch (() => {
+		Promise.all (promises).catch ((e) => {
 			event.stopImmediatePropagation ();
 			event.stopPropagation ();
 			event.preventDefault ();
-			this.debug.debug ('Listener Event Propagation Stopped');
+			this.debug.debug ('Listener Event Propagation Stopped', e);
 		});
 	}
 
