@@ -120,9 +120,6 @@ export class Dialog extends Action {
 
 		this.engine.setting ('maxTextSpeed', parseInt ($_(`${selector} [data-action="set-text-speed"]`).property ('max')));
 
-
-		//document.querySelector('[data-action="set-text-speed"]').value = this.engine.preference ('TextSpeed');
-
 		return Promise.resolve ();
 	}
 
