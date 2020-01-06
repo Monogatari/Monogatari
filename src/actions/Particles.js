@@ -88,7 +88,7 @@ export class Particles extends Action {
 		if (typeof this.particles !== 'undefined') {
 			return Promise.resolve ();
 		} else {
-			return Promise.reject ();
+			return Promise.reject ('Particle system object does not exist.');
 		}
 	}
 

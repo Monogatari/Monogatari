@@ -55,7 +55,7 @@ export class HideImage extends Action {
 
 	willRevert () {
 		if (this.engine.history ('image').length <= 0) {
-			return Promise.reject ();
+			return Promise.reject ('Image history was empty.');
 		}
 		return Promise.resolve ();
 	}

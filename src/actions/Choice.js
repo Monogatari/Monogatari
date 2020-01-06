@@ -168,7 +168,7 @@ export class Choice extends Action {
 				}
 			}
 		}
-		return Promise.reject ();
+		return Promise.reject ('Choice history was empty');
 	}
 
 	revert () {

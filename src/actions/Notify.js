@@ -106,7 +106,7 @@ export class Notify extends Action {
 						}
 					});
 				} else {
-					reject ();
+					reject ('The permission to display notifications was denied by the user.');
 				}
 			});
 		}

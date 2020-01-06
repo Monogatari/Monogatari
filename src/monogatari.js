@@ -2068,7 +2068,7 @@ class Monogatari {
 				return Promise.reject (e);
 			});
 		} else {
-			return Promise.reject ();
+			return Promise.reject ('Extra condition check failed.');
 		}
 	}
 

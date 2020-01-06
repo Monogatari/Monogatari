@@ -16,7 +16,7 @@ export class Clear extends Action {
 	}
 
 	willRevert () {
-		return Promise.reject ();
+		return Promise.reject ('Clear is not reversible.');
 	}
 }
 

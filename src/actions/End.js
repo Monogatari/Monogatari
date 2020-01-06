@@ -64,7 +64,7 @@ export class End extends Action {
 	}
 
 	willRevert () {
-		return Promise.reject ();
+		return Promise.reject ('End is not reversible');
 	}
 }
 

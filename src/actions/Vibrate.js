@@ -56,7 +56,7 @@ export class Vibrate extends Action {
 		if (typeof this.time !== 'undefined') {
 			return Promise.resolve ();
 		}
-		return Promise.reject ();
+		return Promise.reject ('Time for vibration was not provided');
 	}
 
 	apply () {
