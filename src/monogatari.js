@@ -1902,10 +1902,11 @@ class Monogatari {
 		// playing or is looking at some menu and thus the game should not
 		// proceed. The game will not proceed if it's blocked or if the distraction
 		// free mode is enabled.
+
 		if (!$_('.modal').isVisible ()
 			&& !this.global ('distraction_free')
 			&& !this.global ('block')
-			&& !this.global ('_engine_block')) {
+			&& (!this.global ('_engine_block') || this.global ('_executing_sub_action'))) {
 			const promises = [];
 
 			this.debug.groupCollapsed ('shouldProceed Check');
@@ -2022,7 +2023,7 @@ class Monogatari {
 		// free mode is enabled.
 		if (!this.global ('distraction_free')
 			&& !this.global ('block')
-			&& !this.global ('_engine_block')) {
+			&& (!this.global ('_engine_block') || this.global ('_executing_sub_action'))) {
 			const promises = [];
 
 			this.debug.groupCollapsed ('shouldRollback Check');
@@ -3068,6 +3069,7 @@ Monogatari.globals ({
 	_log: [],
 	_auto_save_interval: null,
 	_engine_block: false,
+	_executing_sub_action: false,
 	_restoring_state: false,
 	on_splash_screen: false,
 });
