@@ -1,0 +1,37 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - '**.html'
+      - '**.js'
+      - '**.json'
+      - '**.css'
+      - '!dist/engine/core/**'
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - '**.html'
+      - '**.js'
+      - '**.json'
+      - '**.css'
+      - '!dist/engine/core/**'
+
+jobs:
+  lint:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Dependencies
+        uses: Borales/actions-yarn@v2.0.0
+        with:
+          cmd: install # will run `yarn install` command
+      - name: Run Tests
+        uses: Borales/actions-yarn@v2.0.0
+        with:
+          cmd: test # will run `yarn test` command
