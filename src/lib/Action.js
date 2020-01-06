@@ -285,6 +285,22 @@ class Action {
 		return false;
 	}
 
+	static beforeRun ({ advance }) {
+		return Promise.resolve ();
+	}
+
+	static beforeRevert ({ advance, step }) {
+		return Promise.resolve ();
+	}
+
+	static afterRun ({ advance }) {
+		return Promise.resolve ();
+	}
+
+	static afterRevert ({ advance, step }) {
+		return Promise.resolve ();
+	}
+
 	/**
 	 * constuctor - Once the action has been matched through one of the match
 	 * functions, an instance of the action is created with the statement  it
