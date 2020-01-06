@@ -8,7 +8,8 @@ on:
       - '**.js'
       - '**.json'
       - '**.css'
-      - '!dist/**' 
+      - '!dist/**'
+      - '!cypress/**'
 
 jobs:
   build:
