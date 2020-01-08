@@ -27,7 +27,7 @@
 		"lint:js": "yarn eslint ./src --ext .js --ignore-pattern *.min.js && yarn eslint ./dist/js --ext .js --ignore-pattern *.min.js && yarn eslint ./dist/engine/electron --ext .js  && yarn eslint ./dist/service-worker.js",
 		"lint:css": "yarn stylelint ./src/**/*.css ./dist/style/**/*.css --ignore-pattern *.min.css",
 		"lint": "yarn lint:html && yarn lint:js && yarn lint:css",
-		"test": "yarn run cypress run"
+		"test": "yarn run cypress"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.7.5",

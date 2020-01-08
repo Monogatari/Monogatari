@@ -21,7 +21,7 @@ context ('Conditionals', function () {
 			]
 		});
 
-		cy.get ('[data-action="start"]').click ();
+		cy.start ();
 		cy.get ('text-box').contains ('True');
 	});
 
@@ -40,7 +40,7 @@ context ('Conditionals', function () {
 			]
 		});
 
-		cy.get ('[data-action="start"]').click ();
+		cy.start ();
 		cy.get ('text-box').contains ('False');
 	});
 
@@ -60,7 +60,7 @@ context ('Conditionals', function () {
 		});
 
 
-		cy.get ('[data-action="start"]').click ();
+		cy.start ();
 		cy.get ('text-box').contains ('SomeString');
 	});
 
@@ -79,7 +79,7 @@ context ('Conditionals', function () {
 			]
 		});
 
-		cy.get ('[data-action="start"]').click ();
+		cy.start ();
 		cy.get ('.fancy-error').should ('be.visible');
 	});
 
@@ -98,7 +98,7 @@ context ('Conditionals', function () {
 			]
 		});
 
-		cy.get ('[data-action="start"]').click ();
+		cy.start ();
 		cy.get ('text-box').contains ('False');
 	});
 
@@ -117,7 +117,7 @@ context ('Conditionals', function () {
 			]
 		});
 
-		cy.get ('[data-action="start"]').click ();
+		cy.start ();
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True']);
 	});
 
@@ -138,23 +138,23 @@ context ('Conditionals', function () {
 			]
 		});
 
-		cy.get ('[data-action="start"]').click ();
+		cy.start ();
 		cy.get ('text-box').contains ('Before');
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		// cy.wait(500);
 		cy.get ('text-box').contains ('True');
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True']);
 		// cy.wait(500);
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		cy.get ('text-box').contains ('After');
 		// cy.wait(500);
-		cy.get ('body').type ('{leftarrow}');
+		cy.rollback ();
 		cy.get ('text-box').contains ('True');
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True']);
-		cy.get ('body').type ('{leftarrow}');
+		cy.rollback ();
 		cy.get ('text-box').contains ('Before');
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('be.empty');
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True']);
 
 	});
@@ -176,13 +176,13 @@ context ('Conditionals', function () {
 			]
 		});
 
-		cy.get ('[data-action="start"]').click ();
+		cy.start ();
 		cy.get ('text-box').contains ('Before');
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		// cy.wait(500);
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True']);
 		cy.get ('text-box').contains ('After');
-		cy.get ('body').type ('{leftarrow}');
+		cy.rollback ();
 		cy.get ('text-box').contains ('Before');
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('be.empty');
 
@@ -226,14 +226,14 @@ context ('Conditionals', function () {
 			]
 		});
 
-		cy.get ('[data-action="start"]').click ();
+		cy.start ();
 		cy.get ('text-box').contains ('Before');
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		// cy.wait(500);
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True']);
 		cy.get ('text-box').contains ('True');
 		// cy.wait(500);
-		cy.get ('body').type ('{leftarrow}');
+		cy.rollback ();
 		cy.get ('text-box').contains ('Before');
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('be.empty');
 
@@ -277,14 +277,14 @@ context ('Conditionals', function () {
 			]
 		});
 
-		cy.get ('[data-action="start"]').click ();
+		cy.start ();
 		cy.get ('text-box').contains ('Before');
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		// cy.wait(500);
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True']);
 		cy.get ('text-box').contains ('After');
 		// cy.wait(500);
-		cy.get ('body').type ('{leftarrow}');
+		cy.rollback ();
 		cy.get ('text-box').contains ('Before');
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('be.empty');
 	});
@@ -356,50 +356,50 @@ context ('Conditionals', function () {
 			]
 		});
 
-		cy.get ('[data-action="start"]').click ();
+		cy.start ();
 		cy.get ('text-box').contains ('Before');
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		// cy.wait(500);
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True']);
 		cy.get ('text-box').contains ('True');
 		// cy.wait(500);
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True', 'True', 'True', 'True', 'True']);
 		cy.get ('text-box').contains ('True2');
 		// cy.wait(500);
-		cy.get ('body').type ('{leftarrow}');
+		cy.rollback ();
 		cy.get ('text-box').contains ('True');
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True']);
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True', 'True', 'True', 'True', 'True']);
 		cy.get ('text-box').contains ('True2');
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		cy.get ('text-box').contains ('After');
-		cy.get ('body').type ('{leftarrow}');
-		cy.get ('body').type ('{leftarrow}');
-		cy.get ('body').type ('{leftarrow}');
+		cy.rollback ();
+		cy.rollback ();
+		cy.rollback ();
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('be.empty');
 		cy.get ('text-box').contains ('Before');
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		// cy.wait(500);
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True']);
 		cy.get ('text-box').contains ('True');
 		// cy.wait(500);
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True', 'True', 'True', 'True', 'True']);
 		cy.get ('text-box').contains ('True2');
 		// cy.wait(500);
-		cy.get ('body').type ('{leftarrow}');
+		cy.rollback ();
 		cy.get ('text-box').contains ('True');
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True']);
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True', 'True', 'True', 'True', 'True']);
 		cy.get ('text-box').contains ('True2');
-		cy.get ('text-box').click ();
+		cy.proceed ();
 		cy.get ('text-box').contains ('After');
-		cy.get ('body').type ('{leftarrow}');
-		cy.get ('body').type ('{leftarrow}');
-		cy.get ('body').type ('{leftarrow}');
+		cy.rollback ();
+		cy.rollback ();
+		cy.rollback ();
 		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('be.empty');
 
 	});

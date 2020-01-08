@@ -23,3 +23,22 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+Cypress.Commands.add ('open', () => {
+	cy.visit ('./dist/index.html');
+	cy.window ().its ('Monogatari.default').as ('monogatari');
+});
+
+Cypress.Commands.add ('start', function () {
+	// this.monogatari.runListener ('start');
+	cy.get ('[data-action="start"]').click ();
+});
+
+Cypress.Commands.add ('proceed',function () {
+	this.monogatari.proceed ();
+});
+
+Cypress.Commands.add ('rollback', function () {
+	this.monogatari.global ('block', false);
+	this.monogatari.rollback ();
+});
