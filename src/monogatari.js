@@ -1863,6 +1863,14 @@ class Monogatari {
 					this.storage (storage);
 				}
 
+
+				if (this.state ('step') > this.label ().length - 1) {
+					while (this.state ('step') > this.label ().length - 1) {
+						const step = this.state ('step') - 1;
+						this.state ({ step });
+					}
+				}
+
 				this.onLoad ().then (() => {
 					// Finally show the game and start playing
 					this.showScreen ('game');
