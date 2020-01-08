@@ -1187,9 +1187,12 @@ class Monogatari {
 					// The game could not be reverted, either because an
 					// action prevented it or because there are no statements
 					// left to revert to.
-					this.state ({
-						step: this.state ('step') - 1
-					});
+
+					if (this.state ('step') > 0) {
+						this.state ({
+							step: this.state ('step') - 1
+						});
+					}
 
 					this.proceed ().then (() => {
 						resolve ();
