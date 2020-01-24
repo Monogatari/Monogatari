@@ -445,7 +445,7 @@ context ('Choices', function () {
 		cy.wrap (this.monogatari).invoke ('history', 'choice').should ('deep.equal', ['One']);
 		cy.get ('text-box').contains ('One');
 		cy.rollback ();
-		// cy.get ('choice-container').should ('be.visible');
+		cy.get ('choice-container').should ('be.visible');
 		cy.wrap (this.monogatari).invoke ('history', 'choice').should ('be.empty');
 		// cy.rollback ();
 
@@ -607,185 +607,189 @@ context ('Choices', function () {
 		cy.proceed ();
 
 		cy.get ('[data-choice="One"]').click ();
-		// cy.proceed ();
-		cy.rollback ();
 		cy.wrap (this.monogatari).invoke ('history', 'choice').should ('deep.equal', ['One']);
 		cy.get ('text-box').contains ('After');
+
 		cy.rollback ();
 		cy.wrap (this.monogatari).invoke ('history', 'choice').should ('be.empty');
+		cy.get ('choice-container').should ('be.visible');
+
+		cy.rollback ();
 		cy.get ('text-box').contains ('Before');
 
 	});
 
-	it ('Supports nested statements.', function () {
-		this.monogatari.setting ('TypeAnimation', false);
-		this.monogatari.script ({
-			'Start': [
-				'Before',
-				{'Choice':{
-					'Dialog': 'This is a choice',
-					'One': {
-						'Text': 'One',
-						'Do': {'Choice':{
-							'Dialog': 'This is a choice 2',
-							'One': {
-								'Text': 'One',
-								'Do': {'Choice':{
-									'Dialog': 'This is a choice 3',
-									'One': {
-										'Text': 'One',
-										'Do': {'Choice':{
-											'Dialog': 'This is a choice 4',
-											'One': {
-												'Text': 'One',
-												'Do': 'One'
-											},
-											'Two': {
-												'Text': 'Two',
-												'Do': 'Two'
-											},
-											'Disabled': {
-												'Text': 'Disabled',
-												'Do': 'Disabled',
-												'Clickable': function () {
-													return false;
-												}
-											},
-											'Hidden': {
-												'Text': 'Hidden',
-												'Do': 'Hidden',
-												'Show': function () {
-													return false;
-												}
-											},
-											'OnChosen': {
-												'Text': 'On Click',
-												'Do': 'On Click',
-												'onChosen': function () {
-													this.storage ({ clicked: true });
-												}
-											}
-										}}
-									},
-									'Two': {
-										'Text': 'Two',
-										'Do': 'Two'
-									},
-									'Disabled': {
-										'Text': 'Disabled',
-										'Do': 'Disabled',
-										'Clickable': function () {
-											return false;
-										}
-									},
-									'Hidden': {
-										'Text': 'Hidden',
-										'Do': 'Hidden',
-										'Show': function () {
-											return false;
-										}
-									},
-									'OnChosen': {
-										'Text': 'On Click',
-										'Do': 'On Click',
-										'onChosen': function () {
-											this.storage ({ clicked: true });
-										}
-									}
-								}}
-							},
-							'Two': {
-								'Text': 'Two',
-								'Do': 'Two'
-							},
-							'Disabled': {
-								'Text': 'Disabled',
-								'Do': 'Disabled',
-								'Clickable': function () {
-									return false;
-								}
-							},
-							'Hidden': {
-								'Text': 'Hidden',
-								'Do': 'Hidden',
-								'Show': function () {
-									return false;
-								}
-							},
-							'OnChosen': {
-								'Text': 'On Click',
-								'Do': 'On Click',
-								'onChosen': function () {
-									this.storage ({ clicked: true });
-								}
-							}
-						}}
-					},
-					'Two': {
-						'Text': 'Two',
-						'Do': 'Two'
-					},
-					'Disabled': {
-						'Text': 'Disabled',
-						'Do': 'Disabled',
-						'Clickable': function () {
-							return false;
-						}
-					},
-					'Hidden': {
-						'Text': 'Hidden',
-						'Do': 'Hidden',
-						'Show': function () {
-							return false;
-						}
-					},
-					'OnChosen': {
-						'Text': 'On Click',
-						'Do': 'On Click',
-						'onChosen': function () {
-							this.storage ({ clicked: true });
-						}
-					}
-				}},
-				'After'
-			]
-		});
+	// it ('Supports nested statements.', function () {
+	// 	this.monogatari.setting ('TypeAnimation', false);
+	// 	this.monogatari.script ({
+	// 		'Start': [
+	// 			'Before',
+	// 			{'Choice':{
+	// 				'Dialog': 'This is a choice',
+	// 				'One': {
+	// 					'Text': 'One',
+	// 					'Do': {'Choice':{
+	// 						'Dialog': 'This is a choice 2',
+	// 						'One': {
+	// 							'Text': 'One',
+	// 							'Do': {'Choice':{
+	// 								'Dialog': 'This is a choice 3',
+	// 								'One': {
+	// 									'Text': 'One',
+	// 									'Do': {'Choice':{
+	// 										'Dialog': 'This is a choice 4',
+	// 										'One': {
+	// 											'Text': 'One',
+	// 											'Do': 'One'
+	// 										},
+	// 										'Two': {
+	// 											'Text': 'Two',
+	// 											'Do': 'Two'
+	// 										},
+	// 										'Disabled': {
+	// 											'Text': 'Disabled',
+	// 											'Do': 'Disabled',
+	// 											'Clickable': function () {
+	// 												return false;
+	// 											}
+	// 										},
+	// 										'Hidden': {
+	// 											'Text': 'Hidden',
+	// 											'Do': 'Hidden',
+	// 											'Show': function () {
+	// 												return false;
+	// 											}
+	// 										},
+	// 										'OnChosen': {
+	// 											'Text': 'On Click',
+	// 											'Do': 'On Click',
+	// 											'onChosen': function () {
+	// 												this.storage ({ clicked: true });
+	// 											}
+	// 										}
+	// 									}}
+	// 								},
+	// 								'Two': {
+	// 									'Text': 'Two',
+	// 									'Do': 'Two'
+	// 								},
+	// 								'Disabled': {
+	// 									'Text': 'Disabled',
+	// 									'Do': 'Disabled',
+	// 									'Clickable': function () {
+	// 										return false;
+	// 									}
+	// 								},
+	// 								'Hidden': {
+	// 									'Text': 'Hidden',
+	// 									'Do': 'Hidden',
+	// 									'Show': function () {
+	// 										return false;
+	// 									}
+	// 								},
+	// 								'OnChosen': {
+	// 									'Text': 'On Click',
+	// 									'Do': 'On Click',
+	// 									'onChosen': function () {
+	// 										this.storage ({ clicked: true });
+	// 									}
+	// 								}
+	// 							}}
+	// 						},
+	// 						'Two': {
+	// 							'Text': 'Two',
+	// 							'Do': 'Two'
+	// 						},
+	// 						'Disabled': {
+	// 							'Text': 'Disabled',
+	// 							'Do': 'Disabled',
+	// 							'Clickable': function () {
+	// 								return false;
+	// 							}
+	// 						},
+	// 						'Hidden': {
+	// 							'Text': 'Hidden',
+	// 							'Do': 'Hidden',
+	// 							'Show': function () {
+	// 								return false;
+	// 							}
+	// 						},
+	// 						'OnChosen': {
+	// 							'Text': 'On Click',
+	// 							'Do': 'On Click',
+	// 							'onChosen': function () {
+	// 								this.storage ({ clicked: true });
+	// 							}
+	// 						}
+	// 					}}
+	// 				},
+	// 				'Two': {
+	// 					'Text': 'Two',
+	// 					'Do': 'Two'
+	// 				},
+	// 				'Disabled': {
+	// 					'Text': 'Disabled',
+	// 					'Do': 'Disabled',
+	// 					'Clickable': function () {
+	// 						return false;
+	// 					}
+	// 				},
+	// 				'Hidden': {
+	// 					'Text': 'Hidden',
+	// 					'Do': 'Hidden',
+	// 					'Show': function () {
+	// 						return false;
+	// 					}
+	// 				},
+	// 				'OnChosen': {
+	// 					'Text': 'On Click',
+	// 					'Do': 'On Click',
+	// 					'onChosen': function () {
+	// 						this.storage ({ clicked: true });
+	// 					}
+	// 				}
+	// 			}},
+	// 			'After'
+	// 		]
+	// 	});
 
-		cy.start ();
-		cy.proceed ();
+	// 	cy.start ();
+	// 	cy.proceed ();
 
-		cy.get ('text-box').contains ('This is a choice');
+	// 	cy.get ('text-box').contains ('This is a choice');
 
-		cy.get ('[data-choice="One"]').click ();
-		cy.get ('text-box').contains ('This is a choice 2');
+	// 	cy.get ('[data-choice="One"]').click ();
+	// 	cy.get ('text-box').contains ('This is a choice 2');
 
-		cy.get ('[data-choice="One"]').click ();
-		cy.get ('text-box').contains ('This is a choice 3');
+	// 	cy.get ('[data-choice="One"]').click ();
+	// 	cy.get ('text-box').contains ('This is a choice 3');
 
-		cy.get ('[data-choice="One"]').click ();
-		cy.get ('text-box').contains ('This is a choice 4');
+	// 	cy.get ('[data-choice="One"]').click ();
+	// 	cy.get ('text-box').contains ('This is a choice 4');
 
-		cy.get ('[data-choice="One"]').click ();
-		cy.get ('text-box').contains ('One');
+	// 	cy.get ('[data-choice="One"]').click ();
+	// 	cy.get ('text-box').contains ('One');
 
-		cy.wrap (this.monogatari).invoke ('history', 'choice').should ('deep.equal', ['One', 'One', 'One', 'One']);
+	// 	cy.wrap (this.monogatari).invoke ('history', 'choice').should ('deep.equal', ['One', 'One', 'One', 'One']);
 
-		// cy.rollback ();
-		// cy.get ('text-box').contains ('This is a choice 4');
+	// 	cy.rollback ();
+	// 	cy.get ('text-box').contains ('This is a choice 4');
 
-		// cy.rollback ();
-		// cy.get ('text-box').contains ('This is a choice 3');
+	// 	cy.rollback ();
+	// 	cy.get ('text-box').contains ('This is a choice 3');
 
-		// cy.rollback ();
-		// cy.get ('text-box').contains ('This is a choice 2');
+	// 	cy.rollback ();
+	// 	cy.get ('text-box').contains ('This is a choice 2');
 
-		// cy.rollback ();
-		// cy.get ('text-box').contains ('This is a choice');
+	// 	cy.rollback ();
+	// 	cy.get ('text-box').contains ('This is a choice');
 
-		cy.rollback ();
-		cy.get ('text-box').contains ('Before');
-		cy.wrap (this.monogatari).invoke ('history', 'choice').should ('be.empty');
+	// 	cy.rollback ();
+	// 	cy.get ('text-box').contains ('Before');
+	// 	cy.wrap (this.monogatari).invoke ('history', 'choice').should ('be.empty');
 
 
-	});
+	// });
+
+
 });
