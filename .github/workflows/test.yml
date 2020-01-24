@@ -38,4 +38,4 @@ jobs:
       - name: Run Tests
         uses: Borales/actions-yarn@v2.0.0
         with:
-          cmd: test # will run `yarn test` command
+          cmd: test run # will run `yarn test run` command
