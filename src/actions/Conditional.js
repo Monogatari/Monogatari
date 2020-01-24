@@ -15,6 +15,17 @@ export class Conditional extends Action {
 
 		// Whether a conditional was just reverted
 		this.engine.global ('_conditional_just_rolled_back', []);
+		return Promise.resolve();
+	}
+
+	static reset () {
+		// Whether a conditional that was run is pending rollback on the next time
+		// a revert is issued.
+		this.engine.global ('_conditional_pending_rollback', []);
+
+		// Whether a conditional was just reverted
+		this.engine.global ('_conditional_just_rolled_back', []);
+		return Promise.resolve();
 	}
 
 	static matchObject (statement) {
