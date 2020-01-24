@@ -42,3 +42,11 @@ Cypress.Commands.add ('rollback', function () {
 	this.monogatari.global ('block', false);
 	this.monogatari.rollback ();
 });
+
+Cypress.Commands.add ('save', function (slot) {
+	return this.monogatari.saveTo ('SaveLabel', slot);
+});
+
+Cypress.Commands.add ('load', function (slot) {
+	return this.monogatari.loadFromSlot ('Save_' + slot);
+});

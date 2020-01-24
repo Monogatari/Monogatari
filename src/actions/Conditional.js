@@ -15,6 +15,7 @@ export class Conditional extends Action {
 
 		// Whether a conditional was just reverted
 		this.engine.global ('_conditional_just_rolled_back', []);
+
 		return Promise.resolve();
 	}
 
@@ -25,6 +26,7 @@ export class Conditional extends Action {
 
 		// Whether a conditional was just reverted
 		this.engine.global ('_conditional_just_rolled_back', []);
+
 		return Promise.resolve();
 	}
 
@@ -52,7 +54,12 @@ export class Conditional extends Action {
 	}
 
 	static beforeRun () {
+		// const restoringState = this.engine.global ('_restoring_state');
+
+		// if (!restoringState) {
 		this.engine.global ('_conditional_pending_rollback').pop ();
+		// }
+
 		return Promise.resolve ();
 	}
 
@@ -124,13 +131,17 @@ export class Conditional extends Action {
 	}
 
 	didApply () {
+		// const restoringState = this.engine.global ('_restoring_state');
 
+		// if (!restoringState) {
 		if (!this.result.advance) {
 			this.engine.global ('_conditional_pending_rollback').push (true);
 		}
 
-		this.engine.global ('_executing_sub_action', false);
 		this.engine.history ('conditional').push (this.branch);
+		// }
+
+		this.engine.global ('_executing_sub_action', false);
 
 		return Promise.resolve ({ advance: false });
 	}

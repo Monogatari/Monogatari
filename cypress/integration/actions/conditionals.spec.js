@@ -404,4 +404,151 @@ context ('Conditionals', function () {
 
 	});
 
+	it ('Restores the state correctly after a save and load.', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'Before',
+				{'Conditional':{
+					'Condition': function () {
+						return true;
+					},
+					'SomeString': 'SomeString',
+					'True': {'Conditional':{
+						'Condition': function () {
+							return true;
+						},
+						'SomeString': 'SomeString',
+						'True': {'Conditional':{
+							'Condition': function () {
+								return true;
+							},
+							'SomeString': 'SomeString',
+							'True': {'Conditional':{
+								'Condition': function () {
+									return true;
+								},
+								'SomeString': 'SomeString',
+								'True': 'True',
+								'False': 'False'
+							}},
+							'False': 'False'
+						}},
+						'False': 'False'
+					}},
+					'False': 'False'
+				}},
+				{'Conditional':{
+					'Condition': function () {
+						return true;
+					},
+					'SomeString': 'SomeString',
+					'True': {'Conditional':{
+						'Condition': function () {
+							return true;
+						},
+						'SomeString': 'SomeString',
+						'True': {'Conditional':{
+							'Condition': function () {
+								return true;
+							},
+							'SomeString': 'SomeString',
+							'True': {'Conditional':{
+								'Condition': function () {
+									return true;
+								},
+								'SomeString': 'SomeString',
+								'True': 'True2',
+								'False': 'False'
+							}},
+							'False': 'False'
+						}},
+						'False': 'False'
+					}},
+					'False': 'False'
+				}},
+				'After'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').contains ('Before');
+		cy.proceed ();
+		// cy.wait(500);
+		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True']);
+		cy.get ('text-box').contains ('True');
+		// cy.wait(500);
+		cy.proceed ();
+		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True', 'True', 'True', 'True', 'True']);
+		cy.get ('text-box').contains ('True2');
+		// cy.wait(500);
+		cy.rollback ();
+		cy.get ('text-box').contains ('True');
+		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True']);
+		cy.proceed ();
+		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True', 'True', 'True', 'True', 'True']);
+		cy.get ('text-box').contains ('True2');
+		cy.proceed ();
+		cy.get ('text-box').contains ('After');
+		cy.rollback ();
+		cy.rollback ();
+		cy.rollback ();
+		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('be.empty');
+		cy.get ('text-box').contains ('Before');
+		cy.proceed ();
+		// cy.wait(500);
+		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True']);
+		cy.get ('text-box').contains ('True');
+		// cy.wait(500);
+		cy.proceed ();
+		cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True', 'True', 'True', 'True', 'True']);
+		cy.get ('text-box').contains ('True2');
+
+		cy.save(1).then(() => {
+			cy.load(1).then(() => {
+				this.monogatari.run (this.monogatari.label ()[this.monogatari.state ('step')]).then(() => {
+					cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True', 'True', 'True', 'True', 'True']);
+					cy.get ('text-box').contains ('True2');
+					cy.wait(500);
+
+					cy.rollback ();
+					cy.get ('text-box').contains ('True');
+					cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True']);
+					cy.proceed ();
+					cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True', 'True', 'True', 'True', 'True']);
+					cy.get ('text-box').contains ('True2');
+					cy.proceed ();
+					cy.get ('text-box').contains ('After');
+					cy.rollback ();
+					cy.rollback ();
+					cy.rollback ();
+					cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('be.empty');
+					cy.get ('text-box').contains ('Before');
+					cy.proceed ();
+					// cy.wait(500);
+					cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True']);
+					cy.get ('text-box').contains ('True');
+					// cy.wait(500);
+					cy.proceed ();
+					cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True', 'True', 'True', 'True', 'True']);
+					cy.get ('text-box').contains ('True2');
+					// cy.wait(500);
+					cy.rollback ();
+					cy.get ('text-box').contains ('True');
+					cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True']);
+					cy.proceed ();
+					cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('deep.equal', ['True', 'True', 'True', 'True', 'True', 'True', 'True', 'True']);
+					cy.get ('text-box').contains ('True2');
+					cy.proceed ();
+					cy.get ('text-box').contains ('After');
+					cy.rollback ();
+					cy.rollback ();
+					cy.rollback ();
+					cy.wrap (this.monogatari).invoke ('history', 'conditional').should ('be.empty');
+				});
+
+			});
+		});
+
+	});
 });
