@@ -1,5 +1,6 @@
 {
   "name": "my-game",
+  "productName": "My Game",
   "version": "0.1.0",
   "main": "engine/electron/index.js",
   "description": "A description of your game",
@@ -20,7 +21,11 @@
         "zip"
       ],
       "type": "distribution",
-      "icon": "assets/icons/icon.icns"
+	  "icon": "assets/icons/icon.icns",
+	  "entitlements": "engine/electron/entitlements.mac.plist",
+	  "entitlementsInherit": "engine/electron/entitlements.mac.plist",
+	  "hardenedRuntime" : true,
+	  "gatekeeperAssess": false
     },
     "linux": {
       "category": "Game",
@@ -30,7 +35,8 @@
       "synopsis": "A small synopsis of your game",
       "description": "A more detailed description of your game"
     },
-    "icon": "assets/icons/512x512.png"
+	"icon": "assets/icons/512x512.png",
+	"afterSign": "engine/electron/notarize.js"
   },
   "scripts": {
     "serve": "parcel serve index.html --open",
