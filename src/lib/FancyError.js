@@ -24,6 +24,7 @@ export class FancyError {
 								<h3>Need More Help?</h3>
 								<div class='error-section'>
 									<p>Remember you can always ask for more help if you need it at:</p>
+									<p><b>Community Forums</b>: <a href='https://community.monogatari.io/' target='_blank' rel="noopener noreferrer">https://community.monogatari.io/</a></p>
 									<p><b>Discord</b>: <a href='https://discord.gg/gWSeDTz' target='_blank'>https://discord.gg/gWSeDTz</a></p>
 									<p><b>GitHub</b>: <a href='https://github.com/Monogatari/Monogatari/issues/' target='_blank'>https://github.com/Monogatari/Monogatari/issues/</a></p>
 									<p><b>Twitter</b>: <a href='https://twitter.com/monogatari' target='_blank'>https://twitter.com/monogatari</a></p>
@@ -103,6 +104,7 @@ export class FancyError {
 										<h3>Need More Help?</h3>
 										<div class='error-section'>
 											<p>Remember you can always ask for more help if you need it at:</p>
+											<p><b>Community Forums</b>: <a href='https://community.monogatari.io/' target='_blank' rel="noopener noreferrer">https://community.monogatari.io/</a></p>
 											<p><b>Discord</b>: <a href='https://discord.gg/gWSeDTz' target='_blank'>https://discord.gg/gWSeDTz</a></p>
 											<p><b>GitHub</b>: <a href='https://github.com/Monogatari/Monogatari/issues/' target='_blank'>https://github.com/Monogatari/Monogatari/issues/</a></p>
 											<p><b>Twitter</b>: <a href='https://twitter.com/monogatari' target='_blank'>https://twitter.com/monogatari</a></p>
