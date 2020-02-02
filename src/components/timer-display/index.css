@@ -1,0 +1,10 @@
+timer-display {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 0.5rem;
+
+	& div {
+		background: rgba(255, 255, 255, 0.2);
+	}
+}

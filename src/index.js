@@ -122,6 +122,7 @@ import SettingsScreen from './components/settings-screen';
 import SlotContainer from './components/slot-container';
 import TextBox from './components/text-box';
 import TextInput from './components/text-input';
+import TimerDisplay from './components/timer-display';
 import VisualNovel from './components/visual-novel';
 
 Monogatari._components = [
@@ -145,6 +146,7 @@ Monogatari._components = [
 	SlotContainer,
 	TextBox,
 	TextInput,
+	TimerDisplay,
 	VisualNovel,
 ];
 
