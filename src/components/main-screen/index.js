@@ -6,7 +6,9 @@ class MainScreen extends ScreenComponent {
 			if (newValue === true) {
 				this.engine.playAmbient ();
 			} else {
-				this.engine.stopAmbient ();
+				if (this.engine.global ('playing') === true) {
+					this.engine.stopAmbient ();
+				}
 			}
 		}
 		return super.onStateUpdate(property, oldValue, newValue);
