@@ -60,7 +60,7 @@ export class ShowBackground extends Action {
 				return this.value.indexOf (color) === 0;
 			}) > -1;
 
-			const isNamed = this.value.indexOf (' ') > -1 ? false : new RegExp(/\w+/).test (this.value);
+			const isNamed = this.value.indexOf (' ') > -1 ? false : new RegExp(/\w+/).test (this.value) && !(new RegExp (/(url|gradient)\(/).test (this.value));
 
 			if (isColorProperty === true || isNamed === true) {
 				this.property = 'background-color';
