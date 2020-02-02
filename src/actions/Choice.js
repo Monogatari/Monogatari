@@ -5,6 +5,8 @@ export class Choice extends Action {
 
 	static setup () {
 		this.engine.global ('_CurrentChoice', []);
+		this.engine.global ('_ChoiceTimer', []);
+
 		this.engine.history ('choice');
 
 		return Promise.resolve ();
@@ -34,6 +36,16 @@ export class Choice extends Action {
 				const choice = this.dataset.choice;
 
 				const current = engine.global ('_CurrentChoice').pop().Choice;
+
+				if (typeof current.Timer !== 'undefined') {
+					const timer = engine.global ('_ChoiceTimer').pop ();
+					if (typeof timer !== 'undefined') {
+						clearTimeout (timer.props.timer);
+						if (timer.parentNode !== null) {
+							timer.element ().remove ();
+						}
+					}
+				}
 
 				if (current) {
 					doAction = current[choice].Do;
@@ -101,6 +113,10 @@ export class Choice extends Action {
 			// Check if the option is an object (a option to choose from) or
 			// if it's text (dialog to be shown)
 			if (typeof choice == 'object') {
+				if (i === 'Timer') {
+					continue;
+				}
+
 				this.statement[i]._key = i;
 
 				// Check if the current option has a condition to be shown
@@ -135,6 +151,7 @@ export class Choice extends Action {
 			});
 
 			const dialog = this.statement.Dialog;
+			const timer = this.statement.Timer;
 
 			if (typeof dialog === 'string') {
 				// If there's a dialog, we'll wait until showing that up to show
@@ -146,6 +163,13 @@ export class Choice extends Action {
 					} else {
 						this.engine.element ().find ('[data-screen="game"]').append (element);
 					}
+
+					if (typeof timer === 'object') {
+						const timer_display = document.createElement ('timer-display');
+						timer_display.setProps (timer);
+						this.engine.global ('_ChoiceTimer').push(timer_display);
+						this.engine.element ().find ('[data-screen="game"]').prepend (timer_display);
+					}
 				});
 			} else {
 				// If there's no dialog, we can just show the choices right away
@@ -153,6 +177,13 @@ export class Choice extends Action {
 					this.engine.element ().find ('[data-component="text-box"]').get (0).content ('text').append (element);
 				} else {
 					this.engine.element ().find ('[data-screen="game"]').append (element);
+				}
+
+				if (typeof timer === 'object') {
+					const timer_display = document.createElement ('timer-display');
+					timer_display.setProps (timer);
+					this.engine.global ('_ChoiceTimer').push(timer_display);
+					this.engine.element ().find ('[data-screen="game"]').prepend (timer_display);
 				}
 			}
 		});
