@@ -44,7 +44,7 @@ export class ReversibleFunction extends Action {
 	}
 
 	didApply () {
-		return Promise.resolve (this.shouldContinue);
+		return Promise.resolve ({ advance: this.shouldContinue });
 	}
 
 	revert () {
