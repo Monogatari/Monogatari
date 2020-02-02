@@ -32,6 +32,7 @@ import './../node_modules/@fortawesome/fontawesome-free/js/all.js';
 
 export * from '@aegis-framework/artemis';
 export * from 'typed.js';
+export * from 'random-js';
 
 import 'particles.js';
 

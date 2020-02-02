@@ -61,6 +61,7 @@
 		"moment": "^2.24.0",
 		"mousetrap": "^1.6.5",
 		"particles.js": "^2.0.0",
+		"random-js": "^2.1.0",
 		"typed.js": "^2.0.11"
 	},
 	"files": [

@@ -4,6 +4,7 @@ import mousetrap from 'mousetrap';
 import { FancyError } from './lib/FancyError';
 import merge  from 'deeply';
 import * as package_json from './../package.json';
+import { Random, browserCrypto } from 'random-js';
 
 /**
  * Every Monogatari Game is composed mainly of the following items:
@@ -2860,6 +2861,15 @@ class Monogatari {
 				});
 			});
 		});
+	}
+
+	static random (min, max) {
+		try {
+			return new Random (browserCrypto).integer (min, max);
+		} catch (e) {
+			console.error (e);
+			return new Random ().integer (min, max);
+		}
 	}
 }
 
