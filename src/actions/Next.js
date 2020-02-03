@@ -6,9 +6,8 @@ export class Next extends Action {
 		return action === 'next';
 	}
 
-	apply () {
-		this.engine.proceed ();
-		return Promise.resolve ();
+	didApply () {
+		return Promise.resolve ({ advance: true });
 	}
 
 	didRevert () {
