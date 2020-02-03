@@ -856,6 +856,9 @@ class Monogatari {
 			for (const category of Object.keys (this.assets ())) {
 				// Iterate over every key on each category
 				for (const asset of Object.values (this.assets (category))) {
+					if (typeof asset !== 'string') {
+						continue;
+					}
 					// Get the directory from where to load this asset
 					const directory = `${this.setting ('AssetsPath').root}/${this.setting ('AssetsPath')[category]}`;
 
@@ -895,6 +898,9 @@ class Monogatari {
 
 				if (typeof character.sprites !== 'undefined') {
 					for (const image of Object.values (character.sprites)) {
+						if (typeof image !== 'string') {
+							continue;
+						}
 						promises.push (Preload.image (`${directory}${image}`).then (() => {
 							this.trigger ('assetLoaded', {
 								name: image,
@@ -907,6 +913,9 @@ class Monogatari {
 
 				if (typeof character.expressions !== 'undefined') {
 					for (const image of Object.values (character.expressions)) {
+						if (typeof image !== 'string') {
+							continue;
+						}
 						promises.push (Preload.image (`${directory}${image}`).then (() => {
 							this.trigger ('assetLoaded', {
 								name: image,
@@ -917,7 +926,7 @@ class Monogatari {
 					}
 				}
 
-				if (typeof character.default_expression !== 'undefined') {
+				if (typeof character.default_expression === 'string') {
 					promises.push (Preload.image (`${directory}${character.default_expression}`).then (() => {
 						this.trigger ('assetLoaded', {
 							name: character.default_expression,
