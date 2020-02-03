@@ -69,6 +69,6 @@
 		"LICENSE",
 		"package.json",
 		"src/*",
-		"dist/engine/core/*"
+		"dist/engine/*"
 	]
 }
