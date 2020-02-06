@@ -1643,13 +1643,30 @@ class Monogatari {
 
 					// Run the function asynchronously and after it has run, unblock
 					// the game so it can continue.
-					return Util.callAsync (actionStatement, Monogatari).finally (() => {
+					return Util.callAsync (actionStatement, Monogatari).then ((returnValue) => {
 						this.global ('block', false);
-						if (shouldAdvance) {
+						if (shouldAdvance && returnValue !== false) {
 							this.debug.trace ();
 							this.debug.groupEnd ();
 							return this.next ();
 						}
+
+						return Promise.resolve ({ advance: false });
+					}).catch((e) => {
+						FancyError.show (
+							'An error occurred while trying to run a Function.',
+							'Monogatari attempted to run a function on the script but an error occurred.',
+							{
+								'Error Mesage': e.message,
+								'File Name': e.fileName,
+								'Line Number': e.lineNumber,
+								'Label': this.state ('label'),
+								'Step': this.state ('step'),
+								'Help': {
+									'_': 'Check the code for your function, there may be additional information in the console.',
+								}
+							}
+						);
 					});
 				}
 
