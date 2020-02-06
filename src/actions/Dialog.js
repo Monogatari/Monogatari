@@ -142,6 +142,9 @@ export class Dialog extends Action {
 		this.engine.element ().find ('[data-ui="who"]').html ('');
 		this.engine.element ().find ('[data-ui="say"]').html ('');
 
+		this.engine.element ().find ('[data-ui="face"]').attribute ('src', '');
+		this.engine.element ().find ('[data-ui="face"]').hide ();
+
 		return Promise.resolve ();
 	}
 
