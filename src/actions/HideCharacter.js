@@ -40,7 +40,7 @@ export class HideCharacter extends Action {
 
 	willApply () {
 
-		if (!this.element) {
+		if (!this.element.exists ()) {
 			FancyError.show (
 				`The character "${this.asset}" can't hide because it's not being shown`,
 				`Monogatari attempted to hide the character "${this.asset}" but it was not being shown.`,

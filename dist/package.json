@@ -21,11 +21,11 @@
         "zip"
       ],
       "type": "distribution",
-	  "icon": "assets/icons/icon.icns",
-	  "entitlements": "engine/electron/entitlements.mac.plist",
-	  "entitlementsInherit": "engine/electron/entitlements.mac.plist",
-	  "hardenedRuntime" : true,
-	  "gatekeeperAssess": false
+      "icon": "assets/icons/icon.icns",
+      "entitlements": "engine/electron/entitlements.mac.plist",
+      "entitlementsInherit": "engine/electron/entitlements.mac.plist",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false
     },
     "linux": {
       "category": "Game",
@@ -35,8 +35,8 @@
       "synopsis": "A small synopsis of your game",
       "description": "A more detailed description of your game"
     },
-	"icon": "assets/icons/512x512.png",
-	"afterSign": "engine/electron/notarize.js"
+    "icon": "assets/icons/512x512.png",
+    "afterSign": "engine/electron/notarize.js"
   },
   "scripts": {
     "serve": "parcel serve index.html --open",
@@ -48,9 +48,9 @@
     "build:web": "parcel build index.html"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.7",
-    "electron": "^7.1.7",
-    "electron-builder": "^21.2.0",
+    "@babel/core": "^7.8.4",
+    "electron": "^8.0.0",
+    "electron-builder": "^22.3.2",
     "parcel": "^1.12.4"
   }
 }

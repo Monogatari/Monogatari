@@ -49,10 +49,7 @@ class DialogLog extends Component {
 
 	pop () {
 		const last = this.content ('log').find ('[data-spoke]').last ();
-
-		if (typeof last !== 'undefined') {
-			last.remove ();
-		}
+		last.remove ();
 	}
 
 	constructor () {

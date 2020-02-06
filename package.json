@@ -50,13 +50,13 @@
 		"stylelint-config-standard": "^19.0.0"
 	},
 	"dependencies": {
-		"@aegis-framework/artemis": "^0.3.21",
+		"@aegis-framework/artemis": "^0.3.22",
 		"@aegis-framework/kayros.css": "^0.4.5",
 		"@aegis-framework/pandora": "^0.1.3",
-		"@fortawesome/fontawesome-free": "^5.12.0",
+		"@fortawesome/fontawesome-free": "^5.12.1",
 		"animate.css": "^3.7.2",
 		"deeply": "^3.1.0",
-		"electron": "^7.1.11",
+		"electron": "^8.0.0",
 		"mixins.css": "^1.0.0",
 		"moment": "^2.24.0",
 		"mousetrap": "^1.6.5",
