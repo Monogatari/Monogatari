@@ -1653,19 +1653,24 @@ class Monogatari {
 
 						return Promise.resolve ({ advance: false });
 					}).catch((e) => {
+						let error = {
+							'Label': this.state ('label'),
+							'Step': this.state ('step'),
+							'Help': {
+								'_': 'Check the code for your function, there may be additional information in the console.',
+							}
+						};
+
+						if (typeof e === 'object') {
+							error = Object.assign (error, e);
+						} else if (typeof e === 'string') {
+							error['Error Mesage'] = e;
+						}
+
 						FancyError.show (
 							'An error occurred while trying to run a Function.',
 							'Monogatari attempted to run a function on the script but an error occurred.',
-							{
-								'Error Mesage': e.message,
-								'File Name': e.fileName,
-								'Line Number': e.lineNumber,
-								'Label': this.state ('label'),
-								'Step': this.state ('step'),
-								'Help': {
-									'_': 'Check the code for your function, there may be additional information in the console.',
-								}
-							}
+							error
 						);
 					});
 				}
