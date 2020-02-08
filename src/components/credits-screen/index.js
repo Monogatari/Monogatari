@@ -63,7 +63,7 @@ class CreditsScreen extends ScreenComponent {
 
 			}
 			html += '</div>';
-			return html;
+			return this.engine.replaceVariables (html);
 		});
 
 		return `
