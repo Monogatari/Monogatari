@@ -26,19 +26,28 @@ export class ReversibleFunction extends Action {
 				this.shouldContinue = false;
 			}
 		}).catch ((e) => {
-			FancyError.show (
-				'An error occurred while trying to apply a Reversible Function.',
-				'Monogatari attempted to run the `Apply` method of a Reversible Function but an error occurred.',
-				{
-					'Error Mesage': e.message,
-					'File Name': e.fileName,
-					'Line Number': e.lineNumber,
-					'Label': this.engine.state ('label'),
-					'Step': this.engine.state ('step'),
-					'Help': {
-						'_': 'Check the code for your function, there may be additional information in the console.',
-					}
+			let error = {
+				'Label': this.engine.state ('label'),
+				'Step': this.engine.state ('step'),
+				'Help': {
+					'_': 'Check the code for your function, there may be additional information in the console.',
 				}
+			};
+
+			if (typeof e === 'object') {
+				error = Object.assign (error, {
+					'Error Message': e.message,
+					'File Name': e.fileName,
+					'Line Number': e.lineNumber
+				});
+			} else if (typeof e === 'string') {
+				error['Error Message'] = e;
+			}
+
+			FancyError.show (
+				'An error occurred while trying to revert a Reversible Function.',
+				'Monogatari attempted to run the `Apply` method of a Reversible Function but an error occurred.',
+				error
 			);
 		});
 	}
@@ -59,19 +68,28 @@ export class ReversibleFunction extends Action {
 				this.shouldContinue = false;
 			}
 		}).catch ((e) => {
+			let error = {
+				'Label': this.engine.state ('label'),
+				'Step': this.engine.state ('step'),
+				'Help': {
+					'_': 'Check the code for your function, there may be additional information in the console.',
+				}
+			};
+
+			if (typeof e === 'object') {
+				error = Object.assign (error, {
+					'Error Message': e.message,
+					'File Name': e.fileName,
+					'Line Number': e.lineNumber
+				});
+			} else if (typeof e === 'string') {
+				error['Error Message'] = e;
+			}
+
 			FancyError.show (
 				'An error occurred while trying to revert a Reversible Function.',
 				'Monogatari attempted to run the `Revert` method of a Reversible Function but an error occurred.',
-				{
-					'Error Mesage': e.message,
-					'File Name': e.fileName,
-					'Line Number': e.lineNumber,
-					'Label': this.engine.state ('label'),
-					'Step': this.engine.state ('step'),
-					'Help': {
-						'_': 'Check the code for your function, there may be additional information in the console.',
-					}
-				}
+				error
 			);
 		});
 	}

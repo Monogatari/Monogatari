@@ -1662,9 +1662,13 @@ class Monogatari {
 						};
 
 						if (typeof e === 'object') {
-							error = Object.assign (error, e);
+							error = Object.assign (error, {
+								'Error Message': e.message,
+								'File Name': e.fileName,
+								'Line Number': e.lineNumber
+							});
 						} else if (typeof e === 'string') {
-							error['Error Mesage'] = e;
+							error['Error Message'] = e;
 						}
 
 						FancyError.show (
