@@ -12,6 +12,7 @@ class TextInput extends Component {
 		this.props = {
 			text: '',
 			warning: '',
+			actionString: 'OK',
 			onSubmit: () => {},
 			validate: () => {},
 			callback: () => {},
@@ -81,7 +82,7 @@ class TextInput extends Component {
 				<input data-content="field" type="text">
 				<small data-content="warning" class="block"></small>
 				<div>
-					<button type='submit'>${this.engine.string ('OK')}</button>
+					<button type='submit'>${this.engine.string (this.props.actionString)}</button>
 				</div>
 			<form>
 		`;

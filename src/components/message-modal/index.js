@@ -8,7 +8,8 @@ class MessageModal extends Component {
 		this.props = {
 			title: null,
 			subtitle: null,
-			body: ''
+			body: '',
+			actionString: 'Close'
 		};
 	}
 
@@ -48,7 +49,7 @@ class MessageModal extends Component {
 					${ typeof body === 'string' && body ? `<p data-content="body">${body}</p>` : '' }
 				</div>
 				<div class="horizontal horizontal--center" data-ui="inner-menu">
-					<button data-action="close" data-close="message-modal" data-string="Close">${this.engine.string ('Close')}</button>
+					<button data-action="close" data-close="message-modal" data-string="Close">${this.engine.string (this.props.actionString)}</button>
 				</div>
 			</div>
 		`;

@@ -22,6 +22,10 @@ export class InputModal extends Action {
 		if (typeof this.statement.Warning !== 'string') {
 			this.statement.Warning = '';
 		}
+
+		if (typeof this.statement.actionString!== 'string') {
+			this.statement.actionString = 'OK';
+		}
 	}
 
 	apply () {
@@ -29,13 +33,14 @@ export class InputModal extends Action {
 
 		const input = document.createElement ('text-input');
 
-		const { Text, Warning, Save, Validation } = this.statement;
+		const { Text, Warning, Save, Validation, actionString } = this.statement;
 
 		input.setProps ({
 			text: this.engine.replaceVariables (Text),
 			warning: Warning,
 			onSubmit: Save,
 			validate: Validation,
+			actionString,
 			callback: () => {
 				this.engine.global ('block', false);
 				this.engine.proceed ();

@@ -107,6 +107,12 @@ export class Message extends Action {
 			});
 		}
 
+		if (typeof this.message.actionString === 'string') {
+			element.setProps ({
+				actionString: this.engine.replaceVariables (this.message.actionString)
+			});
+		}
+
 		for (const newClass of this.classes) {
 			if (newClass) {
 				element.classList.add (newClass);
