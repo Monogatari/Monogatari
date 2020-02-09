@@ -37,7 +37,7 @@
 		"autoprefixer": "^9.7.4",
 		"babel-eslint": "^10.0.3",
 		"core-js": "^3.6.4",
-		"cypress": "^3.8.3",
+		"cypress": "^4.0.1",
 		"dotenv": "^8.2.0",
 		"electron-notarize": "^0.2.1",
 		"eslint": "^6.8.0",
@@ -46,8 +46,8 @@
 		"parcel": "^1.12.4",
 		"postcss-calc": "^7.0.1",
 		"precss": "^4.0.0",
-		"stylelint": "^13.0.0",
-		"stylelint-config-standard": "^19.0.0"
+		"stylelint": "^13.1.0",
+		"stylelint-config-standard": "^20.0.0"
 	},
 	"dependencies": {
 		"@aegis-framework/artemis": "^0.3.22",
