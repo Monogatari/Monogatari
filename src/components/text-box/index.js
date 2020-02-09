@@ -27,7 +27,7 @@ class TextBox extends Component {
 				</div>
 				<div data-content="text">
 					<span data-ui="who" data-content="character-name"></span>
-					<p data-ui="say" data_content="dialog"></p>
+					<p data-ui="say" data-content="dialog"></p>
 				</div>
 			</div>
 
