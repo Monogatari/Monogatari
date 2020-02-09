@@ -43,6 +43,53 @@ Cypress.Commands.add ('rollback', function () {
 	this.monogatari.rollback ();
 });
 
+Cypress.Commands.add ('loadTestAssets', function () {
+	this.monogatari.settings ({
+		'AssetsPath': {
+			root: 'https://datadyne.perfectdark.space/monogatari/assets'
+		}
+	});
+
+	this.monogatari.characters ({
+		'y': {
+			name: 'Yui',
+			directory: 'yui',
+			sprites: {
+				angry: 'angry.png',
+				happy: 'happy.png',
+				normal: 'normal.png',
+				sad: 'sad.png',
+				surprised: 'surprised.png',
+			},
+			expressions: {
+				angry: 'expressions/angry.png',
+				happy: 'expressions/happy.png',
+				normal: 'expressions/normal.png',
+				sad: 'expressions/sad.png',
+				surprised: 'expressions/surprised.png',
+			}
+		},
+		'm': {
+			name: 'Mio',
+			directory: 'mio',
+			sprites: {
+				angry: 'angry.png',
+				happy: 'happy.png',
+				normal: 'normal.png',
+				sad: 'sad.png',
+				surprised: 'surprised.png',
+			},
+			expressions: {
+				angry: 'expressions/angry.png',
+				happy: 'expressions/happy.png',
+				normal: 'expressions/normal.png',
+				sad: 'expressions/sad.png',
+				surprised: 'expressions/surprised.png',
+			}
+		}
+	});
+});
+
 Cypress.Commands.add ('save', function (slot) {
 	return this.monogatari.saveTo ('SaveLabel', slot);
 });
