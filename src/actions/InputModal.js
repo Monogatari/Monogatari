@@ -23,8 +23,12 @@ export class InputModal extends Action {
 			this.statement.Warning = '';
 		}
 
-		if (typeof this.statement.actionString!== 'string') {
+		if (typeof this.statement.actionString !== 'string') {
 			this.statement.actionString = 'OK';
+		}
+
+		if (typeof this.statement.Class !== 'string') {
+			this.statement.Class = '';
 		}
 	}
 
@@ -33,7 +37,7 @@ export class InputModal extends Action {
 
 		const input = document.createElement ('text-input');
 
-		const { Text, Warning, Save, Validation, actionString } = this.statement;
+		const { Text, Warning, Save, Validation, actionString, Class } = this.statement;
 
 		input.setProps ({
 			text: this.engine.replaceVariables (Text),
@@ -44,7 +48,8 @@ export class InputModal extends Action {
 			callback: () => {
 				this.engine.global ('block', false);
 				this.engine.proceed ();
-			}
+			},
+			classes: Class.trim ()
 		});
 
 		this.engine.element ().find ('[data-screen="game"]').append (input);

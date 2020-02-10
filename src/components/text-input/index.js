@@ -16,6 +16,7 @@ class TextInput extends Component {
 			onSubmit: () => {},
 			validate: () => {},
 			callback: () => {},
+			classes: ''
 		};
 	}
 
@@ -39,6 +40,15 @@ class TextInput extends Component {
 
 	willMount () {
 		this.classList.add ('modal', 'modal--active');
+
+		// Check if a list of classes has been defined and if the list is not empty
+		if (typeof this.props.classes === 'string' && this.props.classes !== '') {
+			this.props.classes.split (' ').forEach ((className) => {
+				if (className) {
+					this.classList.add (className);
+				}
+			});
+		}
 		return Promise.resolve ();
 	}
 
