@@ -2396,7 +2396,7 @@ class Monogatari {
 		this.Storage.get ('Settings').then ((local_settings) => {
 			this._preferences = merge (this._preferences, local_settings);
 		}).catch ((e) => {
-			console.error (e);
+			console.warn ('There was no settings saved. This may be the first time this game was opened, we\'ll create them now.', e);
 			this.Storage.set ('Settings', this._preferences);
 		});
 
