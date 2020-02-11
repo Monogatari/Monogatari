@@ -150,15 +150,6 @@ Monogatari._components = [
 	VisualNovel,
 ];
 
-
-for (const component of Monogatari._components) {
-	if (typeof window.customElements.get (component.tag) === 'undefined') {
-		component.engine = Monogatari;
-		window.customElements.define (component.tag, component);
-	}
-}
-
-
 /**
  * =============================================================================
  * Actions

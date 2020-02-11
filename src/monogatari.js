@@ -330,8 +330,37 @@ class Monogatari {
 	 * component must have an unique ID.
 	 */
 	static registerComponent (component) {
+		const alreadyRegistered = this._components.findIndex (c => c.tag === component.tag) > -1;
+
+		if (typeof window.customElements.get (component.tag) !== 'undefined') {
+			FancyError.show (
+				`Unable to register component "${component.tag}"`,
+				'Monogatari attempted to register a component but another component had already been registered for the same tag.',
+				{
+					'Component / Tag': component,
+					'Help': {
+						'_': 'Once a component for a tag has been registered and the setup has completed, it can not be replaced or removed. Try removing the conflicting component first:',
+						'_1': `
+							<pre>
+								<code class='language-javascript'>
+									monogatari.unregisterComponent ('${component.tag}')
+								</code>
+							</pre>
+						`,
+					}
+				}
+			);
+		}
+
 		component.engine = this;
-		window.customElements.define (component.tag, component);
+
+		if (alreadyRegistered && !this.global ('_didSetup')) {
+			// Remove the previous one
+			this.unregisterComponent (component.tag);
+		} else if (!alreadyRegistered && this.global ('_didSetup')) {
+			window.customElements.define (component.tag, component);
+		}
+
 		this._components.push (component);
 	}
 
@@ -344,7 +373,21 @@ class Monogatari {
 	 * each component must have an unique ID.
 	 */
 	static unregisterComponent (component) {
-		this._components = this._components.filter ((c) => c.tag.toLowerCase() !== component.toLowerCase());
+		if (!this.global ('_didSetup')) {
+			this._components = this._components.filter ((c) => c.tag.toLowerCase() !== component.toLowerCase());
+		} else {
+			FancyError.show (
+				`Unable to unregister component "${component}"`,
+				'Monogatari attempted to unregister a component but the setup had already happened.',
+				{
+					'Component': component,
+					'Help': {
+						'_': 'Components can only be unregistered before the setup step is completed.',
+						'_1': 'Try performing this action before the <code class="language-javascript">monogatari.init ()</code> function is called.'
+					}
+				}
+			);
+		}
 	}
 
 	/**
@@ -2357,6 +2400,31 @@ class Monogatari {
 			this.Storage.set ('Settings', this._preferences);
 		});
 
+		// Define all the components that were registered to this point
+		for (const component of this._components) {
+			if (typeof window.customElements.get (component.tag) === 'undefined') {
+				window.customElements.define (component.tag, component);
+			} else {
+				FancyError.show (
+					`Unable to register component "${component.tag}"`,
+					'Monogatari attempted to register a component but another component had already been registered for the same tag.',
+					{
+						'Component / Tag': component,
+						'Help': {
+							'_': 'Once a component for a tag has been registered and the setup has completed, it can not be replaced or removed. Try removing the conflicting component first:',
+							'_1': `
+								<pre>
+									<code class='language-javascript'>
+										monogatari.unregisterComponent ('${component.tag}')
+									</code>
+								</pre>
+							`,
+						}
+					}
+				);
+			}
+		}
+
 		// Register service worker. The service worker will save all requests into
 		// the cache so the game loads more quickly and we can play offline. The
 		// service worker will only be used if it was allowed by the settings and
@@ -2484,7 +2552,10 @@ class Monogatari {
 			action.engine = this;
 			promises.push (action.setup (selector));
 		}
-		return Promise.all (promises);
+		return Promise.all (promises).then (() => {
+			this.global ('_didSetup', true);
+			return Promise.resolve ();
+		});
 	}
 	/**
 	 * @static skip - Enable or disable the skip mode which is similar to auto
@@ -2708,6 +2779,7 @@ class Monogatari {
 					this.keyboardShortcut (keys, callback);
 				}
 			}
+			this.global ('_didBind', true);
 			return Promise.resolve ();
 		});
 	}
@@ -2892,6 +2964,7 @@ class Monogatari {
 				}
 
 				return Promise.all (init).then (() => {
+					this.global ('_didInit', true);
 					this.trigger ('didInit');
 				});
 			});
@@ -3128,6 +3201,9 @@ Monogatari.globals ({
 	_executing_sub_action: false,
 	_restoring_state: false,
 	on_splash_screen: false,
+	_didSetup: false,
+	_didBind: false,
+	_didInit: false,
 });
 
 Monogatari._listeners = [];
