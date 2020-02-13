@@ -2403,6 +2403,7 @@ class Monogatari {
 		// Define all the components that were registered to this point
 		for (const component of this._components) {
 			if (typeof window.customElements.get (component.tag) === 'undefined') {
+				component.engine = this;
 				window.customElements.define (component.tag, component);
 			} else {
 				FancyError.show (
