@@ -2437,7 +2437,7 @@ class Monogatari {
 				// TODO: There's a place in hell for this quick fix, the splitting
 				// of the sw file is just preventing parcel from trying to bundle it
 				// when building the core libraries.
-				navigator.serviceWorker.register ('./../service-worker' + '.js').then ((registration) => {
+				navigator.serviceWorker.register ('service-worker' + '.js').then ((registration) => {
 
 					// Check if an update to the service worker was found
 					registration.onupdatefound = () => {
