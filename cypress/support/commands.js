@@ -43,7 +43,11 @@ Cypress.Commands.add ('rollback', function () {
 	this.monogatari.rollback ();
 });
 
-Cypress.Commands.add ('loadTestAssets', function () {
+Cypress.Commands.add ('loadTestAssets', function (args) {
+	const { nvl } = Object.assign ({
+		nvl: false
+	}, args);
+
 	this.monogatari.settings ({
 		'AssetsPath': {
 			root: 'https://datadyne.perfectdark.space/monogatari/assets'
@@ -67,7 +71,8 @@ Cypress.Commands.add ('loadTestAssets', function () {
 				normal: 'expressions/normal.png',
 				sad: 'expressions/sad.png',
 				surprised: 'expressions/surprised.png',
-			}
+			},
+			nvl
 		},
 		'm': {
 			name: 'Mio',
@@ -85,7 +90,8 @@ Cypress.Commands.add ('loadTestAssets', function () {
 				normal: 'expressions/normal.png',
 				sad: 'expressions/sad.png',
 				surprised: 'expressions/surprised.png',
-			}
+			},
+			nvl
 		}
 	});
 });

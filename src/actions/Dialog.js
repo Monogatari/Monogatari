@@ -5,7 +5,6 @@ import { $_ } from '@aegis-framework/artemis';
 export class Dialog extends Action {
 
 	static shouldProceed () {
-
 		// Check if the type animation has finished and the Typed object still exists
 		if (!this.engine.global ('finished_typing') && this.engine.global ('textObject') !== null) {
 
@@ -67,7 +66,7 @@ export class Dialog extends Action {
 	static setup () {
 		this.engine.globals ({
 			textObject: null,
-			finished_typing: true,
+			finished_typing: false,
 			typedConfiguration: {
 				strings: [],
 				typeSpeed: this.engine.preference ('TextSpeed'),
@@ -210,6 +209,7 @@ export class Dialog extends Action {
 		element.ready (() => {
 			if (animation) {
 				this.engine.global ('typedConfiguration').strings = [dialog];
+				this.engine.global ('finished_typing', false);
 				this.engine.global ('textObject', new Typed (element.content ('wrapper').get (0), this.engine.global ('typedConfiguration')));
 			} else {
 				element.content ('wrapper').html (dialog);
@@ -255,6 +255,7 @@ export class Dialog extends Action {
 			const last = elements.last ().get (0);
 
 			this.engine.global ('typedConfiguration').strings = [dialog];
+			this.engine.global ('finished_typing', false);
 			this.engine.global ('textObject', new Typed (last, this.engine.global ('typedConfiguration')));
 
 		} else {
@@ -301,6 +302,7 @@ export class Dialog extends Action {
 				// if it is set to false, even if the flag was set to true,
 				// no animation will be shown in the game.
 				this.engine.global ('typedConfiguration').strings = [dialog];
+				this.engine.global ('finished_typing', false);
 				this.engine.global ('textObject', new Typed ('[data-ui="say"]', this.engine.global ('typedConfiguration')));
 			} else {
 				this.engine.element ().find ('[data-ui="say"]').html (dialog);
