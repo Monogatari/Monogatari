@@ -108,7 +108,12 @@ export class Dialog extends Action {
 		// Detect scroll on the text element to remove the unread class used when
 		// there's text not being shown in NVL mode.
 		$_(`${selector} [data-component="text-box"]`).on ('scroll', () => {
-			this.engine.element ().find ('[data-component="text-box"]').removeClass ('unread');
+			const text_box = this.engine.element ().find ('[data-component="text-box"]');
+			if (text_box.exists ()) {
+				if (typeof text_box.get (0).checkUnread === 'function') {
+					text_box.get (0).checkUnread ();
+				}
+			}
 		});
 		return Promise.resolve ();
 	}
@@ -276,6 +281,14 @@ export class Dialog extends Action {
 			this.engine.global ('finished_typing', true);
 			this.engine.trigger ('didFinishTyping');
 		}
+
+		const text_box = this.engine.element ().find ('[data-component="text-box"]');
+		if (text_box.exists ()) {
+			if (typeof text_box.get (0).checkUnread === 'function') {
+				text_box.get (0).checkUnread ();
+			}
+		}
+
 	}
 
 	displayDialog (dialog, character, animation) {

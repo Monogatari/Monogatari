@@ -9,10 +9,7 @@ class TextBox extends Component {
 	 * and scrolls the element.
 	 */
 	checkUnread () {
-		const height = this.clientHeight;
-		const scrollHeight = this.scrollHeight;
-
-		if (height < scrollHeight) {
+		if ((this.clientHeight + this.scrollTop) < this.scrollHeight) {
 			this.classList.add ('unread');
 		} else {
 			this.classList.remove ('unread');
