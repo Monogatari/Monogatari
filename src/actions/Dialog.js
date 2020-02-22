@@ -218,6 +218,7 @@ export class Dialog extends Action {
 				this.engine.global ('textObject', new Typed (element.content ('wrapper').get (0), this.engine.global ('typedConfiguration')));
 			} else {
 				element.content ('wrapper').html (dialog);
+				this.engine.global ('finished_typing', true);
 				this.engine.trigger ('didFinishTyping');
 			}
 		});
