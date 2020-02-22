@@ -212,7 +212,7 @@ export class Dialog extends Action {
 		this.engine.element ().find ('[data-screen="game"]').append (element);
 
 		element.ready (() => {
-			if (animation) {
+			if (animation && this.engine.setting ('TypeAnimation') === true) {
 				this.engine.global ('typedConfiguration').strings = [dialog];
 				this.engine.global ('finished_typing', false);
 				this.engine.global ('textObject', new Typed (element.content ('wrapper').get (0), this.engine.global ('typedConfiguration')));
