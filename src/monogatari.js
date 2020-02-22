@@ -2242,7 +2242,7 @@ class Monogatari {
 					console.warn(e);
 					// Create a broadcast message
 					const element = `
-						<div data-ui="broadcast">
+						<div data-ui="broadcast" data-content="allow-playback">
 							<p data-string="AllowPlayback">${this.string ('AllowPlayback')}.</p>
 						</div>
 					`;
@@ -2252,9 +2252,9 @@ class Monogatari {
 
 					// Try to play the media again once the element has been clicked
 					// and remove it.
-					this.element ().on ('click', '[data-ui="broadcast"]', () => {
+					this.element ().on ('click', '[data-ui="broadcast"][data-content="allow-playback"]', () => {
 						this.playAmbient ();
-						this.element ().find ('[data-ui="broadcast"]').remove ();
+						this.element ().find ('[data-ui="broadcast"][data-content="allow-playback"]').remove ();
 					});
 				});
 			} else {
@@ -2449,13 +2449,13 @@ class Monogatari {
 							if (worker.state === 'installed') {
 								if (navigator.serviceWorker.controller) {
 									const element = `
-										<div data-ui="broadcast">
+										<div data-ui="broadcast" data-content="new-content">
 											<p data-string="NewContent">${this.string ('NewContent')}.</p>
 										</div>
 									`;
 									this.element ().prepend (element);
-									$_(`${selector} [data-ui="broadcast"]`).click (() => {
-										$_(`${selector} [data-ui="broadcast"]`).remove ();
+									this.element ().on ('click', '[data-ui="broadcast"][data-content="new-content"]', () => {
+										this.element ().find ('[data-ui="broadcast"][data-content="new-content"]').remove ();
 									});
 								}
 							}
@@ -2491,7 +2491,7 @@ class Monogatari {
 				this.global ('playing', true);
 
 				// Remove the play main menu audio broadcast message if it's present
-				this.element ().find ('[data-ui="broadcast"]').remove ();
+				this.element ().find ('[data-ui="broadcast"][data-content="allow-playback"]').remove ();
 
 				this.onStart ().then (() => {
 					this.element ().find ('[data-screen]').each ((screen) => {
