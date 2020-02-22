@@ -2238,8 +2238,8 @@ class Monogatari {
 				// avoid media from being autoplayed. Because of these protections,
 				// the user needs to interact with the page first before the media
 				// is able to play.
-				this.ambientPlayer.play ().catch (() => {
-
+				this.ambientPlayer.play ().catch ((e) => {
+					console.warn(e);
 					// Create a broadcast message
 					const element = `
 						<div data-ui="broadcast">
@@ -2252,7 +2252,7 @@ class Monogatari {
 
 					// Try to play the media again once the element has been clicked
 					// and remove it.
-					this.element ().find ('[data-ui="broadcast"]').click (() => {
+					this.element ().on ('click', '[data-ui="broadcast"]', () => {
 						this.playAmbient ();
 						this.element ().find ('[data-ui="broadcast"]').remove ();
 					});
