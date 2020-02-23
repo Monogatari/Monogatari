@@ -9,6 +9,8 @@ Discord: https://discord.gg/gWSeDTz
 
 Twitter: https://twitter.com/monogatari
 
+Community: https://community.monogatari.io/
+
 ## Features
 - Responsive out of the box
 - Plays nice with Electron for Desktop apps and Cordova for mobile apps
