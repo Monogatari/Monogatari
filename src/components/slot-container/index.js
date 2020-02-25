@@ -72,8 +72,7 @@ class SlotContainer extends Component {
 		if (this.props.type === 'load') {
 			// Load a saved game slot when it is pressed
 			this.element().on ('click', '[data-component="save-slot"]', function (event) {
-				const isDeleteButton = $_(event.target).closestParent ('[data-delete]', '[data-component="save-slot"]');
-
+				const isDeleteButton = $_(event.target).closestParent ('[data-delete]', '[data-component="save-slot"]').exists ();
 				if (!isDeleteButton) {
 					engine.loadFromSlot($_(this).attribute ('slot')).then (() => {
 						engine.run (engine.label ()[engine.state ('step')]);
@@ -85,7 +84,7 @@ class SlotContainer extends Component {
 			const self = this;
 			// Save to slot when a slot is pressed.
 			this.element().on('click', '[data-component="save-slot"]', function (event) {
-				const isDeleteButton = $_(event.target).closestParent ('[data-delete]', '[data-component="save-slot"]');
+				const isDeleteButton = $_(event.target).closestParent ('[data-delete]', '[data-component="save-slot"]').exists ();
 
 				if (!isDeleteButton) {
 					engine.debug.debug('Registered Click on Slot');
