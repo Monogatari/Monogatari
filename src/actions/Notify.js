@@ -111,16 +111,16 @@ export class Notify extends Action {
 			});
 		}
 
+		return Promise.resolve ();
+	}
+
+	apply () {
 		for (const key of Object.keys (this.notification)) {
 			if (typeof this.notification[key] === 'string') {
 				this.notification[key] = this.engine.replaceVariables (this.notification[key]);
 			}
 		}
 
-		return Promise.resolve ();
-	}
-
-	apply () {
 		const notification = new Notification (this.notification.title, this.notification);
 
 		if (typeof this.time !== 'undefined') {
