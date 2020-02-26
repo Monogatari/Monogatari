@@ -33,7 +33,7 @@ class CreditsScreen extends ScreenComponent {
 
 	render () {
 		const items = Object.keys (this.props.credits).map ((section) => {
-			let html = `<h3>${section}</h3><div>`;
+			let html = `<h3>${this.engine.replaceVariables (section)}</h3><div>`;
 			const content = this.props.credits[section];
 
 			if (typeof content === 'string') {
@@ -44,26 +44,32 @@ class CreditsScreen extends ScreenComponent {
 			}
 
 			for (const key of Object.keys (content)) {
+				const title = this.engine.replaceVariables (key);
 				let value = content[key];
 
 				if (value instanceof Array) {
 					value = value.join (', ');
 				}
 
-				if (key.indexOf ('_') === 0) {
+				if (typeof value === 'string') {
+					value = this.engine.replaceVariables (value);
+				}
+
+				if (title.indexOf ('_') === 0) {
 					html += `<p class='row row--spaced'>
 								<span class="row__column row__column--phone--12">${value}</span>
 							</p>`;
 				} else {
 					html += `<p class='row row--spaced'>
-								<b class="row__column row__column--phone--6">${key}</b>
+								<b class="row__column row__column--phone--6">${title}</b>
 								<span class="row__column row__column--phone--6">${value}</span>
 							</p>`;
 				}
 
 			}
 			html += '</div>';
-			return this.engine.replaceVariables (html);
+
+			return html;
 		});
 
 		return `
