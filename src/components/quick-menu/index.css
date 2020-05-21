@@ -8,7 +8,7 @@ quick-menu {
 	top: 0;
 	background-color: transparent;
 	width: 100%;
-	z-index: 3;
+	z-index: 11;
 	position: absolute;
 	height: 2.5rem;
 	max-height: 2.5rem;
