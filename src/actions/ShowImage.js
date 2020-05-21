@@ -65,7 +65,9 @@ export class ShowImage extends Action {
 		$_(image).data ('image', this.asset);
 
 		for (const className of this.classes) {
-			$_(image).addClass (className);
+			if (className) {
+				$_(image).addClass (className);
+			}
 		}
 
 		const durationPosition = this.classes.indexOf ('duration');
