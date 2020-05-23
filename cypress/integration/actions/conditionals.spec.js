@@ -83,13 +83,70 @@ context ('Conditionals', function () {
 		cy.get ('.fancy-error').should ('be.visible');
 	});
 
-	it ('Runs the `False` branch when condition returns non boolean/string value.', function () {
+	it ('Displays an error when trying to run a non existent branch.', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
 			'Start': [
 				{'Conditional':{
 					'Condition': function () {
-						return 0;
+						return 'SomeStuff';
+					},
+					'SomeString': 'SomeString',
+					'True': 'True',
+					'False': 'False'
+				}}
+			]
+		});
+
+		cy.start ();
+		cy.get ('.fancy-error').should ('be.visible');
+	});
+
+	it ('Displays an error when trying to run a non-integer branch.', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				{'Conditional':{
+					'Condition': function () {
+						return 2.5;
+					},
+					0: 'SomeString',
+					1: 'One',
+					2: 'Two'
+				}}
+			]
+		});
+
+		cy.start ();
+		cy.get ('.fancy-error').should ('be.visible');
+	});
+
+	it ('Displays an error when trying to run a negative number branch.', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				{'Conditional':{
+					'Condition': function () {
+						return -1;
+					},
+					0: 'SomeString',
+					1: 'One',
+					2: 'Two'
+				}}
+			]
+		});
+
+		cy.start ();
+		cy.get ('.fancy-error').should ('be.visible');
+	});
+
+	it ('Runs the `False` branch when condition returns non boolean/string/numeric value.', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				{'Conditional':{
+					'Condition': function () {
+						return null;
 					},
 					'SomeString': 'SomeString',
 					'True': 'True',
@@ -100,6 +157,25 @@ context ('Conditionals', function () {
 
 		cy.start ();
 		cy.get ('text-box').contains ('False');
+	});
+
+	it ('Runs the correct branch when using numeric keys.', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				{'Conditional':{
+					'Condition': function () {
+						return 2;
+					},
+					0: 'SomeString',
+					1: 'One',
+					2: 'Two'
+				}}
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').contains ('Two');
 	});
 
 	it ('Saves the branch taken in the `conditional` history.', function () {

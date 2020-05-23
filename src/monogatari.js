@@ -1783,10 +1783,12 @@ class Monogatari {
 								return Promise.reject (e);
 							});
 						}).catch ((e) => {
+							console.log(e);
 							this.debug.debug (`Application Failed.\nReason: ${e}`);
 							return Promise.reject (e);
 						});
 					}).catch ((e) => {
+						console.log(e);
 						this.debug.debug (`Will Apply Failed.\nReason: ${e}`);
 						this.debug.trace ();
 						this.debug.groupEnd ();

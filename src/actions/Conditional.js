@@ -79,6 +79,34 @@ export class Conditional extends Action {
 			Util.callAsync (this.statement.Condition, this.engine).then ((returnValue) => {
 				this.engine.global ('_executing_sub_action', true);
 
+				if (typeof returnValue === 'number') {
+					if (returnValue < 0) {
+						FancyError.show (
+							`Conditional condition returned a negative numer "${returnValue}".`,
+							`The \`Condition\` function returned "${returnValue}" and only positive numbers are allowed for numeric values.`,
+							{
+								'Problematic Value': returnValue,
+								'You may have meant one of these': Object.keys(this.statement).filter (b => b !== 'Condition')
+							}
+						);
+						reject ('Invalid negative value');
+					}
+
+					if (!Number.isInteger(returnValue)) {
+						FancyError.show (
+							`Conditional condition returned a non-integer value "${returnValue}".`,
+							`The \`Condition\` function returned "${returnValue}" and only integer numbers are allowed for numeric values.`,
+							{
+								'Problematic Value': returnValue,
+								'You may have meant one of these': Object.keys(this.statement).filter (b => b !== 'Condition')
+							}
+						);
+						reject ('Invalid non-integer value');
+					}
+
+					returnValue = `${returnValue}`;
+				}
+
 				// Check if the function returned true so we run the True branch
 				// of the conditional. If false is returned, we run the False
 				// branch of the conditional and if a string is returned, we use
