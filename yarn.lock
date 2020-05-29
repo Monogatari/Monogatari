@@ -14,10 +14,10 @@
   resolved "https://registry.yarnpkg.com/@aegis-framework/kayros.css/-/kayros.css-0.4.5.tgz#a6be59a19e3ef20b9329531a443935835b80f585"
   integrity sha512-3fdZ8/pHvv3cPPnZYkBraDrnR9FOl6hX5NW7tR/Juor1uzHTMZksDVwuHO/hLl3YfKQtO9ClqexKt8wiLShL7A==
 
-"@aegis-framework/pandora@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@aegis-framework/pandora/-/pandora-0.1.5.tgz#b3f4c9c4f19872a8a2e4c96935136d89faf880c2"
-  integrity sha512-2r53VL5ErwZUU0fPQ+dfz+oiRZ7BfRl1di15oFM5NlohefebnBiN0sCkNf5tSg4LZdUd3PTHfZcuSJC7m28otg==
+"@aegis-framework/pandora@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@aegis-framework/pandora/-/pandora-0.1.6.tgz#b40c5eea9a1c913cf2f685c4c67445beddc7a99e"
+  integrity sha512-cuyhtVU38PPingobXCwZfaue5H1Rz8ONROYb298yyqroydnQjR+UYWeaEVOtqh4pe2VgSY+8R1GiyzlIecnJBg==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.1":
   version "7.10.1"
