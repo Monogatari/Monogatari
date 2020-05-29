@@ -127,6 +127,8 @@ export class Play extends Action {
 		for (const media of Object.keys (players)) {
 			this.engine.removeMediaPlayer ('voice', media);
 		}
+
+		this.engine.state ({ voice : [] });
 	}
 
 	/**
