@@ -89,27 +89,32 @@ export class ShowCharacter extends Action {
 
 		let oneSpriteOnly = true;
 
-		const sprite = this.engine.element ().find (`[data-character="${this.asset}"]`);
 		const imgSrc = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`;
+		const sprite = this.engine.element ().find (`[data-character="${this.asset}"]`);
 
 		if (sprite.isVisible ()) {
-			let before = '';
+			const oldClasses = [...sprite.get(0).classList];
 
-			for (const oldClass of sprite.get(0).classList) {
-				const matches = oldClass.match (/end-([A-Za-z]+)/); // end-[someLetters]
+			// Check if there is any end-animation, here's what this matches:
+			// 'end-fadeIn'.match (/end-([A-Za-z]+)/) => [ "end-fadeIn", "fadeIn" ]
+			const endAnimation = oldClasses.find(c => c.match (/end-([A-Za-z]+)/) !== null);
 
-				if ( matches === null ) {
-					before = oldClass;
-				} else {
-					sprite.removeClass (before);
+			if (typeof endAnimation !== 'undefined') {
+				// If there was, get the animation-only part
+				const [end, animation] = endAnimation.split('-');
+				const watchAnimation = oldClasses[oldClasses.indexOf(endAnimation) - 1];
+				sprite.removeClass (watchAnimation);
+				sprite.addClass (animation);
+				sprite.on ('animationend', (e) => {
+					e.target.remove ();
+				});
+
+				oneSpriteOnly = false;
+			}
+
+			for (const oldClass of oldClasses) {
+				if (this.classes.indexOf (oldClass) === -1) {
 					sprite.removeClass (oldClass);
-					sprite.addClass (matches[1]);
-					sprite.on ('animationend', (e) => {
-						e.target.remove ();
-					});
-
-					oneSpriteOnly = false;
-					break;
 				}
 			}
 		}
@@ -118,9 +123,9 @@ export class ShowCharacter extends Action {
 			sprite.attribute ('src', imgSrc);
 			sprite.data ('sprite', this.sprite);
 
-			for (const newClass of this.classes) {
-				if (newClass) {
-					sprite.addClass (newClass);
+			for (const className of this.classes) {
+				if (className) {
+					sprite.addClass (className);
 				}
 			}
 
@@ -134,12 +139,12 @@ export class ShowCharacter extends Action {
 			const transitionPosition = this.classes.indexOf ('transition');
 
 			if (transitionPosition > -1) {
-				this.engine.element ().find (`[data-character="${this.asset}"]`).style ('transition-duration', this.classes[transitionPosition + 1]);
+				sprite.style ('transition-duration', this.classes[transitionPosition + 1]);
 			} else {
-				this.engine.element ().find (`[data-character="${this.asset}"]`).style ('transition-duration', '');
+				sprite.style ('transition-duration', '');
 			}
 
-			this.engine.element ().find (`[data-character="${this.asset}"]`).data ('sprite', this.sprite);
+			sprite.data ('sprite', this.sprite);
 		} else {
 			const image = document.createElement ('img');
 			$_(image).attribute ('src', imgSrc);

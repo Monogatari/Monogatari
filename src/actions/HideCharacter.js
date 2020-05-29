@@ -63,17 +63,22 @@ export class HideCharacter extends Action {
 
 
 	apply () {
+		const oldClasses = [...this.element.get (0).classList];
 
-		for (const oldClass of this.element.get (0).classList) {
+		for (const oldClass of oldClasses) {
 			this.element.removeClass (oldClass);
-
-			const matches = oldClass.match (/end-([A-Za-z]+)/); // end-[someLetters]
-			if ( matches !== null ) {
-				this.element.addClass (matches[1]);
-			}
 		}
 
 		this.element.addClass ('animated');
+
+		// Check if there is any end-animation, here's what this matches:
+		// 'end-fadeIn'.match (/end-([A-Za-z]+)/) => [ "end-fadeIn", "fadeIn" ]
+		const endAnimation = oldClasses.find(c => c.match (/end-([A-Za-z]+)/) !== null);
+
+		if (typeof endAnimation !== 'undefined') {
+			const [end, animation] = endAnimation.split('-');
+			this.element.addClass (animation);
+		}
 
 		const durationPosition = this.classes.indexOf ('duration');
 
@@ -84,8 +89,10 @@ export class HideCharacter extends Action {
 		}
 
 		if (this.classes.length > 0) {
-			for (const newClass of this.classes) {
-				this.element.addClass (newClass);
+			for (const className of this.classes) {
+				if (className) {
+					this.element.addClass (className);
+				}
 			}
 			this.element.data ('visibility', 'invisible');
 
@@ -98,6 +105,7 @@ export class HideCharacter extends Action {
 		} else {
 			this.element.remove ();
 		}
+
 		return Promise.resolve ();
 	}
 
