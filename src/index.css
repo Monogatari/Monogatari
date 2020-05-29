@@ -8,7 +8,7 @@
  * Animation and Icon libraries. These are used for the characters animations and
  * background transitions. Icons are used overall for buttons.
  */
-@import 'animate.css';
+@import 'animate.css/animate.compat.css';
 @import './style/csshake.min.css';
 @import './../node_modules/@fortawesome/fontawesome-free/css/svg-with-js.css';
 
