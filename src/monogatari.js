@@ -1740,7 +1740,7 @@ class Monogatari {
 					// access all its functionalities
 					act.setContext (Monogatari);
 
-					this.trigger ('WillRunAction', {
+					this.trigger ('willRunAction', {
 						action: act
 					});
 
