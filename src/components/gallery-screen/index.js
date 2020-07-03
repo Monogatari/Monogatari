@@ -48,7 +48,7 @@ class GalleryScreen extends ScreenComponent {
 	// and set the image as a background for it.
 	static showImage (image) {
 		const directory = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').gallery}/`;
-		this.instances ().find ('figure').style ('background-image', `url('${directory}${this.engine.asset ('gallery', image)}')`);
+		this.instances ().find ('[data-ui="image-viewer"] figure').style ('background-image', `url('${directory}${this.engine.asset ('gallery', image)}')`);
 		this.instances ().find ('[data-ui="image-viewer"]').addClass ('modal--active');
 	}
 
