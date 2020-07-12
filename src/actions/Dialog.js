@@ -16,7 +16,7 @@ export class Dialog extends Action {
 
 			this.engine.global ('textObject').destroy ();
 
-			element.innerHTML = str;
+			element.innerHTML = str.replace (/\{pause:(\d+)\}/g, '');
 
 			this.engine.global ('finished_typing', true);
 
@@ -162,6 +162,7 @@ export class Dialog extends Action {
 		const [ id, expression ] = character.split (':');
 
 		this.dialog = dialog.join (' ');
+		this.clearDialog = this.dialog.replace (/\{pause:(\d+)\}/g, '');
 
 		this.nvl = false;
 
@@ -191,6 +192,7 @@ export class Dialog extends Action {
 				this.nvl = true;
 			} else {
 				this.dialog = `${character} ${this.dialog}`;
+				this.clearDialog = `${character} ${this.clearDialog}`;
 			}
 		}
 	}
@@ -206,7 +208,7 @@ export class Dialog extends Action {
 		return Promise.resolve ();
 	}
 
-	displayCenteredDialog (dialog, character, animation) {
+	displayCenteredDialog (dialog, clearDialog, character, animation) {
 		const element = document.createElement ('centered-dialog');
 		this.engine.element ().find ('[data-component="text-box"]').hide ();
 		this.engine.element ().find ('[data-screen="game"]').append (element);
@@ -217,7 +219,7 @@ export class Dialog extends Action {
 				this.engine.global ('finished_typing', false);
 				this.engine.global ('textObject', new Typed (element.content ('wrapper').get (0), this.engine.global ('typedConfiguration')));
 			} else {
-				element.content ('wrapper').html (dialog);
+				element.content ('wrapper').html (clearDialog);
 				this.engine.global ('finished_typing', true);
 				this.engine.trigger ('didFinishTyping');
 			}
@@ -226,7 +228,7 @@ export class Dialog extends Action {
 		return Promise.resolve ();
 	}
 
-	displayNvlDialog (dialog, character, animation) {
+	displayNvlDialog (dialog, clearDialog, character, animation) {
 		if (!this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
 			Dialog.reset ();
 			this.engine.element ().find ('[data-component="text-box"]').addClass ('nvl');
@@ -268,7 +270,7 @@ export class Dialog extends Action {
 			if (character !== 'narrator') {
 				if (previous !== character) {
 					this.engine.element ().find ('[data-ui="say"] [data-spoke]').last().addClass ('nvl-dialog-footer');
-					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='named'><span style='color:${this.engine.character (character).color};'>${this.engine.replaceVariables (this.engine.character (character).name)}: </span><p>${dialog}</p></div>`);
+					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='named'><span style='color:${this.engine.character (character).color};'>${this.engine.replaceVariables (this.engine.character (character).name)}: </span><p>${clearDialog}</p></div>`);
 				} else {
 					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}"><p>${dialog}</p></div>`);
 				}
@@ -277,7 +279,7 @@ export class Dialog extends Action {
 				if (previous !== character) {
 					this.engine.element ().find ('[data-ui="say"] [data-spoke]').last().addClass ('nvl-dialog-footer');
 				}
-				this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='unnamed'><p>${dialog}</p></div>`);
+				this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='unnamed'><p>${clearDialog}</p></div>`);
 			}
 			this.engine.global ('finished_typing', true);
 			this.engine.trigger ('didFinishTyping');
@@ -292,7 +294,7 @@ export class Dialog extends Action {
 
 	}
 
-	displayDialog (dialog, character, animation) {
+	displayDialog (dialog, clearDialog, character, animation) {
 		if (this.nvl === false) {
 			if (this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl') && this._cycle === 'Application') {
 				this.engine.history ('nvl').push (this.engine.element ().find ('text-box [data-ui="say"]').html ());
@@ -319,12 +321,12 @@ export class Dialog extends Action {
 				this.engine.global ('finished_typing', false);
 				this.engine.global ('textObject', new Typed ('[data-ui="say"]', this.engine.global ('typedConfiguration')));
 			} else {
-				this.engine.element ().find ('[data-ui="say"]').html (dialog);
+				this.engine.element ().find ('[data-ui="say"]').html (clearDialog);
 				this.engine.global ('finished_typing', true);
 				this.engine.trigger ('didFinishTyping');
 			}
 		} else {
-			this.displayNvlDialog (dialog, character, animation);
+			this.displayNvlDialog (dialog, clearDialog, character, animation);
 		}
 
 		return Promise.resolve ();
@@ -361,9 +363,9 @@ export class Dialog extends Action {
 
 		// Check if the character object defines if the type animation should be used.
 		if (typeof this.character.type_animation !== 'undefined') {
-			return this.displayDialog (this.dialog, this.id, this.character.type_animation);
+			return this.displayDialog (this.dialog, this.clearDialog, this.id, this.character.type_animation);
 		} else {
-			return this.displayDialog (this.dialog, this.id, true);
+			return this.displayDialog (this.dialog, this.clearDialog, this.id, true);
 		}
 	}
 
@@ -375,7 +377,7 @@ export class Dialog extends Action {
 					dialogLog.instances (instance => instance.write ({
 						id: this.id,
 						character: this.character,
-						dialog: this.dialog
+						dialog: this.clearDialog
 					}));
 				} else {
 					dialogLog.instances (instance => instance.pop ());
@@ -389,10 +391,10 @@ export class Dialog extends Action {
 			this.engine.element ().find ('[data-component="text-box"]').show ('flex');
 			return this.characterDialog ();
 		} else if (this.id === 'centered') {
-			return this.displayCenteredDialog (this.dialog, this.id, this.engine.setting ('CenteredTypeAnimation'));
+			return this.displayCenteredDialog (this.dialog, this.clearDialog, this.id, this.engine.setting ('CenteredTypeAnimation'));
 		} else {
 			this.engine.element ().find ('[data-component="text-box"]').show ('flex');
-			return this.displayDialog (this.dialog, 'narrator', this.engine.setting ('NarratorTypeAnimation'));
+			return this.displayDialog (this.dialog, this.clearDialog, 'narrator', this.engine.setting ('NarratorTypeAnimation'));
 		}
 	}
 
