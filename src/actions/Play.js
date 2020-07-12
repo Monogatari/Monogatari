@@ -3,6 +3,20 @@ import { $_, Text } from '@aegis-framework/artemis';
 
 export class Play extends Action {
 
+	static shouldProceed ({ userInitiated, skip }) {
+		if (userInitiated === false && skip === false) {
+			const voicePlayers = this.engine.mediaPlayers ('voice');
+
+			for (const player of voicePlayers) {
+				if (!player.ended) {
+					return Promise.reject('Voice player still playing.');
+				}
+			}
+		}
+
+		return Promise.resolve ();
+	}
+
 	static willProceed () {
 		Play.shutUp ();
 		return Promise.resolve ();
