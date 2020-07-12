@@ -16,7 +16,7 @@ export class Dialog extends Action {
 
 			this.engine.global ('textObject').destroy ();
 
-			element.innerHTML = str.replace (/\{pause:(\d+)\}/g, '');
+			element.innerHTML = str.replace (/\{pause:(\d+)\}/g, '').replace (/\{speed:(\d+)\}/g, '');
 
 			this.engine.global ('finished_typing', true);
 
@@ -162,7 +162,7 @@ export class Dialog extends Action {
 		const [ id, expression ] = character.split (':');
 
 		this.dialog = dialog.join (' ');
-		this.clearDialog = this.dialog.replace (/\{pause:(\d+)\}/g, '');
+		this.clearDialog = this.dialog.replace (/\{pause:(\d+)\}/g, '').replace (/\{speed:(\d+)\}/g, '');
 
 		this.nvl = false;
 
