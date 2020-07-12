@@ -39,18 +39,18 @@
     "afterSign": "engine/electron/notarize.js"
   },
   "scripts": {
-    "serve": "parcel serve index.html --open",
-    "start": "electron . --enable-logging",
-    "build": "electron-builder -mwl",
-    "build:windows": "electron-builder -w",
-    "build:mac": "electron-builder -m",
-    "build:linux": "electron-builder -l",
-    "build:web": "parcel build index.html"
+    "serve": "yarn http-server . -o -p 3000",
+    "start": "yarn electron . --enable-logging",
+    "build": "yarn electron-builder -mwl",
+    "build:windows": "yarn electron-builder -w",
+    "build:mac": "yarn electron-builder -m",
+    "build:linux": "yarn electron-builder -l"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "electron": "^8.0.0",
-    "electron-builder": "^22.3.2",
+    "@babel/core": "^7.10.4",
+    "electron": "^9.1.0",
+    "electron-builder": "^22.7.0",
+    "http-server": "^0.12.3",
     "parcel": "^1.12.4"
   }
 }
