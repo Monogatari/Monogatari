@@ -1247,7 +1247,7 @@ class Monogatari {
 						});
 					}
 
-					this.proceed ().then (() => {
+					this.proceed ({ userInitiated: false, skip: false, autoPlay: false }).then (() => {
 						resolve ();
 					});
 				});
@@ -1963,8 +1963,8 @@ class Monogatari {
 		});
 	}
 
-	static proceed ({ userInitiated = false, skip = false }) {
-		return this.shouldProceed ({ userInitiated, skip }).then (() => {
+	static proceed ({ userInitiated = false, skip = false, autoPlay = false }) {
+		return this.shouldProceed ({ userInitiated, skip, autoPlay }).then (() => {
 			this.global ('_engine_block', true);
 			return this.willProceed ().then (() => {
 				return this.next ();
@@ -1988,7 +1988,7 @@ class Monogatari {
 	 * @returns {Promise} - Resolves if the game can proceed or reject if it
 	 * can't proceed right now.
 	 */
-	static shouldProceed ({ userInitiated = false, skip = false }) {
+	static shouldProceed ({ userInitiated = false, skip = false, autoPlay = false }) {
 
 		// Check if the game is visible, if it's not, then it probably is not
 		// playing or is looking at some menu and thus the game should not
@@ -2008,7 +2008,7 @@ class Monogatari {
 
 				// Check action by action if they will allow the game to proceed
 				for (const action of this.actions ()) {
-					promises.push (action.shouldProceed ({ userInitiated, skip }).then (() => {
+					promises.push (action.shouldProceed ({ userInitiated, skip, autoPlay }).then (() => {
 						this.debug.debug (`OK ${action.id}`);
 					}).catch ((e) => {
 						this.debug.debug (`FAIL ${action.id}\nReason: ${e}`);
@@ -2020,7 +2020,7 @@ class Monogatari {
 
 				// Check component by component if they will allow the game to proceed
 				for (const component of this.components ()) {
-					promises.push (component.shouldProceed ({ userInitiated, skip }).then (() => {
+					promises.push (component.shouldProceed ({ userInitiated, skip, autoPlay }).then (() => {
 						this.debug.debug (`OK ${component.tag}`);
 					}).catch ((e) => {
 						this.debug.debug (`FAIL ${component.tag}\nReason: ${e}`);
@@ -2347,7 +2347,7 @@ class Monogatari {
 					// something really bad happened. Maybe the browser (tab) was inactive?
 					// possibly special handling to avoid futile "catch up" run
 				}
-				this.proceed ().then (() => {
+				this.proceed ({ userInitiated: false, skip: false, autoPlay: true }).then (() => {
 					expected += interval;
 					setTimeout (this.global ('_auto_play_timer'), Math.max (0, interval - now)); // take into account drift
 				}).catch (() => {
@@ -2583,7 +2583,7 @@ class Monogatari {
 				// save it on a global variable so that we can disable later.
 				this.global ('skip', setTimeout (() => {
 					if (this.element ().find ('[data-screen="game"]').isVisible () && this.global ('playing') === true) {
-						this.proceed ({ skip: true }).then (() => {
+						this.proceed ({ userInitiated: false, skip: true, autoPlay: false }).then (() => {
 							// Nothing to do here
 						}).catch (() => {
 							// An action waiting for user interaction or something else
@@ -2712,7 +2712,7 @@ class Monogatari {
 		});
 
 		this.keyboardShortcut (['right', 'space'], () => {
-			this.proceed ({ userInitiated: true }).then (() => {
+			this.proceed ({ userInitiated: true, skip: false, autoPlay: false }).then (() => {
 				// Nothing to do here
 			}).catch (() => {
 				// An action waiting for user interaction or something else
