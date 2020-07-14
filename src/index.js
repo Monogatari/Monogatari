@@ -104,6 +104,7 @@ Monogatari._languageCodes = {
 
 import AlertModal from './components/alert-modal';
 import CenteredDialog from './components/centered-dialog';
+import CharacterSprite from './components/character-sprite';
 import ChoiceContainer from './components/choice-container';
 import CreditsScreen from './components/credits-screen';
 import DialogLog from './components/dialog-log';
@@ -128,6 +129,7 @@ import VisualNovel from './components/visual-novel';
 Monogatari._components = [
 	AlertModal,
 	CenteredDialog,
+	CharacterSprite,
 	ChoiceContainer,
 	CreditsScreen,
 	DialogLog,

@@ -89,7 +89,6 @@ export class ShowCharacter extends Action {
 
 		let oneSpriteOnly = true;
 
-		const imgSrc = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`;
 		const sprite = this.engine.element ().find (`[data-character="${this.asset}"]`);
 
 		if (sprite.isVisible ()) {
@@ -119,8 +118,10 @@ export class ShowCharacter extends Action {
 			}
 		}
 
+		const imgSrc = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}`;
+
 		if (oneSpriteOnly && sprite.isVisible ()) {
-			sprite.attribute ('src', imgSrc);
+			sprite.attribute ('src', `${imgSrc}${this.image}`);
 			sprite.data ('sprite', this.sprite);
 
 			for (const className of this.classes) {
@@ -146,11 +147,29 @@ export class ShowCharacter extends Action {
 
 			sprite.data ('sprite', this.sprite);
 		} else {
-			const image = document.createElement ('img');
-			$_(image).attribute ('src', imgSrc);
-			$_(image).addClass ('animated');
-			$_(image).data ('character', this.asset);
-			$_(image).data ('sprite', this.sprite);
+			let image;
+			if (typeof this.image === 'string') {
+				image = document.createElement ('img');
+				$_(image).attribute ('src', `${imgSrc}${this.image}`);
+				$_(image).addClass ('animated');
+				$_(image).data ('character', this.asset);
+				$_(image).data ('sprite', this.sprite);
+			} else {
+				image = document.createElement ('character-sprite');
+
+				image.setProps({
+					layers: this.character.layers,
+					directory: imgSrc,
+				});
+
+				image.setState({
+					layers: this.image,
+				});
+
+				$_(image).addClass ('animated');
+				$_(image).data ('character', this.asset);
+				$_(image).data ('sprite', this.sprite);
+			}
 
 			for (const className of this.classes) {
 				if (className) {
