@@ -2353,6 +2353,8 @@ class Monogatari {
 				}).catch (() => {
 					// An action waiting for user interaction or something else
 					// is blocking the game.
+					expected += interval;
+					setTimeout (this.global ('_auto_play_timer'), Math.max (0, interval - now)); // take into account drift
 				});
 			});
 			setTimeout (this.global ('_auto_play_timer'), interval);
