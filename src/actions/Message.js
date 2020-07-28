@@ -10,7 +10,7 @@ export class Message extends Action {
 		this.engine.on ('click', '[data-component="message-modal"] [data-action="close"]', () => {
 			this.engine.global ('block', false);
 			this.engine.element ().find ('[data-component="message-modal"]').remove ();
-			this.engine.proceed ();
+			this.engine.proceed ({ userInitiated: true, skip: false, autoPlay: false });
 		});
 		return Promise.resolve ();
 	}

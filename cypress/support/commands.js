@@ -35,7 +35,7 @@ Cypress.Commands.add ('start', function () {
 });
 
 Cypress.Commands.add ('proceed',function () {
-	this.monogatari.proceed ();
+	this.monogatari.proceed ({ userInitiated: true, skip: false, autoPlay: false });
 });
 
 Cypress.Commands.add ('rollback', function () {

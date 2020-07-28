@@ -14,7 +14,7 @@ class GameScreen extends ScreenComponent {
 
 		this.engine.on ('click', '[data-screen="game"] *:not([data-choice])', function () {
 			self.engine.debug.debug ('Next Statement Listener');
-			self.engine.proceed ({ userInitiated: true }).then (() => {
+			self.engine.proceed ({ userInitiated: true, skip: false, autoPlay: false }).then (() => {
 				// Nothing to do here
 			}).catch (() => {
 				// An action waiting for user interaction or something else

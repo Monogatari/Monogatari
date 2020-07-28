@@ -107,7 +107,7 @@ export class Video extends Action {
 				if (this.mode === 'immersive') {
 					this.engine.state ('videos').pop ();
 					this.engine.global ('block', false);
-					this.engine.proceed ();
+					this.engine.proceed ({ userInitiated: false, skip: false, autoPlay: false });
 				}
 			};
 		}

@@ -47,7 +47,7 @@ export class InputModal extends Action {
 			actionString,
 			callback: () => {
 				this.engine.global ('block', false);
-				this.engine.proceed ();
+				this.engine.proceed ({ userInitiated: true, skip: false, autoPlay: false });
 			},
 			classes: Class.trim ()
 		});
