@@ -30,7 +30,7 @@ class MenuComponent extends Component {
 		const buttons = [...this.buttons ()];
 
 		if (index > -1) {
-			buttons.splice (index + 1, 0, button);
+			buttons.splice (index, 0, button);
 
 			this.engine.configuration (this.tag, {
 				buttons
