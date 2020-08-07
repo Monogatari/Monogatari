@@ -2223,6 +2223,7 @@ class Monogatari {
 
 			// Make the ambient player loop
 			this.ambientPlayer.loop = true;
+			this.ambientPlayer.volume = this.preference ('Volume').Music;
 
 			// Check if the music was defined in the music assets object
 			if (typeof this.asset ('music', this.setting ('MainScreenMusic')) !== 'undefined') {

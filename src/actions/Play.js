@@ -68,6 +68,14 @@ export class Play extends Action {
 			} else {
 				const players = engine.mediaPlayers (target);
 
+				// Music volume should also affect the main screen
+				// ambient music
+				if (target === 'music') {
+					if (engine.ambientPlayer instanceof Audio) {
+						engine.ambientPlayer.volume = value;
+					}
+				}
+
 				for (const player of players) {
 					player.volume = value;
 				}
