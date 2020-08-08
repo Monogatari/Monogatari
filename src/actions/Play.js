@@ -169,11 +169,17 @@ export class Play extends Action {
 		player.dataset.fade = 'in';
 		player.dataset.maxVolume = maxVolume;
 
-		return new Promise ((resolve, reject) => {
-			setTimeout (() => {
-				Play.fade (player, volume, interval, expected, resolve);
-			}, interval);
-		});
+		if (Math.sign (volume) === 1) {
+			return new Promise ((resolve, reject) => {
+				setTimeout (() => {
+					Play.fade (player, volume, interval, expected, resolve);
+				}, interval);
+			});
+		} else {
+			// If the volume is set to zero or not valid, the fade effect is disabled
+			// to prevent errors
+			return Promise.resolve ();
+		}
 	}
 
 	/**
