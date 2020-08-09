@@ -5,7 +5,6 @@
 	  "flexbox": true
   	},
 	"precss": true,
-	"postcss-calc": true,
-	"stylelint": true
+	"postcss-calc": true
   }
 }
