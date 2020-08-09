@@ -7,16 +7,17 @@ export class Placeholder extends Action {
 		return action === '$';
 	}
 
-	constructor ([action, name]) {
+	constructor ([action, name, ...args]) {
 		super ();
 
 		this.name = name;
 		this.action = this.engine.$ (name);
+		this.arguments = args;
 	}
 
 	willApply () {
 		if (this.name.indexOf ('_') === 0) {
-			return Util.callAsync (this.action, this.engine).then ((action) => {
+			return Util.callAsync (this.action, this.engine, ...this.arguments).then ((action) => {
 				this.action = action;
 				return Promise.resolve ();
 			});
