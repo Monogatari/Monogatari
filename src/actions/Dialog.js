@@ -45,14 +45,14 @@ export class Dialog extends Action {
 
 		// this.engine.global ('_CurrentChoice');
 
-		this.engine.element ().find ('[data-component="text-box"]').show ('flex');
+		this.engine.element ().find ('[data-component="text-box"]').show ('grid');
 
 		const dialogLog = this.engine.component ('dialog-log');
 
 		const centeredDialog = this.engine.element ().find ('[data-component="centered-dialog"]');
 		if (centeredDialog.isVisible ()) {
 			centeredDialog.remove ();
-			this.engine.element ().find ('[data-component="text-box"]').show ('flex');
+			this.engine.element ().find ('[data-component="text-box"]').show ('grid');
 		}
 
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
@@ -388,12 +388,12 @@ export class Dialog extends Action {
 		}
 
 		if (typeof this.character !== 'undefined') {
-			this.engine.element ().find ('[data-component="text-box"]').show ('flex');
+			this.engine.element ().find ('[data-component="text-box"]').show ('grid');
 			return this.characterDialog ();
 		} else if (this.id === 'centered') {
 			return this.displayCenteredDialog (this.dialog, this.clearDialog, this.id, this.engine.setting ('CenteredTypeAnimation'));
 		} else {
-			this.engine.element ().find ('[data-component="text-box"]').show ('flex');
+			this.engine.element ().find ('[data-component="text-box"]').show ('grid');
 			return this.displayDialog (this.dialog, this.clearDialog, 'narrator', this.engine.setting ('NarratorTypeAnimation'));
 		}
 	}
