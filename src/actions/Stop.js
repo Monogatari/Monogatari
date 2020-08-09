@@ -32,11 +32,17 @@ export class Stop extends Action {
 
 		player.dataset.fade = 'out';
 
-		return new Promise ((resolve, reject) => {
-			setTimeout (() => {
-				Stop.fade (player, volume, interval, expected, resolve);
-			}, interval);
-		});
+		if (Math.sign (volume) === 1) {
+			return new Promise ((resolve, reject) => {
+				setTimeout (() => {
+					Stop.fade (player, volume, interval, expected, resolve);
+				}, interval);
+			});
+		} else {
+			// If the volume is set to zero or not valid, the fade effect is disabled
+			// to prevent errors
+			return Promise.resolve ();
+		}
 	}
 
 	/**
