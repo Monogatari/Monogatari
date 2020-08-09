@@ -20,6 +20,8 @@ const { ipcMain } = require('electron');
 let win;
 
 function createWindow () {
+	const appRoot = app.getAppPath ();
+
 	// Create the browser window.
 	win = new BrowserWindow ({
 
@@ -47,21 +49,21 @@ function createWindow () {
 		fullscrenable: true,
 
 		// Set an icon for the window
-		icon: __dirname + '/assets/icons/icon_128x128.png',
+		icon: path.join(appRoot, '/assets/icons/icon_128x128.png'),
 
 		webPreferences: {
 			nodeIntegration: false,
 			nodeIntegrationInWorker: false,
 			// contextIsolation: true,
 			enableRemoteModule: false,
-			preload: path.join (app.getAppPath (), '/engine/electron/preload.js')
+			preload: path.join (appRoot, '/engine/electron/preload.js'),
 		}
 	});
 
 	// and load the index.html of the app.
 	win.loadURL (url.format(
 		{
-			pathname: path.join(__dirname, '/../../index.html'),
+			pathname: path.join(appRoot, '/index.html'),
 			protocol: 'file:',
 			slashes: true
 		}
