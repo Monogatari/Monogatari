@@ -2912,29 +2912,6 @@ class Monogatari {
 					}
 				}
 
-				// Preload all the game assets
-				this.preload ().then (() => {
-
-				}).catch ((e) => {
-					console.error (e);
-				}).finally (() => {
-					if (this.label ()) {
-						this.showSplashScreen ();
-					} else {
-						FancyError.show (
-							`"${this.setting ('Label')}" Label was not found`,
-							'Monogatari tried to get your start label but it couldn\'t find it in your script.',
-							{
-								'Start Label on your Settings': this.setting ('Label'),
-								'Labels Available': Object.keys (this.script ()),
-								'Help': {
-									'_': 'Please check that the label exists in your script.'
-								}
-							}
-						);
-					}
-				});
-
 				const init = [];
 
 				for (const component of this.components ()) {
@@ -2972,6 +2949,29 @@ class Monogatari {
 				return Promise.all (init).then (() => {
 					this.global ('_didInit', true);
 					this.trigger ('didInit');
+
+					// Preload all the game assets
+					this.preload ().then (() => {
+
+					}).catch ((e) => {
+						console.error (e);
+					}).finally (() => {
+						if (this.label ()) {
+							this.showSplashScreen ();
+						} else {
+							FancyError.show (
+								`"${this.setting ('Label')}" Label was not found`,
+								'Monogatari tried to get your start label but it couldn\'t find it in your script.',
+								{
+									'Start Label on your Settings': this.setting ('Label'),
+									'Labels Available': Object.keys (this.script ()),
+									'Help': {
+										'_': 'Please check that the label exists in your script.'
+									}
+								}
+							);
+						}
+					});
 				});
 			});
 		});
