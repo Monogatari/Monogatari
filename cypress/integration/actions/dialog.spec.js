@@ -15,7 +15,7 @@ context ('Dialog', function () {
 
 		cy.start ();
 		cy.get ('text-box').contains ('Hello!');
-		cy.get ('[data-content="character_expression"]').should ('be.visible');
+		cy.get ('[data-content="character-expression"]').should ('be.visible');
 	});
 
 	it ('Adds the dialog-footer class to the last dialog of an nvl character when the character speaking changes', function () {

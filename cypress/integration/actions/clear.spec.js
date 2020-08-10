@@ -17,10 +17,10 @@ context ('Clear', function () {
 
 		cy.start ();
 		cy.get ('text-box').contains ('Hello!');
-		cy.get ('[data-content="character_expression"]').should ('be.visible');
+		cy.get ('[data-content="character-expression"]').should ('be.visible');
 
 		cy.proceed ();
-		cy.get ('[data-content="character_expression"]').should ('not.be.visible');
+		cy.get ('[data-content="character-expression"]').should ('not.be.visible');
 		cy.get ('[data-content="dialog"]').should ('be.empty');
 		cy.get ('[data-content="character-name"]').should ('be.empty');
 	});

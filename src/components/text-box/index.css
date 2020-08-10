@@ -6,13 +6,13 @@
 
 text-box {
 	display: grid;
-	grid-template-columns: auto minmax(80%, 1fr);
+	grid-template-columns: auto minmax(70%, 1fr);
 	grid-template-rows: auto 1fr;
 	grid-template-areas: "header header" "side-image text";
 
 	background-color: var(--main-color);
 	min-height: 20%;
-	max-height: 25%;
+	max-height: 20%;
 	overflow: hidden;
 	width: 100%;
 	z-index: 10;
@@ -30,6 +30,12 @@ text-box {
 		position: fixed;
 		bottom: 0;
 		transition: all ease 0.5s;
+	}
+
+	&.rtl {
+		grid-template-areas: "header header" "text side-image";
+		text-align: right;
+		grid-template-columns: minmax(70%, 1fr) auto;
 	}
 
 	&.nvl {
@@ -71,12 +77,17 @@ text-box {
 		max-height: 100%;
 	}
 
+	[data-content="dialog"] {
+		padding: 1rem;
+	}
+
 	[data-content="side-image"] {
 		grid-area: side-image;
 		place-self: center;
 		display: flex;
 		max-height: 100%;
 		overflow-y: hidden;
+		z-index: 2;
 	}
 
 	&.side-image--independent {
@@ -90,17 +101,22 @@ text-box {
 	}
 
 	&.side-image--unconstrained {
-		grid-template-rows: 1fr 1fr;
-
 		& [data-content="side-image"] {
 			max-width: none;
 		}
-
-		& [data-content="name"] {
-			align-items: flex-end;
-		}
 	}
 }
+
+/** Medium Screens, Tablets (601px) **/
+@media screen and (min-width: 37.56255em) {
+
+}
+
+/** Default Style. Don't change. (320px) **/
+@media screen and  (max-width: 20em) {}
+
+/** Extra Small Devices, Phones (480px) **/
+@media screen and (min-width : 30em) {}
 
 /** Medium Screens, Tablets (601px) **/
 @media screen and (min-width: 37.56255em) {
@@ -112,3 +128,38 @@ text-box {
 		}
 	}
 }
+
+/** Medium Devices, Desktops (768px)**/
+@media screen and (min-width: 48em) {
+	text-box {
+		grid-template-columns: auto minmax(80%, 1fr);
+
+		&.rtl {
+			grid-template-columns: minmax(80%, 1fr) auto;
+		}
+	}
+}
+
+/** Medium Devices, Desktops (992px)**/
+@media screen and (min-width: 62em) {
+
+}
+
+/** HD Screen, Large Devices, Wide Screens (1200px) **/
+@media screen and (min-width: 75em) {
+
+}
+
+/** Full HD Screen, Large Devices, Wide Screens (1920px) **/
+@media screen and (min-width: 120em) {
+
+}
+
+/** Retina Screen , Large Devices, Wide Screens(2560px) **/
+@media screen and (min-width: 160em) {}
+
+/** 4k Screens, Large Devices, Wide Screens (3840px) **/
+@media screen and (min-width: 240em) {}
+
+/** 5k Screens, Large Devices, Wide Screens (5120px) **/
+@media screen and (min-width: 320em) {}

@@ -7,7 +7,7 @@ describe ('Main menu gets shown after the loading is over.', function () {
 	});
 
 	it ('Opens the game', function () {
-		cy.wait(1500);
+		cy.wait(2500);
 	});
 
 	it ('Should start the game when the button is clicked', function () {

@@ -2,6 +2,10 @@ import { Component } from './../../lib/Component';
 
 class TextBox extends Component {
 
+	show () {
+		this.element.show ('grid');
+	}
+
 	/**
 	 * checkUnread - This function is used to add the unread class to the
 	 * text box if new contents (dialogs) were added to it causing it to overflow
