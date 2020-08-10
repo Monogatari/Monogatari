@@ -1347,6 +1347,18 @@ class Monogatari {
 					break;
 			}
 
+			if (window.navigator && !Platform.electron () && !Platform.cordova ()) {
+				if (window.navigator.storage && window.navigator.storage.persist) {
+					window.navigator.storage.persist ().then ((persisted) => {
+						if (persisted !== true) {
+							console.warn ('Persistent Storage permission has been denied. When your device gets low on storage, it may choose to delete your game files.');
+						}
+					}).catch ((error) => {
+						console.error (error);
+					});
+				}
+			}
+
 			this.Storage = new Space (adapter, {
 				name: Text.friendly (this.setting ('Name')),
 				version: this.setting ('Version'),
