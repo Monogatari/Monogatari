@@ -4,6 +4,30 @@
  * ===========================
  */
 
+[data-spoke='narrator'] p {
+	padding-left: 0;
+}
+
+[data-ui='who'] {
+	display: block;
+	width: 100%;
+	margin: 0;
+
+	&:not(:empty) {
+		padding: 1rem;
+	}
+}
+
+[data-ui='say'],
+[data-content="dialog"] {
+	padding: 0 1rem;
+}
+
+[data-ui='say'] span {
+	padding: 0;
+	margin: 0;
+}
+
 text-box {
 	display: grid;
 	grid-template-columns: auto minmax(70%, 1fr);

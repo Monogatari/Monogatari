@@ -45,14 +45,14 @@ export class Dialog extends Action {
 
 		// this.engine.global ('_CurrentChoice');
 
-		this.engine.element ().find ('[data-component="text-box"]').first ().show ();
+		this.engine.element ().find ('[data-component="text-box"]').get (0).show ();
 
 		const dialogLog = this.engine.component ('dialog-log');
 
 		const centeredDialog = this.engine.element ().find ('[data-component="centered-dialog"]');
 		if (centeredDialog.isVisible ()) {
 			centeredDialog.remove ();
-			this.engine.element ().find ('[data-component="text-box"]').first ().show ();
+			this.engine.element ().find ('[data-component="text-box"]').get (0).show ();
 		}
 
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
@@ -107,7 +107,7 @@ export class Dialog extends Action {
 
 		// Detect scroll on the text element to remove the unread class used when
 		// there's text not being shown in NVL mode.
-		$_(`${selector} [data-component="text-box"]`).on ('scroll', () => {
+		$_(`${selector} [data-component="text-box"] [data-content="text"]`).on ('scroll', () => {
 			const text_box = this.engine.element ().find ('[data-component="text-box"]');
 			if (text_box.exists ()) {
 				if (typeof text_box.get (0).checkUnread === 'function') {
@@ -388,12 +388,12 @@ export class Dialog extends Action {
 		}
 
 		if (typeof this.character !== 'undefined') {
-			this.engine.element ().find ('[data-component="text-box"]').first ().show ();
+			this.engine.element ().find ('[data-component="text-box"]').get (0).show ();
 			return this.characterDialog ();
 		} else if (this.id === 'centered') {
 			return this.displayCenteredDialog (this.dialog, this.clearDialog, this.id, this.engine.setting ('CenteredTypeAnimation'));
 		} else {
-			this.engine.element ().find ('[data-component="text-box"]').first ().show ();
+			this.engine.element ().find ('[data-component="text-box"]').get (0).show ();
 			return this.displayDialog (this.dialog, this.clearDialog, 'narrator', this.engine.setting ('NarratorTypeAnimation'));
 		}
 	}

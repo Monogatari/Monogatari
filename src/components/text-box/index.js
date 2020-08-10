@@ -3,7 +3,7 @@ import { Component } from './../../lib/Component';
 class TextBox extends Component {
 
 	show () {
-		this.element.show ('grid');
+		this.element ().show ('grid');
 	}
 
 	/**
@@ -13,7 +13,8 @@ class TextBox extends Component {
 	 * and scrolls the element.
 	 */
 	checkUnread () {
-		if ((this.clientHeight + this.scrollTop) < this.scrollHeight) {
+		const text = this.content ('text').get (0);
+		if ((text.clientHeight + text.scrollTop) < text.scrollHeight) {
 			this.classList.add ('unread');
 		} else {
 			this.classList.remove ('unread');
