@@ -1455,6 +1455,50 @@ class Monogatari {
 		};
 	}
 
+	static prepareAction (statement, { cycle }) {
+		if (typeof statement === 'function') {
+			return statement;
+		}
+
+		let action;
+		let interpolatedStatement;
+
+		// Use the correct matching function (matchString or matchObject)
+		// depending on the type of the current statement. If the statement
+		// is a pure js function, it won't be reverted since we don't
+		// know what to do to revert it.
+		if (typeof statement === 'string') {
+			interpolatedStatement = this.replaceVariables (statement).split (' ');
+
+			// Check if it matches using the matchString method
+			action = this.actions ().find (a => a.matchString (interpolatedStatement));
+		} else if (typeof statement === 'object' && statement !== null) {
+
+			// Check if it matches using the matchObject method
+			action = this.actions ().find (a => a.matchObject (statement));
+		}
+
+		if (typeof action !== 'undefined') {
+			const act = new action (typeof statement === 'string' ? interpolatedStatement : statement);
+
+			// The original statement is set just in case the action needs
+			// access to it
+			act._setStatement (statement);
+
+			// The current cycle is also set just in case the action needs to
+			// know what cycle it's currently being performed.
+			act._setCycle (cycle);
+
+			// Monogatari is set as the context of the action so that it can
+			// access all its functionalities
+			act.setContext (this);
+
+			return act;
+		}
+
+		return null;
+	}
+
 	/**
 	 * @static revert - This is the function that allows to go back in the game
 	 * by reverting the statements played.
@@ -1497,129 +1541,8 @@ class Monogatari {
 				}
 			}
 
-			this.debug.debug ('Reverting Action', actionToRevert);
-
-			if (actionToRevert !== null) {
-
-				let interpolatedStatement = null;
-
-				if (typeof actionToRevert === 'string') {
-					interpolatedStatement = this.replaceVariables (actionToRevert).split (' ');
-				}
-
-				// Iterate over all the registered actions to find one that matches with
-				// the statement to revert.
-				for (const action of this.actions ()) {
-					let actionStatement = actionToRevert;
-					let matches = false;
-
-					// Use the correct matching function (matchString or matchObject)
-					// depending on the type of the current statement. If the statement
-					// is a pure js function, it won't be reverted since we don't
-					// know what to do to revert it.
-					if (typeof actionStatement === 'string') {
-
-						// Split the statement into an array using the space separations
-						actionStatement = interpolatedStatement;
-
-						// Check if it matches using the matchString method
-						matches = action.matchString (actionStatement);
-					} else if (typeof actionStatement === 'object' && actionStatement !== null) {
-						// Check if it matches using the matchObject method
-						matches = action.matchObject (actionStatement);
-					}
-
-					// Check if the statement matched any of the registered actions
-					if (matches === true) {
-						// Create an instance of the action and initialize it with the
-						// current statement
-						const act = new action (actionStatement);
-
-						// The original statement is set just in case the action needs
-						// access to it
-						act._setStatement (actionToRevert);
-
-						// The current cycle is also set just in case the action needs to
-						// know what cycle it's currently being performed.
-						act._setCycle ('Revert');
-
-						// Monogatari is set as the context of the action so that it can
-						// access all its functionalities
-						act.setContext (Monogatari);
-
-						this.trigger ('willRevertAction', {
-							action: act
-						});
-
-						// Run the willRevert method of the action first. This method
-						// is usually used to tell whether an action can be reverted
-						// or not.
-						return act.willRevert ().then (() => {
-							this.debug.debug ('Action Will Revert');
-							// If it can be reverted, then run the revert method
-							return act.revert ().then (() => {
-								this.debug.debug ('Action Reverting');
-								// If the reversion was successful, run the didRevert
-								// function. The action will return a boolean (shouldContinue)
-								// specifying if the game should go ahead and revert
-								// the previous statement as well or if it should
-								// wait instead
-								return act.didRevert ().then (({ advance, step }) => {
-									this.debug.debug ('Action Did Revert');
-
-									this.trigger ('didRevertAction', {
-										action: act
-									});
-
-									const promises = [];
-
-									for (const action of this.actions ()) {
-										promises.push (action.afterRevert ({ advance, step }));
-									}
-
-									return Promise.all (promises).then (() => {
-										// Since we reverted correctly, the step should
-										// go back.
-										if (step === true && shouldStepBack === true) {
-											this.state ({
-												step: this.state ('step') - 1
-											});
-										}
-										// Revert the previous statement if the action
-										// told us to.
-										if (advance === true && shouldAdvance === true) {
-											// Clear the Stack using a Time Out instead
-											// of calling the function directly, preventing
-											// an Overflow
-											setTimeout ((...params) => {
-												this.revert.call (Monogatari, ...params);
-											}, 0);
-										}
-
-										this.debug.trace ();
-										this.debug.groupEnd ();
-										return Promise.resolve ({ advance, step });
-									});
-								});
-							});
-						}).catch ((e) => {
-							if (typeof e === 'object' || typeof e === 'string') {
-								console.error (e);
-							}
-							// Clear the Stack using a Time Out instead of calling
-							// the function directly, preventing an Overflow
-							setTimeout ((...params) => {
-								this.run.call (Monogatari, ...params);
-							}, 0, this.label ()[this.state ('step')]);
-
-							this.debug.trace ();
-							this.debug.groupEnd ();
-
-							return Promise.resolve ();
-						});
-					}
-				}
-			} else {
+			// Don't allow null as a valid statement
+			if (actionToRevert === null) {
 				// Clear the Stack using a Time Out instead of calling
 				// the function directly, preventing an Overflow
 				setTimeout ((...params) => {
@@ -1630,9 +1553,91 @@ class Monogatari {
 
 				return Promise.resolve ();
 			}
-			this.debug.trace ();
-			this.debug.groupEnd ();
-			return Promise.reject ();
+
+			const action = this.prepareAction (actionToRevert, { cycle: 'Revert' });
+
+			if (action === null) {
+				this.debug.trace ();
+				this.debug.groupEnd ();
+				return Promise.reject ('The action did not match any of the ones registered.');
+			}
+
+			// If the statement is a pure js function, it won't be reverted since we don't
+			// know what to do to revert it.
+			if (typeof action === 'function') {
+				this.debug.trace ();
+				this.debug.groupEnd ();
+				return Promise.reject ();
+			}
+
+			this.debug.debug ('Reverting Action', actionToRevert);
+
+			this.trigger ('willRevertAction', { action });
+
+			// Run the willRevert method of the action first. This method
+			// is usually used to tell whether an action can be reverted
+			// or not.
+			return action.willRevert ().then (() => {
+				this.debug.debug ('Action Will Revert');
+				// If it can be reverted, then run the revert method
+				return action.revert ().then (() => {
+					this.debug.debug ('Action Reverting');
+					// If the reversion was successful, run the didRevert
+					// function. The action will return a boolean (shouldContinue)
+					// specifying if the game should go ahead and revert
+					// the previous statement as well or if it should
+					// wait instead
+					return action.didRevert ().then (({ advance, step }) => {
+						this.debug.debug ('Action Did Revert');
+
+						this.trigger ('didRevertAction', { action });
+
+						const promises = [];
+
+						for (const action of this.actions ()) {
+							promises.push (action.afterRevert ({ advance, step }));
+						}
+
+						return Promise.all (promises).then (() => {
+							// Since we reverted correctly, the step should
+							// go back.
+							if (step === true && shouldStepBack === true) {
+								this.state ({
+									step: this.state ('step') - 1
+								});
+							}
+							// Revert the previous statement if the action
+							// told us to.
+							if (advance === true && shouldAdvance === true) {
+								// Clear the Stack using a Time Out instead
+								// of calling the function directly, preventing
+								// an Overflow
+								setTimeout ((...params) => {
+									this.revert.call (Monogatari, ...params);
+								}, 0);
+							}
+
+							this.debug.trace ();
+							this.debug.groupEnd ();
+							return Promise.resolve ({ advance, step });
+						});
+					});
+				});
+			}).catch ((e) => {
+				if (typeof e === 'object' || typeof e === 'string') {
+					console.error (e);
+				}
+				// Clear the Stack using a Time Out instead of calling
+				// the function directly, preventing an Overflow
+				setTimeout ((...params) => {
+					this.run.call (Monogatari, ...params);
+				}, 0, this.label ()[this.state ('step')]);
+
+				this.debug.trace ();
+				this.debug.groupEnd ();
+
+				return Promise.resolve ();
+			});
 		});
 	}
 
@@ -1668,148 +1673,107 @@ class Monogatari {
 
 			this.debug.debug ('Running Action', statement);
 
-			let interpolatedStatement = null;
 
-			if (typeof statement === 'string') {
-				interpolatedStatement = this.replaceVariables (statement).split (' ');
+			const action = this.prepareAction (statement, { cycle: 'Application' });
+
+			if (action === null) {
+				this.debug.trace ();
+				this.debug.groupEnd ();
+				return Promise.reject ('The action did not match any of the ones registered.');
 			}
 
-			// Iterate over all the registered actions to find one that matches with
-			// the statement to run.
-			for (const action of this.actions ()) {
-				let actionStatement = statement;
-				let matches = false;
+			if (typeof action === 'function') {
+				// Block the game while the function is being run
+				this.global ('block', true);
 
-				// Use the correct matching function (matchString or matchObject)
-				// depending on the type of the current statement. If the statement
-				// is a function, it will simply be run.
-				if (typeof statement === 'string') {
-					// Split the statement into an array using the space separations
-					actionStatement = interpolatedStatement;
-
-					// Check if it matches using the matchString method
-					matches = action.matchString (actionStatement);
-				} else if (typeof statement === 'object') {
-					// Check if it matches using the matchObject method
-					matches = action.matchObject (statement);
-				} else if (typeof actionStatement === 'function') {
-					// Block the game while the function is being run
-					this.global ('block', true);
-
-					// Run the function asynchronously and after it has run, unblock
-					// the game so it can continue.
-					return Util.callAsync (actionStatement, Monogatari).then ((returnValue) => {
-						this.global ('block', false);
-						if (shouldAdvance && returnValue !== false) {
-							this.debug.trace ();
-							this.debug.groupEnd ();
-							return this.next ();
-						}
-
-						return Promise.resolve ({ advance: false });
-					}).catch((e) => {
-						let error = {
-							'Label': this.state ('label'),
-							'Step': this.state ('step'),
-							'Help': {
-								'_': 'Check the code for your function, there may be additional information in the console.',
-							}
-						};
-
-						if (typeof e === 'object') {
-							error = Object.assign (error, {
-								'Error Message': e.message,
-								'File Name': e.fileName,
-								'Line Number': e.lineNumber
-							});
-						} else if (typeof e === 'string') {
-							error['Error Message'] = e;
-						}
-
-						FancyError.show (
-							'An error occurred while trying to run a Function.',
-							'Monogatari attempted to run a function on the script but an error occurred.',
-							error
-						);
-					});
-				}
-
-				// Check if the statement matched any of the registered actions
-				if (matches === true) {
-					// Create an instance of the action and initialize it with the
-					// current statement
-					const act = new action (actionStatement);
-
-					// The original statement is set just in case the action needs
-					// access to it
-					act._setStatement (statement);
-
-					// The current cycle is also set just in case the action needs to
-					// know what cycle it's currently being performed.
-					act._setCycle ('Application');
-
-					// Monogatari is set as the context of the action so that it can
-					// access all its functionalities
-					act.setContext (Monogatari);
-
-					this.trigger ('willRunAction', {
-						action: act
-					});
-
-					// Run the willApply method of the action first
-					return act.willApply ().then (() => {
-						this.debug.debug ('Action Will Apply');
-
-						// Run the apply method
-						return act.apply (shouldAdvance).then (() => {
-							this.debug.debug ('Action Applying');
-
-							// If everything has been run correctly, then run the
-							// didApply method. The action will return a boolean
-							// (shouldContinue) specifying if the game should run the
-							// next statement right away or if it should wait instead
-							return act.didApply ().then (({ advance }) => {
-								this.debug.debug ('Action Did Apply');
-
-								this.trigger ('didRunAction', {
-									action: act
-								});
-
-								const promises = [];
-
-								for (const action of this.actions ()) {
-									promises.push (action.afterRun ({ advance }));
-								}
-
-								return Promise.all (promises).then (() => {
-									if (advance === true && shouldAdvance === true) {
-										this.debug.debug ('Next action will be run right away');
-										this.next ();
-									}
-									this.debug.trace ();
-									this.debug.groupEnd ();
-									return Promise.resolve ({ advance });
-								});
-							}).catch ((e) => {
-								this.debug.debug (`Did Apply Failed.\nReason: ${e}`);
-								return Promise.reject (e);
-							});
-						}).catch ((e) => {
-							console.error(e);
-							this.debug.debug (`Application Failed.\nReason: ${e}`);
-							return Promise.reject (e);
-						});
-					}).catch ((e) => {
-						console.error(e);
-						this.debug.debug (`Will Apply Failed.\nReason: ${e}`);
+				// Run the function asynchronously and after it has run, unblock
+				// the game so it can continue.
+				return Util.callAsync (statement, Monogatari).then ((returnValue) => {
+					this.global ('block', false);
+					if (shouldAdvance && returnValue !== false) {
 						this.debug.trace ();
 						this.debug.groupEnd ();
+						return this.next ();
+					}
+
+					return Promise.resolve ({ advance: false });
+				}).catch((e) => {
+					let error = {
+						'Label': this.state ('label'),
+						'Step': this.state ('step'),
+						'Help': {
+							'_': 'Check the code for your function, there may be additional information in the console.',
+						}
+					};
+
+					if (typeof e === 'object') {
+						error = Object.assign (error, {
+							'Error Message': e.message,
+							'File Name': e.fileName,
+							'Line Number': e.lineNumber
+						});
+					} else if (typeof e === 'string') {
+						error['Error Message'] = e;
+					}
+
+					FancyError.show (
+						'An error occurred while trying to run a Function.',
+						'Monogatari attempted to run a function on the script but an error occurred.',
+						error
+					);
+				});
+			}
+
+			this.trigger ('willRunAction', { action });
+
+			// Run the willApply method of the action first
+			return action.willApply ().then (() => {
+				this.debug.debug ('Action Will Apply');
+
+				// Run the apply method
+				return action.apply (shouldAdvance).then (() => {
+					this.debug.debug ('Action Applying');
+
+					// If everything has been run correctly, then run the
+					// didApply method. The action will return a boolean
+					// (shouldContinue) specifying if the game should run the
+					// next statement right away or if it should wait instead
+					return action.didApply ().then (({ advance }) => {
+						this.debug.debug ('Action Did Apply');
+
+						this.trigger ('didRunAction', { action });
+
+						const promises = [];
+
+						for (const action of this.actions ()) {
+							promises.push (action.afterRun ({ advance }));
+						}
+
+						return Promise.all (promises).then (() => {
+							if (advance === true && shouldAdvance === true) {
+								this.debug.debug ('Next action will be run right away');
+								this.next ();
+							}
+							this.debug.trace ();
+							this.debug.groupEnd ();
+							return Promise.resolve ({ advance });
+						});
+					}).catch ((e) => {
+						this.debug.debug (`Did Apply Failed.\nReason: ${e}`);
 						return Promise.reject (e);
 					});
-				}
-			}
-			this.debug.trace ();
-			this.debug.groupEnd ();
+				}).catch ((e) => {
+					console.error(e);
+					this.debug.debug (`Application Failed.\nReason: ${e}`);
+					return Promise.reject (e);
+				});
+			}).catch ((e) => {
+				console.error(e);
+				this.debug.debug (`Will Apply Failed.\nReason: ${e}`);
+				this.debug.trace ();
+				this.debug.groupEnd ();
+				return Promise.reject (e);
+			});
 		});
 	}
 
