@@ -35,8 +35,8 @@ text-box {
 	grid-template-areas: "header header" "side-image text";
 
 	background-color: var(--main-color);
-	min-height: 20%;
-	max-height: 20%;
+	min-height: 25%;
+	max-height: 25%;
 	overflow: hidden;
 	width: 100%;
 	z-index: 10;
