@@ -70,7 +70,7 @@ class CreditsScreen extends ScreenComponent {
 			html += '</div>';
 
 			return html;
-		});
+		}).join ('');
 
 		return `
 			<button class="fas fa-arrow-left top left" data-action="back"></button>
