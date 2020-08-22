@@ -1145,6 +1145,12 @@ class Monogatari {
 					date,
 					image,
 					game: this.object ()
+				}).then ((response) => {
+					if (response instanceof Response) {
+						return Promise.resolve (response.json ());
+					}
+
+					return Promise.resolve (response);
 				});
 			});
 		}
@@ -1324,6 +1330,7 @@ class Monogatari {
 		// object will be used
 		if (this.setting ('Storage').Adapter.trim () !== '') {
 			let adapter;
+			const props = {};
 
 			switch (this.setting ('Storage').Adapter) {
 				case 'LocalStorage':
@@ -1336,10 +1343,14 @@ class Monogatari {
 
 				case 'IndexedDB':
 					adapter = SpaceAdapter.IndexedDB;
+					props.keyPath = 'id';
 					break;
 
 				case 'RemoteStorage':
 					adapter = SpaceAdapter.RemoteStorage;
+					props.headers = {
+						'Content-Type': 'application/json',
+					};
 					break;
 
 				default:
@@ -1364,9 +1375,7 @@ class Monogatari {
 				version: this.setting ('Version'),
 				store:  this.setting ('Storage').Store,
 				endpoint: this.setting ('Storage').Endpoint,
-				props: {
-					keyPath: 'id'
-				}
+				props,
 			});
 		}
 
