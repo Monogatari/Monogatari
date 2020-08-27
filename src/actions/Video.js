@@ -1,5 +1,7 @@
-import { Action } from './../lib/Action';
 import { $_ } from '@aegis-framework/artemis';
+
+import { Action } from './../lib/Action';
+import { FancyError } from './../lib/FancyError';
 
 export class Video extends Action {
 
@@ -86,6 +88,28 @@ export class Video extends Action {
 		}
 	}
 
+	willApply () {
+		if (this.constructor._configuration.modes.indexOf (this.mode) === -1) {
+			FancyError.show (
+				`The video mode provided ("${this.mode}") is not valid.`,
+				`Monogatari attempted to play a video but the mode "${this.mode}" was not found in the video action configuration as a valid mode.`,
+				{
+					'Mode Provided': this.mode,
+					'You may have meant one of these': this.constructor._configuration.modes,
+					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
+					'Label': this.engine.state ('label'),
+					'Step': this.engine.state ('step'),
+					'Help': {
+						'_': 'Check your statement and make sure there are no typos on the mode you provided.'
+					}
+				}
+			);
+			return Promise.reject ('Invalid video mode provided.');
+		}
+
+		return Promise.resolve ();
+	}
+
 	apply () {
 		// TODO: Find a way to remove the resize listeners once the video is stopped
 		const element = document.createElement ('video');
@@ -103,11 +127,29 @@ export class Video extends Action {
 
 		if (this.props.indexOf ('close') > -1) {
 			element.onended = () => {
-				this.engine.element ().find (`[data-video="${this.name}"]`).remove ();
-				if (this.mode === 'immersive') {
-					this.engine.state ('videos').pop ();
+				this.engine.element ().find (`[data-video="${this.name}"][data-mode="${this.mode}"]`).remove ();
+
+				let index = -1;
+				for (let i = this.engine.state ('videos').length - 1; i >= 0; i--) {
+					const last = this.engine.state ('videos')[i];
+					const [show, video, name, mode] = last.split (' ');
+					if (name === this.name && mode === this.mode) {
+						index = i;
+						break;
+					}
+				}
+
+				if (this.mode === 'immersive' || this.mode === 'fullscreen' || this.mode === 'modal') {
+					if (index > -1) {
+						this.engine.state ('videos').splice (index, 1);
+					}
+
 					this.engine.global ('block', false);
 					this.engine.proceed ({ userInitiated: false, skip: false, autoPlay: false });
+				} else if (this.mode === 'background' || this.mode === 'displayable') {
+					if (index > -1) {
+						this.engine.state ('videos').splice (index, 1);
+					}
 				}
 			};
 		}
@@ -126,18 +168,21 @@ export class Video extends Action {
 			this.engine.global ('block', true);
 			this.engine.element ().find ('[data-screen="game"]').prepend (element);
 		} else if (this.mode === 'fullscreen') {
+			this.engine.global ('block', true);
 			if (element.requestFullscreen) {
 				this.engine.element ().find ('[data-screen="game"]').append (element);
 				element.requestFullscreen ();
 			} else {
-				this.engine.global ('block', true);
-				$_(element).data ('mode','immersive');
+				$_(element).addClass ('immersive');
 				this.engine.element ().find ('[data-screen="game"]').prepend (element);
 			}
 		} else if (this.mode === 'displayable') {
 			this.engine.element ().find ('[data-screen="game"]').append (element);
-		} else {
+		} else if (this.mode === 'modal') {
+			this.engine.global ('block', true);
 			this.engine.element ().find ('[data-screen="game"]').append (element);
+		} else {
+			return Promise.reject ('Invalid video mode.');
 		}
 
 		element.play ();
@@ -157,15 +202,15 @@ export class Video extends Action {
 	}
 
 	revert () {
-		this.engine.element ().find (`[data-video="${this.name}"]`).remove ();
+		this.engine.element ().find (`[data-video="${this.name}"][data-mode="${this.mode}"]`).remove ();
 		return Promise.resolve ();
 	}
 
 	didRevert () {
 		for (let i = this.engine.state ('videos').length - 1; i >= 0; i--) {
 			const last = this.engine.state ('videos')[i];
-			const [show, video, mode, name] = last.split (' ');
-			if (name === this.name) {
+			const [show, video, name, mode] = last.split (' ');
+			if (name === this.name && mode === this.mode) {
 				this.engine.state ('videos').splice (i, 1);
 				break;
 			}
@@ -173,8 +218,8 @@ export class Video extends Action {
 
 		for (let i = this.engine.history ('video').length - 1; i >= 0; i--) {
 			const last = this.engine.history ('video')[i];
-			const [show, video, mode, name] = last.split (' ');
-			if (name === this.name) {
+			const [show, video, name, mode] = last.split (' ');
+			if (name === this.name && mode === this.mode) {
 				this.engine.history ('video').splice (i, 1);
 				break;
 			}
@@ -187,7 +232,8 @@ Video.id = 'Video';
 Video._configuration = {
 	objects: {
 
-	}
+	},
+	modes: ['modal', 'displayable', 'immersive', 'fullscreen', 'background']
 };
 
 export default Video;

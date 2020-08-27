@@ -18,18 +18,20 @@ export class HideVideo extends Action {
 	}
 
 	apply () {
-
+		const element = this.engine.element ().find (`[data-video="${this.name}"]`);
 		if (this.classes.length > 0) {
-			this.engine.element ().find (`[data-video="${this.name}"]`).addClass ('animated');
+			element.addClass ('animated');
 			for (const newClass of this.classes) {
-				this.engine.element ().find (`[data-video="${this.name}"]`).addClass (newClass);
+				element.addClass (newClass);
 			}
 
-			// Remove item after a while to prevent it from showing randomly
-			// when coming from a menu to the game because of its animation
-			setTimeout (() => {
-				this.engine.element ().find (`[data-video="${this.name}"]`).remove ();
-			}, 10000);
+			element.data ('visibility', 'invisible');
+			element.on ('animationend', (e) => {
+				if (e.target.dataset.visibility === 'invisible') {
+					// Remove only if the animation ends while the element is not visible
+					e.target.remove ();
+				}
+			});
 		} else {
 			this.engine.element ().find (`[data-video="${this.name}"]`).remove ();
 		}

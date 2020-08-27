@@ -277,7 +277,8 @@ video {
 		object-fit: cover;
 	}
 
-	&[data-mode="immersive"] {
+	&[data-mode="immersive"],
+	&.immersive {
 		height: 100%;
 		width: 100%;
 		object-fit: contain;
