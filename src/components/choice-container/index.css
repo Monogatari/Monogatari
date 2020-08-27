@@ -19,10 +19,10 @@ choice-container {
 	position: absolute;
 
 	.nvl & {
-		top: initial;
-		left: initial;
+		position: static;
 		transform: none;
 		width: 100%;
+		justify-content: flex-start;
 
 		[data-content="wrapper"] {
 			flex-direction: row;

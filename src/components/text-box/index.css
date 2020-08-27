@@ -97,6 +97,7 @@ text-box {
 	[data-content="text"] {
 		grid-area: text;
 		display: flex;
+		flex-direction: column;
 		overflow-y: auto;
 		max-height: 100%;
 	}
