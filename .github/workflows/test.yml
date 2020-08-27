@@ -29,5 +29,8 @@ jobs:
       - uses: actions/checkout@v1
       - name: Run Tests
         uses: cypress-io/github-action@v2
-        with: 
+        with:
+          lint-html: yarn run lint:html
+          lint-javascript: yarn run lint:js
+          lint-css: yarn run lint:css
           build: yarn run build:core
