@@ -30,7 +30,4 @@ jobs:
       - name: Run Tests
         uses: cypress-io/github-action@v2
         with:
-          lint-html: yarn run lint:html
-          lint-javascript: yarn run lint:js
-          lint-css: yarn run lint:css
-          build: yarn run build:core
+          build: yarn run lint:html && yarn run lint:js && yarn run lint:css && yarn run build:core
