@@ -9,6 +9,7 @@ on:
       - '**.js'
       - '**.json'
       - '**.css'
+      - '**/test.yml'
       - '!dist/engine/core/**'
   pull_request:
     branches:
@@ -24,16 +25,9 @@ jobs:
   cypress-run:
 
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v1
-      - name: Install Dependencies
-        uses: Borales/actions-yarn@v2.0.0
-        with:
-          cmd: install # will run `yarn install` command
-      - name: Build Core
-        uses: Borales/actions-yarn@v2.0.0
-        with:
-          cmd: build:core # will run `yarn build:core` command:  
       - name: Run Tests
         uses: cypress-io/github-action@v2
+        with: 
+          build: yarn run build:core
