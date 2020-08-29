@@ -50,6 +50,7 @@
     "@babel/core": "^7.11.1",
     "electron": "^9.2.0",
     "electron-builder": "^22.8.0",
+    "electron-notarize": "^1.0.0",
     "http-server": "^0.12.3",
     "parcel": "^1.12.4"
   }
