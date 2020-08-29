@@ -10,7 +10,7 @@ context ('Show Video', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
 			'Start': [
-				'show video dandelion background with fadeIn',
+				'show video kirino background with fadeIn',
 				'One',
 				'Two'
 			]
@@ -26,13 +26,13 @@ context ('Show Video', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
 			'Start': [
-				'show video dandelion immersive with fadeIn close',
+				'show video kirino immersive with fadeIn close',
 				'y Tada!'
 			]
 		});
 
 		cy.start ();
-		cy.wait (26000);
+		cy.wait (6000);
 		cy.get ('text-box').contains ('Tada!');
 	});
 
@@ -40,13 +40,13 @@ context ('Show Video', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
 			'Start': [
-				'show video dandelion background with fadeIn close',
+				'show video kirino background with fadeIn close',
 				'y Tada!'
 			]
 		});
 
 		cy.start ();
-		cy.wait (26000);
+		cy.wait (6000);
 		cy.get ('text-box').contains ('Tada!');
 	});
 
@@ -54,13 +54,13 @@ context ('Show Video', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
 			'Start': [
-				'show video dandelion immersive with fadeIn close',
+				'show video kirino immersive with fadeIn close',
 				'y Tada!'
 			]
 		});
 
 		cy.start ();
-		cy.wait (26000);
+		cy.wait (6000);
 		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('be.empty');
 	});
 
@@ -68,13 +68,13 @@ context ('Show Video', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
 			'Start': [
-				'show video dandelion background with fadeIn close',
+				'show video kirino background with fadeIn close',
 				'y Tada!'
 			]
 		});
 
 		cy.start ();
-		cy.wait (26000);
+		cy.wait (6000);
 		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('be.empty');
 	});
 
@@ -82,40 +82,40 @@ context ('Show Video', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
 			'Start': [
-				'show video dandelion background with fadeIn close',
+				'show video kirino background with fadeIn close',
 				'wait 100',
-				'show video dandelion displayable with fadeIn',
+				'show video kirino displayable with fadeIn',
 				'y Tada!'
 			]
 		});
 
 		cy.start ();
-		cy.wait (26000);
-		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('deep.equal', ['show video dandelion displayable with fadeIn']);
-		cy.get ('[data-video="dandelion"][data-mode="displayable"]').should ('be.visible');
+		cy.wait (6000);
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('deep.equal', ['show video kirino displayable with fadeIn']);
+		cy.get ('[data-video="kirino"][data-mode="displayable"]').should ('be.visible');
 	});
 
 	it ('Removes video element when it gets hidden by the script', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
 			'Start': [
-				'show video dandelion displayable with fadeIn loop',
+				'show video kirino displayable with fadeIn loop',
 				'wait 100',
-				'hide video dandelion with fadeOut',
+				'hide video kirino with fadeOut',
 				'y Tada!'
 			]
 		});
 
 		cy.start ();
 		cy.wait (100);
-		cy.get ('[data-video="dandelion"]').should ('not.exist');
+		cy.get ('[data-video="kirino"]').should ('not.exist');
 	});
 
 	it ('Displays an error when an invalid mode was provided.', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
 			'Start': [
-				'show video dandelion whatever with fadeIn loop',
+				'show video kirino whatever with fadeIn loop',
 				'y Tada!'
 			]
 		});
