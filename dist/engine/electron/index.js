@@ -13,7 +13,7 @@
 const { app, BrowserWindow, Menu } = require ('electron');
 const path = require ('path');
 const url = require ('url');
-const { ipcMain } = require('electron');
+const { ipcMain, shell } = require('electron');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -150,6 +150,20 @@ app.on ('activate', () => {
 	if (win === null) {
 		createWindow ();
 	}
+});
+
+// Whenever a new window tries to get created, we'll check if it was because the
+// user clicked on a link with a target="_blank" property. If so, instead of
+// creating the new window, we'll open the website on their browsers.
+app.on('web-contents-created', (event, contents) => {
+	contents.on ('new-window', async (event, navigationUrl) => {
+		// We'll only open pages with the HTTP(S) protocol.
+		if (navigationUrl.indexOf ('http://') === 0 || navigationUrl.indexOf ('https://') === 0) {
+			event.preventDefault ();
+
+			await shell.openExternal (navigationUrl);
+		}
+	});
 });
 
 // In this file you can include the rest of your app's specific main process
