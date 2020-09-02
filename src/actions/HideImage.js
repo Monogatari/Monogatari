@@ -36,6 +36,12 @@ export class HideImage extends Action {
 				this.element.addClass (newClass);
 			}
 			this.element.data ('visibility', 'invisible');
+			this.element.on ('animationend', (e) => {
+				if (e.target.dataset.visibility === 'invisible') {
+					// Remove only if the animation ends while the element is not visible
+					e.target.remove ();
+				}
+			});
 		} else {
 			this.element.remove ();
 		}
