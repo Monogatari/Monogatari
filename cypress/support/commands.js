@@ -58,6 +58,15 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 		'kirino': 'kirino.mp4'
 	});
 
+	this.monogatari.assets ('images', {
+		'polaroid': 'blurry_polaroid.jpg',
+		'christmas': 'christmas.png'
+	});
+
+	this.monogatari.assets ('music', {
+		'theme': 'theme.mp3'
+	});
+
 	this.monogatari.characters ({
 		'y': {
 			name: 'Yui',

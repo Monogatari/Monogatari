@@ -68,4 +68,79 @@ context ('Show Character', function () {
 
 		cy.get ('[data-sprite="happy"]').should ('not.be.visible');
 	});
+
+	it ('Rollbacks to the right sprite', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show image polaroid',
+				'y One',
+				'show character y normal at left',
+				'm Two',
+				'show character y angry at left with fadeIn',
+				'hide image polaroid',
+				'show image christmas.png center with fadeIn',
+				'm Three',
+				'y Four',
+				'hide image christmas.png with fadeOut',
+				'y Five',
+				'play music theme with fade 5',
+				'y Six',
+				'show character y normal at left with fadeIn',
+				'm Seven',
+				'Eight'
+			]
+		});
+
+		cy.start ();
+
+		// Going forward
+		cy.get ('[data-image="polaroid"]').should ('be.visible');
+		cy.get ('text-box').contains ('One');
+		cy.proceed ();
+		cy.get ('[data-sprite="normal"]').should ('be.visible');
+		cy.get ('text-box').contains ('Two');
+		cy.proceed ();
+		cy.get ('[data-sprite="angry"]').should ('be.visible');
+		cy.get ('[data-image="polaroid"]').should ('not.be.visible');
+		cy.get ('[data-image="christmas.png"]').should ('be.visible');
+		cy.get ('text-box').contains ('Three');
+		cy.proceed ();
+		cy.get ('text-box').contains ('Four');
+		cy.proceed ();
+		cy.get ('[data-image="christmas.png"]').should ('not.be.visible');
+		cy.get ('text-box').contains ('Five');
+		cy.proceed ();
+		cy.get ('text-box').contains ('Six');
+		cy.proceed ();
+		cy.get ('[data-sprite="normal"]').should ('be.visible');
+		cy.get ('[data-sprite="angry"]').should ('not.exist');
+		cy.get ('text-box').contains ('Seven');
+		cy.proceed ();
+		cy.get ('text-box').contains ('Eight');
+
+		// Going backward
+		cy.rollback ();
+		cy.get ('text-box').contains ('Seven');
+		cy.rollback ();
+		cy.get ('[data-sprite="angry"]').should ('be.visible');
+		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
+		cy.get ('text-box').contains ('Six');
+		cy.rollback ();
+		cy.get ('text-box').contains ('Five');
+		cy.rollback ();
+		cy.get ('[data-image="christmas.png"]').should ('be.visible');
+		cy.get ('text-box').contains ('Four');
+		cy.rollback ();
+		cy.get ('text-box').contains ('Three');
+		cy.rollback ();
+		cy.get ('[data-sprite="angry"]').should ('not.be.visible');
+		cy.get ('[data-sprite="normal"]').should ('be.visible');
+		cy.get ('[data-image="polaroid"]').should ('be.visible');
+		cy.get ('[data-image="christmas.png"]').should ('not.be.visible');
+		cy.get ('text-box').contains ('Two');
+		cy.rollback ();
+		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
+		cy.get ('text-box').contains ('One');
+	});
 });

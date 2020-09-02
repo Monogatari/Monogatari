@@ -70,7 +70,6 @@ export class ShowCharacter extends Action {
 	}
 
 	apply () {
-
 		// show [character] [expression] at [position] with [animation] [infinite]
 		//   0      1             2       3     4        5       6         7
 
@@ -203,8 +202,8 @@ export class ShowCharacter extends Action {
 			const [show, character, asset, name] = last.split (' ');
 
 			if (asset === this.asset) {
-				this.constructor (last.split (' '));
-				this.apply ();
+				const action = this.engine.prepareAction (last, { cycle: 'Apply' });
+				action.apply ();
 				break;
 			}
 		}
