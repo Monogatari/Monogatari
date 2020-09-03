@@ -172,8 +172,9 @@ context ('Show Character', function () {
 		});
 
 		cy.start ();
-		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
+		cy.get ('[data-sprite="normal"]').should ('be.visible');
 		cy.proceed();
+		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
 		cy.get ('[data-sprite="happy"]').should ('be.visible');
 	});
 });
