@@ -143,4 +143,37 @@ context ('Show Character', function () {
 		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
 		cy.get ('text-box').contains ('One');
 	});
+
+	it ('Updates the sprite corectly on consecutive show statements', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show character y happy with fadeIn',
+				'show character y angry with fadeIn',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-sprite="angry"]').should ('be.visible');
+		cy.get ('[data-sprite="happy"]').should('have.class', 'fadeIn');
+	});
+
+	it ('Doesn\'t duplicate sprites on consecutive end animations', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show character y normal at left with end-fadeOut',
+				'y Tada!',
+				'show character y happy at left with fadeIn end-fadeOut',
+				'y Tada!',
+				//'show character y happy with rollInLeft',
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
+		cy.proceed();
+		cy.get ('[data-sprite="happy"]').should ('be.visible');
+	});
 });

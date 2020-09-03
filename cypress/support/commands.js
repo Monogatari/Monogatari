@@ -55,7 +55,8 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 	});
 
 	this.monogatari.assets ('videos', {
-		'kirino': 'kirino.mp4'
+		'kirino': 'kirino.mp4',
+		'dandelion': 'dandelion.mp4'
 	});
 
 	this.monogatari.assets ('images', {
