@@ -2,6 +2,13 @@ import { Component } from './../../lib/Component';
 
 class TextBox extends Component {
 
+	constructor (...args) {
+		super (...args);
+		this.props = {
+			mode: 'adv',
+		};
+	}
+
 	show () {
 		this.element ().show ('grid');
 	}

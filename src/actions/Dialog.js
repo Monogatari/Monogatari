@@ -135,8 +135,9 @@ export class Dialog extends Action {
 			this.engine.global ('textObject').destroy ();
 		}
 
+		const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
 		if (keepNVL !== true) {
-			this.engine.element ().find ('[data-component="text-box"]').removeClass ('nvl');
+			textBox.setProps ({ mode: 'adv' });
 		}
 
 		this.engine.element ().find ('[data-component="text-box"]').data ('speaking', '');
@@ -229,9 +230,11 @@ export class Dialog extends Action {
 	}
 
 	displayNvlDialog (dialog, clearDialog, character, animation) {
-		if (!this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
+		const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
+
+		if (textBox.props.mode !== 'nvl') {
 			Dialog.reset ();
-			this.engine.element ().find ('[data-component="text-box"]').addClass ('nvl');
+			textBox.setProps ({ mode: 'nvl' });
 		}
 
 		// Remove contents from the dialog area.
@@ -296,10 +299,13 @@ export class Dialog extends Action {
 
 	displayDialog (dialog, clearDialog, character, animation) {
 		if (this.nvl === false) {
-			if (this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl') && this._cycle === 'Application') {
-				this.engine.history ('nvl').push (this.engine.element ().find ('text-box [data-ui="say"]').html ());
+			const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
+
+			if (textBox.props.mode === 'nvl' && this._cycle === 'Application') {
+				this.engine.history ('nvl').push (textBox.content ('dialog').html ());
 			}
-			this.engine.element ().find ('[data-component="text-box"]').removeClass ('nvl');
+
+			textBox.setProps ({ mode: 'adv' });
 
 			// Destroy the previous textObject so the text is rewritten.
 			// If not destroyed, the text would be appended instead of replaced.
@@ -409,16 +415,18 @@ export class Dialog extends Action {
 		// Check if the dialog to replay is a NVL one or not
 		if (this.nvl === true) {
 			//  Check if the NVL screen is currently being shown
-			if (this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
+			const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
+
+			if (textBox.props.mode === 'nvl') {
 				// If it is being shown, then to go back, we need to remove the last dialog from it
-				this.engine.element ().find ('text-box [data-ui="say"] [data-spoke]').last ().remove ();
+				textBox.content ('dialog').find ('[data-spoke]').last ().remove ();
 				return Promise.resolve ();
 			} else {
 				// If it is not shown right now, then we need to recover the dialogs
 				// that were being shown the last time we hid it
 				if (this.engine.history ('nvl').length > 0) {
-					this.engine.element ().find ('[data-component="text-box"]').addClass ('nvl');
-					this.engine.element ().find ('text-box [data-ui="say"]').html (this.engine.history ('nvl').pop ());
+					textBox.setProps ({ mode: 'nvl' });
+					textBox.content ('dialog').html (this.engine.history ('nvl').pop ());
 					return Promise.resolve ();
 				}
 				return Promise.reject ('No more dialogs on history from where to recover previous state.');

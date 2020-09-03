@@ -68,7 +68,9 @@ export class Jump extends Action {
 			label: this.label
 		});
 
-		if (!this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
+		const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
+
+		if (textBox.props.mode !== 'nvl') {
 			this.engine.action ('Dialog').reset ();
 		}
 

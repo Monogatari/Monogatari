@@ -62,7 +62,7 @@ text-box {
 		grid-template-columns: minmax(70%, 1fr) auto;
 	}
 
-	&.nvl {
+	&[mode="nvl"] {
 		max-height: 100%;
 		height: 100%;
 

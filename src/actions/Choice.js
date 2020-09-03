@@ -152,14 +152,15 @@ export class Choice extends Action {
 
 			const dialog = this.statement.Dialog;
 			const timer = this.statement.Timer;
+			const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
 
 			if (typeof dialog === 'string') {
 				// If there's a dialog, we'll wait until showing that up to show
 				// the choices, in order to avoid showing the choices in an incorrect
 				// format if the dialog was NVL or not
 				return this.engine.run (dialog, false).then (() => {
-					if (this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
-						this.engine.element ().find ('[data-component="text-box"]').get (0).content ('text').append (element);
+					if (textBox.props.mode === 'nvl') {
+						textBox.content ('text').append (element);
 					} else {
 						this.engine.element ().find ('[data-screen="game"]').append (element);
 					}
@@ -173,8 +174,8 @@ export class Choice extends Action {
 				});
 			} else {
 				// If there's no dialog, we can just show the choices right away
-				if (this.engine.element ().find ('[data-component="text-box"]').hasClass ('nvl')) {
-					this.engine.element ().find ('[data-component="text-box"]').get (0).content ('text').append (element);
+				if (textBox.props.mode === 'nvl') {
+					textBox.content ('text').append (element);
 				} else {
 					this.engine.element ().find ('[data-screen="game"]').append (element);
 				}

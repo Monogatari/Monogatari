@@ -18,7 +18,7 @@ choice-container {
 	transform: translate(-50%, -50%);
 	position: absolute;
 
-	.nvl & {
+	[mode="nvl"] & {
 		position: static;
 		transform: none;
 		width: 100%;
