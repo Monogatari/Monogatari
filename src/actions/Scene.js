@@ -87,7 +87,12 @@ export class Scene extends Action {
 	apply () {
 		const scene_elements = [];
 
-		this.engine.element ().find ('[data-screen="game"] img:not([data-ui="face"]):not([data-visibility="invisible"])').each ((element) => {
+		const selectors = [
+			'[data-screen="game"] [data-character]:not([data-visibility="invisible"])',
+			'[data-screen="game"] [data-image]:not([data-visibility="invisible"])'
+		];
+
+		this.engine.element ().find (selectors.join (',')).each ((element) => {
 			scene_elements.push (element.outerHTML);
 		});
 
@@ -102,7 +107,7 @@ export class Scene extends Action {
 
 				this.engine.history ('sceneState').push ({
 					characters: this.engine.state ('characters'),
-					images: this.engine.state ('images')
+					images: this.engine.state ('images'),
 				});
 
 				this.engine.state ({
@@ -128,7 +133,7 @@ export class Scene extends Action {
 
 
 		if (this.engine.global ('_restoring_state') === false) {
-			this.engine.action ('Dialog').reset ();
+			this.engine.action ('Dialog').reset ({ saveNVL: true });
 		}
 
 		return Promise.resolve ({ advance: true });
