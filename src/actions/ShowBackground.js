@@ -9,6 +9,7 @@ export class ShowBackground extends Action {
 		this.engine.state ({
 			background: ''
 		});
+
 		return Promise.resolve ();
 	}
 
@@ -132,11 +133,11 @@ export class ShowBackground extends Action {
 		if (history.length > 0) {
 			const background = this.engine.element ().find ('[data-ui="background"]');
 			const last = history[history.length - 1].replace ('show scene', 'show background');
-			this.constructor (last.split (' '));
+			const action = this.engine.prepareAction (last, { cycle: 'Application' });
 
 			background.style ('background-image', 'initial');
 			background.style ('background-color', 'initial');
-			background.style (this.property, this.value);
+			background.style (action.property, action.value);
 
 			for (const newClass of this.classes) {
 				background.addClass (newClass);
