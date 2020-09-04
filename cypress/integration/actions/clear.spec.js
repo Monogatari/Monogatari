@@ -42,7 +42,7 @@ context ('Clear', function () {
 		cy.get ('text-box').contains ('After');
 	});
 
-	it ('Does not rollback', function () {
+	it ('Rolls back on adv mode', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
 			'Start': [
@@ -57,8 +57,28 @@ context ('Clear', function () {
 
 		cy.proceed ();
 		cy.get ('text-box').contains ('After');
-
 		cy.rollback ();
+		cy.wait (100);
+		cy.get ('text-box').contains ('Before');
+	});
+
+	it ('Rolls back on nvl mode', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'nvl Before',
+				'clear',
+				'nvl After'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').contains ('Before');
+
+		cy.proceed ();
 		cy.get ('text-box').contains ('After');
+		cy.rollback ();
+		cy.wait (100);
+		cy.get ('text-box').contains ('Before');
 	});
 });
