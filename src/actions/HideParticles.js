@@ -16,6 +16,9 @@ export class HideParticles extends Action {
 	}
 
 	didApply () {
+		this.engine.state ({
+			particles: ''
+		});
 		return Promise.resolve ({ advance: true });
 	}
 

@@ -52,7 +52,7 @@ class GameScreen extends ScreenComponent {
 	render () {
 		return `
 			<div data-content="visuals">
-				<div id="particles-js" data-ui="particles"></div>
+				<div id="tsparticles" data-ui="particles"></div>
 				<div id="background" data-ui="background"></div>
 			</div>
 		`;

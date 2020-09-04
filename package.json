@@ -60,8 +60,8 @@
 		"mixins.css": "^1.0.0",
 		"moment": "^2.27.0",
 		"mousetrap": "^1.6.5",
-		"particles.js": "^2.0.0",
-		"random-js": "^2.1.0"
+		"random-js": "^2.1.0",
+		"tsparticles": "^1.17.10"
 	},
 	"files": [
 		"README.md",

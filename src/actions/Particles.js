@@ -1,32 +1,16 @@
 import { Action } from '../lib/Action';
-
-/* global particlesJS, pJSDom */
+import { tsParticles } from 'tsparticles';
 
 export class Particles extends Action {
 
 	static stop () {
 		try {
-			if (typeof pJSDom === 'object') {
-				if (pJSDom.length > 0) {
-					for (let i = 0; i < pJSDom.length; i++) {
-						if (typeof pJSDom[i].pJS !== 'undefined') {
-							// Cancel all the animation frame requests to prevent
-							// memory from being used even then the element
-							// has been destroyed.
-							cancelAnimationFrame (pJSDom[i].pJS.fn.drawAnimFrame);
-							pJSDom.shift ();
-						}
-					}
-				}
-			}
+			const particles = tsParticles.domItem(0);
+			particles.stop ();
+			this.engine.element ().find ('#tsparticles').html ('');
 		} catch (e) {
 			console.error ('An error ocurred while trying to stop particle system.');
 		}
-
-		this.engine.state ({
-			particles: ''
-		});
-		this.engine.element ().find ('#particles-js').html ('');
 	}
 
 
@@ -42,17 +26,19 @@ export class Particles extends Action {
 		this.engine.state ({
 			particles: ''
 		});
+		this.stop ();
 		return Promise.resolve ();
 	}
 
 	static onLoad () {
 		const { particles } = this.engine.state ();
 		if (particles !== '') {
-			const promise = this.engine.run (particles, false);
-			// TODO: Find a way to prevent the histories from filling up on loading
-			// So there's no need for this pop.
-			this.engine.history ('particle').pop ();
-
+			const action = this.engine.prepareAction (particles, { cycle: 'Application' });
+			const promise = action.willApply ().then (() => {
+				return action.apply ().then (() => {
+					return action.didApply ({ updateHistory: false, updateState: false });
+				});
+			});
 			return promise;
 		}
 		return Promise.resolve ();
@@ -93,15 +79,21 @@ export class Particles extends Action {
 	}
 
 	apply () {
-		particlesJS (this.particles);
-		return Promise.resolve ();
+		return tsParticles.load ('tsparticles', this.particles);
 	}
 
-	didApply () {
-		this.engine.history ('particle').push (this._statement);
-		this.engine.state ({
-			particles: this._statement
-		});
+	didApply (args = { updateHistory: true, updateState: true }) {
+		const { updateHistory, updateState } = args;
+
+		if (updateHistory === true) {
+			this.engine.history ('particle').push (this._statement);
+		}
+
+		if (updateState === true) {
+			this.engine.state ({
+				particles: this._statement
+			});
+		}
 		return Promise.resolve ({ advance: true });
 	}
 
@@ -112,6 +104,9 @@ export class Particles extends Action {
 
 	didRevert () {
 		this.engine.history ('particle').pop ();
+		this.engine.state ({
+			particles: ''
+		});
 		return Promise.resolve ({ advance: true, step: true });
 	}
 }
