@@ -10,6 +10,8 @@ export class ShowBackground extends Action {
 			background: ''
 		});
 
+		this.engine.global ('_scene_history_cleared_by_background', false);
+
 		return Promise.resolve ();
 	}
 
@@ -128,6 +130,7 @@ export class ShowBackground extends Action {
 		if (history.length === 0) {
 			history = this.engine.history ('scene');
 			history.pop ();
+			this.engine.global ('_scene_history_cleared_by_background', true);
 		}
 
 		if (history.length > 0) {

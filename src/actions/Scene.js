@@ -150,15 +150,7 @@ export class Scene extends Action {
 	revert () {
 		return this.engine.revert (this._statement.replace('show scene', 'show background'), false, false).then(() => {
 			// this.engine.history ('scene').pop ();
-			if (this.engine.history ('scene').length > 0) {
-				const last = this.engine.history ('scene')[this.engine.history ('scene').length - 1];
-
-				this.engine.state ({
-					scene: last
-				});
-
-				this.engine.history ('scene').pop ();
-
+			const restoreSceneItems = () => {
 				if (this.engine.history ('sceneElements').length > 0) {
 					const scene_elements = this.engine.history  ('sceneElements').pop ();
 
@@ -186,12 +178,31 @@ export class Scene extends Action {
 						this.engine.state (scene_state);
 					}
 				}
-				return this.engine.action ('Dialog').reset ();
+			};
 
-				// if (typeof last === 'undefined') {
-				// 	this.engine.history ('background');
-				// 	return this.engine. action ('Show::Background').reset ();
-				// }
+			// Check if the scene history still has elements left, if it doesn't then we need to roll back
+			// to the initial background defined in the CSS and not in the script.
+			if (this.engine.history ('scene').length > 0) {
+				this.engine.global ('_scene_history_cleared_by_background', false);
+				const last = this.engine.history ('scene')[this.engine.history ('scene').length - 1];
+
+				this.engine.state ({
+					scene: last
+				});
+
+				this.engine.history ('scene').pop ();
+
+				restoreSceneItems ();
+				return this.engine.action ('Dialog').reset ();
+			}
+
+			// If the scene history was empty, we just need to check if it was the background
+			// action who cleared it. If that was the case, we still need to restore the other
+			// items that we save for each scene apart from the background.
+			if (this.engine.global ('_scene_history_cleared_by_background') === true) {
+				this.engine.global ('_scene_history_cleared_by_background', false);
+				restoreSceneItems ();
+				return this.engine.action ('Dialog').reset ();
 			}
 		});
 	}
