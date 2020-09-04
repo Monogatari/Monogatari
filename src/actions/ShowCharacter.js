@@ -168,26 +168,35 @@ export class ShowCharacter extends Action {
 		return Promise.resolve ();
 	}
 
-	didApply () {
-		this.engine.history ('character').push (this._statement);
-		this.engine.state ({
-			characters: [
-				...this.engine.state ('characters').filter ((item) => {
-					if (item !== null && typeof item !== 'undefined') {
-						const [show, character, asset, sprite] = item.split (' ');
-						return asset !== this.asset;
-					}
-					return false;
-				}),
-				this._statement
-			]
-		});
+	didApply (args = { updateHistory: true, updateState: true }) {
+		const { updateHistory, updateState } = args;
+
+		if (updateHistory === true) {
+			this.engine.history ('character').push (this._statement);
+		}
+
+		if (updateState === true) {
+			this.engine.state ({
+				characters: [
+					...this.engine.state ('characters').filter ((item) => {
+						if (typeof item === 'string') {
+							const [show, character, asset, sprite] = item.split (' ');
+							return asset !== this.asset;
+						}
+						return false;
+					}),
+					this._statement
+				]
+			});
+		}
 		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
 		this.engine.element ().find (`[data-character="${this.asset}"]`).remove ();
 
+		// First, we remove the last instance of the character from the history since
+		// that's the one being currently displayed and we want the one before that
 		for (let i = this.engine.history ('character').length - 1; i >= 0; i--) {
 			const last = this.engine.history ('character')[i];
 			const [show, character, asset, name] = last.split (' ');
@@ -197,16 +206,35 @@ export class ShowCharacter extends Action {
 			}
 		}
 
+		// Now, we go through the remaining history to find the last instance of the
+		// character.
 		for (let i = this.engine.history ('character').length - 1; i >= 0; i--) {
 			const last = this.engine.history ('character')[i];
 			const [show, character, asset, name] = last.split (' ');
 
 			if (asset === this.asset) {
+				// this.engine.history ('character').splice (i, 1);
 				const action = this.engine.prepareAction (last, { cycle: 'Apply' });
-				action.apply ();
-				break;
+				return action.apply ().then (() => {
+					return action.didApply ({ updateHistory: false, updateState: true });
+				});
 			}
 		}
+
+		// If the script didn't return on the for cycle above, it means either the
+		// history didn't have any items left or, the character was not found.
+		// In that case, we simply remove the character from the state.
+		this.engine.state ({
+			characters: [
+				...this.engine.state ('characters').filter ((item) => {
+					if (typeof item === 'string') {
+						const [show, character, asset, sprite] = item.split (' ');
+						return asset !== this.asset;
+					}
+					return false;
+				}),
+			],
+		});
 
 		return Promise.resolve ();
 	}

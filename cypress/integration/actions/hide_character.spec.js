@@ -51,6 +51,38 @@ context ('Hide Character', function () {
 
 		cy.start ();
 
-		cy.get ('[data-sprite="happy"]').should ('not.be.visible');
+		cy.get ('[data-sprite="normal"]').should ('be.visible');
+		cy.proceed ();
+		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
+	});
+
+	it ('Makes the character show up again when rolled back.', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show character y normal at center with fadeIn end-fadeOut',
+				'Before',
+				'hide character y with left',
+				'After',
+				//'show character y happy with rollInLeft',
+			]
+		});
+
+		cy.start ();
+
+		cy.get ('[data-sprite="normal"]').should ('be.visible');
+		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at center with fadeIn end-fadeOut']);
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at center with fadeIn end-fadeOut']);
+		cy.get ('text-box').contains ('Before');
+		cy.proceed ();
+		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at center with fadeIn end-fadeOut']);
+		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('be.empty');
+		cy.get ('text-box').contains ('After');
+		cy.rollback ();
+		cy.get ('[data-sprite="normal"]').should ('be.visible');
+		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at center with fadeIn end-fadeOut']);
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at center with fadeIn end-fadeOut']);
+		cy.get ('text-box').contains ('Before');
 	});
 });

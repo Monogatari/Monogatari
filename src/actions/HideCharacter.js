@@ -111,7 +111,7 @@ export class HideCharacter extends Action {
 
 	didApply () {
 		const show = this.engine.state ('characters').filter ((item) => {
-			const [ show, type, asset, ] = item.split (' ');
+			const [ show, character, asset, ] = item.split (' ');
 			return asset !== this.asset;
 		});
 
@@ -132,7 +132,10 @@ export class HideCharacter extends Action {
 			const [show, character, asset, name] = last.split (' ');
 
 			if (asset === this.asset) {
-				return this.engine.run (last, false);
+				const action = this.engine.prepareAction (last, { cycle: 'Application' });
+				return action.apply ().then (() => {
+					return action.didApply ({ updateHistory: false, updateState: true });
+				});
 			}
 		}
 		return Promise.reject ();
