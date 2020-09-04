@@ -155,8 +155,9 @@ context ('Show Character', function () {
 		});
 
 		cy.start ();
+		cy.get ('[data-sprite="happy"]').should ('not.be.visible');
 		cy.get ('[data-sprite="angry"]').should ('be.visible');
-		cy.get ('[data-sprite="happy"]').should('have.class', 'fadeIn');
+		cy.get ('[data-sprite="angry"]').should('have.class', 'fadeIn');
 	});
 
 	it ('Doesn\'t duplicate sprites on consecutive end animations', function () {
