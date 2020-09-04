@@ -8,6 +8,8 @@ export class Scene extends Action {
 		this.engine.history ('sceneElements');
 		this.engine.history ('sceneState');
 
+		this.engine.global ('_should_restore_nvl', false);
+
 		this.engine.state ({
 			scene: ''
 		});
@@ -97,7 +99,6 @@ export class Scene extends Action {
 		});
 
 		const restoringState = this.engine.global ('_restoring_state');
-
 		return this.engine.run (this._statement.replace('show scene', 'show background'), false).then(() => {
 			// Check if the engine is no loading a save file, since loading a file applies the actions on that state
 			// asynchronously, there's a chance this would run after a show image/character action and would remove them
@@ -105,9 +106,12 @@ export class Scene extends Action {
 			if (restoringState === false) {
 				this.engine.history ('sceneElements').push (scene_elements);
 
+				const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
+
 				this.engine.history ('sceneState').push ({
 					characters: this.engine.state ('characters'),
 					images: this.engine.state ('images'),
+					textBoxMode: textBox.props.mode,
 				});
 
 				this.engine.state ({
@@ -118,7 +122,6 @@ export class Scene extends Action {
 				this.engine.element ().find ('[data-character]').remove ();
 				this.engine.element ().find ('[data-image]').remove ();
 			}
-
 			return Promise.resolve ();
 		});
 	}
@@ -130,7 +133,6 @@ export class Scene extends Action {
 		});
 
 		this.engine.history ('scene').push (this._statement);
-
 
 		if (this.engine.global ('_restoring_state') === false) {
 			this.engine.action ('Dialog').reset ({ saveNVL: true });
@@ -147,14 +149,15 @@ export class Scene extends Action {
 
 	revert () {
 		return this.engine.revert (this._statement.replace('show scene', 'show background'), false, false).then(() => {
-			//this.engine.history ('scene').pop ();
-
+			// this.engine.history ('scene').pop ();
 			if (this.engine.history ('scene').length > 0) {
 				const last = this.engine.history ('scene')[this.engine.history ('scene').length - 1];
 
 				this.engine.state ({
 					scene: last
 				});
+
+				this.engine.history ('scene').pop ();
 
 				if (this.engine.history ('sceneElements').length > 0) {
 					const scene_elements = this.engine.history  ('sceneElements').pop ();
@@ -170,10 +173,25 @@ export class Scene extends Action {
 					const scene_state = this.engine.history  ('sceneState').pop ();
 
 					if (typeof scene_state === 'object') {
+						const state = { ...scene_state };
+						const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
+
+						textBox.setProps ({ mode: state.textBoxMode });
+
+						if (state.textBoxMode === 'nvl') {
+							this.engine.global ('_should_restore_nvl', true);
+						}
+
+						delete state.textBoxMode;
 						this.engine.state (scene_state);
 					}
 				}
 				return this.engine.action ('Dialog').reset ();
+
+				// if (typeof last === 'undefined') {
+				// 	this.engine.history ('background');
+				// 	return this.engine. action ('Show::Background').reset ();
+				// }
 			}
 		});
 	}

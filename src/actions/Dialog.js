@@ -13,7 +13,6 @@ export class Dialog extends Action {
 
 			// Get the element it was typing to
 			const element = this.engine.global ('textObject').el;
-
 			this.engine.global ('textObject').destroy ();
 
 			element.innerHTML = str.replace (/\{pause:(\d+)\}/g, '').replace (/\{speed:(\d+)\}/g, '');
@@ -37,7 +36,8 @@ export class Dialog extends Action {
 	}
 
 	static willRollback () {
-		if (this.engine.global ('textObject') !== null) {
+		const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
+		if (this.engine.global ('textObject') !== null && textBox.props.mode !== 'nvl') {
 			this.engine.global ('textObject').destroy ();
 		}
 
@@ -129,15 +129,19 @@ export class Dialog extends Action {
 		return Promise.resolve ();
 	}
 
-	static reset ({ keepNVL = false } = {}) {
+	static reset ({ keepNVL = false, saveNVL = false } = {}) {
+		const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
+
+		if (saveNVL === true && textBox.props.mode === 'nvl') {
+			this.engine.history ('nvl').push (textBox.content ('dialog').html ());
+		}
+
+		if (keepNVL !== true) {
+			textBox.setProps ({ mode: 'adv' });
+		}
 
 		if (this.engine.global ('textObject') !== null) {
 			this.engine.global ('textObject').destroy ();
-		}
-
-		const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
-		if (keepNVL !== true) {
-			textBox.setProps ({ mode: 'adv' });
 		}
 
 		this.engine.element ().find ('[data-component="text-box"]').data ('speaking', '');
@@ -418,13 +422,25 @@ export class Dialog extends Action {
 			const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
 
 			if (textBox.props.mode === 'nvl') {
+				if (this.engine.global ('_should_restore_nvl') === true) {
+					this.engine.global ('_should_restore_nvl', false);
+					if (this.engine.history ('nvl').length > 0) {
+						textBox.content ('dialog').html (this.engine.history ('nvl').pop ());
+						return Promise.resolve ();
+					}
+					return Promise.reject ('No more dialogs on history from where to recover previous state.');
+				}
+				const dialogs = textBox.content ('dialog').find ('[data-spoke]');
 				// If it is being shown, then to go back, we need to remove the last dialog from it
-				textBox.content ('dialog').find ('[data-spoke]').last ().remove ();
+				dialogs.last ().remove ();
 				return Promise.resolve ();
 			} else {
 				// If it is not shown right now, then we need to recover the dialogs
 				// that were being shown the last time we hid it
 				if (this.engine.history ('nvl').length > 0) {
+					if (this.engine.global ('_should_restore_nvl') === true) {
+						this.engine.global ('_should_restore_nvl', false);
+					}
 					textBox.setProps ({ mode: 'nvl' });
 					textBox.content ('dialog').html (this.engine.history ('nvl').pop ());
 					return Promise.resolve ();
