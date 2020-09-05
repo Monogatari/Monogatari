@@ -6,10 +6,12 @@ export class Particles extends Action {
 	static stop () {
 		try {
 			const particles = tsParticles.domItem(0);
-			particles.stop ();
-			this.engine.element ().find ('#tsparticles').html ('');
+			if (typeof particles !== 'undefined') {
+				particles.stop ();
+				this.engine.element ().find ('#tsparticles').html ('');
+			}
 		} catch (e) {
-			console.error ('An error ocurred while trying to stop particle system.');
+			console.error ('An error ocurred while trying to stop particle system.', e);
 		}
 	}
 
