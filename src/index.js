@@ -33,8 +33,7 @@ import './../node_modules/@fortawesome/fontawesome-free/js/all.js';
 export * from '@aegis-framework/artemis';
 export * from './lib/vendor/typed.min.js';
 export * from 'random-js';
-
-import 'particles.js';
+export * from 'tsparticles';
 
 import Monogatari from './monogatari';
 
