@@ -338,5 +338,7 @@ Cypress.Commands.add ('save', function (slot) {
 });
 
 Cypress.Commands.add ('load', function (slot) {
-	return this.monogatari.loadFromSlot ('Save_' + slot);
+	return this.monogatari.loadFromSlot ('Save_' + slot).then (() => {
+		this.monogatari.run (this.monogatari.label ()[this.monogatari.state ('step')]);
+	});
 });

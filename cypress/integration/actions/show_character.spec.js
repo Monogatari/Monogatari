@@ -237,4 +237,40 @@ context ('Show Character', function () {
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
 		cy.get ('text-box').contains ('One');
 	});
+
+	it ('Restores state after load correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show character y normal at left',
+				'show character m normal at right',
+				'y One',
+				'end'
+			]
+		});
+
+		cy.start ();
+
+		// Going forward
+		cy.get ('[data-character="y"][data-sprite="normal"]').should ('be.visible');
+		cy.get ('[data-character="m"][data-sprite="normal"]').should ('be.visible');
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
+		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
+		cy.get ('text-box').contains ('One');
+		cy.save(1).then(() => {
+			cy.proceed ();
+			cy.get('main-screen').should ('be.visible');
+			cy.wrap (this.monogatari).invoke ('history', 'character').should ('be.empty');
+			cy.wrap (this.monogatari).invoke ('state', 'characters').should ('be.empty');
+			cy.load(1).then(() => {
+				cy.get('main-screen').should ('not.be.visible');
+				cy.get('game-screen').should ('be.visible');
+				cy.get ('[data-character="y"][data-sprite="normal"]').should ('be.visible');
+				cy.get ('[data-character="m"][data-sprite="normal"]').should ('be.visible');
+				cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
+				cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
+				cy.get ('text-box').contains ('One');
+			});
+		});
+	});
 });

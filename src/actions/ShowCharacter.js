@@ -30,10 +30,14 @@ export class ShowCharacter extends Action {
 		const promises = [];
 
 		for (const item of characters) {
-			promises.push (this.engine.run (item, false));
-			// TODO: Find a way to prevent the histories from filling up on loading
-			// So there's no need for this pop.
-			this.engine.history ('character').pop ();
+			const action = this.engine.prepareAction (item, { cycle: 'Application' });
+			const promise = action.willApply ().then (() => {
+				return action.apply ().then (() => {
+					return action.didApply ({ updateHistory: false, updateState: false });
+				});
+			});
+
+			promises.push (promise);
 		}
 
 		if (promises.length > 0) {
