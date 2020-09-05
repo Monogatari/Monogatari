@@ -109,4 +109,106 @@ context ('Show Video', function () {
 		cy.start ();
 		cy.get ('.fancy-error').should ('be.visible');
 	});
+
+	it ('Removes video on rollback', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'One',
+				'show video kirino displayable with fadeIn loop',
+				'Two'
+			]
+		});
+
+		cy.start ();
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('history', 'video').should ('be.empty');
+		cy.get ('text-box').contains ('One');
+
+		cy.proceed ();
+		cy.get ('[data-video="kirino"]').should ('be.visible');
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('deep.equal', ['show video kirino displayable with fadeIn loop']);
+		cy.wrap (this.monogatari).invoke ('history', 'video').should ('deep.equal', ['show video kirino displayable with fadeIn loop']);
+		cy.get ('text-box').contains ('Two');
+
+		cy.rollback ();
+		cy.get ('[data-video="kirino"]').should ('not.exist');
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('history', 'video').should ('be.empty');
+		cy.get ('text-box').contains ('One');
+	});
+
+	it ('Handles consecutive statements correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'One',
+				'show video kirino displayable with fadeIn loop',
+				'show video dandelion displayable with fadeIn loop',
+				'Two'
+			]
+		});
+
+		cy.start ();
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('history', 'video').should ('be.empty');
+		cy.get ('text-box').contains ('One');
+
+		cy.proceed ();
+		cy.get ('[data-video="kirino"]').should ('be.visible');
+		cy.get ('[data-video="dandelion"]').should ('be.visible');
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('deep.equal', ['show video kirino displayable with fadeIn loop', 'show video dandelion displayable with fadeIn loop']);
+		cy.wrap (this.monogatari).invoke ('history', 'video').should ('deep.equal', ['show video kirino displayable with fadeIn loop', 'show video dandelion displayable with fadeIn loop']);
+		cy.get ('text-box').contains ('Two');
+
+		cy.rollback ();
+		cy.get ('[data-video="kirino"]').should ('not.exist');
+		cy.get ('[data-video="dandelion"]').should ('not.exist');
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('history', 'video').should ('be.empty');
+		cy.get ('text-box').contains ('One');
+	});
+
+	it ('Restores state correctly on load', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'One',
+				'show video kirino displayable with fadeIn loop',
+				'show video dandelion displayable with fadeIn loop',
+				'Two',
+				'end'
+			]
+		});
+
+		cy.start ();
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('history', 'video').should ('be.empty');
+		cy.get ('text-box').contains ('One');
+
+		cy.proceed ();
+		cy.get ('[data-video="kirino"]').should ('be.visible');
+		cy.get ('[data-video="dandelion"]').should ('be.visible');
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('deep.equal', ['show video kirino displayable with fadeIn loop', 'show video dandelion displayable with fadeIn loop']);
+		cy.wrap (this.monogatari).invoke ('history', 'video').should ('deep.equal', ['show video kirino displayable with fadeIn loop', 'show video dandelion displayable with fadeIn loop']);
+		cy.get ('text-box').contains ('Two');
+
+		cy.save(1).then(() => {
+			cy.proceed ();
+			cy.get('main-screen').should ('be.visible');
+			cy.wrap (this.monogatari).invoke ('state', 'videos').should ('be.empty');
+			cy.wrap (this.monogatari).invoke ('history', 'video').should ('be.empty');
+			cy.get ('[data-video]').should ('not.exist');
+
+			cy.load(1).then(() => {
+				cy.get('main-screen').should ('not.be.visible');
+				cy.get('game-screen').should ('be.visible');
+				cy.get ('[data-video="kirino"]').should ('be.visible');
+				cy.get ('[data-video="dandelion"]').should ('be.visible');
+				cy.wrap (this.monogatari).invoke ('state', 'videos').should ('deep.equal', ['show video kirino displayable with fadeIn loop', 'show video dandelion displayable with fadeIn loop']);
+				cy.wrap (this.monogatari).invoke ('history', 'video').should ('deep.equal', ['show video kirino displayable with fadeIn loop', 'show video dandelion displayable with fadeIn loop']);
+				cy.get ('text-box').contains ('Two');
+			});
+		});
+	});
 });

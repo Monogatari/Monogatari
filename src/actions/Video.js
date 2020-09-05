@@ -22,11 +22,14 @@ export class Video extends Action {
 			const promises = [];
 
 			for (const video of this.engine.state ('videos')) {
-				promises.push (this.engine.run (video, false));
-				// TODO: Find a way to prevent the histories from filling up on loading
-				// So there's no need for this pop.
-				this.engine.history ('video').pop ();
-				this.engine.state ('videos').pop ();
+				const action = this.engine.prepareAction (video, { cycle: 'Application' });
+				const promise = action.willApply ().then (() => {
+					return action.apply ().then (() => {
+						return action.didApply ({ updateHistory: false, updateState: false });
+					});
+				});
+
+				promises.push (promise);
 			}
 
 			if (promises.length > 0) {
@@ -190,9 +193,15 @@ export class Video extends Action {
 		return Promise.resolve ();
 	}
 
-	didApply () {
-		this.engine.state ('videos').push (this._statement);
-		this.engine.history ('video').push (this._statement);
+	didApply (args = { updateHistory: true, updateState: true }) {
+		const { updateHistory, updateState } = args;
+		if (updateHistory === true) {
+			this.engine.history ('video').push (this._statement);
+		}
+
+		if (updateState === true) {
+			this.engine.state ('videos').push (this._statement);
+		}
 
 		if (this.mode === 'background' || this.mode === 'modal' || this.mode === 'displayable') {
 			return Promise.resolve ({ advance: true });
