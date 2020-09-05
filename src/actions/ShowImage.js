@@ -26,11 +26,14 @@ export class ShowImage extends Action {
 		const promises = [];
 
 		for (const item of images) {
-			promises.push (this.engine.run (item, false));
-			// TODO: Find a way to prevent the histories from filling up on loading
-			// So there's no need for this pop.
-			this.engine.history ('image').pop ();
-			this.engine.state ('images').shift ();
+			const action = this.engine.prepareAction (item, { cycle: 'Application' });
+			const promise = action.willApply ().then (() => {
+				return action.apply ().then (() => {
+					return action.didApply ({ updateHistory: false, updateState: false });
+				});
+			});
+
+			promises.push (promise);
 		}
 
 		if (promises.length > 0) {
@@ -81,21 +84,35 @@ export class ShowImage extends Action {
 		return Promise.resolve ();
 	}
 
-	didApply () {
-		this.engine.history ('image').push (this._statement);
-		this.engine.state ({
-			images: [this._statement, ...this.engine.state ('images')]
-		});
+	didApply (args = { updateHistory: true, updateState: true }) {
+		const { updateHistory, updateState } = args;
+		if (updateHistory === true) {
+			this.engine.history ('image').push (this._statement);
+		}
+
+		if (updateState === true) {
+			this.engine.state ({
+				images: [...this.engine.state ('images'), this._statement]
+			});
+		}
 		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
 		this.engine.element ().find (`[data-image="${this.asset}"]`).remove ();
-		this.engine.history ('image').pop ();
 		return Promise.resolve ();
 	}
 
 	didRevert () {
+		this.engine.history ('image').pop ();
+		this.engine.state ({
+			images: [...this.engine.state ('images').filter ((item) => {
+				if (typeof item === 'string') {
+					const [show, image, asset] = item.split (' ');
+					return asset !== this.asset;
+				}
+			})]
+		});
 		return Promise.resolve ({ advance: true, step: true });
 	}
 }

@@ -60,15 +60,28 @@ export class HideImage extends Action {
 	}
 
 	willRevert () {
-		if (this.engine.history ('image').length <= 0) {
+		if (this.engine.history ('image').length === 0) {
 			return Promise.reject ('Image history was empty.');
 		}
 		return Promise.resolve ();
 	}
 
 	revert () {
-		this.engine.run (this.engine.history ('image').pop (), false);
-		return Promise.resolve ();
+		// return this.engine.run (this.engine.history ('image').pop (), false);
+		for (let i = this.engine.history ('image').length - 1; i >= 0; i--) {
+			const last = this.engine.history ('image')[i];
+			const [show, image, asset] = last.split (' ');
+			if (asset === this.asset) {
+				const action = this.engine.prepareAction (last, { cycle: 'Application' });
+				return action.willApply ().then (() => {
+					return action.apply ().then (() => {
+						return action.didApply ({ updateHistory: false, updateState: true });
+					});
+				});
+			}
+		}
+
+		Promise.reject ('Could not find a previous state to revert to');
 	}
 
 	didRevert () {
