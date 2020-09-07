@@ -17,15 +17,16 @@ export class ShowBackground extends Action {
 
 	static onLoad () {
 		const { background, scene } = this.engine.state ();
-		if (background !== '' && scene === '') {
-			const promise = this.engine.run (background, false);
-			// TODO: Find a way to prevent the histories from filling up on loading
-			// So there's no need for this pop.
-			this.engine.history ('background').pop ();
-
-			return promise;
+		if (typeof background === 'string' && background !== '' && scene === '') {
+			const action = this.engine.prepareAction (background, { cycle: 'Application' });
+			return action.willApply ().then (() => {
+				return action.apply ().then (() => {
+					return action.didApply ({ updateHistory: false, updateState: false });
+				});
+			});
+		} else {
+			return Promise.resolve ();
 		}
-		return Promise.resolve ();
 	}
 
 	static reset () {
@@ -108,11 +109,18 @@ export class ShowBackground extends Action {
 		return Promise.resolve ();
 	}
 
-	didApply () {
-		this.engine.state ({
-			background: this._statement
-		});
-		this.engine.history ('background').push (this._statement);
+	didApply (args = { updateHistory: true, updateState: true }) {
+		const { updateHistory, updateState } = args;
+
+		if (updateState === true) {
+			this.engine.state ({
+				background: this._statement
+			});
+		}
+
+		if (updateHistory === true) {
+			this.engine.history ('background').push (this._statement);
+		}
 
 		return Promise.resolve ({ advance: true });
 	}

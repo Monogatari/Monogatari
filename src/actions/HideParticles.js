@@ -26,8 +26,9 @@ export class HideParticles extends Action {
 		if (this.engine.history ('particle').length > 0) {
 			const last = this.engine.history ('particle').pop ();
 			return this.engine.run (last, false);
+		} else {
+			return Promise.resolve ();
 		}
-		return Promise.resolve ();
 	}
 
 	didRevert () {

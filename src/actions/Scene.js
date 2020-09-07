@@ -55,12 +55,12 @@ export class Scene extends Action {
 
 		const { scene } = this.engine.state ();
 		if (scene !== '') {
-			const promise = this.engine.run (scene, false);
-			// TODO: Find a way to prevent the histories from filling up on loading
-			// So there's no need for this pop.
-			this.engine.history ('scene').pop ();
-
-			return promise;
+			const action = this.engine.prepareAction (scene, { cycle: 'Application' });
+			return action.willApply ().then (() => {
+				return action.apply ().then (() => {
+					return action.didApply ({ updateHistory: false, updateState: false });
+				});
+			});
 		}
 		return Promise.resolve ();
 	}
@@ -80,6 +80,9 @@ export class Scene extends Action {
 	constructor ([ show, type, scene, ...classes ]) {
 		super ();
 		this.scene = scene;
+
+		this.scene_elements = [];
+		this.scene_state = {};
 	}
 
 	willApply () {
@@ -87,54 +90,63 @@ export class Scene extends Action {
 	}
 
 	apply () {
-		const scene_elements = [];
-
 		const selectors = [
 			'[data-screen="game"] [data-character]:not([data-visibility="invisible"])',
 			'[data-screen="game"] [data-image]:not([data-visibility="invisible"])'
 		];
 
 		this.engine.element ().find (selectors.join (',')).each ((element) => {
-			scene_elements.push (element.outerHTML);
+			this.scene_elements.push (element.outerHTML);
 		});
 
+		const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
+
+		this.scene_state = {
+			characters: [...this.engine.state ('characters')],
+			images: [...this.engine.state ('images')],
+			textBoxMode: textBox.props.mode,
+		};
+
 		const restoringState = this.engine.global ('_restoring_state');
-		return this.engine.run (this._statement.replace('show scene', 'show background'), false).then(() => {
-			// Check if the engine is no loading a save file, since loading a file applies the actions on that state
-			// asynchronously, there's a chance this would run after a show image/character action and would remove them
-			// from the scene, which is something we don't want
-			if (restoringState === false) {
-				this.engine.history ('sceneElements').push (scene_elements);
 
-				const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
+		const action = this.engine.prepareAction (this._statement.replace('show scene', 'show background'), { cycle: 'Application' });
+		return action.willApply ().then (() => {
+			return action.apply ().then (() => {
+				return action.didApply ({ updateHistory: !restoringState, updateState: !restoringState }).then (() => {
+					// Check if the engine is no loading a save file, since loading a file applies the actions on that state
+					// asynchronously, there's a chance this would run after a show image/character action and would remove them
+					// from the scene, which is something we don't want
+					if (restoringState === false) {
+						this.engine.state ({
+							characters: [],
+							images: []
+						});
 
-				this.engine.history ('sceneState').push ({
-					characters: this.engine.state ('characters'),
-					images: this.engine.state ('images'),
-					textBoxMode: textBox.props.mode,
+						this.engine.element ().find ('[data-character]').remove ();
+						this.engine.element ().find ('[data-image]').remove ();
+					}
 				});
-
-				this.engine.state ({
-					characters: [],
-					images: []
-				});
-
-				this.engine.element ().find ('[data-character]').remove ();
-				this.engine.element ().find ('[data-image]').remove ();
-			}
-			return Promise.resolve ();
+			});
 		});
 	}
 
-	didApply () {
+	didApply (args = { updateHistory: true, updateState: true }) {
+		const { updateHistory, updateState } = args;
 
-		this.engine.state ({
-			scene: this._statement
-		});
+		if (updateHistory === true) {
+			this.engine.history ('sceneElements').push (this.scene_elements);
+			this.engine.history ('sceneState').push (this.scene_state);
+			this.engine.history ('scene').push (this._statement);
+		}
 
-		this.engine.history ('scene').push (this._statement);
+		if (updateState === true) {
+			this.engine.state ({
+				scene: this._statement
+			});
+		}
 
-		if (this.engine.global ('_restoring_state') === false) {
+		const restoringState = this.engine.global ('_restoring_state');
+		if (restoringState === false) {
 			this.engine.action ('Dialog').reset ({ saveNVL: true });
 		}
 
