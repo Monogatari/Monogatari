@@ -20,6 +20,7 @@
 /**
  * Monogatari main styling
  */
+@import './style/variables.css';
 @import './style/monogatari.css';
 
 /**

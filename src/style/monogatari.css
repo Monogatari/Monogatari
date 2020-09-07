@@ -4,12 +4,6 @@
  * ===========================
  */
 
-:root {
-	--main-color: rgba(0, 0, 0, 0.5);
-	--text-color: rgba(66, 66, 66, 0.9);
-	--screen-background-color: #f7f7f7;
-}
-
 /**
  * ===========================
  * Mixins
