@@ -27,6 +27,7 @@
 Cypress.Commands.add ('open', () => {
 	cy.visit ('./dist/index.html');
 	cy.window ().its ('Monogatari.default').as ('monogatari');
+	cy.window ().its ('Monogatari.default.debug').invoke ('level', 5);
 });
 
 Cypress.Commands.add ('start', function () {

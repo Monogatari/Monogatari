@@ -104,12 +104,15 @@ export class Play extends Action {
 
 			if (typeof state !== 'undefined') {
 				if (state.length > 0) {
-					for (const statement of state) {
-						promises.push (this.engine.run (statement, false));
-						// TODO: Find a way to prevent the histories from filling up on loading
-						// So there's no need for this pop.
-						this.engine.history (mediaType).pop ();
-						this.engine.state (mediaType).pop ();
+					for (const s of state) {
+						const action = this.engine.prepareAction (s.statement, { cycle: 'Application' });
+						const promise = action.willApply ().then (() => {
+							return action.apply ({ paused: s.paused }).then (() => {
+								return action.didApply ({ updateHistory: false, updateState: false });
+							});
+						});
+
+						promises.push (promise);
 					}
 				}
 			}
@@ -268,7 +271,8 @@ export class Play extends Action {
 		return Promise.resolve ();
 	}
 
-	apply () {
+	apply (args = { paused: false }) {
+		const { paused } = args;
 		if (this.player) {
 			// Check if the audio should have a fade time
 			const fadePosition = this.props.indexOf ('fade');
@@ -285,15 +289,9 @@ export class Play extends Action {
 
 				this.player.src = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting('AssetsPath')[this.directory]}/${this.media}`;
 
-				this.engine.history (this.type).push (this._statement);
-
-				const state = {};
-				state[this.type] = [...this.engine.state (this.type), this._statement];
-				this.engine.state (state);
-
 				this.player.onended = () => {
 					const endState = {};
-					endState[this.type] = this.engine.state (this.type).filter ((s) => s !== this._statement);
+					endState[this.type] = this.engine.state (this.type).filter ((s) => s.statement !== this._statement);
 					this.engine.state (endState);
 					this.engine.removeMediaPlayer (this.type, this.mediaKey);
 				};
@@ -302,7 +300,11 @@ export class Play extends Action {
 					Play.fadeIn (this.props[fadePosition + 1], this.player);
 				}
 
-				return this.player.play ();
+				if (paused !== true) {
+					return this.player.play ();
+				}
+				this.player.pause ();
+				return Promise.resolve ();
 			} else if (this.player instanceof Array) {
 				const promises = [];
 				for (const player of this.player) {
@@ -319,19 +321,32 @@ export class Play extends Action {
 		return Promise.reject('An error occurred, you probably have a typo on the media you want to play.');
 	}
 
-	didApply () {
+	didApply (args = { updateHistory: true, updateState: true }) {
+		const { updateHistory, updateState } = args;
+		if (updateHistory === true) {
+			if (this.player) {
+				if (this.player instanceof Audio) {
+					this.engine.history (this.type).push (this._statement);
+				}
+			}
+		}
+
+		if (updateState === true) {
+			if (this.player) {
+				if (this.player instanceof Audio) {
+					const state = {};
+					state[this.type] = [...this.engine.state (this.type), { statement: this._statement, paused: false }];
+					this.engine.state (state);
+				}
+			}
+		}
+
 		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
 		if (typeof this.mediaKey !== 'undefined') {
 			this.engine.removeMediaPlayer (this.type, this.mediaKey);
-
-			this.engine.history (this.type).pop ();
-
-			const state = {};
-			state[this.type] = this.engine.state (this.type).filter ((m) => m !== this._statement);
-			this.engine.state (state);
 		} else {
 			for (const player of this.player) {
 				if (!player.paused && !player.ended) {
@@ -344,6 +359,13 @@ export class Play extends Action {
 	}
 
 	didRevert () {
+		if (typeof this.mediaKey !== 'undefined') {
+			this.engine.history (this.type).pop ();
+
+			const state = {};
+			state[this.type] = this.engine.state (this.type).filter ((m) => m.statement !== this._statement);
+			this.engine.state (state);
+		}
 		return Promise.resolve ({ advance: true, step: true });
 	}
 }

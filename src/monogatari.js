@@ -1830,14 +1830,14 @@ class Monogatari {
 					// Retrieve if a song was playing so we can set it to the state
 					if (data.Engine.Song !== '' && typeof data.Engine.Song !== 'undefined') {
 						this.state ({
-							music: [data.Engine.Song],
+							music: [{ statement: data.Engine.Song, paused: false }],
 						});
 					}
 
 					// Retrieve if a sound was playing so we can set it to the state
 					if (data.Engine.Sound !== '' && typeof data.Engine.Sound !== 'undefined') {
 						this.state ({
-							sound: [data.Engine.Sound],
+							sound: [{ statement: data.Engine.Sound, paused: false }],
 						});
 					}
 
@@ -1924,6 +1924,61 @@ class Monogatari {
 				} else {
 					// If the new format is being used, things are a lot more simple
 					const { state, history, storage } = data.game;
+
+					// Monogatari v2.0.0-beta.15 introduced a new format to save the state of the media
+					// being played. Therefore, we need to check if the old format is being used in the
+					// save file and transform it to the new one.
+					if (state.music instanceof Array) {
+						if (state.music.length > 0) {
+							const music = [];
+							for (const statement of state.music) {
+								if (typeof statement === 'string') {
+									music.push ({
+										statement,
+										paused: false,
+									});
+								} else {
+									music.push (statement);
+								}
+							}
+							state.music = music;
+						}
+					}
+
+					if (state.sound instanceof Array) {
+						if (state.sound.length > 0) {
+							const sound = [];
+							for (const statement of state.sound) {
+								if (typeof statement === 'string') {
+									sound.push ({
+										statement,
+										paused: false,
+									});
+								} else {
+									sound.push (statement);
+								}
+							}
+							state.sound = sound;
+						}
+					}
+
+					if (state.voice instanceof Array) {
+						if (state.voice.length > 0) {
+							const voice = [];
+							for (const statement of state.voice) {
+								if (typeof statement === 'string') {
+									voice.push ({
+										statement,
+										paused: false,
+									});
+								} else {
+									voice.push (statement);
+								}
+							}
+							state.voice = voice;
+						}
+					}
+
 					this.state (state);
 					this.history (history);
 					this.storage (storage);

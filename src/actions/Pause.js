@@ -6,7 +6,7 @@ export class Pause extends Action {
 		return action === 'pause';
 	}
 
-	constructor ([ action, type, media ]) {
+	constructor ([ pause, type, media ]) {
 		super ();
 
 		this.type = type;
@@ -19,22 +19,53 @@ export class Pause extends Action {
 		}
 	}
 
-	apply () {
+	willApply () {
 		if (this.player) {
-			if (this.player instanceof Array) {
-				for (const player of this.player) {
-					player.pause ();
-				}
-			} else {
-				this.player.pause ();
-			}
 			return Promise.resolve ();
 		}
-		return Promise.reject ();
+		return Promise.reject ('Media player was not defined.');
+	}
+
+	apply () {
+		if (this.player instanceof Array) {
+			for (const player of this.player) {
+				player.pause ();
+			}
+		} else {
+			this.player.pause ();
+		}
+		return Promise.resolve ();
 	}
 
 	didApply () {
+		const state = {};
+		if (this.player instanceof Array) {
+			state[this.type] = this.engine.state (this.type).map ((s) => {
+				s.paused = true;
+				return s;
+			});
+		} else {
+			state[this.type] = [...this.engine.state (this.type).map ((item) => {
+				if (typeof item.statement === 'string') {
+					const [play, type, media] = item.statement.split (' ');
+
+					if (media === this.media) {
+						item.paused = true;
+					}
+					return item;
+				}
+				return item;
+			})];
+		}
+		this.engine.state (state);
 		return Promise.resolve ({ advance: true });
+	}
+
+	willRevert () {
+		if (this.player) {
+			return Promise.resolve ();
+		}
+		return Promise.reject ('Media player was not defined.');
 	}
 
 	revert () {
@@ -50,6 +81,25 @@ export class Pause extends Action {
 	}
 
 	didRevert () {
+		const state = {};
+		if (this.player instanceof Array) {
+			state[this.type] = this.engine.state (this.type).map ((s) => {
+				s.paused = false;
+				return s;
+			});
+		} else {
+			state[this.type] = [...this.engine.state (this.type).map ((item) => {
+				if (typeof item.statement === 'string') {
+					const [play, type, media] = item.statement.split (' ');
+
+					if (media === this.media) {
+						item.paused = false;
+					}
+					return item;
+				}
+			})];
+		}
+		this.engine.state (state);
 		return Promise.resolve ({ advance: true, step: true });
 	}
 }

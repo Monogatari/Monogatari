@@ -105,32 +105,29 @@ export class Stop extends Action {
 	}
 
 	apply () {
-		if (this.player) {
-			// Check if the audio should have a fade time
-			const fadePosition = this.props.indexOf ('fade');
+		// Check if the audio should have a fade time
+		const fadePosition = this.props.indexOf ('fade');
 
-			if (typeof this.player === 'object' && !(this.player instanceof Audio)) {
-				if (fadePosition > -1) {
-					for (const player of this.player) {
-						Stop.fadeOut (this.props[fadePosition + 1], player).then (() => {
-							this.engine.removeMediaPlayer (this.type, player.dataset.key);
-						});
-					}
-				} else {
-					this.engine.removeMediaPlayer (this.type);
+		if (typeof this.player === 'object' && !(this.player instanceof Audio)) {
+			if (fadePosition > -1) {
+				for (const player of this.player) {
+					Stop.fadeOut (this.props[fadePosition + 1], player).then (() => {
+						this.engine.removeMediaPlayer (this.type, player.dataset.key);
+					});
 				}
 			} else {
+				this.engine.removeMediaPlayer (this.type);
+			}
+		} else {
 
-				if (fadePosition > -1) {
-					Stop.fadeOut (this.props[fadePosition + 1], this.player).then (() => {
-						this.engine.removeMediaPlayer (this.type, this.media);
-					});
-				} else {
-					this.engine.removeMediaPlayer (this.type, this.mediaKey);
-				}
+			if (fadePosition > -1) {
+				Stop.fadeOut (this.props[fadePosition + 1], this.player).then (() => {
+					this.engine.removeMediaPlayer (this.type, this.media);
+				});
+			} else {
+				this.engine.removeMediaPlayer (this.type, this.mediaKey);
 			}
 		}
-
 		return Promise.resolve ();
 	}
 
@@ -138,7 +135,12 @@ export class Stop extends Action {
 		const state = {};
 
 		if (typeof this.media !== 'undefined') {
-			state[this.type] = this.engine.state (this.type).filter ((m) => m.indexOf (`play ${this.type} ${this.media}`) <= -1);
+			state[this.type] = [...this.engine.state (this.type).filter ((item) => {
+				if (typeof item.statement === 'string') {
+					const [play, type, media] = item.statement.split (' ');
+					return type !== this.type && media !== this.media;
+				}
+			})];
 		} else {
 			this.engine.history (this.type).push (this.engine.state (this.type));
 			state[this.type] = [];
@@ -151,31 +153,37 @@ export class Stop extends Action {
 
 	revert () {
 		if (typeof this.media !== 'undefined') {
-			const last = [...this.engine.history (this.type)].reverse ().find ((m) => m.indexOf (`play ${this.type} ${this.media}`) > -1);
+			for (let i = this.engine.history (this.type).length - 1; i >= 0; i--) {
+				const last = this.engine.history (this.type)[i];
+				if (typeof last !== 'undefined') {
+					const [play, type, media] = last.split (' ');
 
-			if (typeof last !== 'undefined') {
-				const promise = this.engine.run (last, false).then (() => {
-					this.engine.history (this.type).pop ();
-					return Promise.resolve ();
-				});
-
-				return promise;
+					if (this.type === type && this.media === media) {
+						const action = this.engine.prepareAction (last, { cycle: 'Application'});
+						return action.willApply ().then (() => {
+							return action.apply ().then (() => {
+								return action.didApply ({ updateHistory: false, updateState: true });
+							});
+						});
+					}
+				}
 			}
-
+			return Promise.resolve ();
 		} else {
 			const statements = this.engine.history (this.type).pop ();
-
 			const promises = [];
-			for (const statement of statements) {
-				promises.push (this.engine.run (statement, false).then (() => {
-					this.engine.history (this.type).pop ();
-					return Promise.resolve ();
-				}));
+			for (const state of statements) {
+				const action = this.engine.prepareAction (state.statement, { cycle: 'Application'});
+				const promise =  action.willApply ().then (() => {
+					return action.apply ({ paused: state.paused }).then (() => {
+						return action.didApply ({ updateHistory: false, updateState: true });
+					});
+				});
+
+				promises.push (promise);
 			}
 			return Promise.all (promises);
 		}
-
-		return Promise.resolve ();
 	}
 
 	didRevert () {
