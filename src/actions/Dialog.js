@@ -305,7 +305,7 @@ export class Dialog extends Action {
 		if (this.nvl === false) {
 			const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
 
-			if (textBox.props.mode === 'nvl' && this._cycle === 'Application') {
+			if (textBox.props.mode === 'nvl' && this._cycle === 'Application' && this.engine.global ('_restoring_state') === false) {
 				this.engine.history ('nvl').push (textBox.content ('dialog').html ());
 			}
 
@@ -360,8 +360,12 @@ export class Dialog extends Action {
 		// Focus the character's sprite and colorize it's name with the defined
 		// color on its declaration
 		this.engine.element ().find (`[data-character="${this.id}"]`).addClass ('focus');
-		this.engine.element ().find ('[data-ui="who"]').style ('color', this.character.color);
 
+		if (typeof this.character.color === 'string' && this.character.color !== '') {
+			this.engine.element ().find ('[data-ui="who"]').style ('color', this.character.color);
+		} else {
+			this.engine.element ().find ('[data-ui="who"]').style ('color', 'var(--character-name-color)');
+		}
 		// Check if an expression or face image was used and if it exists and
 		// display it
 		if (typeof this.image !== 'undefined' && !this.nvl) {

@@ -295,6 +295,7 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 
 	this.monogatari.characters ({
 		'y': {
+			color: 'blue',
 			name: 'Yui',
 			directory: 'yui',
 			sprites: {

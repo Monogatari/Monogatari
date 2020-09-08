@@ -92,6 +92,7 @@ text-box {
 	[data-content="name"] {
 		grid-area: header;
 		display: flex;
+		color: var(--character-name-color);
 	}
 
 	[data-content="text"] {
