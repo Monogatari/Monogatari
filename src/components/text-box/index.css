@@ -14,7 +14,7 @@
 	margin: 0;
 
 	&:not(:empty) {
-		padding: 1rem;
+		padding: 0.5rem 1rem;
 	}
 }
 
@@ -91,6 +91,7 @@ text-box {
 
 	[data-content="name"] {
 		grid-area: header;
+		grid-column-start: text-start;
 		display: flex;
 		color: var(--character-name-color);
 	}
@@ -104,11 +105,12 @@ text-box {
 	}
 
 	[data-content="dialog"] {
-		padding: 1rem;
+		padding: 0 1rem;
 	}
 
 	[data-content="side-image"] {
 		grid-area: side-image;
+		grid-row-start: 1;
 		place-self: center;
 		display: flex;
 		max-height: 100%;
@@ -116,7 +118,7 @@ text-box {
 		z-index: 2;
 	}
 
-	&.side-image--independent {
+	&.side-image--non-independent {
 		& [data-content="side-image"] {
 			grid-row-start: 1;
 		}
