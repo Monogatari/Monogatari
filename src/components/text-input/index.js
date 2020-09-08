@@ -13,7 +13,7 @@ class TextInput extends Component {
 		this.props = {
 			text: '',
 			type: 'text',
-			default: '',
+			default: null,
 			options: [],
 			warning: '',
 			actionString: 'OK',
@@ -95,6 +95,18 @@ class TextInput extends Component {
 			});
 		});
 
+		// For inputs that require a text field, we place the default value after
+		// mount instead of in-creation because this way, the cursor will be placed
+		// at the end of the default value. If we did it in-creation, it would
+		// be placed at the start.
+		const text = ['text', 'password', 'email', 'url', 'number', 'color'];
+		const { type, default: defaultValue, options } = this.props;
+
+		if (text.indexOf (type) > -1) {
+			if (defaultValue !== null && defaultValue !== '') {
+				this.content ('field').value (defaultValue);
+			}
+		}
 		this.content ('field').get (0).focus ();
 		return Promise.resolve ();
 	}
@@ -105,16 +117,16 @@ class TextInput extends Component {
 		let input = '';
 
 		if (text.indexOf (type) > -1) {
-			input = `<input data-content="field" name="field" type="${type}" ${defaultValue !== '' ? `value="${defaultValue}"` : ''} tabindex="0">`;
+			input = `<input data-content="field" name="field" type="${type}" tabindex="0">`;
 		} else if (type === 'select') {
 			input = `
 				<select data-content="field" name="field" tabindex="0">
-				${options.map ((o) => `<option value="${o.value}" ${defaultValue !== '' && defaultValue == o.value ? 'selected' : ''}>${o.label}</option>`).join ('')}
+				${options.map ((o) => `<option value="${o.value}" ${defaultValue !== null && defaultValue !== '' && defaultValue == o.value ? 'selected' : ''}>${o.label}</option>`).join ('')}
 				</select>
 			`;
 
 		} else if (type === 'radio' || type === 'checkbox') {
-			input = options.map ((o, index) => `<div class="input-pair"><input data-content="field" id="field_${index}" name="field" type="${type}" value="${o.value}" ${defaultValue !== '' && defaultValue == o.value ? 'checked' : ''} tabindex="0"><label for="field_${index}">${o.label}</label></div>`).join ('');
+			input = options.map ((o, index) => `<div class="input-pair"><input data-content="field" id="field_${index}" name="field" type="${type}" value="${o.value}" ${defaultValue !== null && defaultValue !== '' && defaultValue == o.value ? 'checked' : ''} tabindex="0"><label for="field_${index}">${o.label}</label></div>`).join ('');
 		}
 		return `
 			<form class="modal__content">

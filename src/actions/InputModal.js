@@ -31,8 +31,8 @@ export class InputModal extends Action {
 			this.statement.Class = '';
 		}
 
-		if (typeof this.statement.Default !== 'string') {
-			this.statement.Default = '';
+		if (['string', 'number'].indexOf (typeof this.statement.Default) === -1 || this.statement.Default === '') {
+			this.statement.Default = null;
 		}
 
 		if (typeof this.statement.Type !== 'string') {
