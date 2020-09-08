@@ -84,6 +84,10 @@ button {
 	}
 }
 
+button:focus {
+	border: 4px solid #222;
+}
+
 input,
 select {
 	color: inherit;
@@ -331,10 +335,13 @@ video {
 
 [data-screen]:not([data-screen='game']) [data-action='back'] {
 	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-content: center;
+	align-items: center;
 	border-radius: 100%;
 	width: 3rem;
 	height: 3rem;
-	padding: 0.5em;
 	margin: 1rem;
 	z-index: 2;
 	background-color: var(--main-color);

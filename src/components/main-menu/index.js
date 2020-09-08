@@ -30,6 +30,8 @@ class MainMenu extends MenuComponent {
 			element.setAttribute ('icon', button.icon);
 			element.setAttribute ('string', button.string);
 
+			element.setAttribute ('tabindex', 0);
+
 			element.innerHTML = `
 				<span class="${button.icon}"></span>
 				<span data-string="${button.string}">${this.engine.string (button.string)}</span>

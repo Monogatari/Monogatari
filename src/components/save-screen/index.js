@@ -23,7 +23,7 @@ class SaveScreen extends ScreenComponent {
 
 	render () {
 		return `
-			<button class="fas fa-arrow-left top left" data-action="back"></button>
+			<button class="top left" data-action="back"><span class="fas fa-arrow-left"></span></button>
 			<div class="horizontal horizontal--center">
 				<input type="text" placeholder="Save Slot Name" data-input="slotName" data-content="slot-name" required>
 				<button data-string="Save" data-action="save">Save</button>

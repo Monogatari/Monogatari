@@ -37,13 +37,15 @@ quick-menu {
 		font-size: 1rem;
 		margin: 0 0.5rem;
 		background: transparent;
-		color: rgba(125, 125, 125, 0.5);
+		color: var(--quick-menu-text-color);
 
 		&:hover,
 		&:focus {
-			color: rgba(125, 125, 125, 0.5);
+			color: var(--quick-menu-text-color);
 			background: transparent;
 			cursor: pointer;
+			border: none;
+			border-bottom: 4px solid var(--quick-menu-text-color);
 		}
 
 		& > [data-string] {

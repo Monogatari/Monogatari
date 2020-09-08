@@ -105,16 +105,16 @@ class TextInput extends Component {
 		let input = '';
 
 		if (text.indexOf (type) > -1) {
-			input = `<input data-content="field" name="field" type="${type}" ${defaultValue !== '' ? `value="${defaultValue}"` : ''} >`;
+			input = `<input data-content="field" name="field" type="${type}" ${defaultValue !== '' ? `value="${defaultValue}"` : ''} tabindex="0">`;
 		} else if (type === 'select') {
 			input = `
-				<select data-content="field" name="field">
+				<select data-content="field" name="field" tabindex="0">
 				${options.map ((o) => `<option value="${o.value}" ${defaultValue !== '' && defaultValue == o.value ? 'selected' : ''}>${o.label}</option>`).join ('')}
 				</select>
 			`;
 
 		} else if (type === 'radio' || type === 'checkbox') {
-			input = options.map ((o, index) => `<div class="input-pair"><input data-content="field" id="field_${index}" name="field" type="${type}" value="${o.value}" ${defaultValue !== '' && defaultValue == o.value ? 'checked' : ''}><label for="field_${index}">${o.label}</label></div>`).join ('');
+			input = options.map ((o, index) => `<div class="input-pair"><input data-content="field" id="field_${index}" name="field" type="${type}" value="${o.value}" ${defaultValue !== '' && defaultValue == o.value ? 'checked' : ''} tabindex="0"><label for="field_${index}">${o.label}</label></div>`).join ('');
 		}
 		return `
 			<form class="modal__content">
@@ -122,7 +122,7 @@ class TextInput extends Component {
 				${input}
 				<small data-content="warning" class="block"></small>
 				<div>
-					<button type='submit'>${this.engine.string (this.props.actionString)}</button>
+					<button type='submit' tabindex="0">${this.engine.string (this.props.actionString)}</button>
 				</div>
 			<form>
 		`;

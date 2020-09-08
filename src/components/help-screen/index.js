@@ -4,7 +4,7 @@ class HelpScreen extends ScreenComponent {
 
 	render () {
 		return `
-			<button class="fas fa-arrow-left top left" data-action="back"></button>
+			<button class="top left" data-action="back"><span class="fas fa-arrow-left"></span></button>
 			<h2 data-string="Help">Help</h2>
 			<div class="row row--spaced" data-content="help">
 				<p data-string="AdvanceHelp" class="row__column--12">To advance through the game, left-click or tap anywhere on the game screen or press the space key</p>

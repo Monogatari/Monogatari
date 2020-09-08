@@ -156,7 +156,7 @@ class SettingsScreen extends ScreenComponent {
 
 	render () {
 		return `
-			<button class="fas fa-arrow-left top left" data-action="back"></button>
+			<button class="top left" data-action="back"><span class="fas fa-arrow-left"></span></button>
 			<h2 data-string="Settings">Settings</h2>
 			<div class="row row--spaced padded text---center">
 				<div class="row__column row__column--12 row__column--phone--12 row__column--phablet--12 row__column--tablet--6 row__column--desktop--6 row__column--desktop-large--6 row__column--retina--6">

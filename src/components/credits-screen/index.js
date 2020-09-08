@@ -73,7 +73,7 @@ class CreditsScreen extends ScreenComponent {
 		}).join ('');
 
 		return `
-			<button class="fas fa-arrow-left top left" data-action="back"></button>
+			<button class="top left" data-action="back"><span class="fas fa-arrow-left"></span></button>
 			<h2 data-string="Credits" data-content="title">Credits</h2>
 			<div data-content="credits" data-ui="credits">
 				${items}

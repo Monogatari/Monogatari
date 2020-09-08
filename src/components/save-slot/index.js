@@ -117,7 +117,7 @@ class SaveSlot extends Component {
 			background = Text.suffix ('show background', background);
 		}
 		return `
-			<button data-delete='${this.props.slot}'><span class='fas fa-times'></span></button>
+			<button data-delete='${this.props.slot}' aria-label="${this.engine.string ('Delete')} Slot ${this.props.name}"><span class='fas fa-times'></span></button>
 			<small class='badge'>${this.props.name}</small>
 			<div data-content="background" style="${hasImage ? 'background-image' : 'background'}: ${background}"></div>
 			<figcaption>${moment (this.props.date).format ('LL LTS')}</figcaption>

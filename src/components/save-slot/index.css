@@ -32,6 +32,9 @@ save-slot {
 	}
 
 	[data-delete] {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		top: -1rem;
 		border-radius: 100%;
 		width: 2rem;

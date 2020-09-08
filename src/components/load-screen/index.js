@@ -6,7 +6,7 @@ class LoadScreen extends ScreenComponent {
 		const autoSaveEnabled = this.engine.setting ('AutoSave') != 0 && typeof this.engine.setting ('AutoSave') === 'number';
 
 		return `
-			<button class="fas fa-arrow-left top left" data-action="back"></button>
+			<button class="top left" data-action="back"><span class="fas fa-arrow-left"></span></button>
 			<h2 data-string="Load">Load</h2>
 			<div data-ui="saveSlots">
 				<h3 data-string="LoadSlots">Saved Games</h3>
