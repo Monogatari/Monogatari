@@ -66,7 +66,8 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 	});
 
 	this.monogatari.assets ('music', {
-		'theme': 'theme.mp3'
+		'theme': 'theme.mp3',
+		'subspace': 'subspace.mp3'
 	});
 
 	this.monogatari.action ('particles').particles ({

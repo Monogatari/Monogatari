@@ -260,63 +260,65 @@ export class Play extends Action {
 				this.player = player;
 			}
 		} else {
-			this.player = this.engine.mediaPlayer (this.type);
+			this.player = this.engine.mediaPlayers (this.type);
 		}
 	}
 
 	willApply () {
-		if (this.player instanceof Audio) {
-			this.player.loop = false;
+		if (this.player) {
+			if (this.player instanceof Audio) {
+				this.player.loop = false;
+			}
+			return Promise.resolve ();
+		} else {
+			return Promise.reject ('Media player was not defined.');
 		}
-		return Promise.resolve ();
 	}
 
 	apply (args = { paused: false }) {
 		const { paused } = args;
-		if (this.player) {
-			// Check if the audio should have a fade time
-			const fadePosition = this.props.indexOf ('fade');
+		// Check if the audio should have a fade time
+		const fadePosition = this.props.indexOf ('fade');
 
-			if (this.player instanceof Audio) {
-				// Make the audio loop if it was provided as a prop
-				if (this.props.indexOf ('loop') > -1) {
-					this.player.loop = true;
-				}
-
-				if (this.props.indexOf ('volume') > -1) {
-					this.player.volume = (parseInt (this.props[this.props.indexOf ('volume') + 1]) * this.mediaVolume) / 100;
-				}
-
-				this.player.src = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting('AssetsPath')[this.directory]}/${this.media}`;
-
-				this.player.onended = () => {
-					const endState = {};
-					endState[this.type] = this.engine.state (this.type).filter ((s) => s.statement !== this._statement);
-					this.engine.state (endState);
-					this.engine.removeMediaPlayer (this.type, this.mediaKey);
-				};
-
-				if (fadePosition > -1) {
-					Play.fadeIn (this.props[fadePosition + 1], this.player);
-				}
-
-				if (paused !== true) {
-					return this.player.play ();
-				}
-				this.player.pause ();
-				return Promise.resolve ();
-			} else if (this.player instanceof Array) {
-				const promises = [];
-				for (const player of this.player) {
-					if (player.paused && !player.ended) {
-						if (fadePosition > -1) {
-							Play.fadeIn (this.props[fadePosition + 1], player);
-						}
-						promises.push (player.play ());
-					}
-				}
-				return Promise.all (promises);
+		if (this.player instanceof Audio) {
+			// Make the audio loop if it was provided as a prop
+			if (this.props.indexOf ('loop') > -1) {
+				this.player.loop = true;
 			}
+
+			if (this.props.indexOf ('volume') > -1) {
+				this.player.volume = (parseInt (this.props[this.props.indexOf ('volume') + 1]) * this.mediaVolume) / 100;
+			}
+
+			this.player.src = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting('AssetsPath')[this.directory]}/${this.media}`;
+
+			this.player.onended = () => {
+				const endState = {};
+				endState[this.type] = this.engine.state (this.type).filter ((s) => s.statement !== this._statement);
+				this.engine.state (endState);
+				this.engine.removeMediaPlayer (this.type, this.mediaKey);
+			};
+
+			if (fadePosition > -1) {
+				Play.fadeIn (this.props[fadePosition + 1], this.player);
+			}
+
+			if (paused !== true) {
+				return this.player.play ();
+			}
+			this.player.pause ();
+			return Promise.resolve ();
+		} else if (this.player instanceof Array) {
+			const promises = [];
+			for (const player of this.player) {
+				if (player.paused && !player.ended) {
+					if (fadePosition > -1) {
+						Play.fadeIn (this.props[fadePosition + 1], player);
+					}
+					promises.push (player.play ());
+				}
+			}
+			return Promise.all (promises);
 		}
 		return Promise.reject('An error occurred, you probably have a typo on the media you want to play.');
 	}
@@ -324,20 +326,23 @@ export class Play extends Action {
 	didApply (args = { updateHistory: true, updateState: true }) {
 		const { updateHistory, updateState } = args;
 		if (updateHistory === true) {
-			if (this.player) {
-				if (this.player instanceof Audio) {
-					this.engine.history (this.type).push (this._statement);
-				}
+			if (this.player instanceof Audio) {
+				this.engine.history (this.type).push (this._statement);
 			}
 		}
 
 		if (updateState === true) {
-			if (this.player) {
-				if (this.player instanceof Audio) {
-					const state = {};
-					state[this.type] = [...this.engine.state (this.type), { statement: this._statement, paused: false }];
-					this.engine.state (state);
-				}
+			if (this.player instanceof Audio) {
+				const state = {};
+				state[this.type] = [...this.engine.state (this.type), { statement: this._statement, paused: false }];
+				this.engine.state (state);
+			} else if (this.player instanceof Array) {
+				const state = {};
+				state[this.type] = [...this.engine.state (this.type).map ((item) => {
+					item.paused = false;
+					return item;
+				})];
+				this.engine.state (state);
 			}
 		}
 
@@ -347,7 +352,7 @@ export class Play extends Action {
 	revert () {
 		if (typeof this.mediaKey !== 'undefined') {
 			this.engine.removeMediaPlayer (this.type, this.mediaKey);
-		} else {
+		} else if (this.player instanceof Array) {
 			for (const player of this.player) {
 				if (!player.paused && !player.ended) {
 					player.pause ();
@@ -364,6 +369,13 @@ export class Play extends Action {
 
 			const state = {};
 			state[this.type] = this.engine.state (this.type).filter ((m) => m.statement !== this._statement);
+			this.engine.state (state);
+		} else if (this.player instanceof Array) {
+			const state = {};
+			state[this.type] = [...this.engine.state (this.type).map ((item) => {
+				item.paused = true;
+				return item;
+			})];
 			this.engine.state (state);
 		}
 		return Promise.resolve ({ advance: true, step: true });
