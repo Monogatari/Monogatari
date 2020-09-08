@@ -30,7 +30,7 @@ context ('Choices', function () {
 					'Hidden': {
 						'Text': 'Hidden',
 						'Do': 'Hidden',
-						'Show': function () {
+						'Condition': function () {
 							return false;
 						}
 					},
@@ -52,7 +52,7 @@ context ('Choices', function () {
 		cy.get ('text-box').contains ('This is a choice');
 	});
 
-	it ('Doesn\'t display choices whose `Show` function returned false.', function () {
+	it ('Doesn\'t display choices whose `Condition` function returned false.', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
 			'Start': [
@@ -77,7 +77,7 @@ context ('Choices', function () {
 					'Hidden': {
 						'Text': 'Hidden',
 						'Do': 'Hidden',
-						'Show': function () {
+						'Condition': function () {
 							return false;
 						}
 					},
@@ -124,7 +124,7 @@ context ('Choices', function () {
 					'Hidden': {
 						'Text': 'Hidden',
 						'Do': 'Hidden',
-						'Show': function () {
+						'Condition': function () {
 							return false;
 						}
 					},
@@ -171,7 +171,7 @@ context ('Choices', function () {
 					'Hidden': {
 						'Text': 'Hidden',
 						'Do': 'Hidden',
-						'Show': function () {
+						'Condition': function () {
 							return false;
 						}
 					},
@@ -219,7 +219,7 @@ context ('Choices', function () {
 					'Hidden': {
 						'Text': 'Hidden',
 						'Do': 'Hidden',
-						'Show': function () {
+						'Condition': function () {
 							return false;
 						}
 					},
@@ -267,7 +267,7 @@ context ('Choices', function () {
 					'Hidden': {
 						'Text': 'Hidden',
 						'Do': 'Hidden',
-						'Show': function () {
+						'Condition': function () {
 							return false;
 						}
 					},
@@ -316,7 +316,7 @@ context ('Choices', function () {
 					'Hidden': {
 						'Text': 'Hidden',
 						'Do': 'Hidden',
-						'Show': function () {
+						'Condition': function () {
 							return false;
 						}
 					},
@@ -365,7 +365,7 @@ context ('Choices', function () {
 					'Hidden': {
 						'Text': 'Hidden',
 						'Do': 'Hidden',
-						'Show': function () {
+						'Condition': function () {
 							return false;
 						}
 					},
@@ -386,9 +386,10 @@ context ('Choices', function () {
 
 		cy.get ('[data-choice="One"]').click ();
 		cy.proceed ();
-		cy.rollback ();
 		cy.wrap (this.monogatari).invoke ('history', 'choice').should ('deep.equal', ['One']);
-		cy.get ('text-box').contains ('One');
+		cy.rollback ();
+		cy.wrap (this.monogatari).invoke ('history', 'choice').should ('be.empty');
+		cy.get ('text-box').contains ('This is a choice');
 
 	});
 
@@ -417,7 +418,7 @@ context ('Choices', function () {
 					'Hidden': {
 						'Text': 'Hidden',
 						'Do': 'Hidden',
-						'Show': function () {
+						'Condition': function () {
 							return false;
 						}
 					},
@@ -440,16 +441,18 @@ context ('Choices', function () {
 
 		cy.proceed ();
 
+		cy.wrap (this.monogatari).invoke ('history', 'choice').should ('deep.equal', ['One']);
+		cy.get ('text-box').contains ('After');
+
 		cy.rollback ();
 
-		cy.wrap (this.monogatari).invoke ('history', 'choice').should ('deep.equal', ['One']);
-		cy.get ('text-box').contains ('One');
-		cy.rollback ();
 		cy.get ('choice-container').should ('be.visible');
 		cy.wrap (this.monogatari).invoke ('history', 'choice').should ('be.empty');
-		// cy.rollback ();
 
-		// cy.get ('text-box').contains ('Before');
+		cy.rollback ();
+
+		cy.get ('choice-container').should ('not.exist');
+		cy.get ('text-box').contains ('Before');
 
 	});
 
@@ -480,7 +483,7 @@ context ('Choices', function () {
 					'Hidden': {
 						'Text': 'Hidden',
 						'Do': 'Hidden',
-						'Show': function () {
+						'Condition': function () {
 							return false;
 						}
 					},
@@ -529,7 +532,7 @@ context ('Choices', function () {
 					'Hidden': {
 						'Text': 'Hidden',
 						'Do': 'Hidden',
-						'Show': function () {
+						'Condition': function () {
 							return false;
 						}
 					},
@@ -587,7 +590,7 @@ context ('Choices', function () {
 					'Hidden': {
 						'Text': 'Hidden',
 						'Do': 'Hidden',
-						'Show': function () {
+						'Condition': function () {
 							return false;
 						}
 					},
@@ -656,7 +659,7 @@ context ('Choices', function () {
 	// 										'Hidden': {
 	// 											'Text': 'Hidden',
 	// 											'Do': 'Hidden',
-	// 											'Show': function () {
+	// 											'Condition': function () {
 	// 												return false;
 	// 											}
 	// 										},
@@ -683,7 +686,7 @@ context ('Choices', function () {
 	// 								'Hidden': {
 	// 									'Text': 'Hidden',
 	// 									'Do': 'Hidden',
-	// 									'Show': function () {
+	// 									'Condition': function () {
 	// 										return false;
 	// 									}
 	// 								},
@@ -710,7 +713,7 @@ context ('Choices', function () {
 	// 						'Hidden': {
 	// 							'Text': 'Hidden',
 	// 							'Do': 'Hidden',
-	// 							'Show': function () {
+	// 							'Condition': function () {
 	// 								return false;
 	// 							}
 	// 						},
@@ -737,7 +740,7 @@ context ('Choices', function () {
 	// 				'Hidden': {
 	// 					'Text': 'Hidden',
 	// 					'Do': 'Hidden',
-	// 					'Show': function () {
+	// 					'Condition': function () {
 	// 						return false;
 	// 					}
 	// 				},

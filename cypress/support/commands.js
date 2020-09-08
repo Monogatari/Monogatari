@@ -33,15 +33,23 @@ Cypress.Commands.add ('open', () => {
 Cypress.Commands.add ('start', function () {
 	// this.monogatari.runListener ('start');
 	cy.get ('[data-action="start"]').click ();
+	// Prevent False Positives by waiting a bit
+	cy.wait (150);
 });
 
 Cypress.Commands.add ('proceed',function () {
 	this.monogatari.proceed ({ userInitiated: true, skip: false, autoPlay: false });
+
+	// Prevent False Positives by waiting a bit
+	cy.wait (150);
 });
 
 Cypress.Commands.add ('rollback', function () {
 	this.monogatari.global ('block', false);
 	this.monogatari.rollback ();
+
+	// Prevent False Positives by waiting a bit
+	cy.wait (150);
 });
 
 Cypress.Commands.add ('loadTestAssets', function (args) {

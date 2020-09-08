@@ -12,7 +12,7 @@ context ('Hide Particles', function () {
 			'Start': [
 				'show particles snow',
 				'One',
-				'hide particles snow',
+				'hide particles',
 				'Two'
 			]
 		});
@@ -38,7 +38,7 @@ context ('Hide Particles', function () {
 			'Start': [
 				'show particles snow',
 				'One',
-				'hide particles snow',
+				'hide particles',
 				'Two'
 			]
 		});

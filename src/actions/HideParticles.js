@@ -24,8 +24,14 @@ export class HideParticles extends Action {
 
 	revert () {
 		if (this.engine.history ('particle').length > 0) {
-			const last = this.engine.history ('particle').pop ();
-			return this.engine.run (last, false);
+			const last = this.engine.history ('particle')[this.engine.history ('particle').length - 1];
+
+			const action = this.engine.prepareAction (last, { cycle: 'Application' });
+			return action.willApply ().then (() => {
+				return action.apply ().then (() => {
+					return action.didApply ({ updateHistory: false, updateState: true });
+				});
+			});
 		} else {
 			return Promise.resolve ();
 		}

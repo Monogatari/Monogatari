@@ -27,7 +27,7 @@ context ('Hide Video', function () {
 		this.monogatari.script ({
 			'Start': [
 				'show video kirino displayable with fadeIn loop',
-				'wait 100',
+				'One',
 				'hide video kirino with fadeOut',
 				'y Tada!'
 			]
@@ -35,7 +35,8 @@ context ('Hide Video', function () {
 
 		cy.start ();
 		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('deep.equal', ['show video kirino displayable with fadeIn loop']);
-		cy.wait (100);
+
+		cy.proceed ();
 		cy.get ('[data-video="kirino"]').should ('not.exist');
 		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('deep.equal', []);
 		cy.rollback ();

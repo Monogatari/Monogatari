@@ -33,7 +33,7 @@ context ('Dialog', function () {
 
 		cy.proceed ();
 
-		cy.get ('text-box').contains ('Hello!');
+		cy.get ('text-box').contains ('Hi!');
 		cy.get ('[data-content="character-name"]').should ('have.css', 'color', 'rgb(255, 255, 255)');
 	});
 
