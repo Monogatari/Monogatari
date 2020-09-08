@@ -30,6 +30,18 @@ export class InputModal extends Action {
 		if (typeof this.statement.Class !== 'string') {
 			this.statement.Class = '';
 		}
+
+		if (typeof this.statement.Default !== 'string') {
+			this.statement.Default = '';
+		}
+
+		if (typeof this.statement.Type !== 'string') {
+			this.statement.Type = 'text';
+		}
+
+		if (typeof this.statement.Options !== 'object' || this.statement.Options === null) {
+			this.statement.Options = [];
+		}
 	}
 
 	apply () {
@@ -37,10 +49,13 @@ export class InputModal extends Action {
 
 		const input = document.createElement ('text-input');
 
-		const { Text, Warning, Save, Validation, actionString, Class } = this.statement;
+		const { Text, Warning, Save, Validation, actionString, Class, Type, Options, Default } = this.statement;
 
 		input.setProps ({
 			text: this.engine.replaceVariables (Text),
+			type: Type,
+			options: Options,
+			default: Default,
 			warning: Warning,
 			onSubmit: Save,
 			validate: Validation,

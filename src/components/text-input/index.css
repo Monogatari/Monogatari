@@ -29,6 +29,23 @@ text-input {
 		background-color: #eee;
 		min-width: 50%;
 	}
+
+	.input-pair {
+		display: flex;
+		justify-content: center;
+
+		& [type="checkbox"] {
+			display: block;
+			appearance: checkbox;
+			min-width: auto;
+		}
+
+		& [type="radio"] {
+			display: block;
+			appearance: radio;
+			min-width: auto;
+		}
+	}
 }
 
 /** Medium Screens, Tablets (601px) **/
