@@ -88,7 +88,7 @@ export class HideCharacter extends Action {
 			this.element.style ('animation-duration', '');
 		}
 
-		if (this.classes.length > 0) {
+		if (this.classes.length > 0 || typeof endAnimation !== 'undefined') {
 			for (const className of this.classes) {
 				if (className) {
 					this.element.addClass (className);
