@@ -101,6 +101,9 @@ export class Choice extends Action {
 	static reset () {
 		this.engine.global ('_CurrentChoice', []);
 		this.engine.global ('_ChoiceTimer', []);
+
+		this.engine.global ('_choice_pending_rollback', []);
+		this.engine.global ('_choice_just_rolled_back', []);
 		return Promise.resolve ();
 	}
 
