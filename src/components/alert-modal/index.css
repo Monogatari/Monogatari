@@ -14,4 +14,9 @@ alert-modal {
 	p {
 		font-size: 1.5rem;
 	}
+
+	input[type="text"] {
+		margin-bottom: 2rem;
+		text-align: center;
+	}
 }

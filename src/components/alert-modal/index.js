@@ -33,7 +33,7 @@ class AlertDialog extends Component {
 		return `
 			<div class="modal__content" data-content="wrapper">
 				<p data-string="${message}" data-content="message">${this.engine.string(message)}</p>
-				${context ? `<small data-content="context" ${editable ? 'contenteditable="true"' : ''}>${context}</small>` : ''}
+				${context ? `${editable ? `<input type="text" data-content="context" value="${context}" />` : `<small data-content="context">${context}</small>`}` : ''}
 				${actions ? `<div data-content="actions">
 					${actions.map (action => `<button data-action="${action.listener}" data-string="${action.label}">${this.engine.string(action.label)}</button>`).join('')}
 				</div>` : ''}

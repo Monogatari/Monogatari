@@ -14,7 +14,7 @@ class SlotContainer extends Component {
 	static bind () {
 		this.engine.registerListener ('overwrite-slot', {
 			callback: (element) => {
-				const customName = $_(element).closest ('[data-content="context"]').text ().trim ();
+				const customName = $_(element).closest ('[data-content="context"]').value ().trim ();
 				if (customName !== '') {
 					this.engine.saveTo ('SaveLabel', this.engine.global ('overwrite_slot'), customName);
 
