@@ -63,10 +63,21 @@ export class HideCharacter extends Action {
 
 
 	apply () {
+		const currentPosition = this.element.data ('position');
+		const position = this._statement.match (/at\s(\S*)/);
+
 		const oldClasses = [...this.element.get (0).classList];
 
 		for (const oldClass of oldClasses) {
-			this.element.removeClass (oldClass);
+			if (oldClass !== currentPosition || position instanceof Array) {
+				this.element.removeClass (oldClass);
+			}
+		}
+
+		if (position instanceof Array) {
+			// If it was, we'll set that position to the character
+			const [at, positionClass] = position;
+			this.element.data ('position', positionClass);
 		}
 
 		this.element.addClass ('animated');

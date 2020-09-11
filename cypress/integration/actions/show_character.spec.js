@@ -32,6 +32,76 @@ context ('Show Character', function () {
 		cy.get ('[data-sprite="happy"]').should ('be.visible');
 	});
 
+	it ('Adds the center position by default if none was provided', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show character y happy',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-sprite="happy"]').should ('have.class', 'center');
+		cy.get ('[data-sprite="happy"]').should ('have.data', 'position', 'center');
+	});
+
+	it ('Sets the data position property correctly when one is provided', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show character y happy at left',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-sprite="happy"]').should ('have.class', 'left');
+		cy.get ('[data-sprite="happy"]').should ('have.data', 'position', 'left');
+	});
+
+	// it ('Reuses the data position property as the position for a sprite if none is provided in a later statement', function () {
+	// 	this.monogatari.setting ('TypeAnimation', false);
+	// 	this.monogatari.script ({
+	// 		'Start': [
+	// 			'show character y happy at left',
+	// 			'One',
+	// 			'show character y angry with fadeIn',
+	// 			'Two'
+	// 		]
+	// 	});
+
+	// 	cy.start ();
+	// 	cy.get ('[data-sprite="happy"]').should ('have.class', 'left');
+	// 	cy.get ('[data-sprite="happy"]').should ('have.data', 'position', 'left');
+
+	// 	cy.proceed ();
+
+	// 	cy.get ('[data-sprite="angry"]').should ('have.class', 'left');
+	// 	cy.get ('[data-sprite="angry"]').should ('have.data', 'position', 'left');
+	// });
+
+	it ('Resets the position if none is provided in a later statement', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show character y happy at left',
+				'One',
+				'show character y angry with fadeIn',
+				'Two'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-sprite="happy"]').should ('have.class', 'left');
+		cy.get ('[data-sprite="happy"]').should ('have.data', 'position', 'left');
+
+		cy.proceed ();
+
+		cy.get ('[data-sprite="angry"]').should ('have.class', 'center');
+		cy.get ('[data-sprite="angry"]').should ('have.data', 'position', 'center');
+	});
+
 	it ('Clears the previous classes from the image correctly', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({

@@ -122,6 +122,8 @@ export class ShowCharacter extends Action {
 			}
 		}
 
+		const position = this._statement.match (/at\s(\S*)/);
+
 		if (oneSpriteOnly && sprite.isVisible ()) {
 			sprite.attribute ('src', imgSrc);
 			sprite.data ('sprite', this.sprite);
@@ -147,6 +149,30 @@ export class ShowCharacter extends Action {
 				sprite.style ('transition-duration', '');
 			}
 
+			// Check if a position was provided. (show character y at left)
+			if (position instanceof Array) {
+				// If it was, we'll set that position to the character
+				const [at, positionClass] = position;
+				sprite.data ('position', positionClass);
+			} else {
+				// If it wasn't, we'll check if the sprite already had one position set
+				// const currentPosition = sprite.data ('position');
+				// if (typeof currentPosition === 'string') {
+				// 	// If it did, we'll add that position
+				// 	if (currentPosition.trim () !== '') {
+				// 		console.log (currentPosition);
+				// 		sprite.addClass (currentPosition.trim ());
+				// 	}
+				// } else {
+				// 	// If it didn't, we'll set the center position by default
+				// 	sprite.addClass ('center');
+				// 	sprite.data ('position', 'center');
+				// }
+
+				sprite.addClass ('center');
+				sprite.data ('position', 'center');
+			}
+
 			sprite.data ('sprite', this.sprite);
 		} else {
 			const image = document.createElement ('img');
@@ -159,6 +185,17 @@ export class ShowCharacter extends Action {
 				if (className) {
 					image.classList.add (className);
 				}
+			}
+
+			// Check if a position was provided. (show character y at left)
+			if (position instanceof Array) {
+				// If it was, we'll set that position to the character
+				const [at, positionClass] = position;
+				$_(image).data ('position', positionClass);
+			} else {
+				// If it wasn't, we'll set the center position by default
+				image.classList.add ('center');
+				$_(image).data ('position', 'center');
 			}
 
 			const durationPosition = this.classes.indexOf ('duration');
