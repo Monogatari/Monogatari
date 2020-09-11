@@ -3,6 +3,7 @@ timer-display {
 	top: 0;
 	width: 100%;
 	height: 0.5rem;
+	z-index: 100;
 
 	& div {
 		background: rgba(255, 255, 255, 0.2);
