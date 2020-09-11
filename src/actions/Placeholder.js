@@ -16,57 +16,45 @@ export class Placeholder extends Action {
 	}
 
 	willApply () {
+		let promise = Promise.resolve (this.action);
+
 		if (this.name.indexOf ('_') === 0) {
-			return Util.callAsync (this.action, this.engine, ...this.arguments).then ((action) => {
-				this.action = this.engine.prepareAction (action, { cycle: 'Application' });
-				return this.action.willApply ();
-			});
+			promise = Util.callAsync (this.action, this.engine, ...this.arguments);
 		}
 
-		return Promise.resolve ();
+		return promise.then ((action) => {
+			this.action = this.engine.prepareAction (action, { cycle: this._cycle });
+			return this.action.willApply ();
+		});
 	}
 
 	apply () {
-		if (this.name.indexOf ('_') === 0) {
-			return this.action.apply ();
-		} else {
-			return this.engine.run (this.action);
-		}
+		return this.action.apply ();
 	}
 
 	didApply () {
-		if (this.name.indexOf ('_') === 0) {
-			return this.action.didApply ();
-		} else {
-			return Promise.resolve ();
-		}
+		return this.action.didApply ();
 	}
 
 	willRevert () {
+		let promise = Promise.resolve (this.action);
+
 		if (this.name.indexOf ('_') === 0) {
-			return Util.callAsync (this.action, this.engine, ...this.arguments).then ((action) => {
-				this.action = this.engine.prepareAction (action, { cycle: 'Revert' });
-				return this.action.willRevert ();
-			});
+			promise = Util.callAsync (this.action, this.engine, ...this.arguments);
 		}
 
-		return Promise.resolve ();
+		return promise.then ((action) => {
+			this.action = this.engine.prepareAction (action, { cycle: this._cycle });
+			return this.action.willRevert ();
+		});
 	}
 
 	revert () {
-		if (this.name.indexOf ('_') === 0) {
-			return this.action.revert ();
-		} else {
-			return this.engine.revert (this.action);
-		}
+		return this.action.revert ();
 	}
 
 	didRevert () {
-		if (this.name.indexOf ('_') === 0) {
-			return this.action.didRevert ();
-		} else {
-			return Promise.resolve ();
-		}
+		return this.action.didRevert ();
 	}
 }
 
