@@ -70,6 +70,7 @@ export default {
 	'Save': 'Захаваць',
 	'SaveButton': 'Адкрыць меню захавання',
 	'SaveInSlot': 'Захаваць у слот',
+	'SelectYourLanguage': 'Select your language',
 	'Settings': 'Налады',
 	'SettingsButton': 'Адкрыць меню налад',
 	'Show': 'Паказаць',

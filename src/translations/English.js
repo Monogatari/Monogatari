@@ -72,6 +72,7 @@ export default {
 	'Save': 'Save',
 	'SaveButton': 'Open the Save Screen',
 	'SaveInSlot': 'Save in slot',
+	'SelectYourLanguage': 'Select your language',
 	'Settings': 'Settings',
 	'SettingsButton': 'Open the Settings Screen',
 	'Show': 'Show',

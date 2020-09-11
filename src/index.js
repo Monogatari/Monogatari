@@ -76,20 +76,20 @@ Monogatari._translations = {
 	'toki pona': tokipona,
 };
 
-Monogatari._languageCodes = {
-	'Беларуская': 'be',
-	'Deutsch': 'de',
-	'English': 'en',
-	'Español': 'es',
-	'Français': 'fr',
-	'Nederlands': 'nl',
-	'Português': 'pt',
-	'Русский': 'ru',
-	'اللغه العربية': 'ar',
-	'한국어': 'ko',
-	'日本語': 'ja',
-	'简体中文': 'zh',
-	'toki pona': 'en',
+Monogatari._languageMetadata = {
+	'Беларуская': { code: 'be', icon: '🇧🇾' },
+	'Deutsch': { code: 'de', icon: '🇩🇪' },
+	'English': { code: 'en', icon: '🇺🇸' },
+	'Español': { code: 'es', icon: '🇲🇽' },
+	'Français': { code: 'fr', icon: '🇫🇷' },
+	'Nederlands': { code: 'nl', icon: '🇳🇱' },
+	'Português': { code: 'pt', icon: '🇧🇷' },
+	'Русский': { code: 'ru', icon: '🇷🇺' },
+	'اللغه العربية': { code: 'ar', icon: '🇦🇪' },
+	'한국어': { code: 'ko', icon: '🇰🇷' },
+	'日本語': { code: 'ja', icon: '🇯🇵' },
+	'简体中文': { code: 'zh', icon: '🇨🇳' },
+	'toki pona': { code: 'en', icon: '🕮' },
 };
 
 /**
@@ -109,6 +109,7 @@ import DialogLog from './components/dialog-log';
 import GalleryScreen from './components/gallery-screen';
 import GameScreen from './components/game-screen';
 import HelpScreen from './components/help-screen';
+import LanguageSelectionScreen from './components/language-selection-screen';
 import LoadScreen from './components/load-screen';
 import LoadingScreen from './components/loading-screen';
 import MainMenu from './components/main-menu';
@@ -133,6 +134,7 @@ Monogatari._components = [
 	GalleryScreen,
 	GameScreen,
 	HelpScreen,
+	LanguageSelectionScreen,
 	LoadScreen,
 	LoadingScreen,
 	MainMenu,

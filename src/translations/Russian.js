@@ -57,7 +57,7 @@ export default {
 	'NoAutoSavedGames': 'Нет автосохранённых игр',
 	'NoDialogsAvailable': 'Нет диалогов. Диалоги будут появляться здесь по мере прохождения игры',
 
-	'OK': 'ОК',	
+	'OK': 'ОК',
 	'OrientationWarning': 'Чтобы играть, пожалуйста, поверните Ваше устройство',
 	'Overwrite': 'Перезаписать',
 
@@ -71,6 +71,7 @@ export default {
 	'Save': 'Сохранить',
 	'SaveButton': 'Открыть меню сохранения',
 	'SaveInSlot': 'Сохранить',
+	'SelectYourLanguage': 'Select your language',
 	'Settings': 'Настройки',
 	'SettingsButton': 'Открыть меню настроек',
 	'Show': 'Показать',

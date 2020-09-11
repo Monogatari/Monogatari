@@ -70,6 +70,7 @@ export default {
 	'Save': 'Guardar',
 	'SaveButton': 'Abrir la Pantalla de Guardar',
 	'SaveInSlot': 'Guardar en ranura',
+	'SelectYourLanguage': 'Selecciona tu idioma',
 	'Settings': 'Configuración',
 	'SettingsButton': 'Abrir la Pantalla de Configuración',
 	'Show': 'Mostrar',

@@ -72,6 +72,7 @@ export default {
 	'Save': '저장하기',
 	'SaveButton': '저장 화면을 엽니다',
 	'SaveInSlot': '슬롯에 저장',
+	'SelectYourLanguage': 'Select your language',
 	'Settings': '설정',
 	'SettingsButton': '설정 화면을 엽니다',
 	'Show': '보이기',

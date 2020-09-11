@@ -72,6 +72,7 @@ export default {
 	'Save': 'o awen e musi',
 	'SaveButton': 'o lukin e lipu pi awen musi.',
 	'SaveInSlot': 'o awen e musi lon ma.',
+	'SelectYourLanguage': 'Select your language',
 	'Settings': 'ante',
 	'SettingsButton': 'o ante e musi.',
 	'Show': 'open',

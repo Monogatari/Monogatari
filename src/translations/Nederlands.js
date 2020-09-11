@@ -70,6 +70,7 @@ export default {
 	'Save': 'Opslaan',
 	'SaveButton': 'Open de Save Screen',
 	'SaveInSlot': 'Sla op in slot',
+	'SelectYourLanguage': 'Select your language',
 	'Settings': 'Instellingen',
 	'SettingsButton': 'Open de instellingen',
 	'Show': 'Tonen',

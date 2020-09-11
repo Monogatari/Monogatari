@@ -33,6 +33,7 @@
 @import './components/game-screen/index.css';
 @import './components/help-screen/index.css';
 @import './components/gallery-screen/index.css';
+@import './components/language-selection-screen/index.css';
 @import './components/load-screen/index.css';
 @import './components/loading-screen/index.css';
 @import './components/main-menu/index.css';

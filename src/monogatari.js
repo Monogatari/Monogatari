@@ -869,7 +869,7 @@ class Monogatari {
 		this.trigger ('willLocalize');
 
 		// Setup the correct locale for the momentjs dates
-		moment.locale (this._languageCodes[this.preference ('Language')]);
+		moment.locale (this._languageMetadata[this.preference ('Language').code]);
 
 		this.element ().find ('[data-string]').each ((element) => {
 			const string_translation = this.string ($_(element).data ('string'));
@@ -2439,10 +2439,14 @@ class Monogatari {
 		// Set the initial settings if they don't exist or load them from the
 		// Storage if they do.
 		this.Storage.get ('Settings').then ((local_settings) => {
+			this.global ('_first_run', false);
 			this._preferences = merge (this._preferences, local_settings);
 		}).catch ((e) => {
+			this.global ('_first_run', true);
+			if (this.setting ('MultiLanguage') !== true || this.setting ('LanguageSelectionScreen') !== true) {
+				this.Storage.set ('Settings', this._preferences);
+			}
 			console.warn ('There was no settings saved. This may be the first time this game was opened, we\'ll create them now.', e);
-			this.Storage.set ('Settings', this._preferences);
 		});
 
 		// Define all the components that were registered to this point
@@ -2909,6 +2913,31 @@ class Monogatari {
 		}
 	}
 
+	static displayInitialScreen () {
+		// Preload all the game assets
+		this.preload ().then (() => {
+
+		}).catch ((e) => {
+			console.error (e);
+		}).finally (() => {
+			if (this.label ()) {
+				this.showSplashScreen ();
+			} else {
+				FancyError.show (
+					`"${this.setting ('Label')}" Label was not found`,
+					'Monogatari tried to get your start label but it couldn\'t find it in your script.',
+					{
+						'Start Label on your Settings': this.setting ('Label'),
+						'Labels Available': Object.keys (this.script ()),
+						'Help': {
+							'_': 'Please check that the label exists in your script.'
+						}
+					}
+				);
+			}
+		});
+	}
+
 	static init (selector = '#monogatari') {
 		this._selector = selector;
 
@@ -2990,28 +3019,20 @@ class Monogatari {
 					this.global ('_didInit', true);
 					this.trigger ('didInit');
 
-					// Preload all the game assets
-					this.preload ().then (() => {
+					if (this.setting ('MultiLanguage') === true && this.setting ('LanguageSelectionScreen') === true && this.global ('_first_run') === true) {
+						this.showScreen ('language-selection');
 
-					}).catch ((e) => {
-						console.error (e);
-					}).finally (() => {
-						if (this.label ()) {
-							this.showSplashScreen ();
-						} else {
-							FancyError.show (
-								`"${this.setting ('Label')}" Label was not found`,
-								'Monogatari tried to get your start label but it couldn\'t find it in your script.',
-								{
-									'Start Label on your Settings': this.setting ('Label'),
-									'Labels Available': Object.keys (this.script ()),
-									'Help': {
-										'_': 'Please check that the label exists in your script.'
-									}
-								}
-							);
-						}
-					});
+						this.on ('didLocalize', () => {
+							this.Storage.set ('Settings', this._preferences);
+							const languageSelectionScreen = this.element ().find ('[data-screen="language-selection"]');
+							if (languageSelectionScreen.isVisible ()) {
+								this.displayInitialScreen ();
+
+							}
+						});
+					} else {
+						this.displayInitialScreen ();
+					}
 				});
 			});
 		});
@@ -3110,6 +3131,12 @@ Monogatari._settings = {
 
 	// Change to true for a MultiLanguage GameScreen.
 	'MultiLanguage': false,
+
+	// If the 'Multilanguage' setting is set to `true`. This will enable a
+	// language selection screen that will be shown before the asset loading
+	// screen. If set to false, the loading screen will appear first instead and
+	// players will have to change the language from the settings screen.
+	'LanguageSelectionScreen': true,
 
 	// Music for the Main Menu.
 	'MainScreenMusic': '',

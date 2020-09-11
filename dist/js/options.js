@@ -31,6 +31,12 @@ monogatari.settings({
 	// Change to true for a MultiLanguage GameScreen.
 	'MultiLanguage': false,
 
+	// If the 'Multilanguage' setting is set to `true`. This will enable a
+	// language selection screen that will be shown before the asset loading
+	// screen. If set to false, the loading screen will appear first instead and
+	// players will have to change the language from the settings screen.
+	'LanguageSelectionScreen': true,
+
 	// Music for the Main Menu.
 	'MainScreenMusic': '',
 

@@ -72,6 +72,7 @@ export default {
 	'Save': 'حفظ',
 	'SaveButton': 'يفتح شاشة حفظ اللعبة',
 	'SaveInSlot': 'حفظ في خانة',
+	'SelectYourLanguage': 'Select your language',
 	'Settings': 'إعدادات',
 	'SettingsButton': 'يفتح صفحة الإعدادات',
 	'Show': 'عرض',

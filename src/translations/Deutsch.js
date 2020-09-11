@@ -71,6 +71,7 @@ export default {
 	'Save': 'Speichern',
 	'SaveButton': 'Öffne den Speicherbildschirm',
 	'SaveInSlot': 'In Slot speichern',
+	'SelectYourLanguage': 'Select your language',
 	'Settings': 'Optionen',
 	'SettingsButton': 'Öffne die Optionen',
 	'Show': 'Einblenden',

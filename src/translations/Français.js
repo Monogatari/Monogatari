@@ -70,6 +70,7 @@ export default {
 	'Save': 'Sauvegarder',
 	'SaveButton': 'Ouvrir l’écran de Sauvegarde',
 	'SaveInSlot': 'Enregistrer à l’emplacement',
+	'SelectYourLanguage': 'Select your language',
 	'Settings': 'Préférences',
 	'SettingsButton': 'Ouvrir l’écran des Préférences',
 	'Show': 'Monter',

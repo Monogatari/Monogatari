@@ -70,6 +70,7 @@ export default {
 	'Save': 'セーブ',
 	'SaveButton': '保存画面を開きます',
 	'SaveInSlot': 'スロットにセーブする',
+	'SelectYourLanguage': 'Select your language',
 	'Settings': '環境設定',
 	'SettingsButton': '設定画面を開きます',
 	'Show': 'ショー',

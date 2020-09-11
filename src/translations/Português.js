@@ -70,6 +70,7 @@ export default {
 	'Save': 'Salvar',
 	'SaveButton': 'Abrir ecrã de salvar.',
 	'SaveInSlot': 'Salvar em ranhura',
+	'SelectYourLanguage': 'Select your language',
 	'Settings': 'Configurações',
 	'SettingsButton': 'Abrir o Ecrã de Configurações',
 	'Show': 'Mostrar',

@@ -1,0 +1,46 @@
+language-selection-screen {
+	& [data-content="wrapper"] {
+		flex-direction: column;
+		padding: 2rem;
+
+		height: 100%;
+		justify-content: center;
+	}
+
+	& [data-content="buttons"] {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	& button {
+		background: transparent;
+		border: 4px solid var(--main-color);
+		border-radius: 10px;
+		padding: 1rem;
+		color: var(--text-color);
+
+		display: flex;
+		flex-direction: column;
+		height: auto;
+		padding: 1rem;
+
+		& [data-content="icon"] {
+			font-size: 6rem;
+			line-height: 1;
+		}
+
+		& [data-content="language"] {
+			font-weight: bold;
+		}
+
+		&:hover,
+		&:focus {
+			background: transparent;
+
+			& [data-content="language"] {
+				text-decoration: underline;
+			}
+		}
+	}
+}

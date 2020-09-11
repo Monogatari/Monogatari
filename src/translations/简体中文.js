@@ -70,6 +70,7 @@ export default {
 	'Save': '存档',
 	'SaveButton': '显示存档界面',
 	'SaveInSlot': '写入存档槽位',
+	'SelectYourLanguage': 'Select your language',
 	'Settings': '环境设定',
 	'SettingsButton': '显示环境设定界面',
 	'Show': '显示',
