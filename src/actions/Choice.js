@@ -7,8 +7,28 @@ export class Choice extends Action {
 		this.engine.global ('_CurrentChoice', []);
 		this.engine.global ('_ChoiceTimer', []);
 
+		this.engine.global ('_choice_pending_rollback', []);
+		this.engine.global ('_choice_just_rolled_back', []);
+
 		this.engine.history ('choice');
 
+		return Promise.resolve ();
+	}
+
+
+	static afterRevert () {
+		// When a choice gets reverted, it pushes a `true` value to this global variable.
+		// As soon as it gets reverted, this function is run and it pops the `true` out of
+		// the array, meaning it was just reverted and the choice should be showing on screeen again.
+		if (this.engine.global ('_choice_just_rolled_back').pop ()) {
+			return Promise.resolve ();
+		}
+
+		// If the player reverts once more while the choice is being shown, then we'll reach this part
+		// and we can clean up any variables we need to.
+		if (this.engine.global ('_choice_pending_rollback').pop ()) {
+			this.engine.global ('_ChoiceTimer').pop ();
+		}
 		return Promise.resolve ();
 	}
 
@@ -39,6 +59,7 @@ export class Choice extends Action {
 
 				if (typeof current.Timer !== 'undefined') {
 					const timer = engine.global ('_ChoiceTimer').pop ();
+					engine.global ('_choice_pending_rollback').pop ();
 					if (typeof timer !== 'undefined') {
 						clearTimeout (timer.props.timer);
 						if (timer.parentNode !== null) {
@@ -79,6 +100,7 @@ export class Choice extends Action {
 
 	static reset () {
 		this.engine.global ('_CurrentChoice', []);
+		this.engine.global ('_ChoiceTimer', []);
 		return Promise.resolve ();
 	}
 
@@ -154,26 +176,21 @@ export class Choice extends Action {
 			const timer = this.statement.Timer;
 			const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
 
+			let promise = Promise.resolve ();
+
 			if (typeof dialog === 'string') {
 				// If there's a dialog, we'll wait until showing that up to show
 				// the choices, in order to avoid showing the choices in an incorrect
 				// format if the dialog was NVL or not
-				return this.engine.run (dialog, false).then (() => {
-					if (textBox.props.mode === 'nvl') {
-						textBox.content ('text').append (element);
-					} else {
-						this.engine.element ().find ('[data-screen="game"]').append (element);
-					}
-
-					if (typeof timer === 'object') {
-						const timer_display = document.createElement ('timer-display');
-						timer_display.setProps (timer);
-						this.engine.global ('_ChoiceTimer').push(timer_display);
-						this.engine.element ().find ('[data-screen="game"]').prepend (timer_display);
-					}
+				const action = this.engine.prepareAction (dialog, { cycle: 'Application' });
+				promise = action.willApply ().then (() => {
+					return action.apply ().then (() => {
+						return action.didApply ();
+					});
 				});
-			} else {
-				// If there's no dialog, we can just show the choices right away
+			}
+
+			return promise.then (() => {
 				if (textBox.props.mode === 'nvl') {
 					textBox.content ('text').append (element);
 				} else {
@@ -184,9 +201,10 @@ export class Choice extends Action {
 					const timer_display = document.createElement ('timer-display');
 					timer_display.setProps (timer);
 					this.engine.global ('_ChoiceTimer').push(timer_display);
+					this.engine.global ('_choice_pending_rollback').push (true);
 					this.engine.element ().find ('[data-screen="game"]').prepend (timer_display);
 				}
-			}
+			});
 		});
 	}
 
@@ -213,17 +231,22 @@ export class Choice extends Action {
 	revert () {
 		const choice = this.engine.history ('choice')[this.engine.history ('choice').length - 1];
 
+
 		return this.engine.revert (this.statement[choice].Do, false).then (() => {
 			if (typeof this.statement[choice].onRevert === 'function') {
 				return Util.callAsync (this.statement[choice].onRevert, this.engine);
 			}
 			return Promise.resolve ();
 		}).then (() => {
+			if (typeof this.statement.Timer === 'object' && this.statement.Timer !== null) {
+				this.engine.global ('_ChoiceTimer').pop ();
+			}
 			return this.engine.run (this._statement, false);
 		});
 	}
 
 	didRevert () {
+		this.engine.global ('_choice_just_rolled_back').push (true);
 		this.engine.history ('choice').pop ();
 		return Promise.resolve ({ advance: false, step: false });
 	}
