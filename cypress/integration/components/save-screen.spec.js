@@ -101,7 +101,7 @@ context ('Save Screen', function () {
 
 		cy.get ('[data-component="alert-modal"]').should ('be.visible');
 
-		cy.get ('[data-component="alert-modal"] small').clear().type('Overwrite');
+		cy.get ('[data-component="alert-modal"] input').clear().type('Overwrite');
 
 		cy.get ('[data-component="alert-modal"] button[data-action="overwrite-slot"]').click ();
 
