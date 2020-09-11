@@ -29,6 +29,49 @@ context ('Hide Image', function () {
 
 	});
 
+	it ('Keeps the position of the image', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show image polaroid at left',
+				'One',
+				'hide image polaroid with fadeOut'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-image="polaroid"]').should ('have.class', 'left');
+		cy.get ('[data-image="polaroid"]').should ('have.data', 'position', 'left');
+
+		cy.proceed ();
+
+		cy.get ('[data-image="polaroid"]').should ('have.class', 'left');
+		cy.get ('[data-image="polaroid"]').should ('have.data', 'position', 'left');
+	});
+
+	it ('Forces a new position if one is provided', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show image polaroid at left',
+				'One',
+				'hide image polaroid at center with fadeOut'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-image="polaroid"]').should ('have.class', 'left');
+		cy.get ('[data-image="polaroid"]').should ('have.data', 'position', 'left');
+
+		cy.proceed ();
+
+		cy.get ('[data-image="polaroid"]').should ('have.class', 'center');
+		cy.get ('[data-image="polaroid"][data-position="center"]').should('exist');
+		cy.get ('[data-image="polaroid"]').should ('not.have.class', 'center');
+		cy.get ('[data-image="polaroid"]').should ('not.be.visible');
+
+	});
+
 	it ('Hides the image correctly and restores it after a rollback', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({

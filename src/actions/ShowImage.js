@@ -61,8 +61,10 @@ export class ShowImage extends Action {
 	}
 
 	apply () {
-
 		const image = document.createElement ('img');
+		const position = this._statement.match (/at\s(\S*)/);
+
+
 		$_(image).attribute ('src', `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').images}/${this.image}`);
 		$_(image).addClass ('animated');
 		$_(image).data ('image', this.asset);
@@ -71,6 +73,15 @@ export class ShowImage extends Action {
 			if (className) {
 				$_(image).addClass (className);
 			}
+		}
+
+		if (position instanceof Array) {
+			// If it was, we'll set that position to the character
+			const [at, positionClass] = position;
+			$_(image).data ('position', positionClass);
+		} else {
+			$_(image).addClass ('center');
+			$_(image).data ('position', 'center');
 		}
 
 		const durationPosition = this.classes.indexOf ('duration');

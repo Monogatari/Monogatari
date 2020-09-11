@@ -29,19 +29,19 @@ game-screen {
 		max-width: 100%;
 		max-height: 100%;
 
-		.bottom {
+		&.bottom {
 			top: auto;
 		}
 
-		.left {
+		&.left {
 			right: auto;
 		}
 
-		.right {
+		&.right {
 			left: auto;
 		}
 
-		.top {
+		&.top {
 			bottom: auto;
 		}
 	}

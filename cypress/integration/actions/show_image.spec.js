@@ -47,6 +47,34 @@ context ('Show Image', function () {
 		cy.get ('text-box').contains ('One');
 	});
 
+	it ('Adds the center position by default if none was provided', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show image polaroid',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-image="polaroid"]').should ('have.class', 'center');
+		cy.get ('[data-image="polaroid"]').should ('have.data', 'position', 'center');
+	});
+
+	it ('Sets the data position property correctly when one is provided', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show image polaroid at left',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-image="polaroid"]').should ('have.class', 'left');
+		cy.get ('[data-image="polaroid"]').should ('have.data', 'position', 'left');
+	});
+
 	it ('Handles consecutive statements correctly', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
