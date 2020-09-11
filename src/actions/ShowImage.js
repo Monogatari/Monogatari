@@ -95,8 +95,7 @@ export class ShowImage extends Action {
 		return Promise.resolve ();
 	}
 
-	didApply (args = { updateHistory: true, updateState: true }) {
-		const { updateHistory, updateState } = args;
+	didApply ({ updateHistory = true, updateState = true } = {}) {
 		if (updateHistory === true) {
 			this.engine.history ('image').push (this._statement);
 		}

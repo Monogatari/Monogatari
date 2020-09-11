@@ -99,7 +99,7 @@ context ('Show Character', function () {
 		cy.proceed ();
 
 		cy.get ('[data-sprite="angry"]').should ('have.class', 'center');
-		cy.get ('[data-sprite="angry"]').should ('have.data', 'position', 'center');
+		cy.get ('[data-sprite="angry"][data-position="center"]').should ('exist');
 	});
 
 	it ('Clears the previous classes from the image correctly', function () {

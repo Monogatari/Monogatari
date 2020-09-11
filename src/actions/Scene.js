@@ -130,9 +130,7 @@ export class Scene extends Action {
 		});
 	}
 
-	didApply (args = { updateHistory: true, updateState: true }) {
-		const { updateHistory, updateState } = args;
-
+	didApply ({ updateHistory = true, updateState = true } = {}) {
 		if (updateHistory === true) {
 			this.engine.history ('sceneElements').push (this.scene_elements);
 			this.engine.history ('sceneState').push (this.scene_state);

@@ -193,8 +193,7 @@ export class Video extends Action {
 		return Promise.resolve ();
 	}
 
-	didApply (args = { updateHistory: true, updateState: true }) {
-		const { updateHistory, updateState } = args;
+	didApply ({ updateHistory = true, updateState = true } = {}) {
 		if (updateHistory === true) {
 			this.engine.history ('video').push (this._statement);
 		}

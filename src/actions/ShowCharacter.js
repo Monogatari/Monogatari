@@ -209,9 +209,7 @@ export class ShowCharacter extends Action {
 		return Promise.resolve ();
 	}
 
-	didApply (args = { updateHistory: true, updateState: true }) {
-		const { updateHistory, updateState } = args;
-
+	didApply ({ updateHistory = true, updateState = true } = {}) {
 		if (updateHistory === true) {
 			this.engine.history ('character').push (this._statement);
 		}

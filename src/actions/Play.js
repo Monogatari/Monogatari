@@ -275,8 +275,7 @@ export class Play extends Action {
 		}
 	}
 
-	apply (args = { paused: false }) {
-		const { paused } = args;
+	apply ({ paused = false } = {}) {
 		// Check if the audio should have a fade time
 		const fadePosition = this.props.indexOf ('fade');
 
@@ -323,8 +322,7 @@ export class Play extends Action {
 		return Promise.reject('An error occurred, you probably have a typo on the media you want to play.');
 	}
 
-	didApply (args = { updateHistory: true, updateState: true }) {
-		const { updateHistory, updateState } = args;
+	didApply ({ updateHistory = true, updateState = true } = {}) {
 		if (updateHistory === true) {
 			if (this.player instanceof Audio) {
 				this.engine.history (this.type).push (this._statement);

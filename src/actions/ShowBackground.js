@@ -109,9 +109,7 @@ export class ShowBackground extends Action {
 		return Promise.resolve ();
 	}
 
-	didApply (args = { updateHistory: true, updateState: true }) {
-		const { updateHistory, updateState } = args;
-
+	didApply ({ updateHistory = true, updateState = true } = {}) {
 		if (updateState === true) {
 			this.engine.state ({
 				background: this._statement

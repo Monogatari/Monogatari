@@ -84,9 +84,7 @@ export class Particles extends Action {
 		return tsParticles.load ('tsparticles', this.particles);
 	}
 
-	didApply (args = { updateHistory: true, updateState: true }) {
-		const { updateHistory, updateState } = args;
-
+	didApply ({ updateHistory = true, updateState = true } = {}) {
 		if (updateHistory === true) {
 			this.engine.history ('particle').push (this._statement);
 		}
