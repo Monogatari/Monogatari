@@ -22,6 +22,7 @@ language-selection-screen {
 
 		display: flex;
 		flex-direction: column;
+		justify-content: center;
 		height: auto;
 		padding: 1rem;
 

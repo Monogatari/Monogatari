@@ -530,6 +530,19 @@ class Monogatari {
 		}
 	}
 
+	static languageMetadata (language, object = null) {
+		if (typeof language !== 'undefined') {
+			if (object !== null) {
+				if (typeof this._languageMetadata[language] !== 'object') {
+					this._languageMetadata[language] = {};
+				}
+				this._languageMetadata[language] = Object.assign ({}, this._languageMetadata[language], object);
+			}
+			return this._languageMetadata[language];
+		}
+		return this._languageMetadata;
+	}
+
 	static translations (object = null) {
 		if (object !== null) {
 			if (typeof object === 'string') {

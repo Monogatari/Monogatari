@@ -1,5 +1,6 @@
 import { $_ } from '@aegis-framework/artemis';
 
+import { FancyError } from './../../lib/FancyError';
 import { ScreenComponent } from './../../lib/ScreenComponent';
 
 class LanguageSelectionScreen extends ScreenComponent {
@@ -24,7 +25,14 @@ class LanguageSelectionScreen extends ScreenComponent {
 
 		if (property === 'index') {
 			const { languages } = this.props;
-			this.content ('title').text (this.engine.translation (languages[newValue]).SelectYourLanguage);
+			const translation = this.engine.translation (languages[newValue]);
+
+			if (typeof translation === 'object') {
+				const string = translation.SelectYourLanguage;
+				if (typeof string === 'string') {
+					this.content ('title').text (string);
+				}
+			}
 		}
 		return Promise.resolve ();
 	}
@@ -60,13 +68,40 @@ class LanguageSelectionScreen extends ScreenComponent {
 	render () {
 		const { languages } = this.props;
 		const buttons = languages.map ((language) =>{
-			const { code, icon } = this.engine._languageMetadata[language];
+			const metadata = this.engine._languageMetadata[language];
 
-			return `
-				<button data-language="${language}" title="${language}">
-					<span data-content="icon">${icon}</span>
-					<span data-content="language">${language}</span>
-				</button>`;
+			if (typeof metadata === 'object') {
+				const { code, icon } = metadata;
+				return `
+					<button data-language="${language}" title="${language}">
+						${ typeof icon === 'string' ? `<span data-content="icon">${icon}</span>` : '' }
+						<span data-content="language">${language}</span>
+					</button>
+				`;
+			} else {
+				FancyError.show (
+					`Metadata for language "${language}" could not be found.`,
+					'Monogatari attempted to retrieve the metadata for this language but it does not exists',
+					{
+						'Language Not Found': language,
+						'You may have meant one of these': Object.keys (this.engine._script),
+						'Help': {
+							'_': 'Please check that youi have defined the metadata for this language. Remember the metadata is defined as follows:',
+							'_1': `
+								<pre>
+									<code class='language-javascript'>
+									monogatari.languageMetadata ("Español", {
+										"code": "es",
+										"icon": "🇲🇽"
+									});
+									</code>
+								</pre>
+							`,
+							'Documentation': '<a href="https://developers.monogatari.io/documentation/v/develop/configuration-options/game-configuration/internationalization/" target="_blank">Internationalization</a>'
+						}
+					}
+				);
+			}
 		}).join ('');
 
 		return `

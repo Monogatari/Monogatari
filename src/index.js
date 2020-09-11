@@ -77,19 +77,58 @@ Monogatari._translations = {
 };
 
 Monogatari._languageMetadata = {
-	'Беларуская': { code: 'be', icon: '🇧🇾' },
-	'Deutsch': { code: 'de', icon: '🇩🇪' },
-	'English': { code: 'en', icon: '🇺🇸' },
-	'Español': { code: 'es', icon: '🇲🇽' },
-	'Français': { code: 'fr', icon: '🇫🇷' },
-	'Nederlands': { code: 'nl', icon: '🇳🇱' },
-	'Português': { code: 'pt', icon: '🇧🇷' },
-	'Русский': { code: 'ru', icon: '🇷🇺' },
-	'اللغه العربية': { code: 'ar', icon: '🇦🇪' },
-	'한국어': { code: 'ko', icon: '🇰🇷' },
-	'日本語': { code: 'ja', icon: '🇯🇵' },
-	'简体中文': { code: 'zh', icon: '🇨🇳' },
-	'toki pona': { code: 'en', icon: '🕮' },
+	'Беларуская': {
+		code: 'be',
+		icon: '🇧🇾'
+	},
+	'Deutsch': {
+		code: 'de',
+		icon: '🇩🇪'
+	},
+	'English': {
+		code: 'en',
+		icon: '🇺🇸'
+	},
+	'Español': {
+		code: 'es',
+		icon: '🇲🇽'
+	},
+	'Français': {
+		code: 'fr',
+		icon: '🇫🇷'
+	},
+	'Nederlands': {
+		code: 'nl',
+		icon: '🇳🇱'
+	},
+	'Português': {
+		code: 'pt',
+		icon: '🇧🇷'
+	},
+	'Русский': {
+		code: 'ru',
+		icon: '🇷🇺'
+	},
+	'اللغه العربية': {
+		code: 'ar',
+		icon: '🇦🇪'
+	},
+	'한국어': {
+		code: 'ko',
+		icon: '🇰🇷'
+	},
+	'日本語': {
+		code: 'ja',
+		icon: '🇯🇵'
+	},
+	'简体中文': {
+		code: 'zh',
+		icon: '🇨🇳'
+	},
+	'toki pona': {
+		code: 'en',
+		icon: '🕮'
+	},
 };
 
 /**
