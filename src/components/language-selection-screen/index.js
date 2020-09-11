@@ -42,73 +42,81 @@ class LanguageSelectionScreen extends ScreenComponent {
 	}
 
 	didMount () {
-		const { languages, timeout } = this.props;
-		this.timer = setTimeout (() => {
-			if (this.element ().isVisible ()) {
-				const { index } = this.state;
-				if (index >= (languages.length - 1)) {
-					this.setState ({ index: 0});
+		// Prevent doing any extra work when the game is not multilanguage
+		if (this.engine.setting ('MultiLanguage') === true && this.engine.setting ('LanguageSelectionScreen') === true) {
+			const { languages, timeout } = this.props;
+			this.timer = setTimeout (() => {
+				if (this.element ().isVisible ()) {
+					const { index } = this.state;
+					if (index >= (languages.length - 1)) {
+						this.setState ({ index: 0});
+					} else {
+						this.setState ({ index: index + 1});
+					}
+					this.timer = setTimeout (() => this.didMount (), parseInt(timeout));
 				} else {
-					this.setState ({ index: index + 1});
+					clearTimeout (this.timer);
 				}
-				this.timer = setTimeout (() => this.didMount (), parseInt(timeout));
-			} else {
-				clearTimeout (this.timer);
-			}
-		}, parseInt(timeout));
+			}, parseInt(timeout));
+		}
 
 		this.element ().on ('click', '[data-language]', (event) => {
 			const language = $_(event.target).closest('[data-language]').data ('language');
 			this.engine.preference ('Language', language);
 			this.engine.localize ();
 		});
+
 		return Promise.resolve ();
 	}
 
 	render () {
-		const { languages } = this.props;
-		const buttons = languages.map ((language) =>{
-			const metadata = this.engine._languageMetadata[language];
+		let buttons = [];
+		// Prevent doing any extra work when the game is not multilanguage
+		if (this.engine.setting ('MultiLanguage') === true && this.engine.setting ('LanguageSelectionScreen') === true) {
+			const { languages } = this.props;
+			buttons = languages.map ((language) =>{
+				const metadata = this.engine._languageMetadata[language];
 
-			if (typeof metadata === 'object') {
-				const { code, icon } = metadata;
-				return `
-					<button data-language="${language}" title="${language}">
-						${ typeof icon === 'string' ? `<span data-content="icon">${icon}</span>` : '' }
-						<span data-content="language">${language}</span>
-					</button>
-				`;
-			} else {
-				FancyError.show (
-					`Metadata for language "${language}" could not be found.`,
-					'Monogatari attempted to retrieve the metadata for this language but it does not exists',
-					{
-						'Language Not Found': language,
-						'You may have meant one of these': Object.keys (this.engine._script),
-						'Help': {
-							'_': 'Please check that youi have defined the metadata for this language. Remember the metadata is defined as follows:',
-							'_1': `
-								<pre>
-									<code class='language-javascript'>
-									monogatari.languageMetadata ("Español", {
-										"code": "es",
-										"icon": "🇲🇽"
-									});
-									</code>
-								</pre>
-							`,
-							'Documentation': '<a href="https://developers.monogatari.io/documentation/v/develop/configuration-options/game-configuration/internationalization/" target="_blank">Internationalization</a>'
+				if (typeof metadata === 'object') {
+					const { code, icon } = metadata;
+					return `
+						<button data-language="${language}" title="${language}">
+							${ typeof icon === 'string' ? `<span data-content="icon">${icon}</span>` : '' }
+							<span data-content="language">${language}</span>
+						</button>
+					`;
+				} else {
+					FancyError.show (
+						`Metadata for language "${language}" could not be found.`,
+						'Monogatari attempted to retrieve the metadata for this language but it does not exists',
+						{
+							'Language Not Found': language,
+							'You may have meant one of these': Object.keys (this.engine._script),
+							'Help': {
+								'_': 'Please check that youi have defined the metadata for this language. Remember the metadata is defined as follows:',
+								'_1': `
+									<pre>
+										<code class='language-javascript'>
+										monogatari.languageMetadata ("Español", {
+											"code": "es",
+											"icon": "🇲🇽"
+										});
+										</code>
+									</pre>
+								`,
+								'Documentation': '<a href="https://developers.monogatari.io/documentation/v/develop/configuration-options/game-configuration/internationalization/" target="_blank">Internationalization</a>'
+							}
 						}
-					}
-				);
-			}
-		}).join ('');
+					);
+				}
+			});
+		}
 
 		return `
 			<div data-content="wrapper">
 				<h1 data-content="title" data-string="SelectYourLanguage">${this.engine.string ('SelectYourLanguage')}</h1>
 				<div data-content="buttons">
-					${buttons}
+					${buttons.join ('')}
 				</div>
 			</div>
 		`;
