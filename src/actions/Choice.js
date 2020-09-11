@@ -119,7 +119,7 @@ export class Choice extends Action {
 		this.result = { advance: false, step: false };
 	}
 
-	apply () {
+	apply ({ updateLog = true } = {}) {
 		this.engine.global ('block', true);
 
 		// Save a reference to the choice object globally. Since the choice buttons
@@ -187,7 +187,7 @@ export class Choice extends Action {
 				// format if the dialog was NVL or not
 				const action = this.engine.prepareAction (dialog, { cycle: 'Application' });
 				promise = action.willApply ().then (() => {
-					return action.apply ().then (() => {
+					return action.apply ({ updateLog }).then (() => {
 						return action.didApply ();
 					});
 				});
@@ -244,7 +244,20 @@ export class Choice extends Action {
 			if (typeof this.statement.Timer === 'object' && this.statement.Timer !== null) {
 				this.engine.global ('_ChoiceTimer').pop ();
 			}
-			return this.engine.run (this._statement, false);
+
+			if (typeof this.statement.Dialog === 'string') {
+				const dialogLog = this.engine.component ('dialog-log');
+				if (typeof dialogLog !== 'undefined') {
+					dialogLog.instances (instance => instance.pop ());
+				}
+			}
+
+			const action = this.engine.prepareAction (this._statement, { cycle: 'Application' });
+			return action.willApply ().then (() => {
+				return action.apply ().then (() => {
+					return action.didApply ({ updateHistory: false, updateState: false });
+				});
+			});
 		});
 	}
 

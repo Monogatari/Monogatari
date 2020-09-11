@@ -383,11 +383,11 @@ export class Dialog extends Action {
 		}
 	}
 
-	apply () {
+	apply ({ updateLog = true } = {}) {
 		try {
 			const dialogLog = this.engine.component ('dialog-log');
 			if (typeof dialogLog !== 'undefined') {
-				if (this._cycle === 'Application') {
+				if (this._cycle === 'Application' && updateLog === true) {
 					dialogLog.instances (instance => instance.write ({
 						id: this.id,
 						character: this.character,
