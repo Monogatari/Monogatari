@@ -41,27 +41,38 @@ class SlotContainer extends Component {
 
 	willMount () {
 		this.classList.add('row', 'row--spaced');
-		return this.engine.Storage.keys().then((keys) => {
-			const fullLabel = `${this.props.label}_`;
+		const fullLabel = `${this.props.label}_`;
 
-			const savedData = keys.filter((key) => {
-				return key.indexOf(fullLabel) === 0;
-			}).sort((a, b) => {
-
-				const aNumber = parseInt(a.split(fullLabel)[1]);
-				const bNumber = parseInt(b.split(fullLabel)[1]);
-
-				if (aNumber > bNumber) {
+		return this.engine.Storage.each ((key, value) => {
+			if (key.indexOf(fullLabel) === 0) {
+				// If any of the save files has somehow become corrupted and is
+				// no longer a valid object, we'll want to exclude it.
+				if (typeof value === 'object' && value !== null) {
+					return Promise.resolve ({
+						valid: true,
+						id: parseInt (key.split(fullLabel)[1]),
+						key,
+					});
+				}
+			}
+			return Promise.resolve ({ valid: false });
+		}).then((data) => {
+			// Filter only those that are marked as valid and then, sort them
+			// using their id as the pivot
+			const validSlots = data.filter (d => d.valid).sort ((a, b) => {
+				if (a.id > b.id) {
 					return 1;
-				} else if (aNumber < bNumber) {
+				} else if (a.id < b.id) {
 					return -1;
 				} else {
 					return 0;
 				}
+			}).map (({ key }) => {
+				return key;
 			});
 
 			this.setState({
-				slots: savedData
+				slots: validSlots
 			});
 		});
 	}
@@ -116,16 +127,24 @@ class SlotContainer extends Component {
 		}
 
 		this.engine.Storage.onCreate ((key, value) => {
+			// We only want to react to those items that we believe are save files
+			// by their key and making sure they're an actual object
 			if (key.indexOf (`${this.props.label}_`) === 0) {
-				this.setState ({
-					slots: [...new Set([...this.state.slots, key])]
-				});
+				if (typeof value === 'object' && value !== null) {
+					this.setState ({
+						slots: [...new Set([...this.state.slots, key])]
+					});
+				}
 			}
 		});
 
 		this.engine.Storage.onUpdate ((key, value) => {
+			// We only want to react to those items that we believe are save files
+			// by their key and making sure they're an actual object
 			if (key.indexOf (`${this.props.label}_`) === 0) {
-				this.element ().find (`[slot="${key}"]`).get (0).setProps (value);
+				if (typeof value === 'object' && value !== null) {
+					this.element ().find (`[slot="${key}"]`).get (0).setProps (value);
+				}
 			}
 		});
 
