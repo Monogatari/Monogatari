@@ -226,4 +226,32 @@ context ('Dialog', function () {
 		cy.rollback ();
 		cy.get ('text-box').contains ('Zero');
 	});
+
+	it ('Updates the Dialog Log Correctly', function () {
+		cy.loadTestAssets ({nvl: true});
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'One',
+				'Two',
+				'Three'
+			]
+		});
+		cy.start ();
+		cy.get ('dialog-log').contains ('One');
+		cy.proceed ();
+
+		cy.get ('dialog-log').contains ('Two');
+		cy.proceed ();
+
+		cy.get ('dialog-log').contains ('Three');
+
+		cy.rollback ();
+		cy.get ('dialog-log').contains ('One');
+		cy.get ('dialog-log').contains ('Two');
+
+		cy.rollback ();
+		cy.get ('dialog-log').contains ('One');
+
+	});
 });

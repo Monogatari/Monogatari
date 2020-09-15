@@ -32,6 +32,9 @@ export class Dialog extends Action {
 		if (centeredDialog.isVisible ()) {
 			centeredDialog.remove ();
 		}
+
+		this.engine.global ('_dialog_pending_revert', false);
+
 		return Promise.resolve (this.engine.global ('finished_typing'));
 	}
 
@@ -57,8 +60,9 @@ export class Dialog extends Action {
 
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
 
-		if (typeof dialogLog !== 'undefined') {
+		if (typeof dialogLog !== 'undefined' && this.engine.global ('_dialog_pending_revert') === true) {
 			dialogLog.instances (instance => instance.pop ());
+			this.engine.global ('_dialog_pending_revert', false);
 		}
 		return Promise.resolve ();
 	}
@@ -84,7 +88,8 @@ export class Dialog extends Action {
 				onDestroy: () => {
 					this.engine.global ('finished_typing', true);
 				}
-			}
+			},
+			_dialog_pending_revert: false,
 		});
 
 		// The NVL mode has its own history so that when going back, all dialogs
@@ -393,8 +398,6 @@ export class Dialog extends Action {
 						character: this.character,
 						dialog: this.clearDialog
 					}));
-				} else {
-					dialogLog.instances (instance => instance.pop ());
 				}
 			}
 		} catch (e) {
@@ -410,6 +413,11 @@ export class Dialog extends Action {
 			this.engine.element ().find ('[data-component="text-box"]').get (0).show ();
 			return this.displayDialog (this.dialog, this.clearDialog, 'narrator', this.engine.setting ('NarratorTypeAnimation'));
 		}
+	}
+
+	didApply () {
+		this.engine.global ('_dialog_pending_revert', true);
+		return Promise.resolve ({ advance: false });
 	}
 
 	willRevert () {
@@ -454,7 +462,9 @@ export class Dialog extends Action {
 		} else {
 			// If the dialog was not NVL, we can simply show it as if we were
 			// doing a simple application
-			return this.apply ();
+			return this.apply ().then (() => {
+				return this.didApply ();
+			});
 		}
 	}
 
