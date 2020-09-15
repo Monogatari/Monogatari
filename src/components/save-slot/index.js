@@ -80,6 +80,28 @@ class SaveSlot extends Component {
 			if (typeof data.Engine !== 'undefined') {
 				data.name = data.Name;
 				data.date = data.Date;
+				// @Compability [<= v1.4.1]
+				// In older versions the date was saved using the JavaScript native Date
+				// object which is not great and moment can actually have trouble parsing
+				// these old dates, specially because we used the locale date wich we have
+				// no way of identifying. Therefore, we'll try to parse the date and if
+				// it doesn't work as-is, we'll try swaping the month and day positions
+				// which may be a common difference on the locales.
+				try {
+					// Check if the date was saved in the old format (dd/mm/yy, hh:mm:ss)
+					if (data.date.indexOf ('/') > -1) {
+						const [date, time] = data.date.replace (',', '').split (' ');
+						const [month, day, year] = date.split ('/');
+						if (isNaN (Date.parse (date))) {
+							data.date = `${year}-${day}-${month} ${time}`;
+						} else {
+							data.date = `${year}-${month}-${day} ${time}`;
+						}
+					}
+				} catch (e) {
+					this.engine.debug.debug ('Failed to convert date', e);
+				}
+
 				data.image = data.Engine.Scene;
 			}
 
@@ -98,23 +120,28 @@ class SaveSlot extends Component {
 
 		if (hasImage) {
 			background = `url(${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').scenes}/${this.engine.asset ('scenes', this.props.image)})`;
-		} else if (this.data.game.state.scene) {
-			background = this.data.game.state.scene;
+		} else if ('game' in this.data) {
+			// @Compability [<= v1.4.1]
+			// That last if checking for the existance of game in the data is
+			// required because older versions do not have that property.
+			if (this.data.game.state.scene) {
+				background = this.data.game.state.scene;
 
-			if (background.indexOf (' with ') > -1) {
-				background = Text.prefix (' with ', background);
+				if (background.indexOf (' with ') > -1) {
+					background = Text.prefix (' with ', background);
+				}
+
+				background = Text.suffix ('show scene', background);
+
+			} else if (this.data.game.state.background) {
+				background = this.data.game.state.background;
+
+				if (background.indexOf (' with ') > -1) {
+					background = Text.prefix (' with ', background);
+				}
+
+				background = Text.suffix ('show background', background);
 			}
-
-			background = Text.suffix ('show scene', background);
-
-		} else if (this.data.game.state.background) {
-			background = this.data.game.state.background;
-
-			if (background.indexOf (' with ') > -1) {
-				background = Text.prefix (' with ', background);
-			}
-
-			background = Text.suffix ('show background', background);
 		}
 		return `
 			<button data-delete='${this.props.slot}' aria-label="${this.engine.string ('Delete')} Slot ${this.props.name}"><span class='fas fa-times'></span></button>
