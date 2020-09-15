@@ -2026,6 +2026,17 @@ class Monogatari {
 	}
 
 	static rollback () {
+		if (this.state ('step') === 0) {
+			const jump = [...this.history ('jump')].reverse ().find (o => {
+				return o.destination.label === this.state ('label') && o.destination.step === 0;
+			});
+
+			if (typeof jump === 'undefined') {
+				this.debug.debug ('Will not attempt rollback since this is the beginning of the game.');
+				return Promise.resolve ();
+			}
+		}
+
 		return this.shouldRollback ().then (() => {
 			this.global ('_engine_block', true);
 			return this.willRollback ().then (() => {
