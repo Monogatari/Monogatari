@@ -375,6 +375,13 @@ video {
 
 /** Medium Devices, Desktops (768px)**/
 @media screen and (min-width: 48em) {
+	.modal > * {
+		width: 60%;
+	}
+}
+
+/** Medium Devices, Desktops (768px by 432px)**/
+@media screen and (min-width: 48em) and (min-height: 27em) {
 	body {
 		font-size: 1.2rem;
 	}
@@ -383,15 +390,17 @@ video {
 		width: 10rem;
 		height: 3.5rem;
 	}
-
-	.modal > * {
-		width: 60%;
-	}
 }
 
 /** Medium Devices, Desktops (992px)**/
 @media screen and (min-width: 62em) {
+	.modal > * {
+		width: 50%;
+	}
+}
 
+/** Medium Devices, Desktops (992px by 558px) **/
+@media screen and (min-width: 62em) and (min-height: 34.875em) {
 	body {
 		font-size: 1.35rem;
 	}
@@ -400,14 +409,17 @@ video {
 	h2 {
 		font-size: 3.5rem;
 	}
-
-	.modal > * {
-		width: 50%;
-	}
 }
 
 /** HD Screen, Large Devices, Wide Screens (1200px) **/
 @media screen and (min-width: 75em) {
+	.modal > * {
+		width: 40%;
+	}
+}
+
+/** HD Screen, Large Devices, Wide Screens (1200px by 675px) **/
+@media screen and (min-width: 75em) and (min-height: 42.187em) {
 	body {
 		font-size: 1.5rem;
 	}

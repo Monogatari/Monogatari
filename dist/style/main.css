@@ -183,8 +183,9 @@ input[type=range]::-ms-fill-upper {
 
 }
 
-/* Styles for the desktop version of the Quick Menu*/
+/** Medium Screens, Phablets (601px) **/
 @media screen and (min-width: 37.56255em) {
+	/* Styles for the desktop version of the Quick Menu */
 
 	/* Quick Menu Style */
 	[data-component="quick-menu"] {
@@ -200,4 +201,39 @@ input[type=range]::-ms-fill-upper {
 	[data-component="quick-menu"] span:hover {
 
 	}
+}
+
+/** Medium Devices, Tablets (992px)**/
+@media screen and (min-width: 62em) {
+
+}
+
+/** HD Screen, Large Devices, Wide Screens, Desktop (1200px) **/
+@media screen and (min-width: 75em) {
+
+}
+
+/** Full HD Screen, Large Devices, Wide Screens, Large Desktops (1920px) **/
+@media screen and (min-width: 120em) {
+
+}
+
+/** Retina Screen , Large Devices, Wide Screens(2560px) **/
+@media screen and (min-width: 160em) {
+
+}
+
+/** 4k Screens, Large Devices, Wide Screens (3840px) **/
+@media screen and (min-width: 240em) {
+
+}
+
+/** 5k Screens, Large Devices, Wide Screens (5000px) **/
+@media screen and (min-width: 312.5em) {
+
+}
+
+/** 8k Screens, Large Devices, Wide Screens (8000px) **/
+@media screen and (min-width: 500em) {
+
 }
