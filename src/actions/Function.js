@@ -56,13 +56,24 @@ export class ReversibleFunction extends Action {
 		return Promise.resolve ({ advance: this.shouldContinue });
 	}
 
+	willApply () {
+		// @Compatibility [<= v2.0.0-beta.15]
+		// To make everything more standardized, we decided to change the
+		// 'Reverse' key to 'Revert' which actually follows the language being
+		// used in other actions and parts of Monogatari
+		if (typeof this.statement.Reverse === 'function' && typeof this.statement.Revert !== 'function') {
+			this.statement.Revert = this.statement.Reverse;
+		}
+		return Promise.resolve ();
+	}
+
 	revert () {
 		// The function will be run asynchronously (No matter if its code isn't)
 		// if the function returns false, the previous statement will not be run
 		// automatically and the game will wait for user interaction or some other
 		// code inside the function to keep going. Any other returnValue will
 		// allow the game to keep going right away.
-		return Util.callAsync (this.statement.Reverse, this.engine).then ((returnValue) => {
+		return Util.callAsync (this.statement.Revert, this.engine).then ((returnValue) => {
 			this.engine.global ('block', false);
 			if (returnValue === false) {
 				this.shouldContinue = false;
