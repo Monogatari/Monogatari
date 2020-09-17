@@ -14,10 +14,10 @@
   resolved "https://registry.yarnpkg.com/@aegis-framework/kayros.css/-/kayros.css-0.4.5.tgz#a6be59a19e3ef20b9329531a443935835b80f585"
   integrity sha512-3fdZ8/pHvv3cPPnZYkBraDrnR9FOl6hX5NW7tR/Juor1uzHTMZksDVwuHO/hLl3YfKQtO9ClqexKt8wiLShL7A==
 
-"@aegis-framework/pandora@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@aegis-framework/pandora/-/pandora-0.1.6.tgz#b40c5eea9a1c913cf2f685c4c67445beddc7a99e"
-  integrity sha512-cuyhtVU38PPingobXCwZfaue5H1Rz8ONROYb298yyqroydnQjR+UYWeaEVOtqh4pe2VgSY+8R1GiyzlIecnJBg==
+"@aegis-framework/pandora@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@aegis-framework/pandora/-/pandora-0.1.7.tgz#833a78d228bb672b5d1ba851d7f9f807909ad680"
+  integrity sha512-It5FL1kpQPDOqFARYr9NhCkKLx8hPzvwkGk4pfFBXTJpDr6Z1/7W6m0AWjy2odWibKAL9tpvuK10durMZgKHqA==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4":
   version "7.10.4"
@@ -2427,10 +2427,10 @@ cssstyle@^1.1.1:
   dependencies:
     cssom "0.3.x"
 
-cypress@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/cypress/-/cypress-5.1.0.tgz#979e9ff3e0acd792eefd365bf104046479a9643b"
-  integrity sha512-craPRO+Viu4268s7eBvX5VJW8aBYcAQT+EwEccQSMY+eH1ZPwnxIgyDlmMWvxLVX9SkWxOlZbEycPyzanQScBQ==
+cypress@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/cypress/-/cypress-5.2.0.tgz#6902efd90703242a2539f0623c6e1118aff01f95"
+  integrity sha512-9S2spcrpIXrQ+CQIKHsjRoLQyRc2ehB06clJXPXXp1zyOL/uZMM3Qc20ipNki4CcNwY0nBTQZffPbRpODeGYQg==
   dependencies:
     "@cypress/listr-verbose-renderer" "^0.4.1"
     "@cypress/request" "^2.88.5"

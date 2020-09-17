@@ -37,7 +37,7 @@
 		"autoprefixer": "^9.8.6",
 		"babel-eslint": "^10.1.0",
 		"core-js": "^3.6.5",
-		"cypress": "^5.1.0",
+		"cypress": "^5.2.0",
 		"dotenv": "^8.2.0",
 		"electron-notarize": "^1.0.0",
 		"eslint": "^7.9.0",
@@ -52,7 +52,7 @@
 	"dependencies": {
 		"@aegis-framework/artemis": "^0.3.24",
 		"@aegis-framework/kayros.css": "^0.4.5",
-		"@aegis-framework/pandora": "^0.1.6",
+		"@aegis-framework/pandora": "^0.1.7",
 		"@fortawesome/fontawesome-free": "^5.14.0",
 		"animate.css": "^4.1.1",
 		"deeply": "^3.1.0",

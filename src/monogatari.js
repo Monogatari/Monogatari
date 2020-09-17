@@ -1939,7 +1939,7 @@ class Monogatari {
 					// If the new format is being used, things are a lot more simple
 					const { state, history, storage } = data.game;
 
-					// @Compability [<= v2.0.0.beta.15]
+					// @Compability [<= v2.0.0-beta.15]
 					// Monogatari v2.0.0-beta.15 introduced a new format to save the state of the media
 					// being played. Therefore, we need to check if the old format is being used in the
 					// save file and transform it to the new one.

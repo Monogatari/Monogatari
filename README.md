@@ -1,4 +1,7 @@
 # Monogatari
+
+[![Monogatari](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/detailed/b9jn8v/develop&style=flat-square&logo=cypress)](https://dashboard.cypress.io/projects/b9jn8v/runs)
+
 Built to bring Visual Novels to the modern web and take them to the next level, making it easy for anyone to create and distribute Visual Novels in a simple way so that anyone can enjoy them on pretty much anywhere, create games with features that no one has ever imagined... It is time for Visual Novels to evolve.
 
 Website: https://monogatari.io/
