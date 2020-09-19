@@ -33,6 +33,7 @@ text-input {
 	.input-pair {
 		display: flex;
 		justify-content: center;
+		align-items: center;
 
 		& [type="checkbox"] {
 			display: block;
