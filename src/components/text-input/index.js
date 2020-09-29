@@ -20,7 +20,8 @@ class TextInput extends Component {
 			onSubmit: () => {},
 			validate: () => {},
 			callback: () => {},
-			classes: ''
+			classes: '',
+			attributes: {},
 		};
 	}
 
@@ -63,7 +64,13 @@ class TextInput extends Component {
 			let inputValue = '';
 			// Retrieve the value submitted
 			if (this.props.type === 'radio') {
-				inputValue = this.element ().find ('[data-content="field"]:checked').value ();
+				const checked = this.element ().find ('[data-content="field"]:checked');
+				if (checked.exists () > 0) {
+					inputValue = checked.value ();
+				} else {
+					inputValue = '';
+				}
+
 			} else if (this.props.type === 'checkbox') {
 				inputValue = [];
 				this.element ().find ('[data-content="field"]:checked').each ((element) => {
@@ -91,7 +98,7 @@ class TextInput extends Component {
 				});
 			}).catch (() => {
 				// Show the warning message since the input was invalid
-				this.content ('warning').text (this.props.warning);
+				this.content ('warning').text (this.engine.replaceVariables (this.props.warning));
 			});
 		});
 
@@ -112,21 +119,60 @@ class TextInput extends Component {
 	}
 
 	render () {
-		const { type, default: defaultValue, options } = this.props;
-		const text = ['text', 'password', 'email', 'url', 'number', 'color'];
+		const { type, default: defaultValue, options, attributes } = this.props;
+		const text = ['text', 'password', 'email', 'url', 'number', 'color', 'file', 'date', 'datetime-local', 'month', 'time', 'week', 'tel', 'range'];
 		let input = '';
+		let attr = '';
+
+		if (typeof attributes === 'object' && attributes !== null) {
+			attr = Object.keys (attributes).map ((key) => {
+				return `${key}="${attributes[key]}"`;
+			}).join (' ');
+		}
 
 		if (text.indexOf (type) > -1) {
-			input = `<input data-content="field" name="field" type="${type}" tabindex="0">`;
+			input = `<input data-content="field" name="field" type="${type}" tabindex="0" ${attr}>`;
 		} else if (type === 'select') {
-			input = `
-				<select data-content="field" name="field" tabindex="0">
-				${options.map ((o) => `<option value="${o.value}" ${defaultValue !== null && defaultValue !== '' && defaultValue == o.value ? 'selected' : ''}>${o.label}</option>`).join ('')}
-				</select>
-			`;
+			const optionElements = options.map ((o) => {
+				let selected = '';
+				let parsedDefault = defaultValue;
+				if (typeof defaultValue === 'string' && defaultValue !== null && defaultValue !== '') {
+					parsedDefault = this.engine.replaceVariables (defaultValue);
+					if (parsedDefault == this.engine.replaceVariables (o.value)) {
+						selected = 'selected';
+					}
+				} else if (typeof defaultValue === 'number') {
+					if (parsedDefault == o.value) {
+						selected = 'selected';
+					}
+				}
+				return `<option value="${typeof o.value === 'string' ? this.engine.replaceVariables (o.value) : o.value}" ${selected}>${this.engine.replaceVariables (o.label)}</option>`;
+			}).join ('');
+
+			input = `<select data-content="field" name="field" tabindex="0" ${attr}>${optionElements}</select>`;
 
 		} else if (type === 'radio' || type === 'checkbox') {
-			input = options.map ((o, index) => `<div class="input-pair"><input data-content="field" id="field_${index}" name="field" type="${type}" value="${o.value}" ${defaultValue !== null && defaultValue !== '' && defaultValue == o.value ? 'checked' : ''} tabindex="0"><label for="field_${index}">${o.label}</label></div>`).join ('');
+			input = options.map ((o, index) => {
+				let checked = '';
+				let parsedDefault = defaultValue;
+				if (typeof defaultValue === 'string' && defaultValue !== null && defaultValue !== '') {
+					parsedDefault = this.engine.replaceVariables (defaultValue);
+					if (parsedDefault == this.engine.replaceVariables (o.value)) {
+						checked = 'checked';
+					}
+				} else if (typeof defaultValue === 'number') {
+					if (parsedDefault == o.value) {
+						checked = 'checked';
+					}
+				}
+
+				return `
+					<div class="input-pair">
+						<input data-content="field" id="field_${index}" name="field" type="${type}" value="${typeof o.value === 'string' ? this.engine.replaceVariables (o.value) : o.value}" ${checked} tabindex="0" ${attr}>
+						<label for="field_${index}">${this.engine.replaceVariables (o.label)}</label>
+					</div>
+				`;
+			}).join ('');
 		}
 		return `
 			<form class="modal__content">

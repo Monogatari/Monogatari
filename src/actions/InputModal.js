@@ -86,6 +86,10 @@ export class InputModal extends Action {
 		if (typeof this.statement.Timer !== 'object') {
 			this.statement.Timer = null;
 		}
+
+		if (typeof this.statement.Attributes !== 'object') {
+			this.statement.Attributes = {};
+		}
 	}
 
 	apply () {
@@ -93,7 +97,7 @@ export class InputModal extends Action {
 
 		const input = document.createElement ('text-input');
 
-		const { Text, Warning, Save, Validation, actionString, Class, Type, Options, Default, Timer } = this.statement;
+		const { Text, Warning, Save, Validation, actionString, Class, Type, Options, Default, Timer, Attributes } = this.statement;
 
 		input.setProps ({
 			text: this.engine.replaceVariables (Text),
@@ -103,6 +107,7 @@ export class InputModal extends Action {
 			warning: Warning,
 			onSubmit: Save,
 			validate: Validation,
+			attributes: Attributes,
 			actionString,
 			callback: () => {
 				const timer = this.engine.global ('_InputTimer');
