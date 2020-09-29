@@ -126,7 +126,15 @@ class TextInput extends Component {
 
 		if (typeof attributes === 'object' && attributes !== null) {
 			attr = Object.keys (attributes).map ((key) => {
-				return `${key}="${attributes[key]}"`;
+				let value = attributes[key];
+
+				// If it's a string value, we'll do the variable interpolation
+				// for it.
+				if (typeof value === 'string') {
+					value = this.engine.replaceVariables (value);
+				}
+
+				return `${key}="${value}"`;
 			}).join (' ');
 		}
 
@@ -136,12 +144,19 @@ class TextInput extends Component {
 			const optionElements = options.map ((o) => {
 				let selected = '';
 				let parsedDefault = defaultValue;
+
+				// If the default value provided is a string, we need to do the variable
+				// interpolation for it.
 				if (typeof defaultValue === 'string' && defaultValue !== null && defaultValue !== '') {
 					parsedDefault = this.engine.replaceVariables (defaultValue);
+					// We're doing a == comparisson instead of === since the numeric
+					// values could be a string.
 					if (parsedDefault == this.engine.replaceVariables (o.value)) {
 						selected = 'selected';
 					}
 				} else if (typeof defaultValue === 'number') {
+					// We're doing a == comparisson instead of === since the numeric
+					// values could be a string.
 					if (parsedDefault == o.value) {
 						selected = 'selected';
 					}
@@ -155,12 +170,19 @@ class TextInput extends Component {
 			input = options.map ((o, index) => {
 				let checked = '';
 				let parsedDefault = defaultValue;
+
+				// If the default value provided is a string, we need to do the variable
+				// interpolation for it.
 				if (typeof defaultValue === 'string' && defaultValue !== null && defaultValue !== '') {
 					parsedDefault = this.engine.replaceVariables (defaultValue);
+					// We're doing a == comparisson instead of === since the numeric
+					// values could be a string.
 					if (parsedDefault == this.engine.replaceVariables (o.value)) {
 						checked = 'checked';
 					}
 				} else if (typeof defaultValue === 'number') {
+					// We're doing a == comparisson instead of === since the numeric
+					// values could be a string.
 					if (parsedDefault == o.value) {
 						checked = 'checked';
 					}
