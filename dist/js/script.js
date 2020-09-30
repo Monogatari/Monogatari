@@ -21,15 +21,21 @@ monogatari.action ('notification').notifications ({
 	}
 });
 
+// Define the Particles JS Configurations used in the game
+monogatari.action ('particles').particles ({
+
+});
+
+// Define the canvas objects used in the game
+monogatari.action ('canvas').objects ({
+
+});
+
 // Credits of the people involved in the creation of this awesome game
 monogatari.configuration ('credits', {
 
 });
 
-// Define the Particles JS Configurations used in the game
-monogatari.action ('particles').particles ({
-
-});
 
 // Define the images that will be available on your game's image gallery
 monogatari.assets ('gallery', {
