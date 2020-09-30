@@ -254,7 +254,7 @@ video {
 	position: relative;
 }
 
-.forceAspectRatio [data-ui=background],
+.forceAspectRatio [data-ui="background"],
 .forceAspectRatio [data-image],
 .forceAspectRatio [data-character] {
 	max-width: 100%;

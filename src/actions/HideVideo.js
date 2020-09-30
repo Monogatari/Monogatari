@@ -22,7 +22,9 @@ export class HideVideo extends Action {
 		if (this.classes.length > 0) {
 			element.addClass ('animated');
 			for (const newClass of this.classes) {
-				element.addClass (newClass);
+				if (newClass) {
+					element.addClass (newClass);
+				}
 			}
 
 			element.data ('visibility', 'invisible');
