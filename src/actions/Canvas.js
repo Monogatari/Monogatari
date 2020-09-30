@@ -17,7 +17,7 @@ export class Canvas extends Action {
 
 	static shouldProceed () {
 		return new Promise ((resolve, reject) => {
-			this.engine.find ('[data-canvas]').each ((element) => {
+			this.engine.element ().find ('[data-canvas]').each ((element) => {
 				if (element.dataset.mode !== 'background' && element.dataset.mode !== 'displayable') {
 					reject (`Canvas ${element.dataset.canvas} must be removed before proceeding.`);
 				}
@@ -167,7 +167,7 @@ export class Canvas extends Action {
 			`);
 		}
 
-		return Util.callAsync (this.object.start, this.engine, this.engine.element ().find (selector), selector);
+		return Util.callAsync (this.object.start, this.engine, this.engine.element ().find (selector).get (0), this.engine.element ().find (selector), selector);
 	}
 
 	didApply ({ updateHistory = true, updateState = true } = {}) {
