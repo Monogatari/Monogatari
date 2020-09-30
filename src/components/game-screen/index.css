@@ -86,9 +86,40 @@ game-screen {
 		} */
 	}
 
+	[data-video] {
+		max-width: 100%;
+		max-height: 100%;
+	
+		&[data-mode="background"] {
+			@include full-size;
+			object-fit: cover;
+		}
+	
+		&[data-mode="immersive"],
+		&.immersive {
+			height: 100%;
+			width: 100%;
+			object-fit: contain;
+			position: absolute;
+			z-index: 20;
+			background: #000;
+		}
+	
+		&[data-mode="modal"],
+		&[data-mode="displayable"] {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			margin: auto;
+		}
+	}
+
 	[data-canvas] {
-		&.character {
-			@extend [data-screen='game'] [data-character];
+		&[data-mode="character"] {
+			@extend game-screen [data-character];
+			@extend game-screen [data-sprite];
 		}
 
 		&.immersive {
@@ -97,6 +128,16 @@ game-screen {
 			right: 0;
 			top: 0;
 			bottom: 0;
+		}
+
+		&[data-mode="modal"],
+		&[data-mode="displayable"] {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			margin: auto;
 		}
 	}
 }
