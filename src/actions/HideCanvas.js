@@ -14,6 +14,8 @@ export class HideCanvas extends Action {
 		this.name = name;
 		this.object = this.engine.action ('Canvas').objects (name);
 
+		this.element = document.querySelector (`[data-component="canvas-container"][canvas="${this.name}"]`);
+
 		if (typeof classes !== 'undefined') {
 			this.classes = classes;
 		} else {
@@ -22,28 +24,30 @@ export class HideCanvas extends Action {
 	}
 
 	apply () {
-		return Util.callAsync (this.object.stop, this.engine).then (() => {
-			const element = this.engine.element ().find (`[data-canvas="${this.name}"]`);
+		const { object } = this.element.props;
+
+		return Util.callAsync (object.stop, this.element.canvas, this.element).then (() => {
 			if (this.classes.length > 0) {
-				element.addClass ('animated');
+				const el = this.element.element ();
+				el.addClass ('animated');
 				for (const newClass of this.classes) {
 					if (newClass) {
-						element.addClass (newClass);
+						el.addClass (newClass);
 					}
 				}
 
-				element.data ('visibility', 'invisible');
+				el.data ('visibility', 'invisible');
 
 				// Remove item after a while to prevent it from showing randomly
 				// when coming from a menu to the game because of its animation
-				element.on ('animationend', (e) => {
+				el.on ('animationend', (e) => {
 					if (e.target.dataset.visibility === 'invisible') {
 						// Remove only if the animation ends while the element is not visible
 						e.target.remove ();
 					}
 				});
 			} else {
-				this.engine.element ().find (`[data-canvas="${this.name}"]`).remove ();
+				this.engine.element ().find (`[data-component="canvas-container"][canvas="${this.name}"]`).remove ();
 			}
 
 			return Promise.resolve ();

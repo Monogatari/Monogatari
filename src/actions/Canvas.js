@@ -17,9 +17,10 @@ export class Canvas extends Action {
 
 	static shouldProceed () {
 		return new Promise ((resolve, reject) => {
-			this.engine.element ().find ('[data-canvas]').each ((element) => {
-				if (element.dataset.mode !== 'background' && element.dataset.mode !== 'displayable') {
-					reject (`Canvas ${element.dataset.canvas} must be removed before proceeding.`);
+			this.engine.element ().find ('[data-component="canvas-container"]').each ((element) => {
+				const { mode, canvas } = element.props;
+				if (['immersive', 'modal'].indexOf (mode) > -1) {
+					reject (`Canvas "${canvas}" must be removed before proceeding.`);
 				}
 			});
 
@@ -59,14 +60,10 @@ export class Canvas extends Action {
 
 	static bind () {
 		window.addEventListener ('resize', () => {
-			this.engine.element ().find ('[data-canvas][data-mode="background"], [data-canvas][data-mode="immersive"]').each ((canvas) => {
-				canvas.width = this.engine.width ();
-				canvas.height = this.engine.height ();
-				if (typeof this.object.resize === 'function') {
-					const { canvas: name, mode } = canvas.dataset;
-					const selector = `[data-canvas="${name}"][data-mode="${mode}"]`;
-
-					Util.callAsync (this.object.resize, this.engine, this.engine.element ().find (selector), selector);
+			this.engine.element ().find ('[data-component="canvas-container"][mode="background"], [data-component="canvas-container"][mode="immersive"]').each ((canvasContainer) => {
+				const { canvas: name, mode, selector, object } = canvasContainer.props;
+				if (typeof object.resize === 'function') {
+					Util.callAsync (object.resize, this.engine, canvasContainer.canvas, canvasContainer);
 				}
 			});
 		});
@@ -78,10 +75,11 @@ export class Canvas extends Action {
 
 		// Go through each canvas element being shown so it can be properly
 		// stopped and then removed.
-		this.engine.element ().find ('[data-canvas]').each ((element) => {
-			const { canvas, mode } = element.dataset;
-			promises.push (Util.callAsync (Canvas.objects (canvas).stop, this.engine).then (() => {
-				this.engine.element ().find (`[data-canvas="${canvas}"][data-mode="${mode}]"`).remove ();
+		this.engine.element ().find ('[data-component="canvas-container"]').each ((canvasContainer) => {
+			const { canvas: name, mode, selector, object } = canvasContainer.props;
+
+			promises.push (Util.callAsync (object.stop, this.engine, canvasContainer.canvas, canvasContainer).then (() => {
+				canvasContainer.content ('canvas').remove ();
 			}));
 		});
 
@@ -125,9 +123,7 @@ export class Canvas extends Action {
 
 		this.mode = mode;
 		this.name = name;
-
-		this.object = Canvas.objects (name);
-
+		this.selector = `[data-canvas="${this.name}"][data-mode="${this.mode}"]`;
 		if (typeof classes !== 'undefined') {
 			this.classes = ['animated', ...classes.filter((c) => c !== 'with')];
 		} else {
@@ -136,7 +132,13 @@ export class Canvas extends Action {
 	}
 
 	willApply () {
+		this.object = Canvas.objects (this.name);
 		if (typeof this.object !== 'undefined') {
+			this.element = document.createElement ('canvas-container');
+
+			this.canvasSelector = `canvas[data-canvas="${this.name}"][data-mode="${this.mode}"]`;
+			this.conatinerSelector = `[data-component="canvas-container"][canvas="${this.name}"][mode="${this.mode}"]`;
+
 			return Promise.resolve ();
 		}
 
@@ -144,30 +146,27 @@ export class Canvas extends Action {
 	}
 
 	apply () {
-		// TODO: Find a way to remove the resize listeners once the canvas is stopped
-		const element = `<canvas data-canvas="${this.name}" data-mode="${this.mode}" class="${this.classes.join (' ')}"></canvas>`;
-		const selector = `[data-canvas="${this.name}"][data-mode="${this.mode}"]`;
+		this.element.setProps ({
+			mode: this.mode,
+			canvas: this.name,
+			object: this.object,
+			classes: this.classes,
+			selector: this.selector,
+		});
 
-		const setSize = () => {
-			this.engine.element ().find (selector).get (0).width = this.engine.width ();
-			this.engine.element ().find (selector).get (0).height = this.engine.height ();
-		};
+		const gameScreen = this.engine.element ().find ('[data-screen="game"]');
 
 		if (this.mode === 'background') {
-			this.engine.element ().find ('[data-ui="background"]').append (element);
-			setSize ();
+			gameScreen.find ('[data-ui="background"]').append (this.element);
 		} else if (this.mode === 'immersive') {
-			this.engine.element ().find ('[data-screen="game"]').prepend (element);
-			setSize ();
+			gameScreen.append (this.element);
 		} else if (this.mode === 'displayable') {
-			this.engine.element ().find ('[data-screen="game"]').append (element);
+			gameScreen.content ('visuals').append (this.element);
 		} else if (this.mode === 'character') {
-			this.engine.element ().find ('[data-screen="game"]').append (`
-				<canvas data-canvas="${this.name}" class='${this.mode} ${this.classes.join (' ')}' data-character='${this.name}'></canvas>
-			`);
+			gameScreen.content ('visuals').append (this.element);
 		}
 
-		return Util.callAsync (this.object.start, this.engine, this.engine.element ().find (selector).get (0), this.engine.element ().find (selector), selector);
+		return Promise.resolve ();
 	}
 
 	didApply ({ updateHistory = true, updateState = true } = {}) {
@@ -179,16 +178,23 @@ export class Canvas extends Action {
 			this.engine.state ('canvas').push (this._statement);
 		}
 
-		if (this.mode === 'background' || this.mode === 'modal' || this.mode === 'displayable') {
+		if (this.mode === 'background' || this.mode === 'character' || this.mode === 'displayable') {
 			return Promise.resolve ({ advance: true });
 		}
 
 		return Promise.resolve ({ advance: false });
 	}
 
+	willRevert () {
+		this.element = document.querySelector (this.containerSelector);
+		this.object = this.element.props.object;
+
+		return Promise.resolve ();
+	}
+
 	revert () {
-		return Util.callAsync (this.object.stop, this.engine).then (() => {
-			this.engine.element ().find (`[data-canvas="${this.name}"][data-mode="${this.mode}"]`).remove ();
+		return Util.callAsync (this.object.stop, this.engine, this.element.canvas, this.element).then (() => {
+			this.element.container ('canvas').remove ();
 		});
 	}
 
