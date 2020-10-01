@@ -1,0 +1,24 @@
+canvas-container {
+	width: 100%;
+	height: 100%;
+
+	& [data-content="wrapper"] {
+		width: 100%;
+		height: 100%;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	&[mode="immersive"] {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+
+		background: #000;
+		z-index: 20;
+	}
+}

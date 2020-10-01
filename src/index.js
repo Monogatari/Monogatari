@@ -141,6 +141,7 @@ Monogatari._languageMetadata = {
  */
 
 import AlertModal from './components/alert-modal';
+import CanvasContainer from './components/canvas-container';
 import CenteredDialog from './components/centered-dialog';
 import ChoiceContainer from './components/choice-container';
 import CreditsScreen from './components/credits-screen';
@@ -166,6 +167,7 @@ import VisualNovel from './components/visual-novel';
 
 Monogatari._components = [
 	AlertModal,
+	CanvasContainer,
 	CenteredDialog,
 	ChoiceContainer,
 	CreditsScreen,
