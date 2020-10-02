@@ -11,9 +11,11 @@ canvas-container {
 		grid-template-rows: 1fr;
 		justify-content: center;
 		align-items: center;
+		justify-items: center;
 	}
 
-	&[mode="immersive"] {
+	&[mode="immersive"],
+	&.immersive {
 		position: absolute;
 		top: 0;
 		bottom: 0;
@@ -26,5 +28,37 @@ canvas-container {
 
 	& canvas {
 		grid-area: 1 / 1;
+	}
+
+	&[mode="character"] {
+		bottom: 0;
+		position: absolute;
+		max-width: 100%;
+		max-height: 80vh;
+		width: min-content;
+
+		margin: 0 auto;
+		left: 0;
+		right: 0;
+
+		&.right {
+			left: initial;
+			right: 0;
+		}
+
+		&.left {
+			left: 0;
+			right: initial;
+		}
+	}
+
+	&[mode="modal"],
+	&[mode="displayable"] {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		margin: auto;
 	}
 }
