@@ -6,7 +6,9 @@ canvas-container {
 		width: 100%;
 		height: 100%;
 
-		display: flex;
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr;
 		justify-content: center;
 		align-items: center;
 	}
@@ -20,5 +22,9 @@ canvas-container {
 
 		background: #000;
 		z-index: 20;
+	}
+
+	& canvas {
+		grid-area: 1 / 1;
 	}
 }

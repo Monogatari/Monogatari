@@ -13,13 +13,14 @@ class CanvasContainer extends Component {
 			object: {
 				start: () => {},
 				stop: () => {},
-				restart: () => {}
+				restart: () => {},
+				layers: [],
+				state: {}
 			},
-			classes: [],
-			selector: null,
+			classes: []
 		};
 
-		this.canvas = null;
+		this.layers = {};
 	}
 
 	onPropsUpdate (property, oldValue, newValue) {
@@ -35,24 +36,44 @@ class CanvasContainer extends Component {
 			}
 		}
 
+		if (mode === 'character') {
+			this.dataset.character = canvas;
+		}
+
 		return Promise.resolve ();
 	}
 
 	didMount () {
 		const { mode, canvas, object, classes } = this.props;
 
-		this.canvas = this.querySelector ('canvas');
+		if ( Array.isArray (object.layers)) {
+			if (object.layers.length > 0) {
+				for (const layer of object.layers) {
+					this.layers[layer] = this.querySelector (`canvas[data-layer="${layer}"]`);
+				}
+			}
+		} else {
+			this.layers.base = this.querySelector ('canvas[data-layer="base"]');
+		}
 
-		return Util.callAsync (object.start, this.engine, this.canvas, this.element ());
+		return Util.callAsync (object.start, this.engine, this.layers, object.state, this);
 	}
 
 	render () {
-		const { mode, canvas, object, classes } = this.props;
+		const { object } = this.props;
+
+		let layers = '';
+
+		if ( Array.isArray (object.layers)) {
+			if (object.layers.length > 0) {
+				layers = object.layers.map (l => `<canvas data-layer="${l}"></canvas>`).join ('');
+			}
+		} else {
+			layers = '<canvas data-layer="base"></canvas>';
+		}
 
 		return `
-			<div data-content="wrapper">
-				<canvas data-canvas="${canvas}" data-mode="${mode}" ${ mode === 'character' ? `data-character="${canvas}"`: '' } data-content="canvas"></canvas>
-			</div>
+			<div data-content="wrapper">${layers}</div>
 		`;
 	}
 }

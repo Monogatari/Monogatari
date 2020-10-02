@@ -61,9 +61,9 @@ export class Canvas extends Action {
 	static bind () {
 		window.addEventListener ('resize', () => {
 			this.engine.element ().find ('[data-component="canvas-container"][mode="background"], [data-component="canvas-container"][mode="immersive"]').each ((canvasContainer) => {
-				const { canvas: name, mode, selector, object } = canvasContainer.props;
+				const { object } = canvasContainer.props;
 				if (typeof object.resize === 'function') {
-					Util.callAsync (object.resize, this.engine, canvasContainer.canvas, canvasContainer);
+					Util.callAsync (object.resize, this.engine, canvasContainer.layers, object.state, canvasContainer);
 				}
 			});
 		});
@@ -76,9 +76,9 @@ export class Canvas extends Action {
 		// Go through each canvas element being shown so it can be properly
 		// stopped and then removed.
 		this.engine.element ().find ('[data-component="canvas-container"]').each ((canvasContainer) => {
-			const { canvas: name, mode, selector, object } = canvasContainer.props;
+			const { object } = canvasContainer.props;
 
-			promises.push (Util.callAsync (object.stop, this.engine, canvasContainer.canvas, canvasContainer).then (() => {
+			promises.push (Util.callAsync (object.stop, this.engine, canvasContainer.layers, object.state, canvasContainer).then (() => {
 				canvasContainer.content ('canvas').remove ();
 			}));
 		});
@@ -123,7 +123,7 @@ export class Canvas extends Action {
 
 		this.mode = mode;
 		this.name = name;
-		this.selector = `[data-canvas="${this.name}"][data-mode="${this.mode}"]`;
+
 		if (typeof classes !== 'undefined') {
 			this.classes = ['animated', ...classes.filter((c) => c !== 'with')];
 		} else {
@@ -136,8 +136,7 @@ export class Canvas extends Action {
 		if (typeof this.object !== 'undefined') {
 			this.element = document.createElement ('canvas-container');
 
-			this.canvasSelector = `canvas[data-canvas="${this.name}"][data-mode="${this.mode}"]`;
-			this.conatinerSelector = `[data-component="canvas-container"][canvas="${this.name}"][mode="${this.mode}"]`;
+			this.containerSelector = `[data-component="canvas-container"][canvas="${this.name}"][mode="${this.mode}"]`;
 
 			return Promise.resolve ();
 		}
@@ -150,8 +149,7 @@ export class Canvas extends Action {
 			mode: this.mode,
 			canvas: this.name,
 			object: this.object,
-			classes: this.classes,
-			selector: this.selector,
+			classes: this.classes
 		});
 
 		const gameScreen = this.engine.element ().find ('[data-screen="game"]');
@@ -193,7 +191,7 @@ export class Canvas extends Action {
 	}
 
 	revert () {
-		return Util.callAsync (this.object.stop, this.engine, this.element.canvas, this.element).then (() => {
+		return Util.callAsync (this.element.object.stop, this.engine, this.element.layers, this.element.object.state, this.element).then (() => {
 			this.element.container ('canvas').remove ();
 		});
 	}
