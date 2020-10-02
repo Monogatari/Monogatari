@@ -1,5 +1,6 @@
 import { Action } from '../lib/Action';
 import { Util } from '@aegis-framework/artemis';
+import { FancyError } from './../lib/FancyError';
 
 export class Canvas extends Action {
 
@@ -132,16 +133,70 @@ export class Canvas extends Action {
 	}
 
 	willApply () {
-		this.object = Canvas.objects (this.name);
-		if (typeof this.object !== 'undefined') {
-			this.element = document.createElement ('canvas-container');
-
-			this.containerSelector = `[data-component="canvas-container"][canvas="${this.name}"][mode="${this.mode}"]`;
-
-			return Promise.resolve ();
+		if (this.constructor._configuration.modes.indexOf (this.mode) === -1) {
+			FancyError.show (
+				`The canvas mode provided ("${this.mode}") is not valid.`,
+				`Monogatari attempted to show a canvas object but the mode "${this.mode}" was not found in the canvas action configuration as a valid mode.`,
+				{
+					'Mode Provided': this.mode,
+					'You may have meant one of these': this.constructor._configuration.modes,
+					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
+					'Label': this.engine.state ('label'),
+					'Step': this.engine.state ('step'),
+					'Help': {
+						'_': 'Check your statement and make sure there are no typos on the mode you provided.'
+					}
+				}
+			);
+			return Promise.reject ('Invalid canvas mode provided.');
 		}
 
-		return Promise.reject ();
+		this.object = Canvas.objects (this.name);
+
+		if (typeof this.object !== 'object') {
+			FancyError.show (
+				`The canvas object "${this.name}" was not found or is invalid`,
+				`Monogatari attempted to retrieve an object named "${this.name}" but it didn't exist in the canvas objects.`,
+				{
+					'Canvas': this.name,
+					'You may have meant': Object.keys (Canvas.objects ()),
+					'Label': this.engine.state ('label'),
+					'Step': this.engine.state ('step'),
+					'Help': {
+						'_': 'Check the object\'s name is correct and that you have defined it previously. A canvas object is defined as follows:',
+						'_1':`
+							<pre>
+								<code class='language-javascript'>
+									this.engine.action ('Canvas').objects ({
+										stars: {
+											start: () => {},
+											stop: () => {},
+											restart: () => {},
+											layers: [],
+											state: {},
+											props: {}
+										}
+									});
+								</code>
+							</pre>
+						`,
+						'_2': 'Notice the object defined uses a name or an id, in this case it was set to "stars" and to show it, you must use that exact name:',
+						'_3':`
+							<pre><code class='language-javascript'>"show canvas stars background"</code></pre>
+						`
+					}
+				}
+			);
+
+			return Promise.reject ('Canvas object did not exist or is invalid');
+		}
+
+		this.element = document.createElement ('canvas-container');
+
+		this.containerSelector = `[data-component="canvas-container"][canvas="${this.name}"][mode="${this.mode}"]`;
+
+		return Promise.resolve ();
+
 	}
 
 	apply () {
@@ -236,7 +291,8 @@ Canvas.id = 'Canvas';
 Canvas._configuration = {
 	objects: {
 
-	}
+	},
+	modes: ['modal', 'displayable', 'immersive', 'background', 'character']
 };
 
 export default Canvas;

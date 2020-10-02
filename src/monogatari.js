@@ -1070,7 +1070,7 @@ class Monogatari {
 								'Help': {
 									'_': 'Please check your storage object and make sure the variable you are using exists.',
 									'_1': 'You should also make sure that there is no typo in your script and that the variable names in your script and storage match.',
-									'Documentation': '<a href="https://developers.monogatari.io/documentation/script/storage" target="_blank">Storage</a>'
+									'Documentation': '<a href="https://developers.monogatari.io/documentation/v/develop/building-blocks/data-storage/" target="_blank">Storage</a>'
 								}
 							}
 						);

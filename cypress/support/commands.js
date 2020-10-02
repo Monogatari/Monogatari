@@ -473,6 +473,9 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 			nvl
 		}
 	});
+
+	// We'll add for a while to ensure all assets have been loaded
+	// cy.wait (5000);
 });
 
 Cypress.Commands.add ('save', function (slot) {

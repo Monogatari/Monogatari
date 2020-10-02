@@ -66,7 +66,7 @@ export class Notify extends Action {
 							'_1':`
 								<pre>
 									<code class='language-javascript'>
-										this.engine.action ('notify').notifications ({
+										this.engine.action ('Notification').notifications ({
 											'Welcome': {
 												title: 'Welcome!',
 												body: 'This is the Monogatari VN Engine',

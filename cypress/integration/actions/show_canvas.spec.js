@@ -128,6 +128,32 @@ context ('Show Canvas', function () {
 
 	});
 
+	it ('Displays an error when an invalid mode was provided.', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show canvas stars whatever with fadeIn',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('.fancy-error').should ('be.visible');
+	});
+
+	it ('Displays an error when the object provided does not exist.', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show canvas whatever background with fadeIn',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('.fancy-error').should ('be.visible');
+	});
+
 	it ('Handles consecutive statements correctly', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
