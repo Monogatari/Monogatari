@@ -302,9 +302,37 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 	});
 
 	this.monogatari.action ('Canvas').objects ({
+		square: {
+			start: ({ base }) => {
+				base.width = 150;
+				base.height = 150;
+				const ctx = base.getContext('2d');
+
+				ctx.fillStyle = 'green';
+				ctx.fillRect(10, 10, 150, 150);
+				return Promise.resolve ();
+
+			}
+		},
+		circle: {
+			start: function ({ base }) {
+				base.width = 150;
+				base.height = 150;
+				const ctx = base.getContext('2d');
+
+				ctx.fillStyle = 'green';
+				ctx.arc(75, 75, 50, 0, 2 * Math.PI);
+
+				setTimeout (() => {
+					this.run ('hide canvas circle');
+				}, 5000);
+
+				return Promise.resolve ();
+			}
+		},
 		stars: {
 			layers: ['sky', 'stars'],
-			state: {
+			props: {
 				drawStar: (ctx, r) => {
 					ctx.save();
 					ctx.beginPath();
@@ -355,7 +383,10 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 					}
 				}
 			},
-			start: function ({ sky, stars }, state, container) {
+			state: {
+
+			},
+			start: function ({ sky, stars }, props, state, container) {
 				let width = 150;
 				let height = 150;
 
@@ -370,15 +401,17 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 				stars.width = width;
 				stars.height = height;
 
-				state.drawSky (sky);
-				state.drawStars (stars, state.drawStar);
+				props.drawSky (sky);
+				props.drawStars (stars, props.drawStar);
 
 				return Promise.resolve ();
 			},
-			stop: () => {
-
+			stop: ({ sky, stars }, props, state, container) => {
+				state.run = true;
+				sky.getContext('2d').clearRect (0, 0, sky.width, sky.height);
+				stars.getContext('2d').clearRect (0, 0, stars.width, stars.height);
 			},
-			resize: function ({ sky, stars }, state, container) {
+			resize: function ({ sky, stars }, props, state, container) {
 				if (container.props.mode === 'background') {
 					const width = this.width ();
 					const height = this.height ();
@@ -392,8 +425,8 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 					stars.width = width;
 					stars.height = height;
 
-					state.drawSky (sky);
-					state.drawStars (stars, state.drawStar);
+					props.drawSky (sky);
+					props.drawStars (stars, props.drawStar);
 				}
 			}
 		}

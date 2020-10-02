@@ -79,7 +79,7 @@ export class Canvas extends Action {
 			const { object } = canvasContainer.props;
 
 			promises.push (Util.callAsync (object.stop, this.engine, canvasContainer.layers, object.props, object.state, canvasContainer).then (() => {
-				canvasContainer.content ('canvas').remove ();
+				canvasContainer.remove ();
 			}));
 		});
 
@@ -205,7 +205,7 @@ export class Canvas extends Action {
 
 	revert () {
 		return Util.callAsync (this.element.props.object.stop, this.engine, this.element.layers, this.element.props.object.props, this.element.props.object.state, this.element).then (() => {
-			this.engine.element ().find (`[data-component="canvas-container"][canvas="${this.name}"]`).remove ();
+			this.engine.element ().find (this.containerSelector).remove ();
 		});
 	}
 
