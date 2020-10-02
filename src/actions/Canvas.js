@@ -172,9 +172,7 @@ export class Canvas extends Action {
 			gameScreen.find ('[data-ui="background"]').append (this.element);
 		} else if (this.mode === 'immersive') {
 			gameScreen.append (this.element);
-		} else if (this.mode === 'displayable') {
-			gameScreen.get (0).content ('visuals').append (this.element);
-		} else if (this.mode === 'character') {
+		} else if (this.mode === 'displayable' || this.mode === 'modal' || this.mode === 'character') {
 			gameScreen.get (0).content ('visuals').append (this.element);
 		}
 
@@ -198,6 +196,7 @@ export class Canvas extends Action {
 	}
 
 	willRevert () {
+		this.containerSelector = `[data-component="canvas-container"][canvas="${this.name}"][mode="${this.mode}"]`;
 		this.element = document.querySelector (this.containerSelector);
 		this.object = this.element.props.object;
 
@@ -205,8 +204,8 @@ export class Canvas extends Action {
 	}
 
 	revert () {
-		return Util.callAsync (this.element.object.stop, this.engine, this.element.layers, this.element.object.props, this.element.object.state, this.element).then (() => {
-			this.element.container ('canvas').remove ();
+		return Util.callAsync (this.element.props.object.stop, this.engine, this.element.layers, this.element.props.object.props, this.element.props.object.state, this.element).then (() => {
+			this.engine.element ().find (`[data-component="canvas-container"][canvas="${this.name}"]`).remove ();
 		});
 	}
 
