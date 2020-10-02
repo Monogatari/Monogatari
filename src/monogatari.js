@@ -1254,7 +1254,8 @@ class Monogatari {
 				this.revert.call (Monogatari). then (() => {
 					this.global ('_engine_block', false);
 					resolve ();
-				}).catch (() => {
+				}).catch ((e) => {
+					this.debug.log ('Revert was prevented.\n', e);
 					this.global ('_engine_block', false);
 					// The game could not be reverted, either because an
 					// action prevented it or because there are no statements
