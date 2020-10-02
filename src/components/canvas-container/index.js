@@ -15,7 +15,8 @@ class CanvasContainer extends Component {
 				stop: () => {},
 				restart: () => {},
 				layers: [],
-				state: {}
+				state: {},
+				props: {}
 			},
 			classes: []
 		};
@@ -56,7 +57,7 @@ class CanvasContainer extends Component {
 			this.layers.base = this.querySelector ('canvas[data-layer="base"]');
 		}
 
-		return Util.callAsync (object.start, this.engine, this.layers, object.state, this);
+		return Util.callAsync (object.start, this.engine, this.layers, object.props, object.state, this);
 	}
 
 	render () {

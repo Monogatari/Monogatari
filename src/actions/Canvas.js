@@ -63,7 +63,7 @@ export class Canvas extends Action {
 			this.engine.element ().find ('[data-component="canvas-container"][mode="background"], [data-component="canvas-container"][mode="immersive"]').each ((canvasContainer) => {
 				const { object } = canvasContainer.props;
 				if (typeof object.resize === 'function') {
-					Util.callAsync (object.resize, this.engine, canvasContainer.layers, object.state, canvasContainer);
+					Util.callAsync (object.resize, this.engine, canvasContainer.layers, object.props, object.state, canvasContainer);
 				}
 			});
 		});
@@ -78,7 +78,7 @@ export class Canvas extends Action {
 		this.engine.element ().find ('[data-component="canvas-container"]').each ((canvasContainer) => {
 			const { object } = canvasContainer.props;
 
-			promises.push (Util.callAsync (object.stop, this.engine, canvasContainer.layers, object.state, canvasContainer).then (() => {
+			promises.push (Util.callAsync (object.stop, this.engine, canvasContainer.layers, object.props, object.state, canvasContainer).then (() => {
 				canvasContainer.content ('canvas').remove ();
 			}));
 		});
@@ -145,10 +145,24 @@ export class Canvas extends Action {
 	}
 
 	apply () {
+		const defaultFunction = () => Promise.resolve ();
+
 		this.element.setProps ({
 			mode: this.mode,
 			canvas: this.name,
-			object: this.object,
+			// We need to pass the object this way so we can clone the state
+			// property instead of pasing it by reference. Otherwise, any changes
+			// made to it during execution would be kept there and the next time we
+			// use the same object, we'll receive the modified state object instead
+			// of a clean one.
+			object: {
+				layers: this.object.layers || ['base'],
+				props: this.object.props || {},
+				state: { ...(this.object.state || {}) },
+				start: this.object.start || defaultFunction,
+				stop: this.object.stop || defaultFunction,
+				resize: this.object.resize || defaultFunction,
+			},
 			classes: this.classes
 		});
 
@@ -159,9 +173,9 @@ export class Canvas extends Action {
 		} else if (this.mode === 'immersive') {
 			gameScreen.append (this.element);
 		} else if (this.mode === 'displayable') {
-			gameScreen.content ('visuals').append (this.element);
+			gameScreen.get (0).content ('visuals').append (this.element);
 		} else if (this.mode === 'character') {
-			gameScreen.content ('visuals').append (this.element);
+			gameScreen.get (0).content ('visuals').append (this.element);
 		}
 
 		return Promise.resolve ();
@@ -191,7 +205,7 @@ export class Canvas extends Action {
 	}
 
 	revert () {
-		return Util.callAsync (this.element.object.stop, this.engine, this.element.layers, this.element.object.state, this.element).then (() => {
+		return Util.callAsync (this.element.object.stop, this.engine, this.element.layers, this.element.object.props, this.element.object.state, this.element).then (() => {
 			this.element.container ('canvas').remove ();
 		});
 	}
