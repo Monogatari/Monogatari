@@ -110,7 +110,10 @@ text-box {
 		grid-row-start: 1;
 		place-self: center;
 		display: flex;
+		justify-content: center;
+		align-items: center;
 		max-height: 100%;
+		height: 100%;
 		overflow-y: hidden;
 		z-index: 2;
 	}

@@ -93,7 +93,7 @@ class LanguageSelectionScreen extends ScreenComponent {
 							'Language Not Found': language,
 							'You may have meant one of these': Object.keys (this.engine._script),
 							'Help': {
-								'_': 'Please check that youi have defined the metadata for this language. Remember the metadata is defined as follows:',
+								'_': 'Please check that you have defined the metadata for this language. Remember the metadata is defined as follows:',
 								'_1': `
 									<pre>
 										<code class='language-javascript'>

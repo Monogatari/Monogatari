@@ -23,12 +23,15 @@ language-selection-screen {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+		align-items: center;
 		height: auto;
+		width: auto;
 		padding: 1rem;
 
 		& [data-content="icon"] {
-			font-size: 6rem;
+			font-size: 3rem;
 			line-height: 1;
+			margin: 1rem 0;
 		}
 
 		& [data-content="language"] {
@@ -41,6 +44,17 @@ language-selection-screen {
 
 			& [data-content="language"] {
 				text-decoration: underline;
+			}
+		}
+	}
+}
+
+@media screen and (min-height: 21.87em) {
+	language-selection-screen {
+
+		& button {
+			& [data-content="icon"] {
+				font-size: 6rem;
 			}
 		}
 	}
