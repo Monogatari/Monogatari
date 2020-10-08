@@ -17,7 +17,7 @@ class GameScreen extends ScreenComponent {
 			self.engine.proceed ({ userInitiated: true, skip: false, autoPlay: false }).then (() => {
 				// Nothing to do here
 			}).catch ((e) => {
-				this.engine.debug.log (`Proceed Prevented\nReason: ${e}`);
+				self.engine.debug.log (`Proceed Prevented\nReason: ${e}`);
 				// An action waiting for user interaction or something else
 				// is blocking the game.
 			});
