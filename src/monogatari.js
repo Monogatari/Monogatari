@@ -2659,7 +2659,8 @@ class Monogatari {
 					if (this.element ().find ('[data-screen="game"]').isVisible () && this.global ('playing') === true) {
 						this.proceed ({ userInitiated: false, skip: true, autoPlay: false }).then (() => {
 							// Nothing to do here
-						}).catch (() => {
+						}).catch ((e) => {
+							this.debug.log (`Proceed Prevented\nReason: ${e}`);
 							// An action waiting for user interaction or something else
 							// is blocking the game.
 						});
@@ -2788,7 +2789,8 @@ class Monogatari {
 		this.keyboardShortcut (['right', 'space'], () => {
 			this.proceed ({ userInitiated: true, skip: false, autoPlay: false }).then (() => {
 				// Nothing to do here
-			}).catch (() => {
+			}).catch ((e) => {
+				this.debug.log (`Proceed Prevented\nReason: ${e}`);
 				// An action waiting for user interaction or something else
 				// is blocking the game.
 			});
@@ -2898,7 +2900,7 @@ class Monogatari {
 						'_1': `
 							<pre>
 								<code class='language-javascript'>
-								$_ready (() => {
+								monogatari.ready ('#monogatari', () => {
 									// Your code should go here
 								});
 								</code>
