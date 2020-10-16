@@ -93,7 +93,7 @@ export class ShowCharacter extends Action {
 		let oneSpriteOnly = true;
 
 		const imgSrc = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`;
-		const sprite = this.engine.element ().find (`[data-character="${this.asset}"]`);
+		const sprite = this.engine.element ().find (`[data-character="${this.asset}"]:not([data-visibility="invisible"])`);
 
 		if (sprite.isVisible ()) {
 			const oldClasses = [...sprite.get(0).classList];
@@ -108,6 +108,7 @@ export class ShowCharacter extends Action {
 				const watchAnimation = oldClasses[oldClasses.indexOf(endAnimation) - 1];
 				sprite.removeClass (watchAnimation);
 				sprite.addClass (animation);
+				sprite.data ('visibility', 'invisible');
 				sprite.on ('animationend', (e) => {
 					e.target.remove ();
 				});
