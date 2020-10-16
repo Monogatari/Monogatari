@@ -25,7 +25,6 @@ export class HideCanvas extends Action {
 
 	apply () {
 		const { object } = this.element.props;
-		console.log (object, this.element);
 
 		return Util.callAsync (object.stop, this.engine, this.element.layers, object.props, object.state, this.element).then (() => {
 			if (this.classes.length > 0) {

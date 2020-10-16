@@ -507,7 +507,7 @@ class Monogatari {
 
 				if (typeof character.Name === 'string') {
 					character.name = character.Name;
-					delete character.Nme;
+					delete character.Name;
 				}
 
 				if (typeof character.Face === 'string') {
