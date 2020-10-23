@@ -1,10 +1,25 @@
 /* global require */
-const { ipcRenderer } = require ('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 
-window.ipcRendererSend = function (...args) {
-	return ipcRenderer.send (...args);
-};
+const allow = [
+	'window-info-request',
+	'window-info-reply',
+	'resize-request',
+	'resize-reply',
+	'quit-request'
+];
 
-window.ipcRendererReceive = function (...args) {
-	return ipcRenderer.on (...args);
-};
+contextBridge.exposeInMainWorld ('electron', {
+	send: (channel, data) => {
+		if (allow.includes(channel)) {
+			ipcRenderer.send(channel, data);
+		}
+	},
+	on: (channel, callback) => {
+		if (allow.includes(channel)) {
+			ipcRenderer.on(channel, (event, args) => {
+				callback.call (null, args);
+			});
+		}
+	},
+});

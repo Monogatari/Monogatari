@@ -35,12 +35,12 @@ class SettingsScreen extends ScreenComponent {
 			return false;
 		};
 
-		window.ipcRendererSend ('window-info-request', {
+		window.electron.send ('window-info-request', {
 			title: this.engine.setting ('Name'),
 			resizable: this.engine.setting ('ForceAspectRatio') !== 'Global'
 		});
 
-		window.ipcRendererReceive ('window-info-reply', (event, args) => {
+		window.electron.on ('window-info-reply', (args) => {
 			const { resizable, minWidth, maxWidth, minHeight, maxHeight } = args;
 
 			if (!resizable) {
@@ -72,7 +72,7 @@ class SettingsScreen extends ScreenComponent {
 			}
 		});
 
-		window.ipcRendererReceive ('resize-reply', (event, args) => {
+		window.electron.on ('resize-reply', (args) => {
 			const { width, height, fullscreen } = args;
 
 			if (fullscreen) {
@@ -86,12 +86,12 @@ class SettingsScreen extends ScreenComponent {
 	changeWindowResolution (resolution) {
 		if (resolution) {
 			if (resolution == 'fullscreen') {
-				window.ipcRendererSend ('resize-request', {
+				window.electron.send ('resize-request', {
 					fullscreen: true
 				});
 			} else if (resolution.indexOf ('x') > -1) {
 				const [ width, height ] = resolution.split ('x');
-				window.ipcRendererSend ('resize-request', {
+				window.electron.send ('resize-request', {
 					width: parseInt (width),
 					height: parseInt (height),
 					fullscreen: false
@@ -126,8 +126,10 @@ class SettingsScreen extends ScreenComponent {
 			}
 
 			// Set the electron quit handler.
-			if (Platform.electron () && (typeof window.ipcRendererReceive === 'function' && typeof window.ipcRendererSend === 'function')) {
-				this.electron ();
+			if (Platform.electron () && typeof window.electron === 'object') {
+				if (typeof window.electron.send === 'function' && typeof window.electron.on === 'function') {
+					this.electron ();
+				}
 			} else {
 				this.element ().find ('[data-platform="electron"]').remove ();
 			}

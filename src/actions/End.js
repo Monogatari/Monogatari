@@ -32,8 +32,10 @@ export class End extends Action {
 				if (this.engine.global ('playing') === true) {
 					this.engine.run ('end');
 				} else {
-					if (typeof window.ipcRendererReceive === 'function' && typeof window.ipcRendererSend === 'function') {
-						window.ipcRendererSend ('quit-request');
+					if (typeof window.electron === 'object') {
+						if (typeof window.electron.send === 'function') {
+							window.electron.send ('quit-request');
+						}
 					}
 				}
 			}

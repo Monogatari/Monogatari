@@ -54,7 +54,7 @@ function createWindow () {
 		webPreferences: {
 			nodeIntegration: false,
 			nodeIntegrationInWorker: false,
-			// contextIsolation: true,
+			contextIsolation: true,
 			enableRemoteModule: false,
 			preload: path.join (appRoot, '/engine/electron/preload.js'),
 		}
