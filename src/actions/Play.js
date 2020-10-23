@@ -167,7 +167,9 @@ export class Play extends Action {
 	static fadeIn (fadeTime, player) {
 		const time = parseFloat (fadeTime.match (/\d*(\.\d*)?/));
 		const increments = time / 0.1;
-		const maxVolume = player.volume * 100;
+
+		const targetVolume = player.volume;
+		const maxVolume = targetVolume * 100;
 
 		const volume = (maxVolume / increments) / maxVolume;
 
@@ -183,7 +185,7 @@ export class Play extends Action {
 		if (Math.sign (volume) === 1) {
 			return new Promise ((resolve, reject) => {
 				setTimeout (() => {
-					Play.fade (player, volume, interval, expected, resolve);
+					Play.fade (player, volume, targetVolume, interval, expected, resolve);
 				}, interval);
 			});
 		} else {
@@ -204,7 +206,7 @@ export class Play extends Action {
 	 *
 	 * @return {void}
 	 */
-	static fade (player, volume, interval, expected, resolve) {
+	static fade (player, volume, targetVolume, interval, expected, resolve) {
 		const now = Date.now () - expected; // the drift (positive for overshooting)
 
 		if (now > interval) {
@@ -213,15 +215,15 @@ export class Play extends Action {
 		}
 
 		if (player.volume !== 1 && player.dataset.fade === 'in') {
-			if (player.volume + volume > 1) {
-				player.volume = 1;
+			if (player.volume + volume > targetVolume) {
+				player.volume = targetVolume;
 				delete player.dataset.fade;
 				resolve ();
 			} else {
 				player.volume += volume;
 				expected += interval;
 				setTimeout (() => {
-					Play.fade (player, volume, interval, expected, resolve);
+					Play.fade (player, volume, targetVolume, interval, expected, resolve);
 				}, Math.max (0, interval - now)); // take into account drift
 			}
 		}
