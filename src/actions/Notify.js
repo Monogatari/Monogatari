@@ -22,6 +22,8 @@ export class Notify extends Action {
 	constructor ([ show, type, name, time ]) {
 		super ();
 
+		this.hasPermission = false;
+
 		// First check if HTML5 notifications are available
 		if ('Notification' in window) {
 
@@ -94,11 +96,13 @@ export class Notify extends Action {
 			return new Promise ((resolve, reject) => {
 				// Let's check whether notification permissions have already been granted
 				if (Notification.permission === 'granted') {
+					this.hasPermission = true;
 					resolve ();
 				} else if (Notification.permission !== 'denied') {
 					Notification.requestPermission((permission) => {
 						// If the user accepts, let's create a notification
 						if (permission === 'granted') {
+							this.hasPermission = true;
 							resolve ();
 						} else {
 							console.warn ('User denied notifications permission, none will be shown.');
@@ -106,7 +110,8 @@ export class Notify extends Action {
 						}
 					});
 				} else {
-					reject ('The permission to display notifications was denied by the user.');
+					console.warn ('The permission to display notifications was denied by the user.');
+					resolve ();
 				}
 			});
 		}
@@ -121,12 +126,14 @@ export class Notify extends Action {
 			}
 		}
 
-		const notification = new Notification (this.notification.title, this.notification);
+		if (this.hasPermission) {
+			const notification = new Notification (this.notification.title, this.notification);
 
-		if (typeof this.time !== 'undefined') {
-			setTimeout(() => {
-				notification.close ();
-			}, this.time);
+			if (typeof this.time !== 'undefined') {
+				setTimeout(() => {
+					notification.close ();
+				}, this.time);
+			}
 		}
 		return Promise.resolve ();
 	}
