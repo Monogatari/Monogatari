@@ -30,6 +30,11 @@ text-input {
 		min-width: 50%;
 	}
 
+	textarea {
+		resize: both;
+		width: 100%;
+	}
+
 	.input-pair {
 		display: flex;
 		justify-content: center;

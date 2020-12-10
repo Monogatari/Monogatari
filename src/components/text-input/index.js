@@ -106,7 +106,7 @@ class TextInput extends Component {
 		// mount instead of in-creation because this way, the cursor will be placed
 		// at the end of the default value. If we did it in-creation, it would
 		// be placed at the start.
-		const text = ['text', 'password', 'email', 'url', 'number', 'color'];
+		const text = ['text', 'textarea', 'password', 'email', 'url', 'number', 'color'];
 		const { type, default: defaultValue, options } = this.props;
 
 		if (text.indexOf (type) > -1) {
@@ -140,6 +140,8 @@ class TextInput extends Component {
 
 		if (text.indexOf (type) > -1) {
 			input = `<input data-content="field" name="field" type="${type}" tabindex="0" ${attr}>`;
+		} else if (type === 'textarea') {
+			input = `<textarea data-content="field" name="field" type="${type}" tabindex="0" ${attr}></textarea>`;
 		} else if (type === 'select') {
 			const optionElements = options.map ((o) => {
 				let selected = '';
