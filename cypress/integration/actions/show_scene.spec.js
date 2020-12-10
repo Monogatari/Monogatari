@@ -30,8 +30,8 @@ context ('Show Scene', function () {
 
 		cy.proceed();
 
-		cy.get ('[data-character="y"][data-sprite="normal"]').should ('not.be.visible');
-		cy.get ('[data-character="m"][data-sprite="normal"]').should ('not.be.visible');
+		cy.get ('[data-character="y"][data-sprite="normal"]').should ('not.exist');
+		cy.get ('[data-character="m"][data-sprite="normal"]').should ('not.exist');
 		cy.get ('[data-character="m"][data-sprite="angry"]').should ('be.visible');
 		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right', 'show character m angry at right']);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character m angry at right']);
@@ -40,16 +40,16 @@ context ('Show Scene', function () {
 		cy.proceed();
 
 		cy.get ('[data-character="y"][data-sprite="angry"]').should ('be.visible');
-		cy.get ('[data-character="m"][data-sprite="angry"]').should ('not.be.visible');
+		cy.get ('[data-character="m"][data-sprite="angry"]').should ('not.exist');
 		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right', 'show character m angry at right', 'show character y angry at left']);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y angry at left']);
 		cy.get ('text-box').contains ('Three');
 		cy.rollback ();
 
-		cy.get ('[data-character="y"][data-sprite="normal"]').should ('not.be.visible');
-		cy.get ('[data-character="m"][data-sprite="normal"]').should ('not.be.visible');
+		cy.get ('[data-character="y"][data-sprite="normal"]').should ('not.exist');
+		cy.get ('[data-character="m"][data-sprite="normal"]').should ('not.exist');
 		cy.get ('[data-character="m"][data-sprite="angry"]').should ('be.visible');
-		cy.get ('[data-character="y"][data-sprite="angry"]').should ('not.be.visible');
+		cy.get ('[data-character="y"][data-sprite="angry"]').should ('not.exist');
 		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right', 'show character m angry at right']);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character m angry at right']);
 		cy.get ('text-box').contains ('Two');
@@ -57,8 +57,8 @@ context ('Show Scene', function () {
 
 		cy.get ('[data-character="y"][data-sprite="normal"]').should ('be.visible');
 		cy.get ('[data-character="m"][data-sprite="normal"]').should ('be.visible');
-		cy.get ('[data-character="m"][data-sprite="angry"]').should ('not.be.visible');
-		cy.get ('[data-character="y"][data-sprite="angry"]').should ('not.be.visible');
+		cy.get ('[data-character="m"][data-sprite="angry"]').should ('not.exist');
+		cy.get ('[data-character="y"][data-sprite="angry"]').should ('not.exist');
 		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
 		cy.get ('text-box').contains ('One');

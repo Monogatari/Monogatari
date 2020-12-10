@@ -309,7 +309,7 @@ context ('Choices', function () {
 		cy.wait (150);
 		cy.wrap (this.monogatari).invoke ('global', '_choice_pending_rollback').should ('be.empty');
 		cy.wrap (this.monogatari).invoke ('global', '_choice_just_rolled_back').should ('have.length', 0);
-		cy.get ('timer-display').should ('not.be.visible');
+		cy.get ('timer-display').should ('not.exist');
 		cy.wrap (this.monogatari).invoke ('global', '_ChoiceTimer').should ('have.length', 0);
 		cy.get ('text-box').contains ('One');
 		cy.proceed ();
@@ -334,7 +334,7 @@ context ('Choices', function () {
 		cy.wait (150);
 		cy.wrap (this.monogatari).invoke ('global', '_choice_pending_rollback').should ('be.empty');
 		cy.wrap (this.monogatari).invoke ('global', '_choice_just_rolled_back').should ('have.length', 0);
-		cy.get ('timer-display').should ('not.be.visible');
+		cy.get ('timer-display').should ('not.exist');
 		cy.wrap (this.monogatari).invoke ('global', '_ChoiceTimer').should ('have.length', 0);
 		cy.get ('text-box').contains ('One');
 		cy.proceed ();

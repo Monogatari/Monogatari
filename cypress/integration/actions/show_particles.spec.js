@@ -37,7 +37,7 @@ context ('Show Particles', function () {
 		cy.start ();
 		cy.wrap (this.monogatari).invoke ('history', 'particle').should ('be.empty');
 		cy.wrap (this.monogatari).invoke ('state', 'particles').should ('equal', '');
-		cy.get ('.tsparticles-canvas-el').should ('not.be.visible');
+		cy.get ('.tsparticles-canvas-el').should ('not.exist');
 		cy.get ('text-box').contains ('Zero');
 		cy.proceed ();
 		cy.wrap (this.monogatari).invoke ('history', 'particle').should ('deep.equal', ['show particles snow']);
@@ -49,7 +49,7 @@ context ('Show Particles', function () {
 
 		cy.wrap (this.monogatari).invoke ('history', 'particle').should ('deep.equal', ['show particles snow']);
 		cy.wrap (this.monogatari).invoke ('state', 'particles').should ('equal', '');
-		cy.get ('.tsparticles-canvas-el').should ('not.be.visible');
+		cy.get ('.tsparticles-canvas-el').should ('not.exist');
 		cy.get ('text-box').contains ('Two');
 
 		cy.rollback ();
@@ -62,7 +62,7 @@ context ('Show Particles', function () {
 		cy.rollback ();
 		cy.wrap (this.monogatari).invoke ('history', 'particle').should ('be.empty');
 		cy.wrap (this.monogatari).invoke ('state', 'particles').should ('equal', '');
-		cy.get ('.tsparticles-canvas-el').should ('not.be.visible');
+		cy.get ('.tsparticles-canvas-el').should ('not.exist');
 		cy.get ('text-box').contains ('Zero');
 	});
 
@@ -80,7 +80,7 @@ context ('Show Particles', function () {
 		cy.start ();
 		cy.wrap (this.monogatari).invoke ('history', 'particle').should ('be.empty');
 		cy.wrap (this.monogatari).invoke ('state', 'particles').should ('equal', '');
-		cy.get ('.tsparticles-canvas-el').should ('not.be.visible');
+		cy.get ('.tsparticles-canvas-el').should ('not.exist');
 		cy.get ('text-box').contains ('One');
 		cy.proceed ();
 		cy.wrap (this.monogatari).invoke ('history', 'particle').should ('deep.equal', ['show particles snow', 'show particles fireflies']);
@@ -92,7 +92,7 @@ context ('Show Particles', function () {
 
 		cy.wrap (this.monogatari).invoke ('history', 'particle').should ('be.empty');
 		cy.wrap (this.monogatari).invoke ('state', 'particles').should ('equal', '');
-		cy.get ('.tsparticles-canvas-el').should ('not.be.visible');
+		cy.get ('.tsparticles-canvas-el').should ('not.exist');
 		cy.get ('text-box').contains ('One');
 
 	});

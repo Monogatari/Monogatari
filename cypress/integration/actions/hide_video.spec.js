@@ -71,8 +71,8 @@ context ('Hide Video', function () {
 		cy.get ('text-box').contains ('Two');
 
 		cy.proceed ();
-		cy.get ('[data-video="kirino"]').should ('not.be.visible');
-		cy.get ('[data-video="dandelion"]').should ('not.be.visible');
+		cy.get ('[data-video="kirino"]').should ('not.exist');
+		cy.get ('[data-video="dandelion"]').should ('not.exist');
 		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('be.empty');
 		cy.wrap (this.monogatari).invoke ('history', 'video').should ('deep.equal', ['show video kirino displayable with fadeIn loop', 'show video dandelion displayable with fadeIn loop']);
 		cy.get ('text-box').contains ('Three');

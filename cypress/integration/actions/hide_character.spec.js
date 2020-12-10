@@ -21,7 +21,7 @@ context ('Hide Character', function () {
 		cy.get ('[data-sprite="happy"]').should('have.class', 'fadeIn');
 
 		cy.proceed ();
-		cy.get ('[data-sprite="happy"]').should ('not.be.visible');
+		cy.get ('[data-sprite="happy"]').should ('not.exist');
 	});
 
 	it ('Shows an error if the character was not being shown.', function () {
@@ -57,7 +57,7 @@ context ('Hide Character', function () {
 		cy.proceed ();
 		cy.get ('[data-sprite="happy"]').should('have.class', 'left');
 		cy.get ('[data-sprite="happy"]').should('have.data', 'position', 'left');
-		cy.get ('[data-sprite="happy"]').should ('not.be.visible');
+		cy.get ('[data-sprite="happy"]').should ('not.exist');
 	});
 
 	it ('Forces a new position if one is provided', function () {
@@ -81,7 +81,7 @@ context ('Hide Character', function () {
 		cy.get ('[data-sprite="happy"]').should('have.class', 'center');
 		cy.get ('[data-sprite="happy"][data-position="center"]').should('exist');
 		cy.get ('[data-sprite="happy"]').should('not.have.class', 'left');
-		cy.get ('[data-sprite="happy"]').should ('not.be.visible');
+		cy.get ('[data-sprite="happy"]').should ('not.exist');
 	});
 
 	it ('Engages the end-animation once the main one is over.', function () {
@@ -100,7 +100,7 @@ context ('Hide Character', function () {
 
 		cy.get ('[data-sprite="normal"]').should ('be.visible');
 		cy.proceed ();
-		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
+		cy.get ('[data-sprite="normal"]').should ('not.exist');
 	});
 
 	it ('Makes the character show up again when rolled back.', function () {
@@ -122,7 +122,7 @@ context ('Hide Character', function () {
 		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at center with fadeIn end-fadeOut']);
 		cy.get ('text-box').contains ('Before');
 		cy.proceed ();
-		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
+		cy.get ('[data-sprite="normal"]').should ('not.exist');
 		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at center with fadeIn end-fadeOut']);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('be.empty');
 		cy.get ('text-box').contains ('After');

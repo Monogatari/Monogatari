@@ -136,7 +136,7 @@ context ('Show Character', function () {
 
 		cy.start ();
 
-		cy.get ('[data-sprite="happy"]').should ('not.be.visible');
+		cy.get ('[data-sprite="happy"]').should ('not.exist');
 	});
 
 	it ('Rollbacks to the right sprite', function () {
@@ -175,13 +175,13 @@ context ('Show Character', function () {
 		cy.get ('[data-sprite="angry"]').should ('be.visible');
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y angry at left with fadeIn']);
 		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character y angry at left with fadeIn']);
-		cy.get ('[data-image="polaroid"]').should ('not.be.visible');
+		cy.get ('[data-image="polaroid"]').should ('not.exist');
 		cy.get ('[data-image="christmas.png"]').should ('be.visible');
 		cy.get ('text-box').contains ('Three');
 		cy.proceed ();
 		cy.get ('text-box').contains ('Four');
 		cy.proceed ();
-		cy.get ('[data-image="christmas.png"]').should ('not.be.visible');
+		cy.get ('[data-image="christmas.png"]').should ('not.exist');
 		cy.get ('text-box').contains ('Five');
 		cy.proceed ();
 		cy.get ('text-box').contains ('Six');
@@ -201,7 +201,7 @@ context ('Show Character', function () {
 		cy.get ('[data-sprite="angry"]').should ('be.visible');
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y angry at left with fadeIn']);
 		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character y angry at left with fadeIn']);
-		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
+		cy.get ('[data-sprite="normal"]').should ('not.exist');
 		cy.get ('text-box').contains ('Six');
 		cy.rollback ();
 		cy.get ('text-box').contains ('Five');
@@ -211,15 +211,15 @@ context ('Show Character', function () {
 		cy.rollback ();
 		cy.get ('text-box').contains ('Three');
 		cy.rollback ();
-		cy.get ('[data-sprite="angry"]').should ('not.be.visible');
+		cy.get ('[data-sprite="angry"]').should ('not.exist');
 		cy.get ('[data-sprite="normal"]').should ('be.visible');
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left']);
 		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left']);
 		cy.get ('[data-image="polaroid"]').should ('be.visible');
-		cy.get ('[data-image="christmas.png"]').should ('not.be.visible');
+		cy.get ('[data-image="christmas.png"]').should ('not.exist');
 		cy.get ('text-box').contains ('Two');
 		cy.rollback ();
-		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
+		cy.get ('[data-sprite="normal"]').should ('not.exist');
 		cy.get ('text-box').contains ('One');
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('be.empty');
 		cy.wrap (this.monogatari).invoke ('history', 'character').should ('be.empty');
@@ -236,7 +236,7 @@ context ('Show Character', function () {
 		});
 
 		cy.start ();
-		cy.get ('[data-sprite="happy"]').should ('not.be.visible');
+		cy.get ('[data-sprite="happy"]').should ('not.exist');
 		cy.get ('[data-sprite="angry"]').should ('be.visible');
 		cy.get ('[data-sprite="angry"]').should('have.class', 'fadeIn');
 	});
@@ -256,7 +256,7 @@ context ('Show Character', function () {
 		cy.start ();
 		cy.get ('[data-sprite="normal"]').should ('be.visible');
 		cy.proceed();
-		cy.get ('[data-sprite="normal"]').should ('not.be.visible');
+		cy.get ('[data-sprite="normal"]').should ('not.exist');
 		cy.get ('[data-sprite="happy"]').should ('be.visible');
 	});
 

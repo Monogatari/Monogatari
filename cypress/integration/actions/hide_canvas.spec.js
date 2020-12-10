@@ -71,8 +71,8 @@ context ('Hide Canvas', function () {
 		cy.get ('text-box').contains ('Two');
 
 		cy.proceed ();
-		cy.get ('[canvas="stars"]').should ('not.be.visible');
-		cy.get ('[canvas="square"]').should ('not.be.visible');
+		cy.get ('[canvas="stars"]').should ('not.exist');
+		cy.get ('[canvas="square"]').should ('not.exist');
 		cy.wrap (this.monogatari).invoke ('state', 'canvas').should ('be.empty');
 		cy.wrap (this.monogatari).invoke ('history', 'canvas').should ('deep.equal', ['show canvas stars displayable with fadeIn', 'show canvas square displayable with fadeIn']);
 		cy.get ('text-box').contains ('Three');

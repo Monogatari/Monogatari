@@ -28,7 +28,7 @@ context ('Hide Particles', function () {
 
 		cy.wrap (this.monogatari).invoke ('history', 'particle').should ('deep.equal', ['show particles snow']);
 		cy.wrap (this.monogatari).invoke ('state', 'particles').should ('equal', '');
-		cy.get ('.tsparticles-canvas-el').should ('not.be.visible');
+		cy.get ('.tsparticles-canvas-el').should ('not.exist');
 		cy.get ('text-box').contains ('Two');
 	});
 
@@ -54,7 +54,7 @@ context ('Hide Particles', function () {
 
 		cy.wrap (this.monogatari).invoke ('history', 'particle').should ('deep.equal', ['show particles snow']);
 		cy.wrap (this.monogatari).invoke ('state', 'particles').should ('equal', '');
-		cy.get ('.tsparticles-canvas-el').should ('not.be.visible');
+		cy.get ('.tsparticles-canvas-el').should ('not.exist');
 		cy.get ('text-box').contains ('Two');
 
 		cy.rollback ();

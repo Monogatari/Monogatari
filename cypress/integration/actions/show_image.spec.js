@@ -41,7 +41,7 @@ context ('Show Image', function () {
 		cy.wrap (this.monogatari).invoke ('history', 'image').should ('deep.equal', ['show image polaroid with fadeIn']);
 		cy.get ('text-box').contains ('Two');
 		cy.rollback ();
-		cy.get ('[data-image="polaroid"]').should ('not.be.visible');
+		cy.get ('[data-image="polaroid"]').should ('not.exist');
 		cy.wrap (this.monogatari).invoke ('state', 'images').should ('be.empty');
 		cy.wrap (this.monogatari).invoke ('history', 'image').should ('be.empty');
 		cy.get ('text-box').contains ('One');
@@ -97,8 +97,8 @@ context ('Show Image', function () {
 		cy.wrap (this.monogatari).invoke ('history', 'image').should ('deep.equal', ['show image polaroid with fadeIn', 'show image christmas with fadeIn']);
 		cy.get ('text-box').contains ('Two');
 		cy.rollback ();
-		cy.get ('[data-image="polaroid"]').should ('not.be.visible');
-		cy.get ('[data-image="christmas"]').should ('not.be.visible');
+		cy.get ('[data-image="polaroid"]').should ('not.exist');
+		cy.get ('[data-image="christmas"]').should ('not.exist');
 		cy.wrap (this.monogatari).invoke ('state', 'images').should ('be.empty');
 		cy.wrap (this.monogatari).invoke ('history', 'image').should ('be.empty');
 		cy.get ('text-box').contains ('One');
