@@ -1,6 +1,6 @@
 {
 	"name": "@monogatari/core",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"main": "./dist/engine/core/monogatari.js",
 	"module": "./dist/engine/core/monogatari.js",
 	"description": "Monogatari is a simple web visual novel engine created to bring Visual Novels to the web.",
@@ -30,23 +30,23 @@
 		"test": "yarn run cypress"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.12.3",
+		"@babel/core": "^7.12.10",
 		"@babel/plugin-proposal-class-properties": "^7.12.1",
 		"@babel/plugin-syntax-object-rest-spread": "^7.8.3",
-		"@babel/preset-env": "^7.12.1",
+		"@babel/preset-env": "^7.12.10",
 		"autoprefixer": "^9.8.6",
 		"babel-eslint": "^10.1.0",
-		"core-js": "^3.6.5",
-		"cypress": "^5.5.0",
+		"core-js": "^3.8.1",
+		"cypress": "^6.1.0",
 		"dotenv": "^8.2.0",
 		"electron-notarize": "^1.0.0",
-		"eslint": "^7.12.1",
-		"htmlhint": "^0.14.1",
+		"eslint": "^7.15.0",
+		"htmlhint": "^0.14.2",
 		"jsdoc": "^3.6.6",
 		"parcel": "^1.12.4",
 		"postcss-calc": "^7.0.5",
 		"precss": "^4.0.0",
-		"stylelint": "^13.7.2",
+		"stylelint": "^13.8.0",
 		"stylelint-config-standard": "^20.0.0"
 	},
 	"dependencies": {
@@ -56,12 +56,12 @@
 		"@fortawesome/fontawesome-free": "^5.15.1",
 		"animate.css": "^4.1.1",
 		"deeply": "^3.1.0",
-		"electron": "^10.1.5",
+		"electron": "^11.0.4",
 		"mixins.css": "^1.0.0",
 		"moment": "^2.29.1",
 		"mousetrap": "^1.6.5",
 		"random-js": "^2.1.0",
-		"tsparticles": "^1.18.7"
+		"tsparticles": "^1.18.11"
 	},
 	"files": [
 		"README.md",
