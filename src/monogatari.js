@@ -1327,6 +1327,7 @@ class Monogatari {
 	 * @returns {void}
 	 */
 	static keyboardShortcut (shortcut, callback) {
+		this.debug.log (`Binding Keyboard Shortcut: ${shortcut}`);
 		mousetrap.bind (shortcut, (event) => {
 			if (event.target.tagName.toLowerCase () != 'input') {
 				event.preventDefault ();
@@ -1412,6 +1413,13 @@ class Monogatari {
 				return;
 			}
 		}
+
+		// If a listener is registered post-bind, we want to register the keyboard
+		// shortcut as well or else it will not happen automatically
+		if (this.global ('_didBind') === true && listener.keys) {
+			this.keyboardShortcut (listener.keys, listener.callback);
+		}
+
 		this._listeners.push (listener);
 	}
 
@@ -1420,6 +1428,7 @@ class Monogatari {
 
 		if (listener) {
 			if (listener.keys) {
+				this.debug.log (`Unbinding Keys: ${listener.keys}`);
 				mousetrap.unbind (listener.keys);
 			}
 			this._listeners = this._listeners.filter((l) => l.name.toLowerCase () !== name.toLowerCase ());
@@ -2851,6 +2860,7 @@ class Monogatari {
 		for (const action of this.actions ()) {
 			promises.push (action.bind (selector));
 		}
+
 		return Promise.all (promises).then (() => {
 			for (const listener of this._listeners) {
 				const { keys, callback } = listener;
