@@ -151,4 +151,87 @@ context ('Stop', function () {
 		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 0);
 	});
 
+	it ('Stops only the desired music', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'Zero',
+				'play music theme loop',
+				'play music subspace loop',
+				'One',
+				'stop music theme',
+				'Two'
+			]
+		});
+
+		cy.start ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'music').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('history', 'music').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 0);
+
+		cy.get ('text-box').contains ('Zero');
+
+		cy.proceed ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'music').should ('deep.equal', [{ statement: 'play music theme loop', paused: false }, { statement: 'play music subspace loop', paused: false }]);
+		cy.wrap (this.monogatari).invoke ('history', 'music').should ('deep.equal', ['play music theme loop', 'play music subspace loop']);
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 2);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.paused').should ('equal', false);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.paused').should ('equal', false);
+
+		cy.get ('text-box').contains ('One');
+
+		cy.proceed ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'music').should ('deep.equal', [{ statement: 'play music subspace loop', paused: false }]);
+		cy.wrap (this.monogatari).invoke ('history', 'music').should ('deep.equal', ['play music theme loop', 'play music subspace loop']);
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 1);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.paused').should ('equal', false);
+
+		cy.get ('text-box').contains ('Two');
+
+	});
+
+	it ('Doesn\'t stop everything if an invalid name is provided', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'Zero',
+				'play music theme loop',
+				'play music subspace loop',
+				'One',
+				'stop music whatever',
+				'Two'
+			]
+		});
+
+		cy.start ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'music').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('history', 'music').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 0);
+
+		cy.get ('text-box').contains ('Zero');
+
+		cy.proceed ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'music').should ('deep.equal', [{ statement: 'play music theme loop', paused: false }, { statement: 'play music subspace loop', paused: false }]);
+		cy.wrap (this.monogatari).invoke ('history', 'music').should ('deep.equal', ['play music theme loop', 'play music subspace loop']);
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 2);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.paused').should ('equal', false);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.paused').should ('equal', false);
+
+		cy.get ('text-box').contains ('One');
+
+		cy.proceed ();
+		cy.wrap (this.monogatari).invoke ('state', 'music').should ('deep.equal', [{ statement: 'play music theme loop', paused: false }, { statement: 'play music subspace loop', paused: false }]);
+		cy.wrap (this.monogatari).invoke ('history', 'music').should ('deep.equal', ['play music theme loop', 'play music subspace loop']);
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 2);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.paused').should ('equal', false);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.paused').should ('equal', false);
+
+		cy.get ('text-box').contains ('Two');
+	});
+
 });

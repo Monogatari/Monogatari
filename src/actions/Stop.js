@@ -125,7 +125,7 @@ export class Stop extends Action {
 					this.engine.removeMediaPlayer (this.type, this.media);
 				});
 			} else {
-				this.engine.removeMediaPlayer (this.type, this.mediaKey);
+				this.engine.removeMediaPlayer (this.type, this.media);
 			}
 		}
 		return Promise.resolve ();
@@ -138,7 +138,7 @@ export class Stop extends Action {
 			state[this.type] = [...this.engine.state (this.type).filter ((item) => {
 				if (typeof item.statement === 'string') {
 					const [play, type, media] = item.statement.split (' ');
-					return type !== this.type && media !== this.media;
+					return !(type === this.type && media === this.media);
 				}
 			})];
 		} else {
