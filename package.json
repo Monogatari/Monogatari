@@ -1,6 +1,6 @@
 {
 	"name": "@monogatari/core",
-	"version": "2.0.1",
+	"version": "2.0.2",
 	"main": "./dist/engine/core/monogatari.js",
 	"module": "./dist/engine/core/monogatari.js",
 	"description": "Monogatari is a simple web visual novel engine created to bring Visual Novels to the web.",
