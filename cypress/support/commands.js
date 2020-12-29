@@ -453,6 +453,48 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 			},
 			nvl
 		},
+		'yd1': {
+			color: 'blue',
+			name: 'Yui',
+			directory: 'yui',
+			sprites: {
+				angry: 'angry.png',
+				happy: 'happy.png',
+				normal: 'normal.png',
+				sad: 'sad.png',
+				surprised: 'surprised.png',
+			},
+			expressions: {
+				angry: 'expressions/angry.png',
+				happy: 'expressions/happy.png',
+				normal: 'expressions/normal.png',
+				sad: 'expressions/sad.png',
+				surprised: 'expressions/surprised.png',
+			},
+			default_expression: 'expressions/sad.png',
+			nvl
+		},
+		'yd2': {
+			color: 'blue',
+			name: 'Yui',
+			directory: 'yui',
+			sprites: {
+				angry: 'angry.png',
+				happy: 'happy.png',
+				normal: 'normal.png',
+				sad: 'sad.png',
+				surprised: 'surprised.png',
+			},
+			expressions: {
+				angry: 'expressions/angry.png',
+				happy: 'expressions/happy.png',
+				normal: 'expressions/normal.png',
+				sad: 'expressions/sad.png',
+				surprised: 'expressions/surprised.png',
+			},
+			default_expression: 'angry',
+			nvl
+		},
 		'm': {
 			name: 'Mio',
 			directory: 'mio',

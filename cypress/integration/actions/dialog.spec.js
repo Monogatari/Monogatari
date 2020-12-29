@@ -18,6 +18,32 @@ context ('Dialog', function () {
 		cy.get ('[data-content="character-expression"]').should ('be.visible');
 	});
 
+	it ('Displays the character\'s default side image correctly when an image path is provided', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'yd1 Hello!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').contains ('Hello!');
+		cy.get ('[data-content="character-expression"]').should ('be.visible');
+	});
+
+	it ('Displays the character\'s default side image correctly when an expression name is provided', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'yd2 Hello!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').contains ('Hello!');
+		cy.get ('[data-content="character-expression"]').should ('be.visible');
+	});
+
 	it ('Changes the character name color correctly', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({

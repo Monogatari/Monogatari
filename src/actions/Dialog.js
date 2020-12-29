@@ -191,7 +191,11 @@ export class Dialog extends Action {
 				}
 
 			} else if (typeof this.character.default_expression !== 'undefined') {
-				this.image = this.character.default_expression;
+				if (typeof this.character.expressions[this.character.default_expression] !== 'undefined') {
+					this.image = this.character.expressions[this.character.default_expression];
+				} else {
+					this.image = this.character.default_expression;
+				}
 				this.expression = 'default';
 			}
 		} else if (id === 'centered') {
