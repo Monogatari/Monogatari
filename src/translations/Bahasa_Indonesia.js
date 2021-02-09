@@ -1,15 +1,13 @@
-/**
- * ============================================================
- * Bahasa_Indonesia
- * ============================================================
- *
- * Translators:
- *
- * mnafisalmukhdi1 <contact.mnam@gmail.com>
- */
-
-
-
+/*
+*
+* ============================================================
+* Bahasa_Indonesia
+* ============================================================
+*
+* Translators:
+*
+* mnafisalmukhdi1 <contact.mnam@gmail.com>
+*/
 export default {
 	'AdvanceHelp': 'Untuk melanjutkan permainan, klik kiri atau ketuk di mana saja pada layar permainan atau tekan tombol spasi',
 	'AllowPlayback': 'Klik di sini untuk menyalakan putar balik audio',
@@ -17,7 +15,7 @@ export default {
 	'AutoPlay': 'Auto',
 	'AutoPlayButton': 'Nyalakan main otomatis',
 	'AutoPlaySpeed': 'Kecepatan main otomatis',
-
+	
 	'Back': 'Kembali',
 	'BackButton': 'Kembali',
 
