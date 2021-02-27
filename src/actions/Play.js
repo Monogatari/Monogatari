@@ -77,7 +77,11 @@ export class Play extends Action {
 				}
 
 				for (const player of players) {
-					player.volume = value;
+					if (!isNaN (player.dataset.volumePercentage)) {
+						player.volume = (parseInt(player.dataset.volumePercentage) / 100 ) * value;
+					} else {
+						player.volume = value;
+					}
 				}
 			}
 
@@ -288,7 +292,9 @@ export class Play extends Action {
 			}
 
 			if (this.props.indexOf ('volume') > -1) {
-				this.player.volume = (parseInt (this.props[this.props.indexOf ('volume') + 1]) * this.mediaVolume) / 100;
+				const percentage = parseInt (this.props[this.props.indexOf ('volume') + 1]);
+				this.player.dataset.volumePercentage = percentage;
+				this.player.volume = (percentage * this.mediaVolume) / 100;
 			}
 
 			this.player.src = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting('AssetsPath')[this.directory]}/${this.media}`;

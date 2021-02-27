@@ -160,4 +160,53 @@ context ('Play', function () {
 		});
 	});
 
+	it ('Sets player volume correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.preference('Volume').Music = 0.25;
+
+		this.monogatari.script ({
+			'Start': [
+				'play music theme with volume 100',
+				'play music subspace with volume 30',
+				'One'
+			]
+		});
+
+		cy.start ();
+
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 2);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.volume').should ('equal', 0.25);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.volume').should ('equal', 0.075);
+
+		cy.get ('text-box').contains ('One');
+	});
+
+	it ('Handles volume change correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.preference('Volume').Music = 0.25;
+
+		this.monogatari.script ({
+			'Start': [
+				'play music theme with volume 100',
+				'play music subspace with volume 30',
+				'One'
+			]
+		});
+
+		cy.start ();
+
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 2);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.volume').should ('equal', 0.25);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.volume').should ('equal', 0.075);
+
+		cy.get ('text-box').contains ('One');
+
+		cy.get ('[data-component="quick-menu"] [data-open="settings"]').click ();
+		cy.get ('settings-screen').should ('be.visible');
+
+		cy.get('[data-action="set-volume"][data-target="music"]').as('range').invoke('val', 0.7).trigger('mouseover');
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.volume').should ('equal', 0.7);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.volume').should ('equal', 0.21);
+	});
+
 });
