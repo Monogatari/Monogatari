@@ -52,6 +52,7 @@ import dutch from './translations/Nederlands';
 import english from './translations/English';
 import french from './translations/Français';
 import german from './translations/Deutsch';
+import indonesian from './translations/Bahasa_Indonesia';
 import japanese from './translations/日本語';
 import korean from './translations/한국어';
 import portuguese from './translations/Português';
@@ -61,6 +62,7 @@ import tokipona from './translations/tokipona';
 
 
 Monogatari._translations = {
+	'Bahasa Indonesia': indonesian,
 	'Беларуская': belarusian,
 	'Deutsch': german,
 	'English': english,
@@ -77,6 +79,10 @@ Monogatari._translations = {
 };
 
 Monogatari._languageMetadata = {
+	'Bahasa Indonesia':{
+		code: 'id',
+		icon: '🇮🇩',
+	},
 	'Беларуская': {
 		code: 'be',
 		icon: '🇧🇾'
