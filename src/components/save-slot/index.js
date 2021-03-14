@@ -80,7 +80,7 @@ class SaveSlot extends Component {
 			if (typeof data.Engine !== 'undefined') {
 				data.name = data.Name;
 				data.date = data.Date;
-				// @Compability [<= v1.4.1]
+				// @Compatibility [<= v1.4.1]
 				// In older versions the date was saved using the JavaScript native Date
 				// object which is not great and moment can actually have trouble parsing
 				// these old dates, specially because we used the locale date wich we have
@@ -121,7 +121,7 @@ class SaveSlot extends Component {
 		if (hasImage) {
 			background = `url(${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').scenes}/${this.engine.asset ('scenes', this.props.image)})`;
 		} else if ('game' in this.data) {
-			// @Compability [<= v1.4.1]
+			// @Compatibility [<= v1.4.1]
 			// That last if checking for the existance of game in the data is
 			// required because older versions do not have that property.
 			if (this.data.game.state.scene) {

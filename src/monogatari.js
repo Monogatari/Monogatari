@@ -1841,7 +1841,7 @@ class Monogatari {
 			this.hideScreens ();
 
 			return this.Storage.get (slot).then ((data) => {
-				// @Compability [<= v1.4.1]
+				// @Compatibility [<= v1.4.1]
 				// Check if an older save format was used so we can transform
 				// that information into the new format.
 				if (typeof data.Engine !== 'undefined') {
@@ -1951,7 +1951,7 @@ class Monogatari {
 					// If the new format is being used, things are a lot more simple
 					const { state, history, storage } = data.game;
 
-					// @Compability [<= v2.0.0-beta.15]
+					// @Compatibility [<= v2.0.0-beta.15]
 					// Monogatari v2.0.0-beta.15 introduced a new format to save the state of the media
 					// being played. Therefore, we need to check if the old format is being used in the
 					// save file and transform it to the new one.
