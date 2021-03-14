@@ -89,6 +89,13 @@ class Action {
 	static id = 'Action';
 
 	/**
+	 * The loading order of an action can be used to sort which actions should be
+	 * run before or after the others when a game is loaded in case they have some
+	 * dependencies between themselves.
+	 */
+	static loadingOrder = 0;
+
+	/**
 	 * @static configuration - A simple function providing access to the configuration
 	 * object of the function. If the action has a configuration object it must
 	 * also include this method.

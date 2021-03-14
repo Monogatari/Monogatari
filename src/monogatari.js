@@ -80,9 +80,27 @@ class Monogatari {
 
 		this.global ('_restoring_state', true);
 
-		for (const action of this.actions ()) {
-			promises.push (action.onLoad ());
+		const actions = this.actions ();
+		const orders = [...new Set(actions.map(action => action.loadingOrder))].sort();
+
+		const loadActions = (actions, dependency = Promise.resolve()) => {
+			console.log(dependency);
+			return dependency.then(() => {
+				const _promises = [];
+				for (const action of actions) {
+					_promises.push (action.onLoad ());
+				}
+				return Promise.all(_promises);
+			});
+		};
+
+		let previous = Promise.resolve();
+
+		for (const order of orders) {
+			previous = loadActions(actions.filter(a => a.loadingOrder === order), previous);
 		}
+
+		promises.push(previous);
 
 		for (const component of this.components ()) {
 			promises.push (component.onLoad ());
