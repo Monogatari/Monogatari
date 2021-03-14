@@ -84,7 +84,6 @@ class Monogatari {
 		const orders = [...new Set(actions.map(action => action.loadingOrder))].sort();
 
 		const loadActions = (actions, dependency = Promise.resolve()) => {
-			console.log(dependency);
 			return dependency.then(() => {
 				const _promises = [];
 				for (const action of actions) {

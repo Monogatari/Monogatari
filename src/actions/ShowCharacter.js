@@ -177,6 +177,7 @@ export class ShowCharacter extends Action {
 			sprite.data ('sprite', this.sprite);
 		} else {
 			let image;
+			let imageReady = Promise.resolve();
 			if (typeof this.image === 'string') {
 				image = document.createElement ('img');
 				$_(image).attribute ('src', `${imgSrc}${this.image}`);
@@ -198,6 +199,10 @@ export class ShowCharacter extends Action {
 				$_(image).addClass ('animated');
 				$_(image).data ('character', this.asset);
 				$_(image).data ('sprite', this.sprite);
+
+				imageReady = new Promise((resolve, reject) => {
+					image.ready(() => resolve());
+				});
 			}
 
 			for (const className of this.classes) {
@@ -221,10 +226,6 @@ export class ShowCharacter extends Action {
 			if (durationPosition > -1) {
 				$_(image).style ('animation-duration', this.classes[durationPosition + 1]);
 			}
-
-			const imageReady = new Promise((resolve, reject) => {
-				image.ready(() => resolve());
-			});
 
 			this.engine.element ().find ('[data-screen="game"] [data-content="visuals"]').append (image);
 
