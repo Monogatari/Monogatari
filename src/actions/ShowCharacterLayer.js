@@ -170,6 +170,19 @@ export class ShowCharacterLayer extends Action {
 			parent.find('[data-content="wrapper"]').append (image);
 		}
 
+		// Update the state of the component
+		const parentAsComponent = parent.get(0);
+		const stateLayers = parentAsComponent.state.layers;
+		parentAsComponent.setState({
+			layers: {
+				...stateLayers,
+				[this.layer]: {
+					asset: this.sprite,
+					classes: this.classes
+				}
+			}
+		});
+
 		return Promise.resolve ();
 	}
 

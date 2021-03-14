@@ -12,13 +12,14 @@ character-sprite {
 		max-height: 80vh;
 		width: 100%;
 
-		& img {
+		& [data-layer] {
 			left: 0;
 			right: 0;
 			top: 0;
 			bottom: 0;
 			max-height: initial;
 			height: 100%;
+			margin: 0;
 		}
 	}
 }

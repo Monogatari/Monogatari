@@ -111,6 +111,15 @@ export class HideCharacterLayer extends Action {
 			this.element.remove ();
 		}
 
+		const parentAsComponent = this.parent.get(0);
+		const stateLayers = parentAsComponent.state.layers;
+		delete stateLayers[this.layer];
+
+		parentAsComponent.setState({
+			layers: stateLayers
+		});
+
+
 		return Promise.resolve ();
 	}
 

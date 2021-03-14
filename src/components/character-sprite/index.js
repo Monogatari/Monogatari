@@ -6,7 +6,6 @@ class CharacterSprite extends Component {
 		super ();
 
 		this.props = {
-			layers: [],
 			character: '',
 			src: '',
 			directory: '',
@@ -20,7 +19,20 @@ class CharacterSprite extends Component {
 		};
 	}
 
-	onStateUpdate (property, oldValue, newValue) {
+	onStateUpdate (property, oldValue, newValue, oldState, newState) {
+		if (property === 'layers') {
+			// const differences = {};
+			// for (const [key, value] of Object.entries(newState)) {
+			// 	if (value !== oldState[key]) {
+			// 		differences[key] = value;
+			// 	}
+			// }
+			this.resize ();
+		}
+
+		// console.log(property, newState);
+		// // this.forceRender();
+
 		return Promise.resolve ();
 	}
 
@@ -45,10 +57,12 @@ class CharacterSprite extends Component {
 	}
 
 	didMount () {
-		this.resize();
 		window.addEventListener('resize', () => {
 			this.resize();
 		});
+
+		this.resize();
+
 		return Promise.resolve ();
 	}
 
@@ -57,7 +71,20 @@ class CharacterSprite extends Component {
 
 		const actualHeight = parseInt (getComputedStyle(this).height.replace('px', ''));
 		const realWidth = actualHeight * ratio;
-		this.content('wrapper').style({ width: `${realWidth}px` });
+
+		this.content('wrapper').style({
+			width: `${realWidth}px`
+		});
+
+		this.content('wrapper').find('[data-layer]').each((layer) => {
+			if (layer.naturalWidth !== width) {
+				layer.style.width = `${(layer.naturalWidth * realWidth) / width}px`;
+			}
+
+			if (layer.naturalHeight !== height) {
+				layer.style.height = 'auto';
+			}
+		});
 	}
 
 	render () {
@@ -66,30 +93,33 @@ class CharacterSprite extends Component {
 		const promises = [];
 
 		for (const layer of character.layers) {
-			let asset = this.state.layers[layer];
+			const localLayer = this.state.layers[layer];
 
-			if (typeof character.layer_assets === 'object' && character.layer_assets !== null) {
-				const layerAssets = character.layer_assets[layer];
+			if (typeof localLayer === 'object' && localLayer !== null) {
+				let { asset, classes } = localLayer;
+
+				if (typeof character.layer_assets === 'object' && character.layer_assets !== null) {
+					const layerAssets = character.layer_assets[layer];
 
 
-				if (typeof layerAssets === 'object' && layerAssets !== null) {
-					if (typeof layerAssets[asset] === 'string') {
-						asset = layerAssets[asset];
+					if (typeof layerAssets === 'object' && layerAssets !== null) {
+						if (typeof layerAssets[asset] === 'string') {
+							asset = layerAssets[asset];
+						}
 					}
 				}
+
+				if (typeof asset === 'string') {
+					promises.push(new Promise((resolve, reject) => {
+						const image = new Image ();
+
+						image.src = `${directory}${asset}`;
+						image.onload = function () {
+							resolve({ layer, image: this, classes });
+						};
+					}));
+				}
 			}
-
-			if (typeof asset === 'string') {
-				promises.push(new Promise((resolve, reject) => {
-					const image = new Image ();
-
-					image.src = `${directory}${asset}`;
-					image.onload = function () {
-						resolve({ layer, image: this });
-					};
-				}));
-			}
-
 		}
 
 		return Promise.all(promises).then ((assets) => {
@@ -101,7 +131,7 @@ class CharacterSprite extends Component {
 				let maxWidth = 0;
 
 				for (const asset of assets) {
-					const { image, layer } = asset;
+					const { image, layer, classes } = asset;
 
 					const height = image.naturalHeight;
 					const width = image.naturalWidth;
@@ -116,6 +146,8 @@ class CharacterSprite extends Component {
 
 					image.style.zIndex = character.layers.indexOf(layer);
 					image.dataset.layer = layer;
+
+					image.classList.add(...classes);
 
 					wrapper.appendChild(image);
 				}

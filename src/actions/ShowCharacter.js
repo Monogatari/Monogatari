@@ -192,9 +192,16 @@ export class ShowCharacter extends Action {
 					directory: imgSrc,
 				});
 
-				image.setState({
-					layers: this.image,
-				});
+				const layers = {};
+
+				for (const [layer, asset] of Object.entries(this.image)) {
+					layers[layer] = {
+						asset,
+						classes: [],
+					};
+				}
+
+				image.setState({ layers });
 
 				$_(image).addClass ('animated');
 				$_(image).data ('character', this.asset);
