@@ -28,6 +28,7 @@
  */
 @import './components/alert-modal/index.css';
 @import './components/canvas-container/index.css';
+@import './components/character-sprite/index.css';
 @import './components/choice-container/index.css';
 @import './components/centered-dialog/index.css';
 @import './components/dialog-log/index.css';

@@ -1,0 +1,24 @@
+character-sprite {
+	display: flex;
+	max-height: 80vh;
+	height: 80vh;
+	position: absolute;
+	width: min-content;
+	overflow: hidden;
+
+	& [data-content="wrapper"] {
+		display: inline-block;
+		height: 100%;
+		max-height: 80vh;
+		width: 100%;
+
+		& img {
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			max-height: initial;
+			height: 100%;
+		}
+	}
+}

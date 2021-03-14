@@ -1,18 +1,22 @@
 import { Action } from './../lib/Action';
 import { FancyError } from './../lib/FancyError';
 
-export class HideCharacter extends Action {
+
+export class HideCharacterLayer extends Action {
 
 	static matchString ([ hide, type, identifier ]) {
-		return hide === 'hide' && type === 'character' && identifier.indexOf(':') === -1;
+		return hide === 'hide' && type === 'character' && identifier.indexOf(':') > -1;
 	}
 
 	constructor ([ hide, type, asset, ...classes ]) {
 		super ();
-		this.asset = asset;
+		const [ character, layer ] = asset.split(':');
+		this.asset = character;
+		this.layer = layer;
 
 		if (typeof this.engine.character (this.asset) !== 'undefined') {
-			this.element = this.engine.element ().find (`[data-character="${this.asset}"]`).last ();
+			this.parent = this.engine.element ().find (`[data-character="${this.asset}"]`).last ();
+			this.element = this.parent.find (`[data-layer="${this.layer}"]`).last ();
 		} else {
 			FancyError.show (
 				`The character "${this.asset}" does not exist`,
@@ -42,10 +46,11 @@ export class HideCharacter extends Action {
 
 		if (!this.element.exists ()) {
 			FancyError.show (
-				`The character "${this.asset}" can't hide because it's not being shown`,
-				`Monogatari attempted to hide the character "${this.asset}" but it was not being shown.`,
+				`The character layer "${this.layer}" can't hide because it's not being shown`,
+				`Monogatari attempted to hide the layer "${this.layer}" of the character "${this.asset}" but it was not being shown.`,
 				{
-					'Missing Character': this.asset,
+					'Missing Layer': this.layer,
+					'Character': this.asset,
 					'You may have meant one of these': Object.keys (this.engine.characters ()),
 					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
 					'Label': this.engine.state ('label'),
@@ -63,21 +68,10 @@ export class HideCharacter extends Action {
 
 
 	apply () {
-		const currentPosition = this.element.data ('position');
-		const position = this._statement.match (/at\s(\S*)/);
-
 		const oldClasses = [...this.element.get (0).classList];
 
 		for (const oldClass of oldClasses) {
-			if (oldClass !== currentPosition || position instanceof Array) {
-				this.element.removeClass (oldClass);
-			}
-		}
-
-		if (position instanceof Array) {
-			// If it was, we'll set that position to the character
-			const [at, positionClass] = position;
-			this.element.data ('position', positionClass);
+			this.element.removeClass (oldClass);
 		}
 
 		this.element.addClass ('animated');
@@ -121,28 +115,30 @@ export class HideCharacter extends Action {
 	}
 
 	didApply () {
-		const show = this.engine.state ('characters').filter ((item) => {
+		const show = this.engine.state ('characterLayers').filter ((item) => {
 			const [ show, character, asset, ] = item.split (' ');
-			return asset !== this.asset;
+			const [id, layer] = asset.split(':');
+			return id !== this.asset && layer !== this.layer;
 		});
 
-		this.engine.state ({ characters: show });
+		this.engine.state ({ characterLayers: show });
 		return Promise.resolve ({ advance: true });
 	}
 
 	willRevert () {
-		if (this.engine.history ('character').length <= 0) {
+		if (this.engine.history ('characterLayer').length <= 0) {
 			return Promise.reject ();
 		}
 		return Promise.resolve ();
 	}
 
 	revert () {
-		for (let i = this.engine.history ('character').length - 1; i >= 0; i--) {
-			const last = this.engine.history ('character')[i];
+		for (let i = this.engine.history ('characterLayer').length - 1; i >= 0; i--) {
+			const last = this.engine.history ('characterLayer')[i];
 			const [show, character, asset, name] = last.split (' ');
+			const [id, layer] = asset.split(':');
 
-			if (asset === this.asset) {
+			if (id === this.asset && layer === this.layer) {
 				const action = this.engine.prepareAction (last, { cycle: 'Application' });
 				return action.apply ().then (() => {
 					return action.didApply ({ updateHistory: false, updateState: true });
@@ -157,6 +153,6 @@ export class HideCharacter extends Action {
 	}
 }
 
-HideCharacter.id = 'Hide::Character';
+HideCharacterLayer.id = 'Hide::Character::Layer';
 
-export default HideCharacter;
+export default HideCharacterLayer;

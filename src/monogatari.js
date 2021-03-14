@@ -1010,6 +1010,20 @@ class Monogatari {
 					}));
 				}
 
+				if (typeof character.layer_assets === 'object') {
+					for (const [layer, obj] of Object.entries(character.layer_assets)) {
+						for (const [key, value] of Object.entries(obj)) {
+							promises.push (Preload.image (`${directory}${value}`).then (() => {
+								this.trigger ('assetLoaded', {
+									name: key,
+									type: 'image',
+									category: 'characters'
+								});
+							}));
+						}
+					}
+				}
+
 				this.trigger ('assetQueued');
 			}
 

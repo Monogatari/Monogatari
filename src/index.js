@@ -149,6 +149,7 @@ Monogatari._languageMetadata = {
 import AlertModal from './components/alert-modal';
 import CanvasContainer from './components/canvas-container';
 import CenteredDialog from './components/centered-dialog';
+import CharacterSprite from './components/character-sprite';
 import ChoiceContainer from './components/choice-container';
 import CreditsScreen from './components/credits-screen';
 import DialogLog from './components/dialog-log';
@@ -175,6 +176,7 @@ Monogatari._components = [
 	AlertModal,
 	CanvasContainer,
 	CenteredDialog,
+	CharacterSprite,
 	ChoiceContainer,
 	CreditsScreen,
 	DialogLog,
@@ -217,6 +219,7 @@ import Function from './actions/Function.js';
 import Gallery from './actions/Gallery.js';
 import HideCanvas from './actions/HideCanvas.js';
 import HideCharacter from './actions/HideCharacter.js';
+import HideCharacterLayer from './actions/HideCharacterLayer.js';
 import HideImage from './actions/HideImage.js';
 import HideParticles from './actions/HideParticles.js';
 import HideVideo from './actions/HideVideo.js';
@@ -232,6 +235,7 @@ import Play from './actions/Play.js';
 import Scene from './actions/Scene.js';
 import ShowBackground from './actions/ShowBackground.js';
 import ShowCharacter from './actions/ShowCharacter.js';
+import ShowCharacterLayer from './actions/ShowCharacterLayer.js';
 import ShowImage from './actions/ShowImage.js';
 import Stop from './actions/Stop.js';
 import Vibrate from './actions/Vibrate.js';
@@ -248,6 +252,7 @@ Monogatari._actions = [
 	Gallery,
 	HideCanvas,
 	HideCharacter,
+	HideCharacterLayer,
 	HideImage,
 	HideParticles,
 	HideVideo,
@@ -263,6 +268,7 @@ Monogatari._actions = [
 	Scene,
 	ShowBackground,
 	ShowCharacter,
+	ShowCharacterLayer,
 	ShowImage,
 	Stop,
 	Vibrate,
