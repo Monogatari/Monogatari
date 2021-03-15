@@ -437,12 +437,18 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 			color: 'blue',
 			name: 'Yui',
 			directory: 'yui',
+			layers: ['base', 'mouth', 'eyes'],
 			sprites: {
 				angry: 'angry.png',
 				happy: 'happy.png',
 				normal: 'normal.png',
 				sad: 'sad.png',
 				surprised: 'surprised.png',
+				angry_layered: {
+					'base': 'normal',
+					'mouth': 'alone',
+					'eyes': 'alone'
+				},
 			},
 			expressions: {
 				angry: 'expressions/angry.png',
@@ -450,6 +456,17 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 				normal: 'expressions/normal.png',
 				sad: 'expressions/sad.png',
 				surprised: 'expressions/surprised.png',
+			},
+			layer_assets: {
+				base: {
+					normal: 'layers/base.png'
+				},
+				mouth: {
+					alone: 'layers/mouth_alone.png'
+				},
+				eyes: {
+					alone: 'layers/eyes_alone.png'
+				}
 			},
 			nvl
 		},

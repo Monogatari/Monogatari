@@ -121,12 +121,19 @@ export class HideCharacter extends Action {
 	}
 
 	didApply () {
-		const show = this.engine.state ('characters').filter ((item) => {
+		const characters = this.engine.state ('characters').filter ((item) => {
 			const [ show, character, asset, ] = item.split (' ');
 			return asset !== this.asset;
 		});
 
-		this.engine.state ({ characters: show });
+		const characterLayers = this.engine.state ('characterLayers').filter ((item) => {
+			const [ show, character, asset, ] = item.split (' ');
+			const [id, layer] = asset.split(':');
+			return id !== this.asset;
+		});
+
+		this.engine.state ({ characters, characterLayers });
+
 		return Promise.resolve ({ advance: true });
 	}
 

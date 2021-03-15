@@ -127,7 +127,7 @@ export class HideCharacterLayer extends Action {
 		const show = this.engine.state ('characterLayers').filter ((item) => {
 			const [ show, character, asset, ] = item.split (' ');
 			const [id, layer] = asset.split(':');
-			return id !== this.asset && layer !== this.layer;
+			return id !== this.asset || layer !== this.layer;
 		});
 
 		this.engine.state ({ characterLayers: show });
