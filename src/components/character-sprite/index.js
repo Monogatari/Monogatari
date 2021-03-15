@@ -77,13 +77,15 @@ class CharacterSprite extends Component {
 		});
 
 		this.content('wrapper').find('[data-layer]').each((layer) => {
-			if (layer.naturalWidth !== width) {
-				layer.style.width = `${(layer.naturalWidth * realWidth) / width}px`;
-			}
+			layer.onload = () => {
+				if (layer.naturalWidth !== width) {
+					layer.style.width = `${(layer.naturalWidth * realWidth) / width}px`;
+				}
 
-			if (layer.naturalHeight !== height) {
-				layer.style.height = 'auto';
-			}
+				if (layer.naturalHeight !== height) {
+					layer.style.height = 'auto';
+				}
+			};
 		});
 	}
 
@@ -96,7 +98,8 @@ class CharacterSprite extends Component {
 			const localLayer = this.state.layers[layer];
 
 			if (typeof localLayer === 'object' && localLayer !== null) {
-				let { asset, classes } = localLayer;
+				const classes = localLayer;
+				let { asset } = localLayer;
 
 				if (typeof character.layer_assets === 'object' && character.layer_assets !== null) {
 					const layerAssets = character.layer_assets[layer];
@@ -114,6 +117,7 @@ class CharacterSprite extends Component {
 						const image = new Image ();
 
 						image.src = `${directory}${asset}`;
+
 						image.onload = function () {
 							resolve({ layer, image: this, classes });
 						};
