@@ -119,7 +119,7 @@ class CharacterSprite extends Component {
 						image.src = `${directory}${asset}`;
 
 						image.onload = function () {
-							resolve({ layer, image: this, classes });
+							resolve({ layer, image: this, classes, sprite: localLayer.asset });
 						};
 					}));
 				}
@@ -135,7 +135,7 @@ class CharacterSprite extends Component {
 				let maxWidth = 0;
 
 				for (const asset of assets) {
-					const { image, layer, classes } = asset;
+					const { image, layer, classes, sprite } = asset;
 
 					const height = image.naturalHeight;
 					const width = image.naturalWidth;
@@ -150,6 +150,7 @@ class CharacterSprite extends Component {
 
 					image.style.zIndex = character.layers.indexOf(layer);
 					image.dataset.layer = layer;
+					image.dataset.sprite = sprite;
 
 					image.classList.add(...classes);
 
