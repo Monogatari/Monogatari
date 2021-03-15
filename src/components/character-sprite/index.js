@@ -98,7 +98,7 @@ class CharacterSprite extends Component {
 			const localLayer = this.state.layers[layer];
 
 			if (typeof localLayer === 'object' && localLayer !== null) {
-				const classes = localLayer;
+				const { classes } = localLayer;
 				let { asset } = localLayer;
 
 				if (typeof character.layer_assets === 'object' && character.layer_assets !== null) {
