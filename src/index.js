@@ -48,6 +48,7 @@ import Monogatari from './monogatari';
 import arabic from './translations/العربية';
 import belarusian from './translations/Беларуская';
 import chinese from './translations/简体中文';
+import traditional_chinese from './translations/繁體中文';
 import dutch from './translations/Nederlands';
 import english from './translations/English';
 import french from './translations/Français';
@@ -75,6 +76,7 @@ Monogatari._translations = {
 	'한국어': korean,
 	'日本語': japanese,
 	'简体中文': chinese,
+	'繁體中文': traditional_chinese,
 	'toki pona': tokipona,
 };
 
@@ -130,6 +132,10 @@ Monogatari._languageMetadata = {
 	'简体中文': {
 		code: 'zh',
 		icon: '🇨🇳'
+	},
+	'繁體中文':{
+		code: 'tw',
+		icon: '🇹🇼',
 	},
 	'toki pona': {
 		code: 'en',
