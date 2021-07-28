@@ -134,7 +134,7 @@ Monogatari._languageMetadata = {
 		icon: '🇨🇳'
 	},
 	'繁體中文':{
-		code: 'tw',
+		code: 'zh',
 		icon: '🇹🇼',
 	},
 	'toki pona': {
