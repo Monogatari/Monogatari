@@ -13,7 +13,7 @@ export default {
 	'AllowPlayback': '點擊這裡以啟用語音回放',
 	'Audio': '音效',
 	'AutoPlay': '自動',
-	'AutoPlayButton': 'Enable auto play',
+	'AutoPlayButton': '進入自動播放',
 	'AutoPlaySpeed': '自動播放速度',
 
 	'Back': '後退',
@@ -29,7 +29,7 @@ export default {
 
 	'FullScreen': '全屏顯示',
 
-	'Gallery': 'Gallery',
+	'Gallery': '畫廊',
 
 	'Help': '幫助',
 	'Hide': '隱藏',
@@ -37,7 +37,7 @@ export default {
 
 	'iOSAudioWarning': 'iOS暫不支持音效設定',
 
-	'KeyboardShortcuts': 'Keyboard Shortcuts',
+	'KeyboardShortcuts': '鍵盤快捷鍵',
 
 	'Language': '語言',
 	'Load': '讀取',
@@ -61,7 +61,7 @@ export default {
 	'Overwrite': '覆蓋',
 
 	'QuickButtons': '快捷菜單按鈕',
-	'QuickMenu': 'Quick Menu',
+	'QuickMenu': '快捷菜單',
 	'Quit': '退出',
 	'QuitButton': '退出遊戲',
 
@@ -70,12 +70,12 @@ export default {
 	'Save': '存檔',
 	'SaveButton': '顯示存檔界面',
 	'SaveInSlot': '寫入存檔槽位',
-	'SelectYourLanguage': 'Select your language',
+	'SelectYourLanguage': '選擇語言',
 	'Settings': '環境設定',
 	'SettingsButton': '顯示環境設定界面',
 	'Show': '顯示',
-	'Skip': 'Skip',
-	'SkipButton': 'Enter skip mode',
+	'Skip': '跳過',
+	'SkipButton': '進入跳過模式',
 	'SlotDeletion': '確定要刪除這個存檔槽位嗎？',
 	'SlotOverwrite': '确定要覆盖这个存檔槽位嗎？',
 	'Sound': '音效音量',
@@ -84,7 +84,7 @@ export default {
 
 	'TextSpeed': '文字顯示速度',
 
-	'Video': 'Video Volume',
+	'Video': '視頻音量',
 	'Voice': '語音音量',
 
 	'Windowed': '窗口'
