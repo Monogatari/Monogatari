@@ -1,10 +1,11 @@
 {
   "plugins": {
+	"postcss-mixins": true,
     "autoprefixer": {
       "grid": true,
 	  "flexbox": true
   	},
-	"precss": true,
-	"postcss-calc": true
+	"postcss-calc": true,
+	"postcss-nested": true
   }
 }

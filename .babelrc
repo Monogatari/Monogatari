@@ -1,8 +1,8 @@
 {
 	"presets": [
 		["@babel/preset-env", {
-			"targets": "> 5%"
+			"targets": "> 0.5%, last 2 versions, not dead"
 		}]
 	],
-	"plugins": ["@babel/plugin-syntax-object-rest-spread"]
+	"plugins": ["@babel/plugin-syntax-object-rest-spread", "@babel/plugin-proposal-class-properties"]
 }

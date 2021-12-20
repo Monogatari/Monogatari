@@ -10,7 +10,7 @@
  * ===========================
  */
 
-@mixin background-image {
+@define-mixin background-image {
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
@@ -19,14 +19,14 @@
 	background-position: center;
 }
 
-@mixin full-viewport {
+@define-mixin full-viewport {
 	height: 100vh;
 	width: 100vw;
 	max-height: 100vh;
 	max-width: 100vw;
 }
 
-@mixin full-size {
+@define-mixin full-size {
 	width: 100%;
 	height: 100%;
 }
@@ -39,7 +39,7 @@
 
 html {
 	width: auto;
-	@include full-viewport;
+	@mixin full-viewport;
 }
 
 body {
@@ -48,8 +48,8 @@ body {
 	color: var(--text-color);
 	background-color: var(--screen-background-color);
 	font-family: 'Open Sans', sans-serif;
-	@include background-image;
-	@include full-viewport;
+	@mixin background-image;
+	@mixin full-viewport;
 }
 
 h1,
@@ -126,12 +126,12 @@ video {
  */
 
 #monogatari {
-	@include full-size;
+	@mixin full-size;
 	position: relative;
 }
 
 .background-image {
-	@include background-image;
+	@mixin background-image;
 }
 
 .wait,
@@ -188,8 +188,8 @@ video {
 	display: none;
 	align-items: stretch;
 	flex-direction: column;
-	@include full-size;
-	@include background-image;
+	@mixin full-size;
+	@mixin background-image;
 }
 
 [data-screen].active {
@@ -286,7 +286,7 @@ video {
 	max-height: 100%;
 
 	&[data-mode="background"] {
-		@include full-size;
+		@mixin full-size;
 		object-fit: cover;
 	}
 
@@ -326,8 +326,8 @@ video {
 }
 
 [data-ui='background'] {
-	@include background-image;
-	@include full-size;
+	@mixin background-image;
+	@mixin full-size;
 }
 
 /**

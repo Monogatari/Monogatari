@@ -24,6 +24,8 @@ dist/dist
 
 # Other
 cache
+.cache
+.parcel-cache
 build
 release
 *.log

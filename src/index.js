@@ -33,7 +33,7 @@ import './../node_modules/@fortawesome/fontawesome-free/js/all.js';
 export * from '@aegis-framework/artemis';
 export * from './lib/vendor/typed.min.js';
 export * from 'random-js';
-export * from 'tsparticles';
+export * from 'tsparticles/tsparticles.slim';
 
 import Monogatari from './monogatari';
 
@@ -50,15 +50,15 @@ import belarusian from './translations/Беларуская';
 import chinese from './translations/简体中文';
 import dutch from './translations/Nederlands';
 import english from './translations/English';
-import french from './translations/Français';
+import french from './translations/Francais';
 import german from './translations/Deutsch';
 import hungarian from './translations/Hungarian';
 import indonesian from './translations/Bahasa_Indonesia';
 import japanese from './translations/日本語';
 import korean from './translations/한국어';
-import portuguese from './translations/Português';
+import portuguese from './translations/Portugues';
 import russian from './translations/Russian';
-import spanish from './translations/Español';
+import spanish from './translations/Espanol';
 import tokipona from './translations/tokipona';
 
 
