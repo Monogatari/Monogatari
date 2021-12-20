@@ -46,5 +46,10 @@
        "sourceType": "module"
 	},
 	"parser": "@babel/eslint-parser",
+	"parserOptions": {
+		"babelOptions": {
+			"configFile": "./.babelrc"
+		}
+	},
     "extends": "eslint:recommended"
 }
