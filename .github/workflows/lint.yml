@@ -1,28 +1,28 @@
 name: Code Quality Check
 
-on: 
+on:
   push:
     branches:
       - develop
-    paths: 
+    paths:
       - '.htmlhintrc'
       - '.postcssrc'
-      - '.stylelintrc'  
+      - '.stylelintrc'
       - '**.html'
       - '**.js'
-      - '**.json' 
+      - '**.json'
       - '**.css'
       - '!dist/engine/core/**'
   pull_request:
-    branches: 
+    branches:
       - develop
-    paths: 
+    paths:
       - '.htmlhintrc'
       - '.postcssrc'
-      - '.stylelintrc'  
+      - '.stylelintrc'
       - '**.html'
       - '**.js'
-      - '**.json' 
+      - '**.json'
       - '**.css'
       - '!dist/engine/core/**'
 
@@ -32,20 +32,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Install Dependencies
-        uses: Borales/actions-yarn@v2.0.0
+        uses: Borales/actions-yarn@v2.3.0
         with:
           cmd: install # will run `yarn install` command
       - name: Lint HTML
-        uses: Borales/actions-yarn@v2.0.0
+        uses: Borales/actions-yarn@v2.3.0
         with:
           cmd: lint:html # will run `yarn lint:html` command
       - name: Lint JavaScript
-        uses: Borales/actions-yarn@v2.0.0
+        uses: Borales/actions-yarn@v2.3.0
         with:
           cmd: lint:js # will run `yarn lint:js` command
       - name: Lint CSS
-        uses: Borales/actions-yarn@v2.0.0
+        uses: Borales/actions-yarn@v2.3.0
         with:
           cmd: lint:css # will run `yarn lint:css` command
