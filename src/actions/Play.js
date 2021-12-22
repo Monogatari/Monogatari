@@ -45,8 +45,15 @@ export class Play extends Action {
 		// Set the volume of all the media components on the settings screen
 		for (const mediaType of mediaPlayers) {
 			const element = document.querySelector (`${selector} [data-target="${mediaType}"]`);
+
 			if (element !== null) {
-				element.value = this.engine.preference ('Volume')[Text.capitalize (mediaType)];
+				let volume = this.engine.preference ('Volume')[Text.capitalize (mediaType)];
+
+				if (typeof volume === 'string') {
+					volume = parseFloat(volume);
+				}
+
+				element.value = volume;
 			}
 		}
 
@@ -59,7 +66,11 @@ export class Play extends Action {
 		// Volume bars listeners
 		$_(`${selector} [data-action="set-volume"]`).on ('change mouseover', function () {
 			const target = this.dataset.target;
-			const value = this.value;
+			let value = this.value;
+
+			if (typeof value === 'string') {
+				value = parseFloat(value);
+			}
 
 			if (target === 'video') {
 				$_('[data-video]').each ((element) => {

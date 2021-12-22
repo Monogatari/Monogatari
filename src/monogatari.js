@@ -2332,7 +2332,14 @@ class Monogatari {
 
 			// Make the ambient player loop
 			this.ambientPlayer.loop = true;
-			this.ambientPlayer.volume = this.preference ('Volume').Music;
+
+			let ambientVolume = this.preference ('Volume').Music;
+
+			if (typeof ambientVolume === 'string') {
+				ambientVolume = parseFloat(ambientVolume);
+			}
+
+			this.ambientPlayer.volume = ambientVolume;
 
 			// Check if the music was defined in the music assets object
 			if (typeof this.asset ('music', this.setting ('MainScreenMusic')) !== 'undefined') {
@@ -2507,173 +2514,179 @@ class Monogatari {
 
 		// Set the initial settings if they don't exist or load them from the
 		// Storage if they do.
-		this.Storage.get ('Settings').then ((local_settings) => {
-			this.global ('_first_run', false);
-			this._preferences = merge (this._preferences, local_settings);
-		}).catch ((e) => {
-			this.global ('_first_run', true);
-			if (this.setting ('MultiLanguage') !== true || this.setting ('LanguageSelectionScreen') !== true) {
-				this.Storage.set ('Settings', this._preferences);
-			}
-			console.warn ('There was no settings saved. This may be the first time this game was opened, we\'ll create them now.', e);
+		const loadPreferencesPromise = new Promise((resolve, reject) => {
+			this.Storage.get ('Settings').then ((local_settings) => {
+				this.global ('_first_run', false);
+				this._preferences = merge (this._preferences, local_settings);
+				resolve();
+			}).catch ((e) => {
+				console.warn ('There was no settings saved. This may be the first time this game was opened, we\'ll create them now.', e);
+				this.global ('_first_run', true);
+				if (this.setting ('MultiLanguage') !== true || this.setting ('LanguageSelectionScreen') !== true) {
+					return this.Storage.set ('Settings', this._preferences);
+				}
+				resolve();
+			});
 		});
 
-		// Define all the components that were registered to this point
-		for (const component of this._components) {
-			if (typeof window.customElements.get (component.tag) === 'undefined') {
-				component.engine = this;
-				window.customElements.define (component.tag, component);
-			} else {
-				FancyError.show (
-					`Unable to register component "${component.tag}"`,
-					'Monogatari attempted to register a component but another component had already been registered for the same tag.',
-					{
-						'Component / Tag': component,
-						'Help': {
-							'_': 'Once a component for a tag has been registered and the setup has completed, it can not be replaced or removed. Try removing the conflicting component first:',
-							'_1': `
-								<pre>
-									<code class='language-javascript'>
-										monogatari.unregisterComponent ('${component.tag}')
-									</code>
-								</pre>
-							`,
-						}
-					}
-				);
-			}
-		}
-
-		// Register service worker. The service worker will save all requests into
-		// the cache so the game loads more quickly and we can play offline. The
-		// service worker will only be used if it was allowed by the settings and
-		// if we are not running in a local platform such as electron or cordova
-		// where the assets are expected to be available locally and thus don't
-		// require being cached.
-		if (this.setting ('ServiceWorkers')) {
-			if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
-				// TODO: There's a place in hell for this quick fix, the splitting
-				// of the sw file is just preventing parcel from trying to bundle it
-				// when building the core libraries.
-				navigator.serviceWorker.register(new URL('service-worker.js', import.meta.url)).then ((registration) => {
-
-					// Check if an update to the service worker was found
-					registration.onupdatefound = () => {
-						const worker = registration.installing;
-						worker.onstatechange = () => {
-							// Once the updated service worker has been installed,
-							// show a notice to the players so that they reload the
-							// page and get the latest content.
-							if (worker.state === 'installed') {
-								if (navigator.serviceWorker.controller) {
-									const element = `
-										<div data-ui="broadcast" data-content="new-content">
-											<p data-string="NewContent">${this.string ('NewContent')}.</p>
-										</div>
-									`;
-									this.element ().prepend (element);
-									this.element ().on ('click', '[data-ui="broadcast"][data-content="new-content"]', () => {
-										this.element ().find ('[data-ui="broadcast"][data-content="new-content"]').remove ();
-									});
-								}
+		return loadPreferencesPromise.then(() => {
+			// Define all the components that were registered to this point
+			for (const component of this._components) {
+				if (typeof window.customElements.get (component.tag) === 'undefined') {
+					component.engine = this;
+					window.customElements.define (component.tag, component);
+				} else {
+					FancyError.show (
+						`Unable to register component "${component.tag}"`,
+						'Monogatari attempted to register a component but another component had already been registered for the same tag.',
+						{
+							'Component / Tag': component,
+							'Help': {
+								'_': 'Once a component for a tag has been registered and the setup has completed, it can not be replaced or removed. Try removing the conflicting component first:',
+								'_1': `
+									<pre>
+										<code class='language-javascript'>
+											monogatari.unregisterComponent ('${component.tag}')
+										</code>
+									</pre>
+								`,
 							}
+						}
+					);
+				}
+			}
+
+			// Register service worker. The service worker will save all requests into
+			// the cache so the game loads more quickly and we can play offline. The
+			// service worker will only be used if it was allowed by the settings and
+			// if we are not running in a local platform such as electron or cordova
+			// where the assets are expected to be available locally and thus don't
+			// require being cached.
+			if (this.setting ('ServiceWorkers')) {
+				if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
+					// TODO: There's a place in hell for this quick fix, the splitting
+					// of the sw file is just preventing parcel from trying to bundle it
+					// when building the core libraries.
+					navigator.serviceWorker.register(new URL('service-worker.js', import.meta.url)).then ((registration) => {
+
+						// Check if an update to the service worker was found
+						registration.onupdatefound = () => {
+							const worker = registration.installing;
+							worker.onstatechange = () => {
+								// Once the updated service worker has been installed,
+								// show a notice to the players so that they reload the
+								// page and get the latest content.
+								if (worker.state === 'installed') {
+									if (navigator.serviceWorker.controller) {
+										const element = `
+											<div data-ui="broadcast" data-content="new-content">
+												<p data-string="NewContent">${this.string ('NewContent')}.</p>
+											</div>
+										`;
+										this.element ().prepend (element);
+										this.element ().on ('click', '[data-ui="broadcast"][data-content="new-content"]', () => {
+											this.element ().find ('[data-ui="broadcast"][data-content="new-content"]').remove ();
+										});
+									}
+								}
+							};
 						};
-					};
-				});
-			} else {
-				console.warn ('Service Workers are not available in this browser or have been disabled in the engine configuration. Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/');
+					});
+				} else {
+					console.warn ('Service Workers are not available in this browser or have been disabled in the engine configuration. Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/');
+				}
 			}
-		}
 
-		// Save the structure of the storage variable. The structure is saved as
-		// a string so that we have a reference to how the storage was originally
-		// and we can reset the storage when the game ends.
-		this.global ('storageStructure', JSON.stringify (this.storage ()));
+			// Save the structure of the storage variable. The structure is saved as
+			// a string so that we have a reference to how the storage was originally
+			// and we can reset the storage when the game ends.
+			this.global ('storageStructure', JSON.stringify (this.storage ()));
 
-		// The open-screen action does exactly what it says, it takes the
-		// data-screen property of the object it's in and then opens that
-		// menu, meaning it hides everything else and shows that one.
-		this.registerListener ('open-screen', {
-			callback: (element) => {
-				this.element ().find ('[data-screen]').each ((screen) => {
-					screen.setState ({ open: false });
-				});
-				this.element ().find (`[data-screen="${element.data('open')}"]`).get (0).setState ({ open: true });
-			}
-		});
-
-		// The start action starts the game so it shows the game screen
-		// and the game starts
-		this.registerListener ('start', {
-			callback: () => {
-				this.global ('playing', true);
-
-				// Remove the play main menu audio broadcast message if it's present
-				this.element ().find ('[data-ui="broadcast"][data-content="allow-playback"]').remove ();
-
-				this.onStart ().then (() => {
+			// The open-screen action does exactly what it says, it takes the
+			// data-screen property of the object it's in and then opens that
+			// menu, meaning it hides everything else and shows that one.
+			this.registerListener ('open-screen', {
+				callback: (element) => {
 					this.element ().find ('[data-screen]').each ((screen) => {
 						screen.setState ({ open: false });
 					});
+					this.element ().find (`[data-screen="${element.data('open')}"]`).get (0).setState ({ open: true });
+				}
+			});
 
-					this.element ().find ('[data-screen="game"]').get (0).setState ({ open: true });
+			// The start action starts the game so it shows the game screen
+			// and the game starts
+			this.registerListener ('start', {
+				callback: () => {
+					this.global ('playing', true);
 
-					// Check if the initial label exists
-					if (this.label ()) {
-						this.run (this.label ()[this.state ('step')]);
-					}
-				});
-			}
-		});
+					// Remove the play main menu audio broadcast message if it's present
+					this.element ().find ('[data-ui="broadcast"][data-content="allow-playback"]').remove ();
 
-		this.registerListener ('dismiss-alert', {
-			callback: () => {
-				this.dismissAlert ();
-			}
-		});
+					this.onStart ().then (() => {
+						this.element ().find ('[data-screen]').each ((screen) => {
+							screen.setState ({ open: false });
+						});
 
-		this.registerListener ('distraction-free', {
-			keys: 'h',
-			callback: () => {
-				this.distractionFree ();
-			}
-		});
+						this.element ().find ('[data-screen="game"]').get (0).setState ({ open: true });
 
-		this.registerListener ('skip', {
-			keys: 's',
-			callback: () => {
-				if (this.global ('playing')) {
-					if (this.global ('skip') !== null) {
-						this.skip (false);
-					} else {
-						this.skip (true);
+						// Check if the initial label exists
+						if (this.label ()) {
+							this.run (this.label ()[this.state ('step')]);
+						}
+					});
+				}
+			});
+
+			this.registerListener ('dismiss-alert', {
+				callback: () => {
+					this.dismissAlert ();
+				}
+			});
+
+			this.registerListener ('distraction-free', {
+				keys: 'h',
+				callback: () => {
+					this.distractionFree ();
+				}
+			});
+
+			this.registerListener ('skip', {
+				keys: 's',
+				callback: () => {
+					if (this.global ('playing')) {
+						if (this.global ('skip') !== null) {
+							this.skip (false);
+						} else {
+							this.skip (true);
+						}
 					}
 				}
+			});
+
+			// Add listener to the auto-play buttons, activating or deactivating the
+			// auto-play feature
+			this.registerListener ('auto-play', {
+				callback: () => {
+					this.autoPlay (this.global ('_auto_play_timer') === null);
+				}
+			});
+
+			const promises = [];
+
+			for (const component of this.components ()) {
+				component.engine = this;
+				promises.push (component.setup (selector));
 			}
-		});
 
-		// Add listener to the auto-play buttons, activating or deactivating the
-		// auto-play feature
-		this.registerListener ('auto-play', {
-			callback: () => {
-				this.autoPlay (this.global ('_auto_play_timer') === null);
+			for (const action of this.actions ()) {
+				action.engine = this;
+				promises.push (action.setup (selector));
 			}
-		});
-
-		const promises = [];
-
-		for (const component of this.components ()) {
-			component.engine = this;
-			promises.push (component.setup (selector));
-		}
-
-		for (const action of this.actions ()) {
-			action.engine = this;
-			promises.push (action.setup (selector));
-		}
-		return Promise.all (promises).then (() => {
-			this.global ('_didSetup', true);
-			return Promise.resolve ();
+			return Promise.all (promises).then (() => {
+				this.global ('_didSetup', true);
+				return Promise.resolve ();
+			});
 		});
 	}
 	/**
