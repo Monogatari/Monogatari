@@ -55,6 +55,11 @@ export class ShowCharacter extends Action {
 		super ();
 		this.asset = asset;
 
+		this.state = this.engine.state('characters').find((statement) => {
+			const [show, character, asset, name] = statement.split (' ');
+			return asset === this.asset;
+		});
+
 		if (typeof this.engine.character (asset) !== 'undefined') {
 			// show [character] [expression] at [position] with [animation] [infinite]
 			this.sprite = sprite;
@@ -244,7 +249,10 @@ export class ShowCharacter extends Action {
 
 	didApply ({ updateHistory = true, updateState = true } = {}) {
 		if (updateHistory === true) {
-			this.engine.history ('character').push (this._statement);
+			this.engine.history ('character').push ({
+				statement: this._statement,
+				previous: this.state || null
+			});
 
 			if (typeof this.image === 'object') {
 				for (const layer in this.image) {
@@ -296,29 +304,22 @@ export class ShowCharacter extends Action {
 	revert () {
 		this.engine.element ().find (`[data-character="${this.asset}"]`).remove ();
 
-		// First, we remove the last instance of the character from the history since
-		// that's the one being currently displayed and we want the one before that
+		// First, we get the last instance of the character from the history as
+		// that's the one being currently displayed.
 		for (let i = this.engine.history ('character').length - 1; i >= 0; i--) {
-			const last = this.engine.history ('character')[i];
-			const [show, character, asset, name] = last.split (' ');
+			const { statement, previous } = this.engine.history ('character')[i];
+			const [show, character, asset, name] = statement.split (' ');
 			if (asset === this.asset) {
 				this.engine.history ('character').splice (i, 1);
+
+				if (typeof previous !== 'undefined' && previous !== null) {
+					const action = this.engine.prepareAction (previous, { cycle: 'Apply' });
+					return action.apply ().then (() => {
+						return action.didApply ({ updateHistory: false, updateState: true });
+					});
+				}
+
 				break;
-			}
-		}
-
-		// Now, we go through the remaining history to find the last instance of the
-		// character.
-		for (let i = this.engine.history ('character').length - 1; i >= 0; i--) {
-			const last = this.engine.history ('character')[i];
-			const [show, character, asset, name] = last.split (' ');
-
-			if (asset === this.asset) {
-				// this.engine.history ('character').splice (i, 1);
-				const action = this.engine.prepareAction (last, { cycle: 'Apply' });
-				return action.apply ().then (() => {
-					return action.didApply ({ updateHistory: false, updateState: true });
-				});
 			}
 		}
 

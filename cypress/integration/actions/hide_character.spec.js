@@ -119,17 +119,32 @@ context ('Hide Character', function () {
 
 		cy.get ('[data-sprite="normal"]').should ('be.visible');
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at center with fadeIn end-fadeOut']);
-		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at center with fadeIn end-fadeOut']);
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', [
+			{
+				statement: 'show character y normal at center with fadeIn end-fadeOut',
+				previous: null
+			}
+		]);
 		cy.get ('text-box').contains ('Before');
 		cy.proceed ();
 		cy.get ('[data-sprite="normal"]').should ('not.exist');
-		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at center with fadeIn end-fadeOut']);
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', [
+			{
+				statement: 'show character y normal at center with fadeIn end-fadeOut',
+				previous: null
+			}
+		]);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('be.empty');
 		cy.get ('text-box').contains ('After');
 		cy.rollback ();
 		cy.get ('[data-sprite="normal"]').should ('be.visible');
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at center with fadeIn end-fadeOut']);
-		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at center with fadeIn end-fadeOut']);
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', [
+			{
+				statement: 'show character y normal at center with fadeIn end-fadeOut',
+				previous: null
+			}
+		]);
 		cy.get ('text-box').contains ('Before');
 	});
 });

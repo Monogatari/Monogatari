@@ -146,11 +146,11 @@ export class HideCharacter extends Action {
 
 	revert () {
 		for (let i = this.engine.history ('character').length - 1; i >= 0; i--) {
-			const last = this.engine.history ('character')[i];
-			const [show, character, asset, name] = last.split (' ');
+			const { statement, previous } = this.engine.history ('character')[i];
+			const [show, character, asset, name] = statement.split (' ');
 
 			if (asset === this.asset) {
-				const action = this.engine.prepareAction (last, { cycle: 'Application' });
+				const action = this.engine.prepareAction (statement, { cycle: 'Application' });
 				return action.apply ().then (() => {
 					return action.didApply ({ updateHistory: false, updateState: true });
 				});

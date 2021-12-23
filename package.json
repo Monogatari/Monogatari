@@ -77,7 +77,7 @@
 		"build:web": "yarn parcel build --target web --no-cache --public-url .",
 		"build:debug": "yarn parcel build --taget debug --no-cache --public-url .",
 		"build:css": "yarn parcel build --target css --no-cache --no-source-maps",
-		"watch:js": "yarn parcel watch ./src/index.js --dist-dir dist/engine/core --no-cache --public-url .",
+		"watch:js": "yarn parcel watch --target web --no-cache --public-url .",
 		"watch:css": "yarn parcel watch ./ --out-file monogatari.css --dist-dir dist/engine/core --no-cache --no-source-maps",
 		"lint:html": "yarn htmlhint ./dist/index.html",
 		"lint:js": "yarn eslint ./src --ext .js --ignore-pattern *.min.js && yarn eslint ./dist/js --ext .js --ignore-pattern *.min.js && yarn eslint ./dist/engine/electron --ext .js  && yarn eslint ./dist/service-worker.js",

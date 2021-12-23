@@ -268,7 +268,6 @@ context ('Input', function () {
 							time: 5000,
 							// The function to run when the time is over
 							callback: function () {
-								console.log ('DONE');
 								// Get all choices being shown and that are not disabled
 								const input = this.element ().find ('text-input').get (0);
 
