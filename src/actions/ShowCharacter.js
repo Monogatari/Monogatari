@@ -94,7 +94,7 @@ export class ShowCharacter extends Action {
 
 		const sprite = this.engine.element ().find (`[data-character="${this.asset}"]:not([data-visibility="invisible"])`);
 
-		if (sprite.isVisible ()) {
+		if (sprite.exists () ) {
 			const oldClasses = [...sprite.get(0).classList];
 
 			// Check if there is any end-animation, here's what this matches:
@@ -125,7 +125,7 @@ export class ShowCharacter extends Action {
 		const imgSrc = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}`;
 		const position = this._statement.match (/at\s(\S*)/);
 
-		if (oneSpriteOnly && sprite.isVisible ()) {
+		if (oneSpriteOnly && sprite.exists ()) {
 			sprite.attribute ('src', `${imgSrc}${this.image}`);
 			sprite.data ('sprite', this.sprite);
 
