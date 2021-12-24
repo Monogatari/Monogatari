@@ -12,10 +12,10 @@
   resolved "https://registry.yarnpkg.com/@aegis-framework/kayros.css/-/kayros.css-0.4.5.tgz#a6be59a19e3ef20b9329531a443935835b80f585"
   integrity sha512-3fdZ8/pHvv3cPPnZYkBraDrnR9FOl6hX5NW7tR/Juor1uzHTMZksDVwuHO/hLl3YfKQtO9ClqexKt8wiLShL7A==
 
-"@aegis-framework/pandora@^0.1.7":
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@aegis-framework/pandora/-/pandora-0.1.7.tgz#833a78d228bb672b5d1ba851d7f9f807909ad680"
-  integrity sha512-It5FL1kpQPDOqFARYr9NhCkKLx8hPzvwkGk4pfFBXTJpDr6Z1/7W6m0AWjy2odWibKAL9tpvuK10durMZgKHqA==
+"@aegis-framework/pandora@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@aegis-framework/pandora/-/pandora-0.1.8.tgz#9811afcde83f64ed1d389968c109ec782c204b7d"
+  integrity sha512-IsDEvjMafNFZQr8nYekFgLfGvERUOdJQQnwjuumdCFY98dhbK5GkLC2FeZd2+1Yv2zW9h4ZiK9niYXCxYIQ0zg==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.16.0":
   version "7.16.0"
@@ -3074,9 +3074,9 @@ electron-notarize@^1.1.1:
     fs-extra "^9.0.1"
 
 electron-to-chromium@^1.4.17:
-  version "1.4.27"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.27.tgz#bfc6e798d8a56a17d658312f4b7ae1a7ca87724f"
-  integrity sha512-uZ95szi3zUbzRDx1zx/xnsCG+2xgZyy57pDOeaeO4r8zx5Dqe8Jv1ti8cunvBwJHVI5LzPuw8umKwZb3WKYxSQ==
+  version "1.4.28"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.28.tgz#fef0e92e281df6d568f482d8d53c34ca5374de48"
+  integrity sha512-Gzbf0wUtKfyPaqf0Plz+Ctinf9eQIzxEqBHwSvbGfeOm9GMNdLxyu1dNiCUfM+x6r4BE0xUJNh3Nmg9gfAtTmg==
 
 electron@^16.0.5:
   version "16.0.5"
@@ -5316,9 +5316,9 @@ ora@^5.2.0:
     wcwidth "^1.0.1"
 
 ordered-binary@^1.0.0:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/ordered-binary/-/ordered-binary-1.2.2.tgz#76b27c8c7c6fa09eded9d06f684b9f2721f95307"
-  integrity sha512-fs9eFLmnFleZNi9oPp/XJdUjUuX90ucllnreN10boTKVje4U2QGjadxl1WAxCmBQRpvSMdALPN34ubDjFGeLyg==
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/ordered-binary/-/ordered-binary-1.2.3.tgz#518f637692a74d372e56230effae37b811575e36"
+  integrity sha512-fEwMk8TNUtzQDjXKYS2ANW3fNZ/gMReCPOAsLHaqw+UDnq/8ddXAcX4lGRpTK7kAghAjkmJs1EXXbcrDbg+ruw==
 
 os-browserify@^0.3.0:
   version "0.3.0"
@@ -7247,9 +7247,9 @@ wcwidth@^1.0.1:
     defaults "^1.0.3"
 
 weak-lru-cache@^1.0.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/weak-lru-cache/-/weak-lru-cache-1.2.0.tgz#9f18a0e622b73a22ec5ea6a585b3d90d834e7126"
-  integrity sha512-/m09N7scntxHqtypoF+1KJnHYntYTwVXAq3y2P3YPNIMyKexGPVCs/DTm/nS1NhD0max+sLvIPJacSeNFQ9lNg==
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/weak-lru-cache/-/weak-lru-cache-1.2.1.tgz#6b4f2da7e1701f845e71522417f1df1e39503df8"
+  integrity sha512-O5ag1F0Xk6ui+Fg5LlosTcVAyHs6DeyiDDbOapNtFCx/KjZ82B3U9stM9hvzbVclKWn9ABPjaINX/nQkGkJkKg==
 
 webidl-conversions@^3.0.0:
   version "3.0.1"
