@@ -24,7 +24,16 @@ context ('Show Scene', function () {
 		cy.start ();
 		cy.get ('[data-character="y"][data-sprite="normal"]').should ('be.visible');
 		cy.get ('[data-character="m"][data-sprite="normal"]').should ('be.visible');
-		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', [
+			{
+				statement: 'show character y normal at left',
+				previous: null
+			},
+			{
+				statement: 'show character m normal at right',
+				previous: null
+			}
+		]);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
 		cy.get ('text-box').contains ('One');
 
@@ -33,7 +42,20 @@ context ('Show Scene', function () {
 		cy.get ('[data-character="y"][data-sprite="normal"]').should ('not.exist');
 		cy.get ('[data-character="m"][data-sprite="normal"]').should ('not.exist');
 		cy.get ('[data-character="m"][data-sprite="angry"]').should ('be.visible');
-		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right', 'show character m angry at right']);
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', [
+			{
+				statement: 'show character y normal at left',
+				previous: null
+			},
+			{
+				statement: 'show character m normal at right',
+				previous: null
+			},
+			{
+				statement: 'show character m angry at right',
+				previous: null
+			}
+		]);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character m angry at right']);
 		cy.get ('text-box').contains ('Two');
 
@@ -41,7 +63,25 @@ context ('Show Scene', function () {
 
 		cy.get ('[data-character="y"][data-sprite="angry"]').should ('be.visible');
 		cy.get ('[data-character="m"][data-sprite="angry"]').should ('not.exist');
-		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right', 'show character m angry at right', 'show character y angry at left']);
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', [
+			{
+				statement: 'show character y normal at left',
+				previous: null
+			},
+			{
+				statement: 'show character m normal at right',
+				previous: null
+			},
+			{
+				statement: 'show character m angry at right',
+				previous: null
+			},
+			{
+				statement: 'show character y angry at left',
+				previous: null
+			}
+		]);
+
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y angry at left']);
 		cy.get ('text-box').contains ('Three');
 		cy.rollback ();
@@ -50,7 +90,20 @@ context ('Show Scene', function () {
 		cy.get ('[data-character="m"][data-sprite="normal"]').should ('not.exist');
 		cy.get ('[data-character="m"][data-sprite="angry"]').should ('be.visible');
 		cy.get ('[data-character="y"][data-sprite="angry"]').should ('not.exist');
-		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right', 'show character m angry at right']);
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', [
+			{
+				statement: 'show character y normal at left',
+				previous: null
+			},
+			{
+				statement: 'show character m normal at right',
+				previous: null
+			},
+			{
+				statement: 'show character m angry at right',
+				previous: null
+			}
+		]);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character m angry at right']);
 		cy.get ('text-box').contains ('Two');
 		cy.rollback ();
@@ -59,7 +112,16 @@ context ('Show Scene', function () {
 		cy.get ('[data-character="m"][data-sprite="normal"]').should ('be.visible');
 		cy.get ('[data-character="m"][data-sprite="angry"]').should ('not.exist');
 		cy.get ('[data-character="y"][data-sprite="angry"]').should ('not.exist');
-		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', [
+			{
+				statement: 'show character y normal at left',
+				previous: null
+			},
+			{
+				statement: 'show character m normal at right',
+				previous: null
+			}
+		]);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
 		cy.get ('text-box').contains ('One');
 
@@ -82,7 +144,16 @@ context ('Show Scene', function () {
 		cy.get ('#background').should ('have.css', 'background-color', 'rgb(0, 128, 0)');
 		cy.get ('[data-character="y"][data-sprite="normal"]').should ('be.visible');
 		cy.get ('[data-character="m"][data-sprite="normal"]').should ('be.visible');
-		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
+		cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', [
+			{
+				statement: 'show character y normal at left',
+				previous: null
+			},
+			{
+				statement: 'show character m normal at right',
+				previous: null
+			}
+		]);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
 
 		cy.wrap (this.monogatari).invoke ('state', 'scene').should ('equal', 'show scene green');
@@ -111,7 +182,16 @@ context ('Show Scene', function () {
 				cy.get ('#background').should ('have.css', 'background-color', 'rgb(0, 128, 0)');
 				cy.get ('[data-character="y"][data-sprite="normal"]').should ('be.visible');
 				cy.get ('[data-character="m"][data-sprite="normal"]').should ('be.visible');
-				cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
+				cy.wrap (this.monogatari).invoke ('history', 'character').should ('deep.equal', [
+					{
+						statement: 'show character y normal at left',
+						previous: null
+					},
+					{
+						statement: 'show character m normal at right',
+						previous: null
+					}
+				]);
 				cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
 
 				cy.wrap (this.monogatari).invoke ('history', 'scene').should ('deep.equal', ['show scene green']);

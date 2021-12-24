@@ -1,7 +1,7 @@
 /**
  * @Compatibility [< v2.1.0]
  *
- * Monogatari v2.1.0 introduced a new format to save the historu of the show
+ * Monogatari v2.1.0 introduced a new format to save the history of the show
  * actions by adding the previous statement they may have replaced in order to
  * supress a bug where the incorrect items were shown as it assumed they were
  * previously visible.

@@ -140,4 +140,58 @@ context ('Show Image', function () {
 			});
 		});
 	});
+
+	it ('Shows the image on rollback only when it was previously visible.', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show image polaroid',
+				'One',
+				'hide image polaroid',
+				'show image christmas',
+				'Two',
+				'Three',
+				'hide image christmas',
+				'show image polaroid',
+				'Four',
+			]
+		});
+
+		cy.start ();
+
+		cy.get ('[data-image="polaroid"]').should ('be.visible');
+		cy.get ('text-box').contains ('One');
+		cy.proceed ();
+
+		cy.get ('[data-image="polaroid"]').should ('not.exist');
+		cy.get ('[data-image="christmas"]').should ('be.visible');
+		cy.get ('text-box').contains ('Two');
+		cy.proceed ();
+
+		cy.get ('[data-image="polaroid"]').should ('not.exist');
+		cy.get ('[data-image="christmas"]').should ('be.visible');
+		cy.get ('text-box').contains ('Three');
+		cy.proceed ();
+
+		cy.get ('[data-image="christmas"]').should ('not.exist');
+		cy.get ('[data-image="polaroid"]').should ('be.visible');
+		cy.get ('text-box').contains ('Four');
+
+		cy.rollback ();
+
+		cy.get ('[data-image="polaroid"]').should ('not.exist');
+		cy.get ('[data-image="christmas"]').should ('be.visible');
+		cy.get ('text-box').contains ('Three');
+
+		cy.rollback ();
+
+		cy.get ('text-box').contains ('Two');
+		cy.get ('[data-image="polaroid"]').should ('not.exist');
+		cy.get ('[data-image="christmas"]').should ('be.visible');
+
+		cy.rollback ();
+
+		cy.get ('[data-image="polaroid"]').should ('be.visible');
+		cy.get ('text-box').contains ('One');
+	});
 });

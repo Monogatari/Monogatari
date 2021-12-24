@@ -327,7 +327,7 @@ context ('Show Character', function () {
 			},
 			{
 				statement: 'show character m normal at right',
-				previous: 'show character y normal at left'
+				previous: null
 			}
 		]);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
@@ -342,7 +342,7 @@ context ('Show Character', function () {
 			},
 			{
 				statement: 'show character m normal at right',
-				previous: 'show character y normal at left'
+				previous: null
 			},
 			{
 				statement: 'show character m angry at right',
@@ -361,7 +361,7 @@ context ('Show Character', function () {
 			},
 			{
 				statement: 'show character m normal at right',
-				previous: 'show character y normal at left'
+				previous: null
 			},
 			{
 				statement: 'show character m angry at right',
@@ -369,7 +369,7 @@ context ('Show Character', function () {
 			},
 			{
 				statement: 'show character y angry at left',
-				previous: 'show character m angry at right'
+				previous: 'show character y normal at left'
 			}
 		]);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character m angry at right', 'show character y angry at left']);
@@ -384,7 +384,7 @@ context ('Show Character', function () {
 			},
 			{
 				statement: 'show character m normal at right',
-				previous: 'show character y normal at left'
+				previous: null
 			},
 			{
 				statement: 'show character m angry at right',
@@ -403,7 +403,7 @@ context ('Show Character', function () {
 			},
 			{
 				statement: 'show character m normal at right',
-				previous: 'show character y normal at left'
+				previous: null
 			}
 		]);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
@@ -433,7 +433,7 @@ context ('Show Character', function () {
 			},
 			{
 				statement: 'show character m normal at right',
-				previous: 'show character y normal at left'
+				previous: null
 			}
 		]);
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
@@ -455,7 +455,7 @@ context ('Show Character', function () {
 					},
 					{
 						statement: 'show character m normal at right',
-						previous: 'show character y normal at left'
+						previous: null
 					}
 				]);
 				cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y normal at left', 'show character m normal at right']);
