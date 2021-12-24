@@ -2469,7 +2469,7 @@ class Monogatari {
 				console.warn ('There was no settings saved. This may be the first time this game was opened, we\'ll create them now.', e);
 				this.global ('_first_run', true);
 				if (this.setting ('MultiLanguage') !== true || this.setting ('LanguageSelectionScreen') !== true) {
-					return this.Storage.set ('Settings', this._preferences);
+					resolve(this.Storage.set ('Settings', this._preferences));
 				}
 				resolve();
 			});
@@ -2633,6 +2633,8 @@ class Monogatari {
 				this.global ('_didSetup', true);
 				return Promise.resolve ();
 			});
+		}).catch((error) => {
+			console.error('Initialization error', error);
 		});
 	}
 	/**
