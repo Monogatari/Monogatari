@@ -2510,9 +2510,6 @@ class Monogatari {
 			// require being cached.
 			if (this.setting ('ServiceWorkers')) {
 				if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
-					// TODO: There's a place in hell for this quick fix, the splitting
-					// of the sw file is just preventing parcel from trying to bundle it
-					// when building the core libraries.
 					navigator.serviceWorker.register(new URL('service-worker.js', import.meta.url)).then ((registration) => {
 
 						// Check if an update to the service worker was found

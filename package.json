@@ -109,7 +109,7 @@
 		"stylelint-config-standard": "^24.0.0"
 	},
 	"dependencies": {
-		"@aegis-framework/artemis": "^0.3.27",
+		"@aegis-framework/artemis": "^0.3.28",
 		"@aegis-framework/kayros.css": "^0.4.5",
 		"@aegis-framework/pandora": "^0.1.8",
 		"@fortawesome/fontawesome-free": "^5.15.4",

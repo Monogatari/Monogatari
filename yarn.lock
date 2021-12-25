@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@aegis-framework/artemis@^0.3.27":
-  version "0.3.27"
-  resolved "https://registry.yarnpkg.com/@aegis-framework/artemis/-/artemis-0.3.27.tgz#4e4d77d69c3c1a745fa4b6e361521b0fdf9b419b"
-  integrity sha512-7ZbZaXYIyJwTIIig1uf4YIc1kJnMw96vUjqycs4E8U58G/sqZEHNMAmYFX/fuMe/F/ojm+iEUUDEZJQMYuGonQ==
+"@aegis-framework/artemis@^0.3.28":
+  version "0.3.28"
+  resolved "https://registry.yarnpkg.com/@aegis-framework/artemis/-/artemis-0.3.28.tgz#23513917caac74dd2f5c013f3e8c7826e573d12c"
+  integrity sha512-tPXZfxiQhOPBS0hFgv42cGvGL9JkNRPsnXdmUJm3SfmpOO1GVdG4bUYogn6oNTELWafunyyC3JinSRKJha5K8A==
 
 "@aegis-framework/kayros.css@^0.4.5":
   version "0.4.5"
