@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@aegis-framework/artemis@^0.3.26":
-  version "0.3.26"
-  resolved "https://registry.yarnpkg.com/@aegis-framework/artemis/-/artemis-0.3.26.tgz#199ba1f8eb871de90c51060289152fe52346566a"
-  integrity sha512-D2ZVIWiq5Sp4qt7ANYAyvbt/6nPD31VqyARQNNyMK6NC3GBMXHWEKoeHofs/+plR+on7prKaAySvc8O4qmedGQ==
+"@aegis-framework/artemis@^0.3.27":
+  version "0.3.27"
+  resolved "https://registry.yarnpkg.com/@aegis-framework/artemis/-/artemis-0.3.27.tgz#4e4d77d69c3c1a745fa4b6e361521b0fdf9b419b"
+  integrity sha512-7ZbZaXYIyJwTIIig1uf4YIc1kJnMw96vUjqycs4E8U58G/sqZEHNMAmYFX/fuMe/F/ojm+iEUUDEZJQMYuGonQ==
 
 "@aegis-framework/kayros.css@^0.4.5":
   version "0.4.5"
@@ -6971,10 +6971,10 @@ tslib@~2.1.0:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
   integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
 
-tsparticles@^1.37.5:
-  version "1.37.5"
-  resolved "https://registry.yarnpkg.com/tsparticles/-/tsparticles-1.37.5.tgz#df87356e8ba092ed066ef80c367b0a0f6d3b81e8"
-  integrity sha512-BQBRnnKKhKH2POwxuHzPiuL/zPUjuR5QmMCFQ2vm3fadE2k4vqmH099m1R9R+nt0lTvWL6SCS0hYQQkqUjsMXg==
+tsparticles@^1.37.6:
+  version "1.37.6"
+  resolved "https://registry.yarnpkg.com/tsparticles/-/tsparticles-1.37.6.tgz#f59951350d116a822c576932a4e057160e01bebf"
+  integrity sha512-DGmlIij32gqZJ++WFJO6MxvO9wZjwfhYEpGdwHWF/+zVBkHQSLEuM97ffxFwgzCq6hQ37ljECmk2zwooOxeGBA==
 
 tty-browserify@^0.0.1:
   version "0.0.1"
