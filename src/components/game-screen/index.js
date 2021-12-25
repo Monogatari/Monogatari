@@ -23,19 +23,21 @@ class GameScreen extends ScreenComponent {
 			});
 		});
 
-		this.engine.registerListener ('back', {
-			keys: 'left',
-			callback: () => {
-				this.engine.global ('block', false);
-				this.engine.rollback ().then (() => {
-					// Nothing to do here
-				}).catch ((e) => {
-					this.engine.debug.log (`Proceed Prevented\nReason: ${e}`);
-					// An action waiting for user interaction or something else
-					// is blocking the game.
-				});
-			}
-		});
+		if (this.engine.setting ('AllowRollback') === true) {
+			this.engine.registerListener ('back', {
+				keys: 'left',
+				callback: () => {
+					this.engine.global ('block', false);
+					this.engine.rollback ().then (() => {
+						// Nothing to do here
+					}).catch ((e) => {
+						this.engine.debug.log (`Proceed Prevented\nReason: ${e}`);
+						// An action waiting for user interaction or something else
+						// is blocking the game.
+					});
+				}
+			});
+		}
 
 		return Promise.resolve ();
 	}

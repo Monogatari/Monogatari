@@ -10,7 +10,14 @@ class QuickMenu extends MenuComponent {
 	}
 
 	render () {
-		return this.static.buttons ().map ((button) => {
+		let buttons = this.static.buttons ();
+		if (this.engine.setting ('AllowRollback') !== true) {
+			buttons = buttons.filter((button) => {
+				return button && button.data && button.data.action !== 'back';
+			});
+		}
+
+		return buttons.map ((button) => {
 			// A user could create a custom element to display all or specific
 			// buttons. If no element was set on the button's definition, we'll
 			// assume it to be a simple button.

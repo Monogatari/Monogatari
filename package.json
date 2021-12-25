@@ -1,8 +1,8 @@
 {
 	"name": "@monogatari/core",
 	"version": "2.1.0",
-	"main": "dist/engine/core/monogatari.node.js",
-	"module": "dist/engine/core/monogatari.module.js",
+	"main": "lib/monogatari.node.js",
+	"module": "lib/monogatari.module.js",
 	"css": "dist/engine/core/monogatari.css",
 	"debug": "dist/engine/core/debug.js",
 	"web": "dist/engine/core/monogatari.js",
@@ -129,6 +129,7 @@
 		"LICENSE",
 		"package.json",
 		"src/*",
-		"dist/engine/*"
+		"dist/engine/*",
+		"lib/*"
 	]
 }

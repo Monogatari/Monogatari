@@ -326,7 +326,10 @@ class Monogatari {
 	 * @return {Action[]} - List of registered Actions
 	 */
 	static actions () {
-		return this._actions;
+		const experimentalFeatures = this.setting ('ExperimentalFeatures');
+		return this._actions.filter(action => {
+			return action._experimental === false || experimentalFeatures === true;
+		});
 	}
 
 	/**
@@ -348,7 +351,7 @@ class Monogatari {
 	 * component must have an unique ID.
 	 */
 	static registerComponent (component) {
-		const alreadyRegistered = this._components.findIndex (c => c.tag === component.tag) > -1;
+		const alreadyRegistered = this.components ().findIndex (c => c.tag === component.tag) > -1;
 
 		if (typeof window.customElements.get (component.tag) !== 'undefined') {
 			FancyError.show (
@@ -392,7 +395,7 @@ class Monogatari {
 	 */
 	static unregisterComponent (component) {
 		if (!this.global ('_didSetup')) {
-			this._components = this._components.filter ((c) => c.tag.toLowerCase() !== component.toLowerCase());
+			this._components = this.components ().filter ((c) => c.tag.toLowerCase() !== component.toLowerCase());
 		} else {
 			FancyError.show (
 				`Unable to unregister component "${component}"`,
@@ -414,7 +417,10 @@ class Monogatari {
 	 * @return {Component[]} - List of registered Components
 	 */
 	static components () {
-		return this._components;
+		const experimentalFeatures = this.setting ('ExperimentalFeatures');
+		return this._components.filter(component => {
+			return component._experimental === false || experimentalFeatures === true;
+		});
 	}
 
 	/**
@@ -2017,24 +2023,28 @@ class Monogatari {
 	}
 
 	static rollback () {
-		if (this.state ('step') === 0) {
-			const jump = [...this.history ('jump')].reverse ().find (o => {
-				return o.destination.label === this.state ('label') && o.destination.step === 0;
-			});
+		const allowRollback = this.setting ('AllowRollback') === true;
 
-			if (typeof jump === 'undefined') {
-				this.debug.debug ('Will not attempt rollback since this is the beginning of the game.');
-				return Promise.resolve ();
+		if (allowRollback) {
+			if (this.state ('step') === 0) {
+				const jump = [...this.history ('jump')].reverse ().find (o => {
+					return o.destination.label === this.state ('label') && o.destination.step === 0;
+				});
+
+				if (typeof jump === 'undefined') {
+					this.debug.debug ('Will not attempt rollback since this is the beginning of the game.');
+					return Promise.resolve ();
+				}
 			}
-		}
 
-		return this.shouldRollback ().then (() => {
-			this.global ('_engine_block', true);
-			return this.willRollback ().then (() => {
-				return this.previous ().then (() => {
+			return this.shouldRollback ().then (() => {
+				this.global ('_engine_block', true);
+				return this.willRollback ().then (() => {
+					return this.previous ().then (() => {
+					});
 				});
 			});
-		});
+		}
 	}
 
 	/**
@@ -2477,7 +2487,7 @@ class Monogatari {
 
 		return loadPreferencesPromise.then(() => {
 			// Define all the components that were registered to this point
-			for (const component of this._components) {
+			for (const component of this.components ()) {
 				if (typeof window.customElements.get (component.tag) === 'undefined') {
 					component.engine = this;
 					window.customElements.define (component.tag, component);
@@ -3260,7 +3270,19 @@ Monogatari._settings = {
 		'Adapter': 'LocalStorage',
 		'Store': 'GameData',
 		'Endpoint': ''
-	}
+	},
+
+	// Whether players can go back to previous points of the game or not.
+	// Default: true
+	// If this is set to false, the "Back" button on the quick menu will not be
+	// shown and the left arrow keyboard shortcut will be disabled.
+	'AllowRollback': true,
+
+	// Whether experimental features should be enabled or not. Default: false
+	// These features are unfinished and unstable, chances are they will still
+	// go through a lot of changes and functionality won't have any backward
+	// compatibility rendering your save files unusable on many cases.
+	'ExperimentalFeatures': false
 };
 
 Monogatari._preferences = {

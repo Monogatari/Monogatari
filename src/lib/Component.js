@@ -27,6 +27,12 @@ import { Component as PandoraComponent } from '@aegis-framework/pandora';
  */
 class Component extends PandoraComponent {
 
+	/**
+	 * Marks the component as experimental, meaning it's not stable and should not
+	 * be used in production.
+	 */
+	static _experimental = false;
+
 	static _priority = 0;
 
 	static all () {

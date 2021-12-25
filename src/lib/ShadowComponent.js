@@ -27,6 +27,12 @@ import { ShadowComponent as PandoraShadowComponent } from '@aegis-framework/pand
  */
 class ShadowComponent extends PandoraShadowComponent {
 
+	/**
+	 * Marks the component as experimental, meaning it's not stable and should not
+	 * be used in production.
+	 */
+	static _experimental = false;
+
 	static _priority = 0;
 
 	static all () {

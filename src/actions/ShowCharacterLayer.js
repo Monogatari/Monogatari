@@ -3,6 +3,8 @@ import { $_ } from '@aegis-framework/artemis';
 
 export class ShowCharacterLayer extends Action {
 
+	static _experimental = true;
+
 	static setup () {
 		// The character history saves what characters have been displayed
 		this.engine.history ('characterLayer');

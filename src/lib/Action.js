@@ -73,6 +73,12 @@
 class Action {
 
 	/**
+	 * Marks the action as experimental, meaning it's not stable and should not
+	 * be used in production.
+	 */
+	static _experimental = false;
+
+	/**
 	 * If needed, every action should declare its configuration as follows. This
 	 * configuration object should be used to store action-specific settings as well
 	 * as other objects/assets used by the action. If any specific object needs

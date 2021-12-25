@@ -4,6 +4,8 @@ import { FancyError } from './../lib/FancyError';
 
 export class HideCharacterLayer extends Action {
 
+	static _experimental = true;
+
 	static matchString ([ hide, type, identifier ]) {
 		return hide === 'hide' && type === 'character' && identifier.indexOf(':') > -1;
 	}
