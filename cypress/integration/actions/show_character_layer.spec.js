@@ -29,7 +29,30 @@ context ('Show Character', function () {
 
 
 		cy.wrap (this.monogatari).invoke ('state', 'characters').should ('deep.equal', ['show character y angry_layered with fadeIn']);
-		cy.wrap (this.monogatari).invoke ('state', 'characterLayers').should ('deep.equal', ['show character y:base normal', 'show character y:mouth alone', 'show character y:eyes alone']);
+		cy.wrap (this.monogatari).invoke ('state', 'characterLayers').should ('deep.equal', [
+			'show character y:base normal',
+			'show character y:mouth alone',
+			'show character y:eyes alone'
+		]);
+		cy.wrap (this.monogatari).invoke ('history', 'characterLayer').should ('deep.equal', [
+			{
+				parent: 'show character y angry_layered with fadeIn',
+				layers: [
+					{
+						statement: 'show character y:base normal',
+						previous: null
+					},
+					{
+						statement: 'show character y:mouth alone',
+						previous: null
+					},
+					{
+						statement: 'show character y:eyes alone',
+						previous: null
+					}
+				]
+			}
+		]);
 
 		cy.proceed();
 

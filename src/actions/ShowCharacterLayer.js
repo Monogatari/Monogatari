@@ -57,6 +57,12 @@ export class ShowCharacterLayer extends Action {
 		this.asset = character;
 		this.layer = layer;
 
+		this.state = this.engine.state('characterLayers').find((statement) => {
+			const [show, _character, asset, name] = statement.split (' ');
+			const [_identifier, _layer] = asset.split(':');
+			return _identifier === character && _layer == layer;
+		});
+
 		if (typeof this.engine.character (character) !== 'undefined') {
 			// show [character] [expression] at [position] with [animation] [infinite]
 			this.sprite = sprite;
@@ -190,7 +196,15 @@ export class ShowCharacterLayer extends Action {
 
 	didApply ({ updateHistory = true, updateState = true } = {}) {
 		if (updateHistory === true) {
-			this.engine.history ('characterLayer').push (this._statement);
+			this.engine.history ('characterLayer').push ({
+				parent: null,
+				layers: [
+					{
+						statement: this._statement,
+						previous: this.state || null
+					}
+				]
+			});
 		}
 
 		if (updateState === true) {
@@ -220,28 +234,34 @@ export class ShowCharacterLayer extends Action {
 		// First, we remove the last instance of the character from the history since
 		// that's the one being currently displayed and we want the one before that
 		for (let i = this.engine.history ('characterLayer').length - 1; i >= 0; i--) {
-			const last = this.engine.history ('characterLayer')[i];
-			const [show, character, asset, name] = last.split (' ');
-			const [id, layer] = asset.split(':');
-			if (id === this.asset && layer === this.layer) {
-				this.engine.history ('characterLayer').splice (i, 1);
-				break;
-			}
-		}
+			const { parent, layers }  = this.engine.history ('characterLayer')[i];
 
-		// Now, we go through the remaining history to find the last instance of the
-		// character.
-		for (let i = this.engine.history ('characterLayer').length - 1; i >= 0; i--) {
-			const last = this.engine.history ('characterLayer')[i];
-			const [show, character, asset, name] = last.split (' ');
+			const historyStatement = layers.find((s) => {
+				const { previous, statement } = s;
+				const [show, character, asset, name] = statement.split (' ');
+				const [id, layer] = asset.split(':');
 
-			const [id, layer] = asset.split(':');
+				return id === this.asset && layer === this.layer;
+			});
 
-			if (id === this.asset && layer === this.layer) {
-				const action = this.engine.prepareAction (last, { cycle: 'Apply' });
-				return action.apply ().then (() => {
-					return action.didApply ({ updateHistory: false, updateState: true });
-				});
+			if (typeof historyStatement === 'object' && historyStatement !== null) {
+
+				const { statement, previous } = historyStatement;
+				const [show, character, asset, name] = statement.split (' ');
+				const [id, layer] = asset.split(':');
+				if (id === this.asset && layer === this.layer) {
+					this.engine.history ('characterLayer').splice (i, 1);
+
+					if (typeof previous !== 'undefined' && previous !== null) {
+						const action = this.engine.prepareAction (previous, { cycle: 'Apply' });
+						return action.apply ().then (() => {
+							return action.didApply ({ updateHistory: false, updateState: true });
+						});
+					}
+
+
+					break;
+				}
 			}
 		}
 

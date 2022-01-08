@@ -145,15 +145,26 @@ export class HideCharacterLayer extends Action {
 
 	revert () {
 		for (let i = this.engine.history ('characterLayer').length - 1; i >= 0; i--) {
-			const last = this.engine.history ('characterLayer')[i];
-			const [show, character, asset, name] = last.split (' ');
-			const [id, layer] = asset.split(':');
+			const { parent, layers } = this.engine.history ('characterLayer')[i];
+			const historyStatement = layers.find((s) => {
+				const { previous, statement } = s;
+				const [show, character, asset, name] = statement.split (' ');
+				const [id, layer] = asset.split(':');
 
-			if (id === this.asset && layer === this.layer) {
-				const action = this.engine.prepareAction (last, { cycle: 'Application' });
-				return action.apply ().then (() => {
-					return action.didApply ({ updateHistory: false, updateState: true });
-				});
+				return id === this.asset && layer === this.layer;
+			});
+
+			if (typeof historyStatement === 'object' && historyStatement !== null) {
+				const { statement, previous } = historyStatement;
+				const [show, character, asset, name] = statement.split (' ');
+				const [id, layer] = asset.split(':');
+
+				if (id === this.asset && layer === this.layer) {
+					const action = this.engine.prepareAction (previous, { cycle: 'Application' });
+					return action.apply ().then (() => {
+						return action.didApply ({ updateHistory: false, updateState: true });
+					});
+				}
 			}
 		}
 		return Promise.reject ();

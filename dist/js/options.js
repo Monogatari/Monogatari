@@ -129,7 +129,19 @@ monogatari.settings({
 		'Adapter': 'LocalStorage',
 		'Store': 'GameData',
 		'Endpoint': ''
-	}
+	},
+
+	// Whether players can go back to previous points of the game or not.
+	// Default: true
+	// If this is set to false, the "Back" button on the quick menu will not be
+	// shown and the left arrow keyboard shortcut will be disabled.
+	'AllowRollback': true,
+
+	// Whether experimental features should be enabled or not. Default: false
+	// These features are unfinished and unstable, chances are they will still
+	// go through a lot of changes and functionality won't have any backward
+	// compatibility rendering your save files unusable on many cases.
+	'ExperimentalFeatures': false
 });
 
 // Initial Settings

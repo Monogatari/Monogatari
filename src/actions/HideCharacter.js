@@ -126,13 +126,19 @@ export class HideCharacter extends Action {
 			return asset !== this.asset;
 		});
 
-		const characterLayers = this.engine.state ('characterLayers').filter ((item) => {
-			const [ show, character, asset, ] = item.split (' ');
-			const [id, layer] = asset.split(':');
-			return id !== this.asset;
-		});
+		const experimentalFeatures = this.engine.setting ('ExperimentalFeatures');
 
-		this.engine.state ({ characters, characterLayers });
+		if (experimentalFeatures) {
+			const characterLayers = this.engine.state ('characterLayers').filter ((item) => {
+				const [ show, character, asset, ] = item.split (' ');
+				const [id, layer] = asset.split(':');
+				return id !== this.asset;
+			});
+
+			this.engine.state ({ characters, characterLayers });
+		} else {
+			this.engine.state ({ characters });
+		}
 
 		return Promise.resolve ({ advance: true });
 	}

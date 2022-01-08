@@ -189,7 +189,7 @@ export class ShowCharacter extends Action {
 				$_(image).addClass ('animated');
 				$_(image).data ('character', this.asset);
 				$_(image).data ('sprite', this.sprite);
-			} else {
+			} else if (this.engine.setting ('ExperimentalFeatures') === true) {
 				image = document.createElement ('character-sprite');
 
 				image.setProps({
@@ -248,15 +248,38 @@ export class ShowCharacter extends Action {
 	}
 
 	didApply ({ updateHistory = true, updateState = true } = {}) {
+		const experimentalFeatures = this.engine.setting ('ExperimentalFeatures') === true;
 		if (updateHistory === true) {
 			this.engine.history ('character').push ({
 				statement: this._statement,
 				previous: this.state || null
 			});
 
-			if (typeof this.image === 'object') {
-				for (const layer in this.image) {
-					this.engine.history('characterLayer').push(`show character ${this.asset}:${layer} ${this.image[layer]}`);
+			if (experimentalFeatures) {
+				if (typeof this.image === 'object') {
+					const statements = [];
+					for (const layer in this.image) {
+						const previous = this.engine.state ('characterLayers').find ((statement) => {
+							const [show, _character, asset, name] = statement.split (' ');
+							const [_identifier, _layer] = asset.split (':');
+							return _identifier === this.asset && _layer == layer;
+						});
+
+						statements.push ({
+							statement: `show character ${this.asset}:${layer} ${this.image[layer]}`,
+							previous: previous || null
+						});
+					}
+
+					this.engine.history('characterLayer').push ({
+						parent: this._statement,
+						layers: statements
+					});
+				} else {
+					this.engine.history('characterLayer').push ({
+						parent: this._statement,
+						layers: []
+					});
 				}
 			}
 		}
@@ -275,33 +298,49 @@ export class ShowCharacter extends Action {
 				]
 			});
 
-			if (typeof this.image === 'object') {
-				const newState = [];
+			if (experimentalFeatures) {
 
-				for (const layer in this.image) {
-					newState.push(`show character ${this.asset}:${layer} ${this.image[layer]}`);
+				if (typeof this.image === 'object') {
+					const newState = [];
+
+					for (const layer in this.image) {
+						newState.push (`show character ${this.asset}:${layer} ${this.image[layer]}`);
+					}
+
+					this.engine.state ({
+						characterLayers: [
+							...this.engine.state ('characterLayers').filter ((item) => {
+								if (typeof item === 'string') {
+									const [show, character, asset, sprite] = item.split (' ');
+									const [id] = asset.split(':');
+									return id !== this.asset;
+								}
+								return false;
+							}),
+							...newState
+						]
+					});
+				} else {
+					this.engine.state ({
+						characterLayers: [
+							...this.engine.state ('characterLayers').filter ((item) => {
+								if (typeof item === 'string') {
+									const [show, character, asset, sprite] = item.split (' ');
+									const [id] = asset.split(':');
+									return id !== this.asset;
+								}
+								return false;
+							}),
+						]
+					});
 				}
-
-				this.engine.state ({
-					characterLayers: [
-						...this.engine.state ('characterLayers').filter ((item) => {
-							if (typeof item === 'string') {
-								const [show, character, asset, sprite] = item.split (' ');
-								const [id] = asset.split(':');
-								return id !== this.asset;
-							}
-							return false;
-						}),
-						...newState
-					]
-				});
-
 			}
 		}
 		return Promise.resolve ({ advance: true });
 	}
 
 	revert () {
+		const experimentalFeatures = this.engine.setting ('ExperimentalFeatures');
 		this.engine.element ().find (`[data-character="${this.asset}"]`).remove ();
 
 		// First, we get the last instance of the character from the history as
@@ -316,7 +355,41 @@ export class ShowCharacter extends Action {
 					const action = this.engine.prepareAction (previous, { cycle: 'Apply' });
 					return action.apply ().then (() => {
 						return action.didApply ({ updateHistory: false, updateState: true });
+					}).then(({ advance }) => {
+						if (experimentalFeatures) {
+							if (typeof this.image === 'object') {
+								for (let j = this.engine.history ('characterLayer').length - 1; j >= 0; j--) {
+									const { parent } = this.engine.history ('characterLayer')[j];
+									if (typeof parent === 'string') {
+										const [_show, _character, _asset, _name] = parent.split (' ');
+
+										if (_asset === this.asset) {
+											this.engine.history ('characterLayer').splice (j, 1);
+											break;
+										}
+									}
+								}
+							}
+						}
+
+						return Promise.resolve({ advance });
 					});
+				} else {
+					if (experimentalFeatures) {
+						if (typeof this.image === 'object') {
+							for (let j = this.engine.history ('characterLayer').length - 1; j >= 0; j--) {
+								const { parent } = this.engine.history ('characterLayer')[j];
+								if (typeof parent === 'string') {
+									const [_show, _character, _asset, _name] = parent.split (' ');
+
+									if (_asset === this.asset) {
+										this.engine.history ('characterLayer').splice (j, 1);
+										break;
+									}
+								}
+							}
+						}
+					}
 				}
 
 				break;
