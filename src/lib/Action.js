@@ -379,6 +379,17 @@ class Action {
 	}
 
 	/**
+	 * setExtras - Some times, actions may require extra context to know what they're
+	 * supposed to do. The extras object should hold any additional information
+	 * we want to pass down to the action.
+	 *
+	 * @param {Object} extras
+	 */
+	setExtras (extras) {
+		this._extras = extras;
+	}
+
+	/**
 	 * willApply - Method called before the application of an action
 	 *
 	 * @return {Promise} - Result of the willApply operation, if this function

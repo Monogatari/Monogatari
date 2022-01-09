@@ -131,7 +131,29 @@ export class ShowCharacter extends Action {
 		const position = this._statement.match (/at\s(\S*)/);
 
 		if (oneSpriteOnly && sprite.exists ()) {
-			sprite.attribute ('src', `${imgSrc}${this.image}`);
+
+			if (this.engine.setting ('ExperimentalFeatures') === true) {
+				if (sprite.matches ('character-sprite') && typeof this.image === 'object') {
+					const image = sprite.get (0);
+					const layers = {};
+
+					for (const [layer, asset] of Object.entries(this.image)) {
+						layers[layer] = {
+							asset,
+							classes: [],
+						};
+					}
+
+					image.setState({ layers });
+				} else if (sprite.matches ('character-sprite')) {
+					sprite.get(0).setProps ({ 'src': `${imgSrc}${this.image}` });
+				} else {
+					sprite.attribute ('src', `${imgSrc}${this.image}`);
+				}
+			} else {
+				sprite.attribute ('src', `${imgSrc}${this.image}`);
+			}
+
 			sprite.data ('sprite', this.sprite);
 
 			for (const className of this.classes) {
@@ -197,13 +219,28 @@ export class ShowCharacter extends Action {
 					directory: imgSrc,
 				});
 
+
 				const layers = {};
 
-				for (const [layer, asset] of Object.entries(this.image)) {
-					layers[layer] = {
-						asset,
-						classes: [],
-					};
+				const extras = this._extras || {};
+				if (typeof extras.layerHistory !== 'undefined') {
+					for (const { statement, previous } of extras.layerHistory.layers) {
+						if (previous !== null) {
+							const [show, _character, asset, name, ...classes] = previous.split (' ');
+							const [_identifier, _layer] = asset.split(':');
+							layers[_layer] = {
+								asset: name,
+								classes: ['animated', ...classes.filter ((item) => item !== 'at' && item !== 'with')],
+							};
+						}
+					}
+				} else {
+					for (const [layer, asset] of Object.entries(this.image)) {
+						layers[layer] = {
+							asset,
+							classes: [],
+						};
+					}
 				}
 
 				image.setState({ layers });
@@ -278,7 +315,12 @@ export class ShowCharacter extends Action {
 				} else {
 					this.engine.history('characterLayer').push ({
 						parent: this._statement,
-						layers: []
+						layers: this.engine.state ('characterLayers').map((s) => {
+							return {
+								statement: null,
+								previous: s
+							};
+						})
 					});
 				}
 			}
@@ -302,9 +344,17 @@ export class ShowCharacter extends Action {
 
 				if (typeof this.image === 'object') {
 					const newState = [];
-
-					for (const layer in this.image) {
-						newState.push (`show character ${this.asset}:${layer} ${this.image[layer]}`);
+					const extras = this._extras || {};
+					if (typeof extras.layerHistory !== 'undefined') {
+						for (const { statement, previous } of extras.layerHistory.layers) {
+							if (previous !== null) {
+								newState.push (previous);
+							}
+						}
+					} else {
+						for (const layer in this.image) {
+							newState.push (`show character ${this.asset}:${layer} ${this.image[layer]}`);
+						}
 					}
 
 					this.engine.state ({
@@ -351,31 +401,41 @@ export class ShowCharacter extends Action {
 			if (asset === this.asset) {
 				this.engine.history ('character').splice (i, 1);
 
-				if (typeof previous !== 'undefined' && previous !== null) {
-					const action = this.engine.prepareAction (previous, { cycle: 'Apply' });
-					return action.apply ().then (() => {
-						return action.didApply ({ updateHistory: false, updateState: true });
-					}).then(({ advance }) => {
-						if (experimentalFeatures) {
-							if (typeof this.image === 'object') {
-								for (let j = this.engine.history ('characterLayer').length - 1; j >= 0; j--) {
-									const { parent } = this.engine.history ('characterLayer')[j];
-									if (typeof parent === 'string') {
-										const [_show, _character, _asset, _name] = parent.split (' ');
+				if (experimentalFeatures) {
+					if (typeof previous !== 'undefined' && previous !== null) {
+						let previousLayers;
+						for (let j = this.engine.history ('characterLayer').length - 1; j >= 0; j--) {
+							const { parent } = this.engine.history ('characterLayer')[j];
+							if (typeof parent === 'string') {
+								const [_show, _character, _asset, _name] = parent.split (' ');
 
-										if (_asset === this.asset) {
-											this.engine.history ('characterLayer').splice (j, 1);
-											break;
-										}
-									}
+								if (_asset === this.asset) {
+									previousLayers =  this.engine.history ('characterLayer')[j];
+									break;
 								}
 							}
 						}
 
-						return Promise.resolve({ advance });
-					});
-				} else {
-					if (experimentalFeatures) {
+
+						const action = this.engine.prepareAction (previous, { cycle: 'Apply', extras: { layerHistory: previousLayers } });
+						return action.apply ().then (() => {
+							return action.didApply ({ updateHistory: false, updateState: true });
+						}).then(({ advance }) => {
+							for (let j = this.engine.history ('characterLayer').length - 1; j >= 0; j--) {
+								const { parent } = this.engine.history ('characterLayer')[j];
+								if (typeof parent === 'string') {
+									const [_show, _character, _asset, _name] = parent.split (' ');
+
+									if (_asset === this.asset) {
+										this.engine.history ('characterLayer').splice (j, 1);
+										break;
+									}
+								}
+							}
+
+							return Promise.resolve({ advance });
+						});
+					} else {
 						if (typeof this.image === 'object') {
 							for (let j = this.engine.history ('characterLayer').length - 1; j >= 0; j--) {
 								const { parent } = this.engine.history ('characterLayer')[j];
@@ -390,8 +450,14 @@ export class ShowCharacter extends Action {
 							}
 						}
 					}
+				} else {
+					if (typeof previous !== 'undefined' && previous !== null) {
+						const action = this.engine.prepareAction (previous, { cycle: 'Apply' });
+						return action.apply ().then (() => {
+							return action.didApply ({ updateHistory: false, updateState: true });
+						});
+					}
 				}
-
 				break;
 			}
 		}
@@ -409,6 +475,16 @@ export class ShowCharacter extends Action {
 					return false;
 				}),
 			],
+			characterLayers: [
+				...this.engine.state ('characterLayers').filter ((item) => {
+					if (typeof item === 'string') {
+						const [show, character, asset, sprite] = item.split (' ');
+						const [id, layer] = asset.split(':');
+						return id !== this.asset;
+					}
+					return false;
+				}),
+			]
 		});
 
 		return Promise.resolve ();

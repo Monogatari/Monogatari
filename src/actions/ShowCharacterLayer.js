@@ -196,15 +196,52 @@ export class ShowCharacterLayer extends Action {
 
 	didApply ({ updateHistory = true, updateState = true } = {}) {
 		if (updateHistory === true) {
-			this.engine.history ('characterLayer').push ({
-				parent: null,
-				layers: [
-					{
-						statement: this._statement,
-						previous: this.state || null
-					}
-				]
-			});
+			let previousHistory;
+			for (let j = this.engine.history ('characterLayer').length - 1; j >= 0; j--) {
+				const { parent } = this.engine.history ('characterLayer')[j];
+
+				const [_show, _character, _asset, _name] = parent.split (' ');
+
+				if (_asset === this.asset) {
+					previousHistory = this.engine.history ('characterLayer')[j];
+					break;
+				}
+			}
+
+			const parent = this.engine.state('characters').find(s => {
+				const [show, _character, asset, name] = s.split (' ');
+				return asset === this.asset;
+			}) || null;
+
+			if (typeof previousHistory !== 'undefined') {
+				this.engine.history ('characterLayer').push ({
+					parent,
+					layers: [
+						...previousHistory.layers.filter(({ statement, previous}) => {
+							if (statement !== null) {
+								const [_show, _character, _asset, _name] = parent.split (' ');
+								const [_identifier, _layer] = _asset.split(':');
+								return _identifier !== this.asset && _layer !== this.layer;
+							}
+						}),
+						{
+							statement: this._statement,
+							previous: this.state || null
+						}
+					]
+				});
+			} else {
+				this.engine.history ('characterLayer').push ({
+					parent,
+					layers: [
+						{
+							statement: this._statement,
+							previous: this.state || null
+						}
+					]
+				});
+			}
+
 		}
 
 		if (updateState === true) {
@@ -238,7 +275,7 @@ export class ShowCharacterLayer extends Action {
 
 			const historyStatement = layers.find((s) => {
 				const { previous, statement } = s;
-				const [show, character, asset, name] = statement.split (' ');
+				const [show, character, asset, name] = (statement || previous).split (' ');
 				const [id, layer] = asset.split(':');
 
 				return id === this.asset && layer === this.layer;
@@ -247,7 +284,7 @@ export class ShowCharacterLayer extends Action {
 			if (typeof historyStatement === 'object' && historyStatement !== null) {
 
 				const { statement, previous } = historyStatement;
-				const [show, character, asset, name] = statement.split (' ');
+				const [show, character, asset, name] = (statement || previous).split (' ');
 				const [id, layer] = asset.split(':');
 				if (id === this.asset && layer === this.layer) {
 					this.engine.history ('characterLayer').splice (i, 1);

@@ -27,18 +27,33 @@ class CharacterSprite extends Component {
 			// 		differences[key] = value;
 			// 	}
 			// }
-			this.resize ();
+			// this.resize ();
+			return this.forceRender().then(() => {
+				this.resize();
+				return Promise.resolve();
+			});
+			//this.resize();
 		}
 
-		// console.log(property, newState);
-		// // this.forceRender();
 
 		return Promise.resolve ();
 	}
 
+
 	onPropsUpdate (property, oldValue, newValue, oldObject, newObject) {
 		if (property === 'src') {
-			this.element ().find ('img').setAttribute ('src', newValue);
+			if (typeof newValue === 'string' && newValue.trim() !== '') {
+				const img = document.createElement(img);
+				img.src = newValue;
+
+
+				this.element ().find ('img:not(:first-child)').each((element) => {
+					element.remove();
+				});
+
+
+				this.element ().find ('img').get(0).setAttribute ('src', newValue);
+			}
 		}
 
 		if (property === 'width' || property === 'height') {

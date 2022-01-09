@@ -417,7 +417,7 @@ class Monogatari {
 	 * @return {Component[]} - List of registered Components
 	 */
 	static components () {
-		const experimentalFeatures = this.setting ('ExperimentalFeatures');
+		const experimentalFeatures = this.setting ('ExperimentalFeatures') || typeof window.Cypress !== 'undefined';
 		return this._components.filter(component => {
 			return component._experimental === false || experimentalFeatures === true;
 		});
@@ -1527,7 +1527,7 @@ class Monogatari {
 		};
 	}
 
-	static prepareAction (statement, { cycle }) {
+	static prepareAction (statement, { cycle, extras }) {
 		if (typeof statement === 'function') {
 			return statement;
 		}
@@ -1564,6 +1564,8 @@ class Monogatari {
 			// Monogatari is set as the context of the action so that it can
 			// access all its functionalities
 			act.setContext (this);
+
+			act.setExtras(extras || {});
 
 			return act;
 		}

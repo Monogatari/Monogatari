@@ -60,7 +60,8 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 	this.monogatari.settings ({
 		'AssetsPath': {
 			root: 'https://datadyne.perfectdark.space/monogatari/assets'
-		}
+		},
+		'ExperimentalFeatures': true
 	});
 
 	this.monogatari.assets ('videos', {
@@ -437,7 +438,7 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 			color: 'blue',
 			name: 'Yui',
 			directory: 'yui',
-			layers: ['base', 'mouth', 'eyes'],
+			layers: ['base', 'mouth', 'eyes', 'eyebrows'],
 			sprites: {
 				angry: 'angry.png',
 				happy: 'happy.png',
@@ -449,6 +450,12 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 					'mouth': 'alone',
 					'eyes': 'alone'
 				},
+				happy_layered: {
+					'base': 'arm_raised',
+					'mouth': 'smile',
+					'eyes': 'alone',
+					'eyebrows': 'normal'
+				},
 			},
 			expressions: {
 				angry: 'expressions/angry.png',
@@ -459,13 +466,18 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 			},
 			layer_assets: {
 				base: {
-					normal: 'layers/base.png'
+					normal: 'layers/base.png',
+					arm_raised: 'body/arm_raised.png'
 				},
 				mouth: {
-					alone: 'layers/mouth_alone.png'
+					alone: 'layers/mouth_alone.png',
+					smile: 'mouth/smile.png'
 				},
 				eyes: {
 					alone: 'layers/eyes_alone.png'
+				},
+				eyebrows: {
+					normal: 'eyebrows/normal.png'
 				}
 			},
 			nvl
