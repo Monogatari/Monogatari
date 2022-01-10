@@ -417,7 +417,7 @@ class Monogatari {
 	 * @return {Component[]} - List of registered Components
 	 */
 	static components () {
-		const experimentalFeatures = this.setting ('ExperimentalFeatures') || typeof window.Cypress !== 'undefined';
+		const experimentalFeatures = this.setting ('ExperimentalFeatures');
 		return this._components.filter(component => {
 			return component._experimental === false || experimentalFeatures === true;
 		});
@@ -2982,6 +2982,10 @@ class Monogatari {
 
 	static init (selector = '#monogatari') {
 		this._selector = selector;
+
+		if (typeof window.Cypress !== 'undefined') {
+			this.setting ('ExperimentalFeatures', true);
+		}
 
 		this.trigger ('willInit');
 
