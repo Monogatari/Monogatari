@@ -7,6 +7,7 @@
 	"debug": "dist/engine/core/debug.js",
 	"web": "dist/engine/core/monogatari.js",
 	"browserslist": "> 0.5%, last 2 versions, not dead",
+	"types": "types/index.d.ts",
 	"description": "Monogatari is a simple web visual novel engine created to bring Visual Novels to the web.",
 	"repository": {
 		"type": "git",
