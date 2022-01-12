@@ -1,93 +1,103 @@
 /**
  * ============================================================
- * English
+ * 繁體中文 (Traditional Chinese)
  * ============================================================
  *
  * Translators:
  *
- * Hyuchia <diego@hyuchia.com>
+ * Koala Yeung <koalay@gmail.com>
  */
 
-
+/**
+ * 常用字詞的譯法
+ * --------------
+ *
+ * - Save︰保存進度（動詞）；存檔（名詞）
+ * - Load︰載入進度
+ * - Slot︰位置
+ * - Screen︰介面
+ * - Auto︰自動播放
+ * - Skip︰快轉
+ */
 
 export default {
-	'AdvanceHelp': 'To advance through the game, left-click or tap anywhere on the game screen or press the space key',
-	'AllowPlayback': 'Click here to allow audio playback',
-	'Audio': 'Audio',
-	'AutoPlay': 'Auto',
-	'AutoPlayButton': 'Enable auto play',
-	'AutoPlaySpeed': 'Autoplay Speed',
+	'AdvanceHelp': '點按滑鼠左鍵、輕觸螢幕、或按空白鍵繼續遊戲',
+	'AllowPlayback': '點擊以批准播放聲效',
+	'Audio': '聲效',
+	'AutoPlay': '自動',
+	'AutoPlayButton': '進入自動播放模式',
+	'AutoPlaySpeed': '自動播放速度',
 
-	'Back': 'Back',
-	'BackButton': 'Go back',
+	'Back': '返回',
+	'BackButton': '返回',
 
-	'Cancel': 'Cancel',
-	'Close': 'Close',
-	'Confirm': 'Do you want to quit?',
-	'Credits': 'Credits',
+	'Cancel': '取消',
+	'Close': '關閉',
+	'Confirm': '你確定要離開了嗎？',
+	'Credits': '製作及嗚謝',
 
-	'Delete': 'Delete',
-	'DialogLogButton': 'Show the dialog log',
+	'Delete': '刪除',
+	'DialogLogButton': '顯示對話紀錄',
 
-	'FullScreen': 'Full Screen',
+	'FullScreen': '全螢幕',
 
-	'Gallery': 'Gallery',
+	'Gallery': '圖庫',
 
-	'Help': 'Help',
-	'Hide': 'Hide',
-	'HideButton': 'Hide the text box',
+	'Help': '幫助',
+	'Hide': '隱藏',
+	'HideButton': '隱藏對話框',
 
-	'iOSAudioWarning': 'Audio settings are not supported on iOS',
+	'iOSAudioWarning': '在 iOS 上無法支援聲效設定',
 
-	'KeyboardShortcuts': 'Keyboard Shortcuts',
+	'KeyboardShortcuts': '鍵盤快捷鍵',
 
-	'Language': 'Language',
-	'Load': 'Load',
-	'LoadAutoSaveSlots': 'Auto Saved Games',
-	'LoadButton': 'Open the Load Screen',
-	'Loading': 'Loading',
-	'LoadingMessage': 'Wait while the assets are loaded',
-	'LoadSlots': 'Saved Games',
-	'LocalStorageWarning': 'Local Storage is not available in this browser',
-	'Log': 'Log',
+	'Language': '語言',
+	'Load': '載入進度',
+	'LoadAutoSaveSlots': '自動保存進度',
+	'LoadButton': '打開載入進度的界面',
+	'Loading': '載入中',
+	'LoadingMessage': '媒體加載中，請稍候',
+	'LoadSlots': '遊戲存檔',
+	'LocalStorageWarning': '瀏覽器不支援 Local Storage 功能',
+	'Log': '紀錄',
 
-	'Music': 'Music Volume',
+	'Music': '音樂音量',
 
-	'NewContent': 'There is new content available, reload the page to get the latest version',
-	'NoSavedGames': 'No saved games',
-	'NoAutoSavedGames': 'No automatically saved games',
+	'NewContent': '有新的遊戲內容上線，請重新載入本頁，以取得最新版本',
+	'NoSavedGames': '沒有已保存的進度',
+	'NoAutoSavedGames': '沒有自動保存的進度',
 	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up',
 
 	'OK': 'OK',
-	'OrientationWarning': 'Please rotate your device to play',
-	'Overwrite': 'Overwrite',
+	'OrientationWarning': '請旋轉你的裝置以進行遊戲',
+	'Overwrite': '覆蓋存檔',
 
-	'QuickButtons': 'Quick Menu Buttons',
-	'QuickMenu': 'Quick Menu',
-	'Quit': 'Quit',
-	'QuitButton': 'Quit Game',
+	'QuickButtons': '快速選單鍵',
+	'QuickMenu': '快速選單',
+	'Quit': '離開',
+	'QuitButton': '離開遊戲',
 
-	'Resolution': 'Resolution',
+	'Resolution': '解像度',
 
-	'Save': 'Save',
-	'SaveButton': 'Open the Save Screen',
-	'SaveInSlot': 'Save in slot',
-	'SelectYourLanguage': 'Select your language',
-	'Settings': 'Settings',
-	'SettingsButton': 'Open the Settings Screen',
-	'Show': 'Show',
-	'Skip': 'Skip',
-	'SkipButton': 'Enter skip mode',
-	'SlotDeletion': 'Are you sure you want to delete this slot?',
-	'SlotOverwrite': 'Are you sure you want to overwrite this slot?',
-	'Sound': 'Sound Volume',
-	'Start': 'Start',
-	'Stop': 'Stop',
+	'Save': '保存進度',
+	'SaveButton': '開啟存檔介面',
+	'SaveInSlot': '在這位置保存遊戲',
+	'SelectYourLanguage': '選擇語言',
+	'Settings': '設定',
+	'SettingsButton': '開啟設定介面',
+	'Show': '顯示',
+	'Skip': '快轉',
+	'SkipButton': '進入快轉模式',
+	'SlotDeletion': '你是否確定要刪除這個位置的存檔？',
+	'SlotOverwrite': '你是否確定要覆蓋這個位置的存檔？',
+	'Sound': '聲音音量',
+	'Start': '開始',
+	'Stop': '停止',
 
-	'TextSpeed': 'Text Speed',
+	'TextSpeed': '文字速度',
 
-	'Video': 'Video Volume',
-	'Voice': 'Voice Volume',
+	'Video': '影片音量',
+	'Voice': '語音音量',
 
-	'Windowed': 'Windowed'
+	'Windowed': '視窗'
 };
