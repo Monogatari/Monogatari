@@ -66,7 +66,7 @@ export default {
 	'NewContent': '有新的遊戲內容上線，請重新載入本頁，以取得最新版本',
 	'NoSavedGames': '沒有已保存的進度',
 	'NoAutoSavedGames': '沒有自動保存的進度',
-	'NoDialogsAvailable': 'No dialogs available. Dialogs will appear here as they show up',
+	'NoDialogsAvailable': '沒有對話。若場景有對話，將會在這裏顯示。',
 
 	'OK': 'OK',
 	'OrientationWarning': '請旋轉你的裝置以進行遊戲',
