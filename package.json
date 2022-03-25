@@ -98,6 +98,7 @@
 		"dotenv": "^11.0.0",
 		"electron-notarize": "^1.1.1",
 		"eslint": "^8.6.0",
+		"eslint-plugin-cypress": "^2.12.1",
 		"htmlhint": "^1.1.0",
 		"jsdoc": "^3.6.7",
 		"parcel": "^2.1.1",

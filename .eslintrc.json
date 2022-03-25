@@ -38,6 +38,7 @@
 		"no-unused-vars": [1, { "args": "after-used" }]
     },
     "env": {
+		"cypress/globals": true,
         "es6": true,
         "browser": true
     },
@@ -51,5 +52,8 @@
 			"configFile": "./.babelrc"
 		}
 	},
+	"plugins": [
+		"cypress"
+	],
     "extends": "eslint:recommended"
 }
