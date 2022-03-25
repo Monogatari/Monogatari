@@ -16,8 +16,8 @@ export class ShowBackground extends Action {
 	}
 
 	static onLoad () {
-		const { background, scene } = this.engine.state ();
-		if (typeof background === 'string' && background !== '' && scene === '') {
+		const { background } = this.engine.state ();
+		if (typeof background === 'string' && background !== '') {
 			const action = this.engine.prepareAction (background, { cycle: 'Application' });
 			return action.willApply ().then (() => {
 				return action.apply ().then (() => {
