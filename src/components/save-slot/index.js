@@ -124,16 +124,13 @@ class SaveSlot extends Component {
 			// @Compatibility [<= v1.4.1]
 			// That last if checking for the existance of game in the data is
 			// required because older versions do not have that property.
-			if (this.data.game.state.scene) {
-				background = this.data.game.state.scene;
 
-				if (background.indexOf (' with ') > -1) {
-					background = Text.prefix (' with ', background);
-				}
+			// eslint-disable-next-line
+			console.debug('SaveSlot.render', this.data.game.state.background, this.data.game.state.scene);
 
-				background = Text.suffix ('show scene', background);
-
-			} else if (this.data.game.state.background) {
+			if (this.data.game.state.background) {
+				// eslint-disable-next-line no-console
+				console.debug('this.data.game.state.background case');
 				background = this.data.game.state.background;
 
 				if (background.indexOf (' with ') > -1) {
@@ -141,6 +138,16 @@ class SaveSlot extends Component {
 				}
 
 				background = Text.suffix ('show background', background);
+			} else if (this.data.game.state.scene) {
+				// eslint-disable-next-line no-console
+				console.debug('this.data.game.state.scene case');
+				background = this.data.game.state.scene;
+
+				if (background.indexOf (' with ') > -1) {
+					background = Text.prefix (' with ', background);
+				}
+
+				background = Text.suffix ('show scene', background);
 			}
 		}
 		return `
