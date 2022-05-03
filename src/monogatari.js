@@ -2456,13 +2456,13 @@ class Monogatari {
 				this.element ().find ('[data-component="quick-menu"] [data-action="distraction-free"] [data-string]').text (this.string ('Hide'));
 				this.element ().find ('[data-component="quick-menu"] [data-action="distraction-free"] [data-icon]').replaceWith ('<span class="fas fa-eye" data-action="distraction-free"></span>');
 				this.element ().find ('[data-component="quick-menu"]').removeClass ('transparent');
-				this.element ().find ('[data-component="text-box"]').show ();
+				this.element ().find ('[data-component="text-box"]').removeClass ('distraction-free-mode');
 				this.global ('distraction_free', false);
 			} else {
 				this.element ().find ('[data-component="quick-menu"] [data-action="distraction-free"] [data-string]').text (this.string ('Show'));
 				this.element ().find ('[data-component="quick-menu"] [data-action="distraction-free"] [data-icon]').replaceWith ('<span class="fas fa-eye-slash" data-action="distraction-free"></span>');
 				this.element ().find ('[data-component="quick-menu"]').addClass ('transparent');
-				this.element ().find ('[data-component="text-box"]').hide();
+				this.element ().find ('[data-component="text-box"]').addClass ('distraction-free-mode');
 				this.global ('distraction_free', true);
 			}
 		}
