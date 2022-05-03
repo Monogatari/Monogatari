@@ -42,6 +42,12 @@ text-box {
 	bottom: 0;
 	color: rgb(255, 255, 255);
 
+	&.distraction-free-mode {
+		opacity: 0 !important;
+		pointer-events: none !important;
+		user-select: none !important;
+	}
+
 	&::after {
 		content: ' ';
 		width: 100%;
