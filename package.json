@@ -30,7 +30,7 @@
 		"test": "yarn run cypress"
 	},
 	"devDependencies": {
-		"autoprefixer": "^10.4.2",
+		"autoprefixer": "^10.4.14",
 		"cypress": "^9.2.1",
 		"dotenv": "^11.0.0",
 		"electron-notarize": "^1.1.1",
@@ -46,19 +46,17 @@
 	},
 	"dependencies": {
 		"@aegis-framework/artemis": "^0.3.29",
-		"@aegis-framework/kayros.css": "^0.4.5",
+		"@aegis-framework/kayros.css": "^0.5.1",
 		"@aegis-framework/pandora": "^0.1.8",
 		"@fortawesome/fontawesome-free": "^5.15.4",
 		"animate.css": "^4.1.1",
-		"core-js": "^3.20.2",
 		"deeply": "^3.1.0",
 		"electron": "^16.0.7",
 		"esbuild": "^0.17.19",
 		"esbuild-sass-plugin": "^2.9.0",
 		"mixins.css": "^1.0.0",
-		"moment": "^2.29.1",
+		"moment": "^2.29.4",
 		"mousetrap": "^1.6.5",
-		"regenerator-runtime": "^0.13.9",
 		"tsparticles": "^1.39.0"
 	},
 	"files": [

@@ -2,10 +2,15 @@ import { $_, $_ready, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, 
 import moment from 'moment/min/moment-with-locales';
 import mousetrap from 'mousetrap';
 import { FancyError } from './lib/FancyError';
-import merge  from 'deeply';
-import * as package_json from './../package.json';
+import deeply from 'deeply';
+import { version } from './../package.json';
 import { random } from './utils/random';
 import migrate from './migrations';
+
+/**
+ * Overcome the `this` is undefined
+ */
+const merge = deeply.bind({});
 
 /**
  * Every Monogatari Game is composed mainly of the following items:
@@ -129,7 +134,7 @@ class Monogatari {
 	 * @return {number} - Computed Width of the element
 	 */
 	static height () {
-		return getComputedStyle(this.element (true)).height.replace ('px', '');
+		return parseInt(getComputedStyle(this.element (true)).height.replace ('px', ''));
 	}
 
 	/**
@@ -137,7 +142,7 @@ class Monogatari {
 	 * will give access to the debug tools that are a replacement for the console
 	 * log functions.
 	 *
-	 * @return {Proxy <Debug>} - Proxy to the Artemis Debug Class
+	 * @returns {Debug} - Proxy to the Artemis Debug Class
 	 */
 	static get debug () {
 		return new Proxy (Debug, {
@@ -149,7 +154,7 @@ class Monogatari {
 		});
 	}
 
-	static set debug (value) {
+	static set debug (_) {
 		throw new Error ('Debug reference cannot be overriden.');
 	}
 
@@ -3447,7 +3452,7 @@ Monogatari._temp = {};
 
 Monogatari.Storage = new Space ();
 
-Monogatari.version = package_json.version;
+Monogatari.version = version;
 
 Monogatari._id = 'visual-novel';
 
