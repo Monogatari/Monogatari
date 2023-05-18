@@ -53,6 +53,7 @@ const builds = {
 		},
 	},
 	iife: {
+		entryPoints: ["./src/browser.js"],
 		format: "iife",
 		outfile: "./dist/engine/core/monogatari.js",
 		globalName: "Monogatari",
