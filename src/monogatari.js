@@ -3095,7 +3095,7 @@ class Monogatari {
 	 * @param {number} max
 	 * @returns {number}
 	 */
-	static random(min, max) {
+	static random (min, max) {
 		return random(min, max);
 	}
 }

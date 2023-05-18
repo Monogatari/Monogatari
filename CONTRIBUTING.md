@@ -52,8 +52,8 @@ the way to contribute. So let's start!
 
 4. Change to the `develop` branch. Monogatari uses the [Git WorkFlow](https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows) so there are
    two main branches, `master` where all the stable code is hosted
-   and `develop` where all the work in progress code is hosted. Following 
-   this distinction, `master` usually hosts the code of the latest stable 
+   and `develop` where all the work in progress code is hosted. Following
+   this distinction, `master` usually hosts the code of the latest stable
    release while develop hosts the code for the upcoming releases. All
    your contributions should always use `develop` as its base.
 
@@ -67,12 +67,12 @@ the way to contribute. So let's start!
    yarn install
    ```
 
-6. Make all the changes you want and build the code. Please follow the 
+6. Make all the changes you want and build the code. Please follow the
    coding guidelines described at the end of this document while making
    changes to the code.
 
    ```bash
-   yarn run build:core
+   yarn run build
    ```
 
 7. Test your changes and make sure everything works correctly, once
@@ -88,12 +88,12 @@ the way to contribute. So let's start!
    git push origin develop
    ```
 
-9. You can repeat this process for all the changes you want to add but if 
+9. You can repeat this process for all the changes you want to add but if
    you are done then its time to [make a Pull Request](https://help.github.com/articles/creating-a-pull-request/)
 
 10. Once you've made the pull request, then all that's left is wait until
-   someone reviews your code and approves it for being merged into the 
-   official source code. Once merged, you've officially became a 
+   someone reviews your code and approves it for being merged into the
+   official source code. Once merged, you've officially became a
    contributor!
 
 
