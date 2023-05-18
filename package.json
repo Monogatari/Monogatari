@@ -6,7 +6,6 @@
 	"css": "dist/engine/core/monogatari.css",
 	"debug": "dist/engine/core/debug.js",
 	"web": "dist/engine/core/monogatari.js",
-	"browserslist": "> 0.5%, last 2 versions, not dead",
 	"types": "types/index.d.ts",
 	"description": "Monogatari is a simple web visual novel engine created to bring Visual Novels to the web.",
 	"repository": {
@@ -19,67 +18,11 @@
 		"url": "https://github.com/Monogatari/Monogatari/issues"
 	},
 	"homepage": "https://monogatari.io",
-	"targets": {
-		"module": {
-			"source": "src/index.js",
-			"engines": {
-				"browsers": "Chrome 80"
-			},
-			"outputFormat": "esmodule",
-			"isLibrary": true,
-			"optimize": true,
-			"includeNodeModules": true
-		},
-		"debug": {
-			"source": "debug/index.js",
-			"engines": {
-				"browsers": "Chrome 80"
-			},
-			"outputFormat": "esmodule",
-			"isLibrary": true,
-			"optimize": true,
-			"includeNodeModules": true
-		},
-		"main": {
-			"source": "src/index.js",
-			"engines": {
-				"node": ">= 12"
-			},
-			"outputFormat": "commonjs",
-			"isLibrary": true,
-			"optimize": true,
-			"includeNodeModules": true
-		},
-		"css": {
-			"source": "src/index.css"
-		},
-		"web": {
-			"source": "src/browser.js",
-			"context": "browser",
-			"outputFormat": "global",
-			"engines": {
-				"browsers": "> 0.5%, last 2 versions, not dead"
-			},
-			"isLibrary": false,
-			"optimize": true,
-			"includeNodeModules": true
-		}
-	},
-	"parcelIgnore": [
-		"service-worker.js"
-	],
 	"scripts": {
-		"start": "yarn parcel serve index.html --open --no-cache",
-		"build": "yarn parcel build ./src/index.html",
-		"build:core": "yarn build:js && yarn build:css",
-		"build:js": "yarn build:main && yarn build:module && yarn build:web",
-		"build:main": "yarn parcel build --target main --no-cache --public-url . --no-scope-hoist",
-		"build:module": "yarn parcel build --target module --no-cache --public-url . --no-scope-hoist",
-		"build:web": "yarn parcel build --target web --no-cache --public-url . --no-scope-hoist",
-		"build:debug": "yarn parcel build --taget debug --no-cache --public-url .",
-		"build:css": "yarn parcel build --target css --no-cache --no-source-maps",
-		"watch:js": "yarn parcel watch --target web --no-cache --public-url .",
-		"watch:css": "yarn parcel watch ./ --out-file monogatari.css --dist-dir dist/engine/core --no-cache --no-source-maps",
+		"build": "node build.js",
+		"watch": "yarn watch:js && yarn:watch:css",
+		"watch:js": "node build.js --dev",
+		"watch:css": "node build.js --dev --css",
 		"lint:html": "yarn htmlhint ./dist/index.html",
 		"lint:js": "yarn eslint ./src --ext .js --ignore-pattern *.min.js && yarn eslint ./dist/js --ext .js --ignore-pattern *.min.js && yarn eslint ./dist/engine/electron --ext .js  && yarn eslint ./dist/service-worker.js",
 		"lint:css": "yarn stylelint ./src/**/*.css ./dist/style/**/*.css --ignore-pattern *.min.css",
@@ -87,12 +30,6 @@
 		"test": "yarn run cypress"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.16.7",
-		"@babel/eslint-parser": "^7.16.5",
-		"@babel/plugin-proposal-class-properties": "^7.16.7",
-		"@babel/plugin-syntax-object-rest-spread": "^7.8.3",
-		"@babel/preset-env": "^7.16.7",
-		"@parcel/babel-preset-env": "^2.1.1",
 		"autoprefixer": "^10.4.2",
 		"cypress": "^9.2.1",
 		"dotenv": "^11.0.0",
@@ -100,8 +37,6 @@
 		"eslint": "^8.6.0",
 		"htmlhint": "^1.1.0",
 		"jsdoc": "^3.6.7",
-		"parcel": "^2.1.1",
-		"parcel-resolver-ignore": "^2.0.0",
 		"postcss": "^8.4.5",
 		"postcss-calc": "^8.2.2",
 		"postcss-mixins": "^9.0.1",
@@ -118,10 +53,11 @@
 		"core-js": "^3.20.2",
 		"deeply": "^3.1.0",
 		"electron": "^16.0.7",
+		"esbuild": "^0.17.19",
+		"esbuild-sass-plugin": "^2.9.0",
 		"mixins.css": "^1.0.0",
 		"moment": "^2.29.1",
 		"mousetrap": "^1.6.5",
-		"random-js": "^2.1.0",
 		"regenerator-runtime": "^0.13.9",
 		"tsparticles": "^1.39.0"
 	},

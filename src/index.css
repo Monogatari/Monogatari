@@ -8,45 +8,45 @@
  * Animation and Icon libraries. These are used for the characters animations and
  * background transitions. Icons are used overall for buttons.
  */
-@import 'npm:animate.css/animate.compat.css';
+@import 'animate.css/animate.compat.css';
 @import './style/csshake.min.css';
-@import 'npm:@fortawesome/fontawesome-free/css/svg-with-js.css';
+@import '@fortawesome/fontawesome-free/css/svg-with-js.css';
 
 /**
  * CSS Base Library from Aegis Framework
  */
-@import 'npm:@aegis-framework/kayros.css';
+@import '@aegis-framework/kayros.css';
 
 /**
  * Monogatari main styling
  */
 @import './style/variables.css';
-@import './style/monogatari.css';
+@import './style/monogatari.scss';
 
 /**
  * Components custom styling
  */
-@import './components/alert-modal/index.css';
-@import './components/canvas-container/index.css';
-@import './components/character-sprite/index.css';
-@import './components/choice-container/index.css';
-@import './components/centered-dialog/index.css';
-@import './components/dialog-log/index.css';
-@import './components/game-screen/index.css';
-@import './components/help-screen/index.css';
-@import './components/gallery-screen/index.css';
-@import './components/language-selection-screen/index.css';
-@import './components/load-screen/index.css';
-@import './components/loading-screen/index.css';
-@import './components/main-menu/index.css';
-@import './components/main-screen/index.css';
-@import './components/message-modal/index.css';
-@import './components/quick-menu/index.css';
-@import './components/save-screen/index.css';
-@import './components/save-slot/index.css';
-@import './components/settings-screen/index.css';
-@import './components/slot-container/index.css';
-@import './components/text-box/index.css';
-@import './components/text-input/index.css';
-@import './components/timer-display/index.css';
-@import './components/visual-novel/index.css';
+@import './components/alert-modal/index.scss';
+@import './components/canvas-container/index.scss';
+@import './components/character-sprite/index.scss';
+@import './components/choice-container/index.scss';
+@import './components/centered-dialog/index.scss';
+@import './components/dialog-log/index.scss';
+@import './components/game-screen/index.scss';
+@import './components/help-screen/index.scss';
+@import './components/gallery-screen/index.scss';
+@import './components/language-selection-screen/index.scss';
+@import './components/load-screen/index.scss';
+@import './components/loading-screen/index.scss';
+@import './components/main-menu/index.scss';
+@import './components/main-screen/index.scss';
+@import './components/message-modal/index.scss';
+@import './components/quick-menu/index.scss';
+@import './components/save-screen/index.scss';
+@import './components/save-slot/index.scss';
+@import './components/settings-screen/index.scss';
+@import './components/slot-container/index.scss';
+@import './components/text-box/index.scss';
+@import './components/text-input/index.scss';
+@import './components/timer-display/index.scss';
+@import './components/visual-novel/index.scss';

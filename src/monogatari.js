@@ -4,7 +4,7 @@ import mousetrap from 'mousetrap';
 import { FancyError } from './lib/FancyError';
 import merge  from 'deeply';
 import * as package_json from './../package.json';
-import { Random, browserCrypto } from 'random-js';
+import { random } from './utils/random';
 import migrate from './migrations';
 
 /**
@@ -3084,13 +3084,14 @@ class Monogatari {
 		});
 	}
 
-	static random (min, max) {
-		try {
-			return new Random (browserCrypto).integer (min, max);
-		} catch (e) {
-			console.error (e);
-			return new Random ().integer (min, max);
-		}
+	/**
+	 * Random number between `min` and `max`
+	 * @param {number} min
+	 * @param {number} max
+	 * @returns {number}
+	 */
+	static random(min, max) {
+		return random(min, max);
 	}
 }
 

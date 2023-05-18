@@ -13,11 +13,6 @@
  * =============================================================================
  */
 
-// Make babel use the polyfill as the package has been deprecated in favor of
-// this:
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-
 import '@fortawesome/fontawesome-free/js/all.js';
 
 /**
@@ -31,7 +26,6 @@ import '@fortawesome/fontawesome-free/js/all.js';
 
 export * from '@aegis-framework/artemis';
 export * from './lib/vendor/typed.min.js';
-export * from 'random-js';
 export * from 'tsparticles/tsparticles.slim';
 
 import Monogatari from './monogatari';
