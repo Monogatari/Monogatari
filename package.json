@@ -30,10 +30,15 @@
 		"test": "yarn run cypress"
 	},
 	"devDependencies": {
+		"@babel/core": "^7.21.8",
+		"@babel/preset-env": "^7.21.5",
+		"@types/babel__core": "^7.20.0",
 		"autoprefixer": "^10.4.14",
+		"core-js": "^3.30.2",
 		"cypress": "^9.2.1",
 		"dotenv": "^11.0.0",
 		"electron-notarize": "^1.1.1",
+		"esbuild-plugin-babel": "^0.2.3",
 		"eslint": "^8.6.0",
 		"htmlhint": "^1.1.0",
 		"jsdoc": "^3.6.7",

@@ -14,7 +14,7 @@ const esbuildBase = {
 	minify: true,
 	platform: 'browser',
 	charset: 'utf8',
-	target: ['firefox78', 'chrome78', 'safari11.1'],
+	target: ['es2020', 'firefox78', 'chrome78', 'safari11.1'],
 };
 
 /** @type {import('esbuild').Plugin} */
@@ -37,43 +37,61 @@ const kayrosFixPlugin = {
 	},
 };
 
-/** @type {Record<string, Partial<import('esbuild').BuildOptions>>} */
-const builds = {
-	esm: {
-		format: 'esm',
-		outfile: './lib/monogatari.module.js',
-		sourcemap: 'linked',
-	},
-	cjs: {
-		format: 'cjs',
-		outfile: './lib/monogatari.node.js',
-		sourcemap: 'linked',
-		define: {
-			'import.meta.url': 'location',
-		},
-	},
-	iife: {
-		entryPoints: ['./src/browser.js'],
-		format: 'iife',
-		outfile: './dist/engine/core/monogatari.js',
-		globalName: 'Monogatari',
-		define: {
-			'import.meta.url': 'location',
-		},
-	},
-	debug: {
-		entryPoints: ['./debug/index.js'],
-		format: 'iife',
-		outfile: './dist/engine/debug/debug.js',
-	},
-	css: {
-		entryPoints: ['./src/index.css'],
-		outfile: './dist/engine/core/monogatari.css',
-		plugins: [kayrosFixPlugin, sassPlugin()],
-	},
-};
-
 async function main () {
+	const { default: pluginBabel } = await import('esbuild-plugin-babel');
+
+	/** @type {Record<string, Partial<import('esbuild').BuildOptions>>} */
+	const builds = {
+		esm: {
+			format: 'esm',
+			outfile: './lib/monogatari.module.js',
+			sourcemap: 'linked',
+		},
+		cjs: {
+			format: 'cjs',
+			outfile: './lib/monogatari.node.js',
+			sourcemap: 'linked',
+			define: {
+				'import.meta.url': 'location',
+			},
+		},
+		iife: {
+			entryPoints: ['./src/browser.js'],
+			format: 'iife',
+			outfile: './dist/engine/core/monogatari.js',
+			globalName: 'Monogatari',
+			define: {
+				'import.meta.url': 'location',
+			},
+			plugins: [
+				pluginBabel({
+					filter: /.js$/,
+					config: {
+						presets: [
+							[
+								"@babel/preset-env",
+								{
+									useBuiltIns: "usage",
+									corejs: 3
+								}
+							]
+						]
+					}
+				})
+			]
+		},
+		debug: {
+			entryPoints: ['./debug/index.js'],
+			format: 'iife',
+			outfile: './dist/engine/debug/debug.js',
+		},
+		css: {
+			entryPoints: ['./src/index.css'],
+			outfile: './dist/engine/core/monogatari.css',
+			plugins: [kayrosFixPlugin, sassPlugin()],
+		},
+	};
+
 	if (DEV) {
 		const ctx = await context({
 			...esbuildBase,
