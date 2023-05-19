@@ -267,9 +267,9 @@ class Action {
 	/**
 	 * @static match - Currently this function is saved up for future uses.
 	 *
-	 * @param {any} - Statement to match
+	 * @param {any} statement - Statement to match
 	 *
-	 * @return {type} - Whether the action matches the statement or not
+	 * @returns {boolean} - Whether the action matches the statement or not
 	 */
 	static match (statement) {
 		return false;
@@ -462,7 +462,7 @@ class Action {
 	 * correctly gone through the willRevert and revert functions. Now that it has
 	 * been reverted, we can perform any cleanup operations.
 	 *
-	 * @return {Promise<boolean>} - Result of the didRevert operation. When resolved,
+	 * @returns {Promise} - Result of the didRevert operation. When resolved,
 	 * it should resolve to a boolean value, true if the game should go to the
 	 * previous statement right away, false if it should wait for user's interaction.
 	 */
