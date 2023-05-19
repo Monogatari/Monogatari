@@ -47,7 +47,7 @@
 		"browser": true
 	},
 	"parserOptions": {
-		"ecmaVersion": 8,
+		"ecmaVersion": "latest",
 		"sourceType": "module"
 	},
 	"extends": "eslint:recommended"

@@ -7,7 +7,7 @@
 const random = (min = 0, max = 100) => {
 	try {
 		// prettier-ignore
-		return ((min + ((max - min + 1) * crypto.getRandomValues(new Uint32Array(1))[0]) / 2 ** 32) | 0)
+		return ((min + ((max - min + 1) * crypto.getRandomValues(new Uint32Array(1))[0]) / 2 ** 32) | 0);
 	} catch (error) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
