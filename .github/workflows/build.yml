@@ -25,7 +25,7 @@ jobs:
       - name: Build Core
         uses: Borales/actions-yarn@v2.3.0
         with:
-          cmd: build:core # will run `yarn build:core` command
+          cmd: build # will run `yarn build` command
       - name: Commit changed files
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

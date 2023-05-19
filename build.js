@@ -14,7 +14,7 @@ const esbuildBase = {
 	minify: true,
 	platform: 'browser',
 	charset: 'utf8',
-	target: ['es2020', 'firefox78', 'chrome78', 'safari11.1'],
+	target: ['es2020', 'edge79', 'firefox67', 'chrome64', 'safari11.1'],
 };
 
 /** @type {import('esbuild').Plugin} */
@@ -38,8 +38,6 @@ const kayrosFixPlugin = {
 };
 
 async function main () {
-	const { default: pluginBabel } = await import('esbuild-plugin-babel');
-
 	/** @type {Record<string, Partial<import('esbuild').BuildOptions>>} */
 	const builds = {
 		esm: {
@@ -52,7 +50,7 @@ async function main () {
 			outfile: './lib/monogatari.node.js',
 			sourcemap: 'linked',
 			define: {
-				'import.meta.url': 'location',
+				'import.meta.url': 'location.origin',
 			},
 		},
 		iife: {
@@ -61,24 +59,8 @@ async function main () {
 			outfile: './dist/engine/core/monogatari.js',
 			globalName: 'Monogatari',
 			define: {
-				'import.meta.url': 'location',
+				'import.meta.url': 'location.origin',
 			},
-			plugins: [
-				pluginBabel({
-					filter: /.js$/,
-					config: {
-						presets: [
-							[
-								"@babel/preset-env",
-								{
-									useBuiltIns: "usage",
-									corejs: 3
-								}
-							]
-						]
-					}
-				})
-			]
 		},
 		debug: {
 			entryPoints: ['./debug/index.js'],
