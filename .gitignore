@@ -18,6 +18,12 @@
 node_modules
 package-lock.json
 
+# Lock Files in Template
+dist/yarn.lock
+dist/package-lock.json
+dist/pnpm-lock.yaml
+dist/bun.lockb
+
 # Build systems
 .cache
 dist/dist

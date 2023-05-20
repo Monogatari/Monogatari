@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+	  "target": "ESNext",
+	  "useDefineForClassFields": true,
+	  "module": "ESNext",
+	  "strict": false, // this is false because not everyone want strict
+	  "esModuleInterop": true,
+	  "skipLibCheck": true,
+	  "explainFiles": true
+	},
+	"include": ["js", "engine/core", "engine/debug"]
+}

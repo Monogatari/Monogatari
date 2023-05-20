@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"skipLibCheck": true,
+		"module": "ESNext",
+		"moduleResolution": "nodenext",
+		"allowSyntheticDefaultImports": true,
+		"explainFiles": true
+	},
+	"include": ["engine/electron"]
+}

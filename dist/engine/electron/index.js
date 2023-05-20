@@ -8,15 +8,17 @@
 
 /* global require */
 /* global process */
-/* global __dirname */
 
-const { app, BrowserWindow, Menu } = require ('electron');
+const { app, ipcMain, shell, BrowserWindow, Menu } = require ('electron');
 const path = require ('path');
 const url = require ('url');
-const { ipcMain, shell } = require('electron');
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
+/**
+ * Keep a global reference of the window object, if you don't, the window will
+ * be closed automatically when the JavaScript object is garbage collected.
+ *
+ * @type {BrowserWindow}
+ */
 let win;
 
 function createWindow () {
