@@ -1,5 +1,5 @@
 import { Action } from './../lib/Action';
-import { Util } from '@aegis-framework/artemis';
+import { Util } from '@aegis-framework/artemis/index';
 
 export class Placeholder extends Action {
 

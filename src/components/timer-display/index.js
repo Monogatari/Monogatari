@@ -1,5 +1,5 @@
 import { Component } from './../../lib/Component';
-import { Util } from '@aegis-framework/artemis';
+import { Util } from '@aegis-framework/artemis/index';
 
 class TimerDisplay extends Component {
 

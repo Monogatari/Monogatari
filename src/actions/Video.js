@@ -1,4 +1,4 @@
-import { $_ } from '@aegis-framework/artemis';
+import { $_ } from '@aegis-framework/artemis/index';
 
 import { Action } from './../lib/Action';
 import { FancyError } from './../lib/FancyError';

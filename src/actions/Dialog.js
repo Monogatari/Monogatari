@@ -1,6 +1,6 @@
 import { Action } from './../lib/Action';
 import Typed from './../lib/vendor/typed.min.js';
-import { $_ } from '@aegis-framework/artemis';
+import { $_ } from '@aegis-framework/artemis/index';
 
 export class Dialog extends Action {
 

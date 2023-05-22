@@ -1,4 +1,4 @@
-import { $_ } from '@aegis-framework/artemis';
+import { $_ } from '@aegis-framework/artemis/index';
 import { Component } from './../../lib/Component';
 
 class TextInput extends Component {

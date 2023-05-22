@@ -1,5 +1,5 @@
-import { $_ } from '@aegis-framework/artemis';
-import { ShadowComponent as PandoraShadowComponent } from '@aegis-framework/pandora';
+import { $_ } from '@aegis-framework/artemis/index';
+import { ShadowComponent as PandoraShadowComponent } from '@aegis-framework/pandora/index';
 
 /**
  * A component represents an object or content in the game such as screens, menus

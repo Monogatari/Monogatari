@@ -1,6 +1,6 @@
 import './vendor/prism.js';
 import { FancyError } from '../src/lib/FancyError';
-import { $_ready } from '@aegis-framework/artemis';
+import { $_ready } from '@aegis-framework/artemis/index';
 
 /* global window */
 

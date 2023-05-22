@@ -1,4 +1,4 @@
-import { $_, Text, Util, $_ready } from '@aegis-framework/artemis';
+import { $_, Text, Util, $_ready } from '@aegis-framework/artemis/index';
 /* global Prism */
 
 export class FancyError {

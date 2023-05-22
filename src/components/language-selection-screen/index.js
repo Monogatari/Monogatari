@@ -1,4 +1,4 @@
-import { $_ } from '@aegis-framework/artemis';
+import { $_ } from '@aegis-framework/artemis/index';
 
 import { FancyError } from './../../lib/FancyError';
 import { ScreenComponent } from './../../lib/ScreenComponent';

@@ -1,5 +1,5 @@
 import { ScreenComponent } from './../../lib/ScreenComponent';
-import { Platform, Text } from '@aegis-framework/artemis';
+import { Platform, Text } from '@aegis-framework/artemis/index';
 
 class SettingsScreen extends ScreenComponent {
 

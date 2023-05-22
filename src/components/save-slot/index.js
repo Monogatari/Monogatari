@@ -1,5 +1,5 @@
 import { Component } from './../../lib/Component';
-import { Text } from '@aegis-framework/artemis';
+import { Text } from '@aegis-framework/artemis/index';
 import moment from 'moment/min/moment-with-locales';
 
 class SaveSlot extends Component {

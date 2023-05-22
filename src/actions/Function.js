@@ -1,5 +1,5 @@
 import { Action } from './../lib/Action';
-import { Util } from '@aegis-framework/artemis';
+import { Util } from '@aegis-framework/artemis/index';
 import { FancyError } from '../lib/FancyError';
 
 export class ReversibleFunction extends Action {

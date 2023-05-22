@@ -1,5 +1,5 @@
 import { Component } from './../../lib/Component';
-import { $_ } from '@aegis-framework/artemis';
+import { $_ } from '@aegis-framework/artemis/index';
 
 class SlotContainer extends Component {
 

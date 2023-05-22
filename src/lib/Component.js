@@ -1,5 +1,5 @@
-import { $_ } from '@aegis-framework/artemis';
-import { Component as PandoraComponent } from '@aegis-framework/pandora';
+import { $_ } from '@aegis-framework/artemis/index';
+import { Component as PandoraComponent } from '@aegis-framework/pandora/index';
 
 /**
  * @typedef {import('../monogatari').default} Monogatari
