@@ -77,6 +77,7 @@ class MenuComponent extends Component {
 				button.element = 'button';
 			}
 
+			/** @type {HTMLElement} */
 			const element = document.createElement (button.element);
 
 			if (typeof button.data === 'object') {

@@ -1,3 +1,6 @@
+/**
+ * @typedef {import('../monogatari').Monogatari} Monogatari
+ */
 
 /**
  * An action describes the functionality for a Monogatari statement, when Monogatari

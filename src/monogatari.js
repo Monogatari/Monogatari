@@ -8,6 +8,12 @@ import { random } from './utils/random';
 import migrate from './migrations';
 
 /**
+ * @typedef {import('./lib/Action').Action} Action
+ * @typedef {import('./lib/Component').Component} Component
+ * @typedef {import('@aegis-framework/artemis/src/DOM').DOM} DOM
+ */
+
+/**
  * Overcome the `this` is undefined
  */
 const merge = deeply.bind({});
@@ -46,7 +52,6 @@ const merge = deeply.bind({});
  *           be setup first or perform any other needed final operations. In this
  * 			 step, all needed elements will now be shown and the game will begin.
  *
- * @class Monogatari
  */
 class Monogatari {
 
@@ -262,12 +267,13 @@ class Monogatari {
 
 	/**
 	 * @static state - Simple function to access, create and state variables.
+	 * @template {string | Record<any, any> | null} [T=null]
 	 *
-	 * @param  {Object|string} [object = null] - Object with which current
+	 * @param  {T} [object=null] - Object with which current
 	 * state object will be updated with (i.e. Object.assign) or a string to access
 	 * a specific state variable.
 	 *
-	 * @return {type} - If the parameter passed was a string, this function will
+	 * @return {T extends string ? any : T extends Record<any, any> ? void : Record<any, any>} - If the parameter passed was a string, this function will
 	 * return the variable associated with that name. If no argument was passed,
 	 * it will return the whole state object containing all variables.
 	 */
@@ -306,6 +312,7 @@ class Monogatari {
 	 */
 	static registerAction (action, naturalPosition = false) {
 		action.engine = this;
+
 		if (naturalPosition) {
 			this._actions.push (action);
 		} else {
@@ -331,7 +338,9 @@ class Monogatari {
 	 * @return {Action[]} - List of registered Actions
 	 */
 	static actions () {
+		/** @type {boolean} */
 		const experimentalFeatures = this.setting ('ExperimentalFeatures');
+
 		return this._actions.filter(action => {
 			return action._experimental === false || experimentalFeatures === true;
 		});
@@ -422,7 +431,9 @@ class Monogatari {
 	 * @return {Component[]} - List of registered Components
 	 */
 	static components () {
+		/** @type {boolean} */
 		const experimentalFeatures = this.setting ('ExperimentalFeatures');
+
 		return this._components.filter(component => {
 			return component._experimental === false || experimentalFeatures === true;
 		});
@@ -2884,13 +2895,14 @@ class Monogatari {
 	/**
 	 * @static element - Get the main visual-novel element
 	 *
-	 * @param {boolean} pure - Wether to get an Artemis DOM instance of the element
+	 * @template {boolean} T
+	 * @param {T} pure - Wether to get an Artemis DOM instance of the element
 	 * or a pure HTML element
 	 * @param {boolean} handled - Wether the case of the element not existing is
 	 * being handled in some way or not. If it doesn't exist and it is not being
 	 * handled, an error will be shown.
 	 *
-	 * @returns {DOM | HTMLElement}
+	 * @returns {T extends true ? HTMLElement : DOM}
 	 */
 	static element (pure = false, handled = false) {
 		let element = null;
@@ -2928,6 +2940,7 @@ class Monogatari {
 				}
 			);
 		}
+
 		return element;
 	}
 
@@ -3456,4 +3469,5 @@ Monogatari.version = version;
 
 Monogatari._id = 'visual-novel';
 
+export { Monogatari }
 export default Monogatari;

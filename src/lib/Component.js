@@ -2,6 +2,11 @@ import { $_ } from '@aegis-framework/artemis';
 import { Component as PandoraComponent } from '@aegis-framework/pandora';
 
 /**
+ * @typedef {import('../monogatari').default} Monogatari
+ * @typedef {import('@aegis-framework/artemis/src/DOM').DOM} DOM
+ */
+
+/**
  * A component represents an object or content in the game such as screens, menus
  * and all other visual or structural elements.
  *
@@ -253,6 +258,7 @@ class Component extends PandoraComponent {
 		}
 	}
 
+	/** @type {Monogatari} */
 	get engine () {
 		return this.constructor.engine;
 	}
