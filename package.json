@@ -45,8 +45,8 @@
 		"@fortawesome/fontawesome-free": "^5.15.4",
 		"animate.css": "^4.1.1",
 		"deeply": "^3.1.0",
-		"esbuild": "^0.17.19",
-		"esbuild-sass-plugin": "^2.9.0",
+		"esbuild": "^0.19.2",
+		"esbuild-sass-plugin": "^2.13.0",
 		"moment": "^2.29.4",
 		"mousetrap": "^1.6.5",
 		"tsparticles": "^1.39.0"

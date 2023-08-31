@@ -57,7 +57,7 @@ async function main () {
 			entryPoints: ['./src/browser.js'],
 			format: 'iife',
 			outfile: './dist/engine/core/monogatari.js',
-			globalName: 'Monogatari',
+			globalName: 'MonogatariGlobal',
 			define: {
 				'import.meta.url': 'location.origin',
 			},
@@ -77,12 +77,13 @@ async function main () {
 	if (DEV) {
 		const ctx = await context({
 			...esbuildBase,
-			...builds['iife'],
-			entryPoints: [!CSS ? './src/index.js' : './src/index.css'],
+			...builds.iife,
+			entryPoints: [!CSS ? './src/browser.js' : './src/index.css'],
 			outfile: !CSS
 				? './dist/engine/core/monogatari.js'
 				: './dist/engine/core/monogatari.css',
 			plugins: [kayrosFixPlugin, sassPlugin()],
+			legalComments: 'none',
 		});
 
 		await ctx.watch();
