@@ -3469,5 +3469,5 @@ Monogatari.version = version;
 
 Monogatari._id = 'visual-novel';
 
-export { Monogatari }
+export { Monogatari };
 export default Monogatari;
