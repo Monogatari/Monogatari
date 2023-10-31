@@ -17,17 +17,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install Dependencies
-        uses: Borales/actions-yarn@v2.3.0
+        uses: borales/actions-yarn@v4
         with:
           cmd: install # will run `yarn install` command
       - name: Build Core
-        uses: Borales/actions-yarn@v2.3.0
+        uses: borales/actions-yarn@v4
         with:
           cmd: build # will run `yarn build` command
       - name: Commit changed files
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Update engine core
           branch: develop

@@ -32,20 +32,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install Dependencies
-        uses: Borales/actions-yarn@v2.3.0
+        uses: borales/actions-yarn@v4
         with:
           cmd: install # will run `yarn install` command
       - name: Lint HTML
-        uses: Borales/actions-yarn@v2.3.0
+        uses: borales/actions-yarn@v4
         with:
           cmd: lint:html # will run `yarn lint:html` command
       - name: Lint JavaScript
-        uses: Borales/actions-yarn@v2.3.0
+        uses: borales/actions-yarn@v4
         with:
           cmd: lint:js # will run `yarn lint:js` command
       - name: Lint CSS
-        uses: Borales/actions-yarn@v2.3.0
+        uses: borales/actions-yarn@v4
         with:
           cmd: lint:css # will run `yarn lint:css` command
