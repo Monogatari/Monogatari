@@ -43,14 +43,14 @@ class CharacterSprite extends Component {
 	onPropsUpdate (property, oldValue, newValue, oldObject, newObject) {
 		if (property === 'src') {
 			if (typeof newValue === 'string' && newValue.trim() !== '') {
-				const img = document.createElement(img);
+				const img = document.createElement('img');
+
 				img.src = newValue;
 
 
 				this.element ().find ('img:not(:first-child)').each((element) => {
 					element.remove();
 				});
-
 
 				this.element ().find ('img').get(0).setAttribute ('src', newValue);
 			}

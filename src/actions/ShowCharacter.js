@@ -133,6 +133,7 @@ export class ShowCharacter extends Action {
 		if (oneSpriteOnly && sprite.exists ()) {
 
 			if (this.engine.setting ('ExperimentalFeatures') === true) {
+				// If its another layered sprite
 				if (sprite.matches ('character-sprite') && typeof this.image === 'object') {
 					const image = sprite.get (0);
 					const layers = {};
@@ -146,8 +147,10 @@ export class ShowCharacter extends Action {
 
 					image.setState({ layers });
 				} else if (sprite.matches ('character-sprite')) {
+					// If it's an image on a previously layered sprite
 					sprite.get(0).setProps ({ 'src': `${imgSrc}${this.image}` });
 				} else {
+					// If it was just an image
 					sprite.attribute ('src', `${imgSrc}${this.image}`);
 				}
 			} else {
