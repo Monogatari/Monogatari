@@ -66,6 +66,7 @@ async function main () {
 			entryPoints: ['./debug/index.js'],
 			format: 'iife',
 			outfile: './dist/engine/debug/debug.js',
+			globalName: 'MonogatariDebug',
 		},
 		css: {
 			entryPoints: ['./src/index.css'],
