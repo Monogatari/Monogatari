@@ -1,6 +1,6 @@
 {
 	"name": "@monogatari/core",
-	"version": "2.1.0",
+	"version": "2.2.0",
 	"main": "lib/monogatari.node.js",
 	"module": "lib/monogatari.module.js",
 	"css": "dist/engine/core/monogatari.css",
@@ -12,7 +12,7 @@
 		"type": "git",
 		"url": "https://github.com/Monogatari/Monogatari.git"
 	},
-	"author": "Diego Islas Ocampo",
+	"author": "Diana Islas Ocampo",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/Monogatari/Monogatari/issues"
@@ -30,26 +30,26 @@
 		"test": "yarn run cypress"
 	},
 	"devDependencies": {
-		"cypress": "^9.2.1",
-		"dotenv": "^11.0.0",
-		"eslint": "^8.6.0",
-		"htmlhint": "^1.1.0",
-		"jsdoc": "^3.6.7",
-		"stylelint": "^14.2.0",
-		"stylelint-config-standard": "^24.0.0"
+		"cypress": "^13.4.0",
+		"dotenv": "^16.3.1",
+		"eslint": "^8.52.0",
+		"htmlhint": "^1.1.4",
+		"jsdoc": "^4.0.2",
+		"stylelint": "^15.11.0",
+		"stylelint-config-standard": "^34.0.0"
 	},
 	"dependencies": {
 		"@aegis-framework/artemis": "^0.3.29",
 		"@aegis-framework/kayros.css": "^0.5.1",
 		"@aegis-framework/pandora": "^0.1.8",
-		"@fortawesome/fontawesome-free": "^5.15.4",
+		"@fortawesome/fontawesome-free": "^6.4.2",
 		"animate.css": "^4.1.1",
 		"deeply": "^3.1.0",
-		"esbuild": "^0.19.2",
-		"esbuild-sass-plugin": "^2.13.0",
+		"esbuild": "^0.19.5",
+		"esbuild-sass-plugin": "^2.16.0",
 		"moment": "^2.29.4",
 		"mousetrap": "^1.6.5",
-		"tsparticles": "^1.39.0"
+		"tsparticles-slim": "^2.12.0"
 	},
 	"files": [
 		"README.md",

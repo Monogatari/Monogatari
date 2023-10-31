@@ -26,7 +26,7 @@ import '@fortawesome/fontawesome-free/js/all.js';
 
 export * from '@aegis-framework/artemis/index';
 export * from './lib/vendor/typed.min.js';
-export * from 'tsparticles/tsparticles.slim';
+export * from 'tsparticles-slim/tsparticles.slim.bundle.js';
 
 import Monogatari from './monogatari';
 

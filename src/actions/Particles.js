@@ -1,5 +1,5 @@
 import { Action } from '../lib/Action';
-import { tsParticles } from 'tsparticles/tsparticles.slim';
+import { tsParticles } from 'tsparticles-slim/tsparticles.slim.bundle.js';
 
 export class Particles extends Action {
 

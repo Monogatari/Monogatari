@@ -150,7 +150,6 @@ context ('Show Character', function () {
 		cy.proceed();
 
 
-
 		cy.get ('[data-sprite="happy_layered"]').should ('be.visible');
 		cy.get ('[data-sprite="happy_layered"]').should('have.class', 'fadeIn');
 
@@ -240,6 +239,8 @@ context ('Show Character', function () {
 		cy.get ('text-box').contains ('Seven');
 
 		cy.proceed();
+
+		// show character y happy
 
 		cy.wrap (this.monogatari).invoke ('state', 'characterLayers').should ('deep.equal', []);
 		cy.get ('[data-layer]:not([data-layer="base"])').should ('not.exist');
