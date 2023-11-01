@@ -224,4 +224,6 @@ export class Scene extends Action {
 
 Scene.id = 'Scene';
 
+Scene.loadingOrder = -2;
+
 export default Scene;
