@@ -1,6 +1,3 @@
-const choice =
-
-
 context ('Choices', function () {
 
 	beforeEach (() => {

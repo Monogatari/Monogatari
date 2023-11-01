@@ -1201,10 +1201,11 @@ class Monogatari {
 
 				let image = '';
 
-				if (this.state ('scene')) {
-					image = this.state ('scene').split (' ')[2];
-				} else if (this.state ('background')) {
+
+				if (this.state ('background')) {
 					image = this.state ('background').split (' ')[2];
+				} else if (this.state ('scene')) {
+					image = this.state ('scene').split (' ')[2];
 				}
 
 				return this.Storage.set (`${this.setting (prefix)}_${id}`, {

@@ -59,7 +59,8 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 
 	this.monogatari.settings ({
 		'AssetsPath': {
-			root: 'https://datadyne.perfectdark.space/monogatari/assets'
+			root: 'https://datadyne.perfectdark.space/monogatari/assets',
+			scenes: 'images',
 		},
 		'ExperimentalFeatures': true
 	});
@@ -71,6 +72,10 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 
 	this.monogatari.assets ('images', {
 		'polaroid': 'blurry_polaroid.jpg',
+		'christmas': 'christmas.png'
+	});
+
+	this.monogatari.assets ('scenes', {
 		'christmas': 'christmas.png'
 	});
 
