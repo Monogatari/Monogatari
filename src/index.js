@@ -40,6 +40,7 @@ import Monogatari from './monogatari';
 
 import arabic from './translations/العربية';
 import belarusian from './translations/Беларуская';
+import brazilianPortuguese from './translations/Portugues_Brasil';
 import chineseTraditional from './translations/繁體中文';
 import chineseSimplified from './translations/简体中文';
 import dutch from './translations/Nederlands';
@@ -66,6 +67,7 @@ Monogatari._translations = {
 	'Magyar': hungarian,
 	'Nederlands': dutch,
 	'Português': portuguese,
+	'Português do Brasil': brazilianPortuguese,
 	'Русский': russian,
 	'اللغه العربية': arabic,
 	'한국어': korean,
@@ -110,6 +112,10 @@ Monogatari._languageMetadata = {
 	},
 	'Português': {
 		code: 'pt',
+		icon: '🇵🇹'
+	},
+	'Português do Brasil': {
+		code: 'pt-br',
 		icon: '🇧🇷'
 	},
 	'Русский': {
