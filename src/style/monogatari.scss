@@ -20,10 +20,10 @@
 }
 
 @mixin full-viewport {
-	height: 100vh;
-	width: 100vw;
-	max-height: 100vh;
-	max-width: 100vw;
+	height: 100svh;
+	width: 100svw;
+	max-height: 100svh;
+	max-width: 100svw;
 }
 
 @mixin full-size {

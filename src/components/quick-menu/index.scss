@@ -10,8 +10,8 @@ quick-menu {
 	width: 100%;
 	z-index: 11;
 	position: absolute;
-	height: 2.5rem;
-	max-height: 2.5rem;
+	height: var(--quick-menu-height);
+	max-height: var(--quick-menu-height);
 	justify-content: flex-end;
 
 	&.splash-screen {

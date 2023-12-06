@@ -149,10 +149,15 @@ text-box {
 /** Medium Screens, Tablets (601px) **/
 @media screen and (min-width: 37.56255em) {
 	text-box {
-		bottom: 2.5rem;
+		&[mode="nvl"] {
+			max-height: calc(100% - var(--quick-menu-height));
+			height: calc(100% - var(--quick-menu-height));
+		}
+
+		bottom: var(--quick-menu-height);
 
 		&::after {
-			bottom: 2.5rem;
+			bottom: var(--quick-menu-height);
 		}
 	}
 }
