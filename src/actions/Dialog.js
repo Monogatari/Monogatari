@@ -177,31 +177,16 @@ export class Dialog extends Action {
 		this.nvl = false;
 
 		if (typeof this.engine.character (id) !== 'undefined') {
-			this.character = this.engine.character (id);
-			this.id = id;
-
-			if (typeof this.character.nvl !== 'undefined') {
-				this.nvl = this.character.nvl;
-			}
-
-			if (typeof expression !== 'undefined') {
-				if (typeof this.character.expressions !== 'undefined') {
-					this.image = this.character.expressions[expression];
-					this.expression = expression;
-				}
-
-			} else if (typeof this.character.default_expression !== 'undefined') {
-				if (typeof this.character.expressions[this.character.default_expression] !== 'undefined') {
-					this.image = this.character.expressions[this.character.default_expression];
-				} else {
-					this.image = this.character.default_expression;
-				}
-				this.expression = 'default';
-			}
+			this._setCharacter (id, expression);
 		} else if (id === 'centered') {
 			this.id = 'centered';
 		} else {
-			this.id = 'narrator';
+			this.id = '_narrator';
+
+			if (typeof this.engine.character ('_narrator') !== 'undefined') {
+				this._setCharacter ('_narrator', expression);
+			}
+
 			if (id === 'nvl') {
 				this.nvl = true;
 			} else {
@@ -220,6 +205,31 @@ export class Dialog extends Action {
 		this.engine.element ().find ('[data-component="text-box"]').removeData ('expression');
 
 		return Promise.resolve ();
+	}
+
+	_setCharacter (id, expression) {
+		this.character = this.engine.character (id);
+
+		this.id = id;
+
+		if (typeof this.character.nvl !== 'undefined') {
+			this.nvl = this.character.nvl;
+		}
+
+		if (typeof expression !== 'undefined') {
+			if (typeof this.character.expressions !== 'undefined') {
+				this.image = this.character.expressions[expression];
+				this.expression = expression;
+			}
+
+		} else if (typeof this.character.default_expression !== 'undefined') {
+			if (typeof this.character.expressions[this.character.default_expression] !== 'undefined') {
+				this.image = this.character.expressions[this.character.default_expression];
+			} else {
+				this.image = this.character.default_expression;
+			}
+			this.expression = 'default';
+		}
 	}
 
 	displayCenteredDialog (dialog, clearDialog, character, animation) {
@@ -260,7 +270,7 @@ export class Dialog extends Action {
 			// If the property is set to true, the animation will be shown
 			// if it is set to false, even if the flag was set to true,
 			// no animation will be shown in the game.
-			if (character !== 'narrator') {
+			if (character !== '_narrator') {
 				if (previous !== character) {
 					this.engine.element ().find ('[data-ui="say"] [data-spoke]').last().addClass ('nvl-dialog-footer');
 					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='named'><span style='color:${this.engine.character (character).color};'>${this.engine.replaceVariables (this.engine.character (character).name)}: </span><p></p></div>`);
@@ -283,7 +293,7 @@ export class Dialog extends Action {
 			this.engine.global ('textObject', new Typed (last, this.engine.global ('typedConfiguration')));
 
 		} else {
-			if (character !== 'narrator') {
+			if (character !== '_narrator') {
 				if (previous !== character) {
 					this.engine.element ().find ('[data-ui="say"] [data-spoke]').last().addClass ('nvl-dialog-footer');
 					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='named'><span style='color:${this.engine.character (character).color};'>${this.engine.replaceVariables (this.engine.character (character).name)}: </span><p>${clearDialog}</p></div>`);
@@ -415,7 +425,7 @@ export class Dialog extends Action {
 			return this.displayCenteredDialog (this.dialog, this.clearDialog, this.id, this.engine.setting ('CenteredTypeAnimation'));
 		} else {
 			this.engine.element ().find ('[data-component="text-box"]').get (0).show ();
-			return this.displayDialog (this.dialog, this.clearDialog, 'narrator', this.engine.setting ('NarratorTypeAnimation'));
+			return this.displayDialog (this.dialog, this.clearDialog, '_narrator', this.engine.setting ('NarratorTypeAnimation'));
 		}
 	}
 

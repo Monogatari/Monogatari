@@ -34,7 +34,7 @@ class DialogLog extends Component {
 
 	write ({ id, character, dialog }) {
 		this.content ('placeholder').remove ();
-		if (id !== 'narrator' && id !== 'centered') {
+		if (id !== '_narrator' && id !== 'centered') {
 			const { name, color } = character;
 			this.content ('log').append (`
 				<div data-spoke="${id}" class="named">

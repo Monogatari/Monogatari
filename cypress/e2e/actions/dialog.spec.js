@@ -280,4 +280,22 @@ context ('Dialog', function () {
 		cy.get ('dialog-log').contains ('One');
 
 	});
+
+	it ('Allows having defaults for the narrator character', function () {
+		this.monogatari.character('_narrator', {
+			nvl: true,
+		});
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'One',
+				'Two',
+				'Three'
+			]
+		});
+		cy.start ();
+
+		cy.get ('text-box').contains ('One');
+		cy.get ('text-box').should ('have.attr', 'mode', 'nvl');
+	});
 });
