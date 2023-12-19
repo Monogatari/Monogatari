@@ -1,6 +1,6 @@
 import { Component } from './../../lib/Component';
 import { Text } from '@aegis-framework/artemis/index';
-import moment from 'moment/min/moment-with-locales';
+import { DateTime } from 'luxon';
 
 class SaveSlot extends Component {
 
@@ -147,7 +147,7 @@ class SaveSlot extends Component {
 			<button data-delete='${this.props.slot}' aria-label="${this.engine.string ('Delete')} Slot ${this.props.name}"><span class='fas fa-times'></span></button>
 			<small class='badge'>${this.props.name}</small>
 			<div data-content="background" style="${hasImage ? 'background-image' : 'background'}: ${background}"></div>
-			<figcaption>${moment (this.props.date).format ('LL LTS')}</figcaption>
+			<figcaption>${DateTime.fromISO(this.props.date).toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}</figcaption>
 		`;
 	}
 }

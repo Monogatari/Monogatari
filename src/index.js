@@ -25,8 +25,15 @@ import '@fortawesome/fontawesome-free/js/all.js';
  */
 
 export * from '@aegis-framework/artemis/index';
-export * from './lib/vendor/typed.min.js';
+
 export * from 'tsparticles-slim/tsparticles.slim.bundle.js';
+
+export * as Luxon from 'luxon';
+
+import Typed from './lib/vendor/typed.min.js';
+
+export { Typed };
+
 
 import Monogatari from './monogatari';
 

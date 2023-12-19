@@ -1,11 +1,13 @@
 import { $_, $_ready, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, Text, Debug } from '@aegis-framework/artemis/index';
-import moment from 'moment/min/moment-with-locales';
 import mousetrap from 'mousetrap';
 import { FancyError } from './lib/FancyError';
 import deeply from 'deeply';
 import { version } from './../package.json';
 import { random } from './utils/random';
 import migrate from './migrations';
+
+import { Settings, DateTime } from 'luxon';
+
 
 /**
  * @typedef {import('./lib/Action').Action} Action
@@ -921,8 +923,8 @@ class Monogatari {
 	static localize () {
 		this.trigger ('willLocalize');
 
-		// Setup the correct locale for the momentjs dates
-		moment.locale (this._languageMetadata[this.preference ('Language').code]);
+		// Setup the correct locale for the dates
+		Settings.defaultLocale = this._languageMetadata[this.preference ('Language').code];
 
 		this.element ().find ('[data-string]').each ((element) => {
 			const string_translation = this.string ($_(element).data ('string'));
@@ -1185,7 +1187,7 @@ class Monogatari {
 	static saveTo (prefix = 'SaveLabel', id = null, name = null) {
 		// Check if the player is actually playing
 		if (this.global ('playing')) {
-			const date = moment ().format ();
+			const date = DateTime.now().toISO();
 
 			if (name === null || name.trim () === '') {
 				name = date;

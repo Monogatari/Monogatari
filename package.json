@@ -48,7 +48,7 @@
 		"deeply": "^3.1.0",
 		"esbuild": "^0.19.8",
 		"esbuild-sass-plugin": "^2.16.0",
-		"moment": "^2.29.4",
+		"luxon": "^3.4.4",
 		"mousetrap": "^1.6.5",
 		"tsparticles-slim": "^2.12.0"
 	},

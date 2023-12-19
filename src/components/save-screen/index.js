@@ -1,5 +1,5 @@
 import { ScreenComponent } from './../../lib/ScreenComponent';
-import moment from 'moment/min/moment-with-locales';
+import { DateTime } from 'luxon';
 
 class SaveScreen extends ScreenComponent {
 
@@ -16,7 +16,7 @@ class SaveScreen extends ScreenComponent {
 	onStateUpdate (property, oldValue, newValue) {
 		super.onStateUpdate (property, oldValue, newValue);
 		if (property === 'open' && newValue === true) {
-			this.content ('slot-name').value (moment ().format ('LL LTS'));
+			this.content ('slot-name').value (DateTime.now().toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS));
 		}
 		return Promise.resolve ();
 	}
