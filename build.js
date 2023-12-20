@@ -14,6 +14,7 @@ const esbuildBase = {
 	minify: true,
 	platform: 'browser',
 	charset: 'utf8',
+	sourcemap: 'external',
 	target: ['es2020', 'edge79', 'firefox67', 'chrome64', 'safari11.1'],
 };
 
