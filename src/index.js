@@ -28,6 +28,8 @@ export * from '@aegis-framework/artemis/index';
 
 export * from 'tsparticles-slim/tsparticles.slim.bundle.js';
 
+export * as Random from './lib/vendor/random-js.min.js';
+
 export * as Luxon from 'luxon';
 
 import Typed from './lib/vendor/typed.min.js';

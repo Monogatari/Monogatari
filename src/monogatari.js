@@ -3,7 +3,7 @@ import mousetrap from 'mousetrap';
 import { FancyError } from './lib/FancyError';
 import deeply from 'deeply';
 import { version } from './../package.json';
-import { random } from './utils/random';
+import { Random, browserCrypto } from './lib/vendor/random-js.min.js';
 import migrate from './migrations';
 
 import { Settings, DateTime } from 'luxon';
@@ -3112,7 +3112,12 @@ class Monogatari {
 	 * @returns {number}
 	 */
 	static random (min, max) {
-		return random(min, max);
+		try {
+			return new Random (browserCrypto).integer (min, max);
+		} catch (e) {
+			console.error (e);
+			return new Random ().integer (min, max);
+		}
 	}
 }
 
