@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@electron/notarize": "^2.4.0",
-    "electron": "^32.0.2",
+    "electron": "^33.2.0",
     "electron-builder": "^25.0.5"
   },
   "staticFiles": {
