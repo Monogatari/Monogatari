@@ -37,7 +37,7 @@ class TextBox extends Component {
 				<img data-ui="face" alt="" data-content="character-expression">
 			</div>
 			<div data-content="text">
-				<mono-typist data-ui="say" data-content="dialog"></mono-typist>
+				<type-writer data-ui="say" data-content="dialog"></type-writer>
 			</div>
 		`;
 	}

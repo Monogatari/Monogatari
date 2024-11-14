@@ -9,4 +9,8 @@
 
 	--quick-menu-text-color: rgba(125, 125, 125, 0.5);
 	--quick-menu-height: 2.5rem;
+
+	--cursor-blinker: '|';
+	--cursor-speed: 0.53s;
+	--cursor-easing: cubic-bezier(1, 0, 0, 1);
 }

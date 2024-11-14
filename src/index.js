@@ -195,8 +195,8 @@ import TextBox from './components/text-box';
 import TextInput from './components/text-input';
 import TimerDisplay from './components/timer-display';
 import VisualNovel from './components/visual-novel';
-import MonoTypist from './components/mono-typist/index.js';
-import NoLetter from './components/no-letter/index.js';
+import TypeWriter from './components/type-writer/index.js';
+import TypeCharacter from './components/type-character/index.js';
 
 Monogatari._components = [
 	AlertModal,
@@ -224,8 +224,8 @@ Monogatari._components = [
 	TextInput,
 	TimerDisplay,
 	VisualNovel,
-	MonoTypist,
-	NoLetter
+	TypeWriter,
+	TypeCharacter
 ];
 
 /**

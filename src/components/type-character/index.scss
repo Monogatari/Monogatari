@@ -1,41 +1,39 @@
 /**
  * ===========================
- * No Letter Component
+ * Type Character Component
  * ===========================
  */
 
- @-webkit-keyframes cursorBlink {
+@-webkit-keyframes cursorBlink {
 	to {
 		opacity: 0
 	}
- }
+}
 
- @keyframes cursorBlink {
+@keyframes cursorBlink {
 	to {
 		opacity: 0
 	}
- }
+}
 
- no-letter[data-component] {
-    display: inline;
-	-webkit-animation-duration: 1s;
+type-character[data-component] {
+	display: inline;
+
 	animation-duration: 1s;
-	-webkit-animation-fill-mode: both;
 	animation-fill-mode: both;
+
 	&.cursor::after {
 		content: var(--cursor-blinker);
-		-webkit-animation-name: cursorBlink;
+
 		animation-name: cursorBlink;
-		-webkit-animation-direction: alternate;
 		animation-direction: alternate;
-		-webkit-animation-duration: var(--cursor-speed);
 		animation-duration: var(--cursor-speed);
-		-webkit-animation-iteration-count: infinite;
 		animation-iteration-count: infinite;
-		-webkit-animation-timing-function: var(--cursor-easing);
 		animation-timing-function: var(--cursor-easing);
+
 		position: absolute;
 		margin-top: -0.2%;
+
 		color: var(--cursor-color)
 	}
- }
+}

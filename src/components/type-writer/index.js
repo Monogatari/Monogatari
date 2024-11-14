@@ -1,18 +1,26 @@
 import { Component } from '../../lib/Component';
 
-class MonoTypist extends Component {
-	static setup () {
-		this.engine.configuration (this.tag, { actions: {} });
-		return Promise.resolve ();
+class TypeWriter extends Component {
+
+	static configuration (object = null) {
+		if (object !== null) {
+			if (typeof object === 'string') {
+				return this._configuration[object];
+			}
+
+			this._configuration = Object.assign ({}, this._configuration, object);
+		}
+
+		return this._configuration;
 	}
 
 	/**
-		@static
-		@function actions — Return the list of all actions from the actions config.
-		@returns {object} The list of actions.
-	**/
+	 @static
+	 @function actions — Return the list of all actions from the actions config.
+	 @returns {object} The list of actions.
+	 **/
 	static actions () {
-		return this.engine.configuration (this.tag).actions;
+		return this._configuration.actions;
 	}
 
 	/**
@@ -21,28 +29,24 @@ class MonoTypist extends Component {
 		@param {object} action The name of the action.
 		@returns {object} The object of the action being searched for.
 	**/
-	static action (action) {
-		return this.engine.configuration (this.tag).actions[action];
-	}
-
-	/**
-		@static
-		@function addAction — Add an action to the actions configuration.
-		@param {object} action An object containing the action options.
-		@returns {void}
-	**/
-	static addAction (action) {
-		// Check to see if our action has all of the necessary information to be added as a valid action.
-		if (typeof action.action === 'string' && typeof action.type === 'string' && typeof action.func === 'function') {
-			this.engine.configuration (this.tag, {
-				actions: {
-					...this.actions (),
-					[action.action]: action
-				}
-			});
-		} else {
-			return this.engine.debug.error ('Attempted to add an action to typing actions, but an invalid action object was provided:\n' + action);
+	static action (action = null) {
+		if (typeof action === 'string') {
+			return this._configuration.actions[action];
 		}
+
+		if (typeof action === 'object' && action !== null) {
+			const requiredFields = ['name', 'type', 'action'];
+
+			if (requiredFields.every (field => Object.keys (action).includes (field))) {
+				this._configuration.actions[action.name] = action;
+
+				return action;
+			}
+
+			throw new Error ('Attempted to add an action to typing actions, but an invalid action object was provided:\n' + action);
+		}
+
+		return this._configuration.actions;
 	}
 
 	constructor (...args) {
@@ -80,6 +84,7 @@ class MonoTypist extends Component {
 	initiate () {
 		// Set the typed configuration on each initiation.
 		this.setState ({ config: this.engine.global ('typedConfiguration') });
+
 		if (!this.state.strings.length && this.props.string) {
 			this.setState ({ strings: [this.props.string] });
 		}
@@ -127,7 +132,7 @@ class MonoTypist extends Component {
 		this.actionsPlayed = 0;
 
 		this.setDisplay (strings[0]);
-		this.elements = this.querySelectorAll ('no-letter');
+		this.elements = this.querySelectorAll ('type-character');
 
 		// We only have one string per instance, so these callbacks are equivalent.
 		if (typeof config.onBegin === 'function') {
@@ -159,8 +164,9 @@ class MonoTypist extends Component {
 			.slice (text.indexOf ('-') + index)
 			.replace (/[-](\w)/g, m => m[1].toUpperCase ());
 
-		const voidElements = [ 'br', 'hr', 'img' ];
+		const voidElements = ['br', 'hr', 'img'];
 		const voidAttributeNames = element.localName && element.getAttributeNames ();
+
 		const voidAttributes = voidAttributeNames && voidAttributeNames.map (elm => ({
 			[elm]: elm.slice (0, 5) === 'data-' ?
 				element.dataset[replace (elm)] :
@@ -180,7 +186,7 @@ class MonoTypist extends Component {
 
 		if (element.localName && voidProperties[element.localName.toLowerCase ()]) {
 			const { props, state = undefined } = voidProperties[element.localName.toLowerCase ()];
-			const node = document.createElement ('no-letter');
+			const node = document.createElement ('type-character');
 			node.style.display = 'none';
 
 			return { props, state, node };
@@ -192,17 +198,20 @@ class MonoTypist extends Component {
 	/**
 		@function setDisplay — Setup the current string with the proper elements to run the typing animation.
 		@param {string} curString The current string.
-		@returns {void} 
+		@returns {void}
 	 */
 	setDisplay (curString) {
 		const typingElement = document.createElement ('div');
+
 		typingElement.innerHTML = curString;
+
 		const textNodes = this._getLeafNodes (typingElement);
+
 		this.actions = [];
 		let voidCount = 0;
 
-		for (const textNode of textNodes) {
-			const isVoidElement = this.checkVoidTags (textNode);
+		for (const node of textNodes) {
+			const isVoidElement = this.checkVoidTags (node);
 			if (isVoidElement) {
 				// Void tags aren't considered "real", which means they aren't added to the "nodeCounter".
 				// So we need a fake counter that will be added the next time strings are parsed and an action is added.
@@ -216,16 +225,17 @@ class MonoTypist extends Component {
 					node.setState (state);
 				}
 
-				// overwrite original with a <no-letter> element.
-				textNode.replaceWith (node);
+				// overwrite original with a <type-character> element.
+				node.replaceWith (node);
 			} else {
-				const [nodes, actions] = this.parseString (textNode.textContent, voidCount);
+				const [nodes, actions] = this.parseString (node.textContent, voidCount);
 				this.actions = this.actions.concat (...actions);
 
-				// overwrite the node with <no-letter> text
-				textNode.replaceWith (...nodes);
+				// overwrite the node with <type-character> text
+				node.replaceWith (...nodes);
 			}
 		}
+
 		this.querySelector ('div').replaceChildren (...typingElement.childNodes);
 	}
 
@@ -236,7 +246,7 @@ class MonoTypist extends Component {
 		clearTimeout (this.timeout);
 
 		if (typeof this.state.config.onStop === 'function') {
-			this.state.config.onStop (this.stringPos, this);
+			this.state.config.onStop.apply (this, [this.stringPos]);
 		}
 	}
 
@@ -244,18 +254,20 @@ class MonoTypist extends Component {
 	    @function start — Start the typing animation again.
 	**/
 	start () {
-		if (!this.timeout) {
-		    this.typewrite ();
+		if (this.timeout) {
+			return;
+		}
+
+		this.typewrite ();
 
 
-			if (typeof this.state.config.onStart === 'function') {
-				this.state.config.onStart (this.stringPos, this);
-			}
+		if (typeof this.state.config.onStart === 'function') {
+			this.state.config.onStart.apply (this, [this.stringPos]);
 		}
 	}
 
 	/**
-		@function parseString — Parse through the current string and replace 
+		@function parseString — Parse through the current string and replace
 		@param {string} curString The current string.
 		@returns {array} An array containing the nodes and actions that were parsed and built.
 	**/
@@ -265,7 +277,8 @@ class MonoTypist extends Component {
 		//   eg: "{speed:10}hello {pause:1000}{speed:1000}world!"
 		//     -> [ '', '{speed:10}', 'hello ', '{pause:1000}', '', '{speed:1000}', 'world!' ]
 		// `(?:<pattern>)` is a non-capturing group, see https://devdocs.io/javascript/regular_expressions/non-capturing_group
-		const acts = Object.entries (this.engine.configuration (MonoTypist.tag).actions)
+
+		const acts = Object.entries (this.constructor.actions ())
 			.map (([ action, value ]) => ({ [value.type]: [action] }))
 			.reduce ((a, b) => {
 				for (const key in b) {
@@ -306,13 +319,14 @@ class MonoTypist extends Component {
 			if (i % 2 === 0) {
 				// If there are enclosedIDs, turn them into an object and send them on.
 				const special = {};
+
 				if (this.enclosedID.length) {
 					for (const id of this.enclosedID) {
 						special[id] = true;
 					}
 				}
-				
-				// iterate over the string, adding <no-letter>s to the element as we go
+
+				// iterate over the string, adding <type-character>s to the element as we go
 				for (const char of section) {
 					const textNode = document.createTextNode (char);
 					let node;
@@ -327,7 +341,7 @@ class MonoTypist extends Component {
 						}
 
 						nodeCounter++;
-						node = document.createElement ('no-letter');
+						node = document.createElement ('type-character');
 						node.setProps ({ letter: char });
 
 						// Check to see if we have any enclosedIDs to transfer.
@@ -340,15 +354,17 @@ class MonoTypist extends Component {
 					nodes.push (node);
 				}
 
-		    // action section
-		    } else {
+			// action section
+			} else {
 				// extract action and parameter
 				let match;
 				let type;
+
 				if (number) {
 					type = 'number';
 					match = section.match (new RegExp (`^\\{(?<action>${number}):(?<n>\\d+)\\}$`));
 				}
+
 				if (!match && enclosed) {
 					type = 'enclosed';
 					match = section.match (new RegExp (`^\\{\\/(?<action>${enclosed})(?<options>.*)\\}$`));
@@ -367,12 +383,14 @@ class MonoTypist extends Component {
 						}
 					}
 				}
+
 				if (!match && instance) {
 					type = 'instance';
 					match = section.match (new RegExp (`^\\{(?<action>${instance})\\/\\}$`));
 				}
 
 				let options;
+
 				if (match) {
 					if (type === 'enclosed' && match.groups.options) {
 						options = {};
@@ -427,11 +445,12 @@ class MonoTypist extends Component {
 				} else {
 					this.engine.debug.error ('Failed to match action:', section);
 				}
-		    }
+			}
 		});
 
 		// Force length of 'actions' to equal nodeCounter
-		actions[nodeCounter-1] = actions[nodeCounter-1];
+		actions[nodeCounter-1] = actions[nodeCounter - 1];
+
 		return [nodes, actions];
 	}
 
@@ -441,14 +460,16 @@ class MonoTypist extends Component {
 		@param {object} act The action to be executed.
 		@returns {void}
 	**/
-	executeAction (act) {
-		const { actions } = this.engine.configuration (MonoTypist.tag);
+	executeAction (action) {
+		const actions = this.constructor.actions ();
+
 		for (const key in actions) {
-			if (act.action === key) {
+			if (action.name === key) {
 				// Since we already know what action it is, we don't need to send that data to the callback function.
 				// So we use destructuring to exclude it from the action.
-				const [ action, ...variables ] = Object.values (act);
-				actions[key].func (this, ...variables);
+				const [action, ...variables] = Object.values (action);
+
+				actions[key].action.apply (this, variables);
 			}
 		}
 	}
@@ -503,12 +524,12 @@ class MonoTypist extends Component {
 		if (typeof this.props.showCursor === 'boolean' || typeof this.props.showCursor === 'number') {
 			if (this.props.showCursor) {
 				if (this.props.hideCursorOnEnd || ignore) {
-					this.unsetCursor (this.querySelectorAll ('no-letter'));
+					this.unsetCursor (this.querySelectorAll ('type-character'));
 				}
 			}
 		} else if (this.state.config.showCursor) {
 			if (this.state.config.hideCursorOnEnd || ignore) {
-				this.unsetCursor (this.querySelectorAll ('no-letter'));
+				this.unsetCursor (this.querySelectorAll ('type-character'));
 			}
 		}
 	}
@@ -522,8 +543,10 @@ class MonoTypist extends Component {
 		// We increase the node counter to see if there are any other actions immediately after it.
 		if (this.actions[this.nodeCounter]) {
 			this.executeAction (this.actions[this.nodeCounter]);
+
 			this.nodeCounter++;
 			this.actionsPlayed++;
+
 			return this.typewrite ();
 		}
 
@@ -619,7 +642,9 @@ class MonoTypist extends Component {
 			}
 		};
 
-		traverse (node);
+		if (node) {
+			traverse (node);
+		}
 
 		return leafNodes;
 	}
@@ -630,6 +655,7 @@ class MonoTypist extends Component {
 	**/
 	destroy (loop) {
 		clearTimeout (this.timeout);
+
 		this.timeout = null;
 		this.ignorePause = undefined;
 		this.loops = false;
@@ -645,7 +671,7 @@ class MonoTypist extends Component {
 		}
 
 		if (typeof this.state.config.onDestroy === 'function') {
-			this.state.config.onDestroy (this);
+			this.state.config.onDestroy.apply (this);
 		}
 
 		// If we're showing the cursor and also hiding it on end, hide it upon destruction.
@@ -671,41 +697,16 @@ class MonoTypist extends Component {
 		return Promise.resolve ();
 	}
 
-	willMount () {
-		// We put these adders into the "willMount" method to make sure the component exists and can be referenced.
-		this.engine.component ('mono-typist').addAction ({action: 'pause', type: 'number', func: function (self, number) {
-			const num = Number (number);
-			if (typeof self.state.config.onTypingPaused === 'function') {
-				self.state.config.onTypingPaused (self.stringPos, self);
-			}
-
-			if (num) {
-				self.nextPause = num;
-			} else {
-				this.engine.debug.error ('Provided value was not a valid number value:\n' + number);
-			}
-		}});
-
-		this.engine.component ('mono-typist').addAction ({action: 'speed', type: 'number', func: function (self, number) {
-			const percentage = Number (number);
-			if (percentage) {
-				const speed = Math.floor ((self.speed * 100) / percentage);
-				self.speed = speed;
-			} else {
-				this.engine.debug.error ('Provided value was not a valid number value:\n' + number);
-			}
-		}});
-
-		return Promise.resolve ();
-	}
-
 	didMount () {
-		if (this.props.start) this.initiate ();
+		if (this.props.start) {
+			this.initiate ();
+		}
+
 		return Promise.resolve ();
 	}
 
 	render () {
-		return '<div class="typist-container"></div>';
+		return '<div class="type-writer-container"></div>';
 	}
 
 	// In some contexts, you can sometimes run into memory leak issues on certain components.
@@ -714,6 +715,7 @@ class MonoTypist extends Component {
 	// This will attempt to remedy the memory build up a little bit in those contexts.
 	willUnmount () {
 		this.destroy (true);
+
 		this.elements = null;
 		this.enclosedID = null;
 		this.innerHTML = '';
@@ -722,7 +724,43 @@ class MonoTypist extends Component {
 	}
 }
 
-MonoTypist.tag = 'mono-typist';
+TypeWriter.tag = 'type-writer';
+
+TypeWriter._configuration = {
+	actions: {
+		'pause': {
+			name: 'pause',
+			type: 'number',
+			action: function (number) {
+				const time = Number (number);
+
+				if (time) {
+					this.nextPause = time;
+
+					if (typeof this.state.config.onTypingPaused === 'function') {
+						this.state.config.onTypingPaused.apply (this, [this.stringPos]);
+					}
+				} else {
+					this.engine.debug.error ('Provided value was not a valid number value:\n' + number);
+				}
+			},
+		},
+		'speed': {
+			name: 'speed',
+			type: 'number',
+			action: function (number) {
+				const percentage = Number (number);
+
+				if (percentage) {
+					const speed = Math.floor ((this.speed * 100) / percentage);
+					this.speed = speed;
+				} else {
+					this.engine.debug.error ('Provided value was not a valid number value:\n' + number);
+				}
+			},
+		},
+	},
+};
 
 
-export default MonoTypist;
+export default TypeWriter;

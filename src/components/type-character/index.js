@@ -1,6 +1,7 @@
 import { Component } from '../../lib/Component';
 
-class NoLetter extends Component {
+class TypeCharacter extends Component {
+
 	constructor (...args) {
 		super (...args);
 
@@ -11,6 +12,7 @@ class NoLetter extends Component {
 
 	render () {
 		const { letter } = this.props;
+
 		const props = Object.keys (this._props).map (e => (e !== 'letter' ? e : false));
 
 		if (props[1]) {
@@ -29,7 +31,7 @@ class NoLetter extends Component {
 	}
 }
 
-NoLetter.tag = 'no-letter';
+TypeCharacter.tag = 'type-character';
 
 
-export default NoLetter;
+export default TypeCharacter;

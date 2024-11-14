@@ -6,9 +6,11 @@ export class Dialog extends Action {
 
 	static shouldProceed () {
 		// Check if the type animation has finished and the Typed object still exists
-		const component = this.engine.element ().find ('mono-typist').collection[0];
+		const component = this.engine.element ().find ('type-writer').get (0);
+
 		if (!this.engine.global ('finished_typing') && component.state.strings.length) {
 			const speedReader = !this.engine.setting ('InstantText');
+
 			if (speedReader) {
 				component.speed = 0;
 				component.ignorePause = true;
@@ -30,7 +32,7 @@ export class Dialog extends Action {
 
 				// We want to dynamically replace all actions, including custom ones.
 				let replaced = str;
-				const actions = this.engine.configuration (component.localName).actions;
+				const actions = component.constructor.actions ();
 				for (const action in actions) {
 					if (actions[action].type === 'number') {
 						replaced = replaced.replace (new RegExp(`\\{${action}:(\\d+)\\}`, 'g'), '');
