@@ -28,7 +28,7 @@ class CenteredDialog extends Component {
 
 	render () {
 		return `
-			<div data-content="wrapper"></div>
+			<type-writer data-content="wrapper"></type-writer>
 		`;
 	}
 }

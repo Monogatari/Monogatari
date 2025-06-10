@@ -2196,6 +2196,54 @@ class Monogatari {
 	}
 
 	/**
+	 * @static stopTyping - Stop the typing effect.
+	 *
+	 * @returns {void}
+	 */
+	static stopTyping (component) {
+		const speedReader = !this.setting ('InstantText');
+
+		if (speedReader) {
+			component.speed = 0;
+			component.ignorePause = true;
+
+			if (component.loops) {
+				component.loops = false;
+
+				// If this doesn't get set, it'll just start looping again.
+				component.stopLoop = true;
+			}
+		} else {
+			// Get the string it was typing
+			const str = component.state.strings[0]; // TODO: Multi-String Capability?
+
+			// Get the element it was typing to
+			// NOTE: Since "querySelector" selects the first element, we don't have to worry about it selecting the wrong element
+			const element = component.querySelector ('div');
+			component.destroy ();
+
+			// We want to dynamically replace all actions, including custom ones.
+			let replaced = str;
+			const actions = component.constructor.actions ();
+			for (const action in actions) {
+				if (actions[action].type === 'number') {
+					replaced = replaced.replace (new RegExp(`\\{${action}:(\\d+)\\}`, 'g'), '');
+				} else if (actions[action].type === 'enclosed') {
+					replaced = replaced.replace (new RegExp(`\\{\\/${action}.*?\\}`, 'g'), '');
+				} else if (actions[action].type === 'instance') {
+					replaced = replaced.replace (new RegExp(`\\{${action}\\}`, 'g'), '');
+				}
+			}
+
+			element.innerHTML = replaced;
+		}
+
+		this.global ('finished_typing', true);
+
+		this.trigger ('didFinishTyping');
+	}
+
+	/**
 	 * @static shouldRollback - Check if the game can revert
 	 *
 	 * @returns {Promise} - Resolves if the game can be reverted or reject if it
@@ -2588,10 +2636,7 @@ class Monogatari {
 			// menu, meaning it hides everything else and shows that one.
 			this.registerListener ('open-screen', {
 				callback: (element) => {
-					this.element ().find ('[data-screen]').each ((screen) => {
-						screen.setState ({ open: false });
-					});
-					this.element ().find (`[data-screen="${element.data('open')}"]`).get (0).setState ({ open: true });
+					this.showScreen (element.data('open'));
 				}
 			});
 
@@ -2761,6 +2806,22 @@ class Monogatari {
 		});
 	}
 
+	static goBack (event, selector) {
+		if (!$_(`${selector} [data-screen="game"]`).isVisible ()) {
+			this.debug.debug ('Registered Back Listener on Non-Game Screen');
+			event.stopImmediatePropagation ();
+			event.stopPropagation ();
+			event.preventDefault ();
+			this.hideScreens ();
+
+			if (this.global ('playing') || this.global ('on_splash_screen')) {
+				this.element ().find ('[data-screen="game"]').get (0).setState ({ open: true });
+			} else {
+				this.element ().find ('[data-screen="main"]').get (0).setState ({ open: true });
+			}
+		}
+	}
+
 	/**
 	 * Every event listener should be binded in this function.
 	 */
@@ -2790,23 +2851,7 @@ class Monogatari {
 		// button will return to the game, if its not playing, then it'll return
 		// to the main menu.
 		this.on ('click', '[data-screen]:not([data-screen="game"]) [data-action="back"]', (event) => {
-
-			if (!$_(`${selector} [data-screen="game"]`).isVisible ()) {
-				this.debug.debug ('Registered Back Listener on Non-Game Screen');
-				event.stopImmediatePropagation();
-				event.stopPropagation();
-				event.preventDefault();
-				this.element ().find ('[data-screen]').each ((screen) => {
-					screen.setState ({ open: false });
-				});
-
-				if (this.global ('playing') || this.global ('on_splash_screen')) {
-					this.element ().find ('[data-screen="game"]').get (0).setState ({ open: true });
-				} else {
-					this.element ().find ('[data-screen="main"]').get (0).setState ({ open: true });
-				}
-			}
-
+			this.goBack (event, selector);
 		});
 
 		const self = this;
@@ -3260,7 +3305,7 @@ Monogatari._settings = {
 
 	// Enables or disables the typing animation for the special centered
 	// character. If the TypeAnimation property was set to false, the centered
-	// character won't shown the animation even if this is set to true.
+	// character won't show the animation even if this is set to true.
 	'CenteredTypeAnimation': true,
 
 	// Force some orientation on mobile devices. If this setting is set either

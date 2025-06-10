@@ -84,7 +84,7 @@ monogatari.settings({
 
 	// Enables or disables the typing animation for the special centered
 	// character. If the TypeAnimation property was set to false, the centered
-	// character won't shown the animation even if this is set to true.
+	// character won't show the animation even if this is set to true.
 	'CenteredTypeAnimation': true,
 
 	// Force some orientation on mobile devices. If this setting is set either

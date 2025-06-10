@@ -6,49 +6,15 @@ export class Dialog extends Action {
 
 	static shouldProceed () {
 		// Check if the type animation has finished and the Typed object still exists
-		const component = this.engine.element ().find ('type-writer').get (0);
+		let component = this.engine.element ().find ('type-writer').get (0);
+		const centeredDialog = this.engine.element ().find ('[data-component="centered-dialog"]');
+
+		if (centeredDialog.isVisible ()) {
+			component = centeredDialog.find ('[data-content="wrapper"]').get (0);
+		}
 
 		if (!this.engine.global ('finished_typing') && component.state.strings.length) {
-			const speedReader = !this.engine.setting ('InstantText');
-
-			if (speedReader) {
-				component.speed = 0;
-				component.ignorePause = true;
-
-				if (component.loops) {
-					component.loops = false;
-
-					// If this doesn't get set, it'll just start looping again.
-					component.stopLoop = true;
-				}
-			} else {
-				// Get the string it was typing
-				const str = component.state.strings[0]; // TODO: Multi-String Capability?
-
-				// Get the element it was typing to
-				// NOTE: Since "querySelector" selects the first element, we don't have to worry about it selecting the wrong element
-				const element = component.querySelector ('div');
-				component.destroy ();
-
-				// We want to dynamically replace all actions, including custom ones.
-				let replaced = str;
-				const actions = component.constructor.actions ();
-				for (const action in actions) {
-					if (actions[action].type === 'number') {
-						replaced = replaced.replace (new RegExp(`\\{${action}:(\\d+)\\}`, 'g'), '');
-					} else if (actions[action].type === 'enclosed') {
-						replaced = replaced.replace (new RegExp(`\\{\\/${action}.*?\\}`, 'g'), '');
-					} else if (actions[action].type === 'instance') {
-						replaced = replaced.replace (new RegExp(`\\{${action}\\}`, 'g'), '');
-					}
-				}
-
-				element.innerHTML = replaced;
-			}
-
-			this.engine.global ('finished_typing', true);
-
-			this.engine.trigger ('didFinishTyping');
+			this.engine.stopTyping (component);
 
 			return Promise.reject ('TypeWriter effect has not finished.');
 		}
@@ -263,15 +229,22 @@ export class Dialog extends Action {
 
 	displayCenteredDialog (dialog, clearDialog, character, animation) {
 		const element = document.createElement ('centered-dialog');
-		this.engine.element ().find ('[data-component="text-box"]').hide ();
-		this.engine.element ().find ('[data-screen="game"]').append (element);
+		const gameScreen = this.engine.element ().find ('[data-screen="game"]');
+		const textBox = this.engine.element ().find ('[data-component="text-box"]');
+		const writer = textBox.find ('type-writer').get (0);
+
+		// If the text-box's typewriter is not emptied and ignored,
+		// it can cause the "finished_typing" variable to be set prematurely.
+		writer.setState ({ ignore: true, strings: [] });
+
+		textBox.hide ();
+		gameScreen.append (element);
 
 		element.ready (() => {
 			if (animation && this.engine.setting ('TypeAnimation') === true) {
 				this.engine.global ('typedConfiguration').strings = [dialog];
 				this.engine.global ('finished_typing', false);
-				// This needs to be properly tested to make sure it's working.
-				this.engine.element ().find (element.content ('wrapper').get (0)).collection[0].setState({ strings: [dialog] });
+				element.content ('wrapper').get (0).setState ({ strings: [dialog] });
 			} else {
 				element.content ('wrapper').html (clearDialog);
 				this.engine.global ('finished_typing', true);

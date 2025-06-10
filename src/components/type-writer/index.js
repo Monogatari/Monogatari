@@ -86,7 +86,7 @@ class TypeWriter extends Component {
 		this.setState ({ config: this.engine.global ('typedConfiguration') });
 
 		if (!this.state.strings.length && this.props.string) {
-			this.setState ({ strings: [this.props.string] });
+			this.setState ({ ignore: true, strings: [this.props.string] });
 		}
 
 		const { config, strings } = this.state;
@@ -141,7 +141,13 @@ class TypeWriter extends Component {
 
 		config.preStringTyped (this.stringPos, this);
 
-		this.typewrite ();
+		if (typeof this.props.delay === 'number') {
+			setTimeout (() => {
+				this.typewrite ();
+			}, this.props.delay);
+		} else {
+			this.typewrite ();
+		}
 	}
 
 	/**
@@ -293,7 +299,7 @@ class TypeWriter extends Component {
 
 		const number = acts.number.join ('|');
 		const enclosed = acts.enclosed ? acts.enclosed.join ('|') : '';
-		const instance = acts.instances ? acts.instance.join ('|') : '';
+		const instance = acts.instance ? acts.instance.join ('|') : '';
 
 		// The enclosedPattern is a bit complicated since we want to check both option based and non-option based enclosed actions.
 		// Ex. {jitter}{/jitter} - non-option based enclosed action.
@@ -687,11 +693,15 @@ class TypeWriter extends Component {
 		super.onStateUpdate (property, oldValue, newValue);
 
 		if (property === 'strings') {
-			this.forceRender ().then (() => {
-				this.destroy (this.loops);
-			}).finally (() => {
-				this.initiate ();
-			});
+			if (!this.state.ignore) {
+				this.forceRender ().then (() => {
+					this.destroy (this.loops);
+				}).finally (() => {
+					this.initiate ();
+				});
+			} else {
+				this.setState ({ ignore: false });
+			}
 		}
 
 		return Promise.resolve ();
