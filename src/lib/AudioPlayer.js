@@ -21,18 +21,18 @@ class AudioPlayer {
 		this.source = null;
 	}
 
-	_createSource (startAt = 0) {
-		const source = this.audioContext.createBufferSource();
+	_createSource () {
+		const source = this.audioContext.createBufferSource ();
 
 		source.buffer = this.buffer;
-		source.connect(this.gainNode);
+		source.connect (this.gainNode);
 		source.loop = this.loop;
 
 		source.onended = () => {
 			this.isPlaying = false;
 			this.hasEnded = true;
 			if (typeof this.onended === 'function') {
-				this.onended();
+				this.onended ();
 			}
 		};
 
@@ -55,12 +55,11 @@ class AudioPlayer {
 			try {
 				let startAt = 0;
 
-				if (this.isPaused) {
+				if (this.isPaused && !this.hasEnded) {
 					startAt = this.pausedAt;
 				}
 
-				// Always create a new source node
-				this.source = this._createSource(startAt);
+				this.source = this._createSource ();
 				this.startedAt = this.audioContext.currentTime - startAt;
 
 				this.isPlaying = true;
@@ -69,21 +68,21 @@ class AudioPlayer {
 
 				this.source.start(0, startAt);
 
-				resolve();
+				resolve ();
 			} catch (error) {
-				reject(error);
+				reject (error);
 			}
 		});
 	}
 
-	pause() {
+	pause () {
 		if (!this.isPlaying || this.hasEnded) {
 			return;
 		}
 
 		if (this.source) {
 			this.source.onended = null;
-			this.source.stop();
+			this.source.stop ();
 			this.source = null;
 		}
 
@@ -92,7 +91,7 @@ class AudioPlayer {
 		this.isPaused = true;
 	}
 
-	stop() {
+	stop () {
 		if (this.isPlaying && this.source) {
 			this.source.onended = null;
 			this.source.stop ();

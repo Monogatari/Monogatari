@@ -1,6 +1,6 @@
 {
 	"name": "@monogatari/core",
-	"version": "2.5.1",
+	"version": "2.6.0",
 	"main": "lib/monogatari.node.js",
 	"module": "lib/monogatari.module.js",
 	"css": "dist/engine/core/monogatari.css",

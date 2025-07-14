@@ -270,22 +270,19 @@ export class Play extends Action {
 				this.media = media;
 			}
 
-			let player = this.engine.mediaPlayer (this.type, this.mediaKey);
-			if (typeof player === 'undefined') {
-				// We'll create the player in the apply method since it's async
-				this.player = null;
-			} else {
-				this.player = player;
-			}
+			const player = this.engine.mediaPlayer (this.type, this.mediaKey);
+
+			// We'll create the player in the apply method since it's async
+			this.player = typeof player === 'undefined' ? null : player;
 		} else {
 			this.player = this.engine.mediaPlayers (this.type);
 		}
 	}
 
-	async createAudioPlayer() {
+	async createAudioPlayer () {
 		const audioContext = this.engine.audioContext;
 		const gainNode = audioContext.createGain ();
-		gainNode.connect(audioContext.destination);
+		gainNode.connect (audioContext.destination);
 		gainNode.gain.setValueAtTime (this.mediaVolume, audioContext.currentTime);
 
 		// Load audio file
