@@ -1,4 +1,5 @@
 import { Action } from './../lib/Action';
+import AudioPlayer from './../lib/AudioPlayer';
 
 export class Stop extends Action {
 
@@ -10,24 +11,23 @@ export class Stop extends Action {
 	 * Prepare the needed values to run the fade function on the given player
 	 *
 	 * @param {string} fadeTime - The time it will take the audio to reach 0
-	 * @param {Audio} player - The Audio object to modify
+	 * @param {AudioPlayer} player - The AudioPlayer object to modify
 	 *
 	 * @return {Promise} - This promise will resolve once the fadeOut has ended
 	 */
 	static fadeOut (fadeTime, player) {
 		const time = parseFloat (fadeTime.match (/\d*(\.\d*)?/));
-
 		const increments = time / 0.1;
-		let maxVolume = parseFloat (player.dataset.maxVolume);
 
-		if (isNaN(maxVolume)) {
-			maxVolume = player.volume * 100;
+		// Get the current volume (considering volume percentage if set)
+		let currentVolume = player.volume;
+		if (player.dataset.volumePercentage) {
+			const percentage = parseInt(player.dataset.volumePercentage);
+			currentVolume = (percentage / 100) * player.volume;
 		}
 
-		const volume = (maxVolume / increments) / maxVolume;
-
+		const volume = currentVolume / increments;
 		const interval = (1000 * time) / increments;
-
 		const expected = Date.now () + interval;
 
 		player.dataset.fade = 'out';
@@ -48,7 +48,7 @@ export class Stop extends Action {
 	/**
 	 * Fade the player's audio on small iterations until it reaches 0
 	 *
-	 * @param {Audio} player The Audio player to which the audio will fadeOut
+	 * @param {AudioPlayer} player The AudioPlayer to which the audio will fadeOut
 	 * @param {number} volume The amount to decrease the volume on each iteration
 	 * @param {number} interval The time in milliseconds between each iteration
 	 * @param {Date} expected The expected time the next iteration will happen
@@ -64,8 +64,9 @@ export class Stop extends Action {
 			// possibly special handling to avoid futile "catch up" run
 		}
 
-		if (player.volume !== 0 && player.dataset.fade === 'out') {
+		if (player.volume > 0 && player.dataset.fade === 'out') {
 			if ((player.volume - volume) < 0) {
+				player.volume = 0;
 				resolve ();
 			} else {
 				player.volume -= volume;
@@ -93,7 +94,7 @@ export class Stop extends Action {
 
 	willApply () {
 		if (this.player) {
-			if (typeof this.player === 'object' && !(this.player instanceof Audio)) {
+			if (typeof this.player === 'object' && !(this.player instanceof AudioPlayer)) {
 				for (const player of Object.values (this.player)) {
 					player.loop = false;
 				}
@@ -108,7 +109,7 @@ export class Stop extends Action {
 		// Check if the audio should have a fade time
 		const fadePosition = this.props.indexOf ('fade');
 
-		if (typeof this.player === 'object' && !(this.player instanceof Audio)) {
+		if (typeof this.player === 'object' && !(this.player instanceof AudioPlayer)) {
 			if (fadePosition > -1) {
 				for (const player of this.player) {
 					Stop.fadeOut (this.props[fadePosition + 1], player).then (() => {

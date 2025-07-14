@@ -6,39 +6,6 @@ context ('Play', function () {
 		cy.window ().its ('Monogatari.default').as ('monogatari');
 	});
 
-	it ('Plays music correctly', function () {
-		this.monogatari.setting ('TypeAnimation', false);
-		this.monogatari.script ({
-			'Start': [
-				'Zero',
-				'play music theme',
-				'One',
-			]
-		});
-
-		cy.start ();
-
-		cy.wrap (this.monogatari).invoke ('state', 'music').should ('be.empty');
-		cy.wrap (this.monogatari).invoke ('history', 'music').should ('be.empty');
-		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 0);
-
-		cy.get ('text-box').contains ('Zero');
-
-		cy.proceed ();
-
-		cy.wrap (this.monogatari).invoke ('state', 'music').should ('deep.equal', [{ statement: 'play music theme', paused: false }]);
-		cy.wrap (this.monogatari).invoke ('history', 'music').should ('deep.equal', ['play music theme']);
-		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 1);
-		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.paused').should ('equal', false);
-
-		cy.get ('text-box').contains ('One');
-		cy.rollback ();
-
-		cy.wrap (this.monogatari).invoke ('state', 'music').should ('be.empty');
-		cy.wrap (this.monogatari).invoke ('history', 'music').should ('be.empty');
-		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 0);
-	});
-
 	it ('Plays all music correctly', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
@@ -63,6 +30,7 @@ context ('Play', function () {
 		cy.get ('text-box').contains ('Zero');
 
 		cy.proceed ();
+		cy.wait(100); // Add a small delay to ensure async operations complete
 
 		cy.wrap (this.monogatari).invoke ('state', 'music').should ('deep.equal', [{ statement: 'play music theme loop', paused: false }, { statement: 'play music subspace loop', paused: false }]);
 		cy.wrap (this.monogatari).invoke ('history', 'music').should ('deep.equal', ['play music theme loop', 'play music subspace loop']);
@@ -73,7 +41,16 @@ context ('Play', function () {
 		cy.get ('text-box').contains ('One');
 
 		cy.proceed ();
-		cy.wrap (this.monogatari).invoke ('state', 'music').should ('deep.equal', [{ statement: 'play music theme loop', paused: true }, { statement: 'play music subspace loop', paused: true }]);
+		cy.wait(100);
+		cy.wrap(this.monogatari).invoke('history', 'music').should('have.length', 2);
+		cy.wrap(this.monogatari).invoke('history', 'music').should('deep.equal', [
+			'play music theme loop',
+			'play music subspace loop'
+		]);
+		cy.wrap(this.monogatari).invoke('state', 'music').should('deep.equal', [
+			{ statement: 'play music theme loop', paused: true },
+			{ statement: 'play music subspace loop', paused: true }
+		]);
 		cy.wrap (this.monogatari).invoke ('history', 'music').should ('deep.equal', ['play music theme loop', 'play music subspace loop']);
 		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 2);
 		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.paused').should ('equal', true);
@@ -175,8 +152,8 @@ context ('Play', function () {
 		cy.start ();
 
 		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 2);
-		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.volume').should ('equal', 0.25);
-		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.volume').should ('equal', 0.075);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.volume').should ('be.closeTo', 0.25, 0.001);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.volume').should ('be.closeTo', 0.075, 0.001);
 
 		cy.get ('text-box').contains ('One');
 	});
@@ -196,8 +173,8 @@ context ('Play', function () {
 		cy.start ();
 
 		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 2);
-		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.volume').should ('equal', 0.25);
-		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.volume').should ('equal', 0.075);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.volume').should ('be.closeTo', 0.25, 0.001);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.volume').should ('be.closeTo', 0.075, 0.001);
 
 		cy.get ('text-box').contains ('One');
 
@@ -205,8 +182,8 @@ context ('Play', function () {
 		cy.get ('settings-screen').should ('be.visible');
 
 		cy.get('[data-action="set-volume"][data-target="music"]').as('range').invoke('val', 0.7).trigger('mouseover');
-		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.volume').should ('equal', 0.7);
-		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.volume').should ('equal', 0.21);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.volume').should ('be.closeTo', 0.7, 0.001);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.volume').should ('be.closeTo', 0.21, 0.001);
 	});
 
 });

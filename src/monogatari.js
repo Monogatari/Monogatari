@@ -889,19 +889,34 @@ class Monogatari {
 	static removeMediaPlayer (type, key) {
 		if (typeof key === 'undefined') {
 			for (const mediaKey of Object.keys (this.mediaPlayers (type, true))) {
-				this._mediaPlayers[type][mediaKey].pause ();
-				this._mediaPlayers[type][mediaKey].setAttribute ('src', '');
-				this._mediaPlayers[type][mediaKey].currentTime = 0;
+				const player = this._mediaPlayers[type][mediaKey];
+				if (player && typeof player.pause === 'function') {
+					player.pause();
+				}
+				if (player && typeof player.stop === 'function') {
+					player.stop();
+				}
+				if (player && typeof player.setAttribute === 'function') {
+					player.setAttribute ('src', '');
+					player.currentTime = 0;
+				}
 				delete this._mediaPlayers[type][mediaKey];
 			}
 		} else {
 			if (typeof this._mediaPlayers[type][key] !== 'undefined') {
-				this._mediaPlayers[type][key].pause ();
-				this._mediaPlayers[type][key].setAttribute ('src', '');
-				this._mediaPlayers[type][key].currentTime = 0;
+				const player = this._mediaPlayers[type][key];
+				if (player && typeof player.pause === 'function') {
+					player.pause();
+				}
+				if (player && typeof player.stop === 'function') {
+					player.stop();
+				}
+				if (player && typeof player.setAttribute === 'function') {
+					player.setAttribute ('src', '');
+					player.currentTime = 0;
+				}
 				delete this._mediaPlayers[type][key];
 			}
-
 		}
 	}
 

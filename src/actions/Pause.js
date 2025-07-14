@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-
 export class Pause extends Action {
 
 	static matchString ([ action ]) {
@@ -39,32 +38,35 @@ export class Pause extends Action {
 
 	didApply () {
 		const state = {};
-		if (this.player instanceof Array) {
-			state[this.type] = this.engine.state (this.type).map ((s) => {
-				s.paused = true;
-				return s;
-			});
-		} else {
-			state[this.type] = [...this.engine.state (this.type).map ((item) => {
-				if (typeof item.statement === 'string') {
-					const [play, type, media] = item.statement.split (' ');
+		const prev = this.engine.state (this.type);
 
+		if (this.player instanceof Array) {
+			state[this.type] = prev.map((s) => ({
+				...s,
+				paused: true
+			}));
+		} else {
+			state[this.type] = prev.map((item) => {
+				if (typeof item.statement === 'string') {
+					const [play, type, media] = item.statement.split(' ');
 					if (media === this.media) {
-						item.paused = true;
+						return { ...item, paused: true };
 					}
-					return item;
 				}
 				return item;
-			})];
+			});
 		}
-		this.engine.state (state);
-		return Promise.resolve ({ advance: true });
+
+		this.engine.state(state);
+
+		return Promise.resolve({ advance: true });
 	}
 
 	willRevert () {
 		if (this.player) {
 			return Promise.resolve ();
 		}
+
 		return Promise.reject ('Media player was not defined.');
 	}
 
@@ -75,31 +77,33 @@ export class Pause extends Action {
 				promises.push (player.play ());
 			}
 			return Promise.all (promises);
-		} else {
-			return this.player.play ();
 		}
+
+		return this.player.play ();
 	}
 
 	didRevert () {
 		const state = {};
 		if (this.player instanceof Array) {
-			state[this.type] = this.engine.state (this.type).map ((s) => {
-				s.paused = false;
-				return s;
-			});
+			state[this.type] = this.engine.state (this.type).map ((s) => ({
+				...s,
+				paused: false
+			}));
 		} else {
-			state[this.type] = [...this.engine.state (this.type).map ((item) => {
+			state[this.type] = this.engine.state (this.type).map ((item) => {
 				if (typeof item.statement === 'string') {
 					const [play, type, media] = item.statement.split (' ');
 
 					if (media === this.media) {
-						item.paused = false;
+						return { ...item, paused: false };
 					}
-					return item;
 				}
-			})];
+				return item;
+			});
 		}
+
 		this.engine.state (state);
+
 		return Promise.resolve ({ advance: true, step: true });
 	}
 }
