@@ -1,4 +1,4 @@
-import { $_, $_ready, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, Text, Debug } from '@aegis-framework/artemis/index';
+import { $_, $_ready, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, Text, Debug } from '@aegis-framework/artemis';
 import mousetrap from 'mousetrap';
 import { FancyError } from './lib/FancyError';
 import deeply from 'deeply';

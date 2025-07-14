@@ -1,5 +1,5 @@
 import { Action } from './../lib/Action';
-import { Text } from '@aegis-framework/artemis/index';
+import { Text } from '@aegis-framework/artemis';
 
 export class ShowBackground extends Action {
 

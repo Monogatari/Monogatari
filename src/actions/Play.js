@@ -1,5 +1,5 @@
 import { Action } from './../lib/Action';
-import { $_, Text } from '@aegis-framework/artemis/index';
+import { $_, Text } from '@aegis-framework/artemis';
 
 export class Play extends Action {
 

@@ -45,6 +45,50 @@ context ('Choices', function () {
 					}
 				}
 			}});
+
+			this.monogatari.$ ('nvlChoice', {'Choice':{
+				'Dialog': 'nvl This is a choice',
+				'One': {
+					'Text': 'One',
+					'Do': 'One'
+				},
+				'Two': {
+					'Text': 'Two',
+					'Do': 'Two'
+				},
+				'Three': {
+					'Text': 'Three',
+					'Do': 'Three'
+				},
+				'Disabled': {
+					'Text': 'Disabled',
+					'Do': 'Disabled',
+					'Clickable': function () {
+						return false;
+					}
+				},
+				'Hidden': {
+					'Text': 'Hidden',
+					'Do': 'Hidden',
+					'Condition': function () {
+						return false;
+					}
+				},
+				'OnClick': {
+					'Text': 'On Click',
+					'Do': 'On Click',
+					'onClick': function () {
+						this.storage ('clicked', true);
+					}
+				},
+				'OnChosen': {
+					'Text': 'On Chosen',
+					'Do': 'On Chosen',
+					'onChosen': function () {
+						this.storage ({ clicked: true });
+					}
+				}
+			}});
 		});
 
 	});
@@ -524,5 +568,37 @@ context ('Choices', function () {
 
 	// });
 
+	it ('Works with NVL mode', function () {
+		cy.loadTestAssets ({nvl: true});
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'nvl Before',
+				'$ nvlChoice',
+				'nvl After'
+			]
+		});
 
+		cy.start ();
+		cy.proceed ();
+
+		cy.get ('text-box').contains ('Before');
+
+		cy.proceed ();
+
+		cy.get ('text-box').contains ('This is a choice');
+
+		cy.get ('[data-choice="One"]').click ();
+
+		cy.get ('text-box').contains ('One');
+
+		cy.rollback ();
+		cy.get ('text-box').contains ('This is a choice');
+
+		cy.rollback ();
+		cy.get ('text-box').contains ('Before');
+
+		cy.rollback ();
+		cy.get ('text-box').contains ('Before');
+	});
 });

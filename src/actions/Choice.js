@@ -1,5 +1,5 @@
 import { Action } from '../lib/Action';
-import { Util } from '@aegis-framework/artemis/index';
+import { Util } from '@aegis-framework/artemis';
 
 export class Choice extends Action {
 
@@ -234,24 +234,40 @@ export class Choice extends Action {
 	revert () {
 		const choice = this.engine.history ('choice')[this.engine.history ('choice').length - 1];
 
-
+		// First, revert the action that was chosen
 		return this.engine.revert (this.statement[choice].Do, false).then (() => {
 			if (typeof this.statement[choice].onRevert === 'function') {
 				return Util.callAsync (this.statement[choice].onRevert, this.engine);
 			}
 			return Promise.resolve ();
 		}).then (() => {
+			// Clean up timer if it exists
 			if (typeof this.statement.Timer === 'object' && this.statement.Timer !== null) {
 				this.engine.global ('_ChoiceTimer').pop ();
 			}
 
+			// If there was a dialog, revert it first
 			if (typeof this.statement.Dialog === 'string') {
 				const dialogLog = this.engine.component ('dialog-log');
 				if (typeof dialogLog !== 'undefined') {
 					dialogLog.instances (instance => instance.pop ());
 				}
+
+				// // Revert the dialog that was shown with the choice
+				// const dialogAction = this.engine.prepareAction (this.statement.Dialog, { cycle: 'Revert' });
+				// return dialogAction.willRevert ().then (() => {
+				// 	return dialogAction.revert ().then (() => {
+				// 		return dialogAction.didRevert ();
+				// 	});
+				// });
 			}
 
+			return Promise.resolve ();
+		}).then (() => {
+			// Remove any existing choice container before re-applying
+			this.engine.element ().find ('choice-container').remove ();
+
+			// Now re-apply the choice to show it again
 			const action = this.engine.prepareAction (this._statement, { cycle: 'Application' });
 			return action.willApply ().then (() => {
 				return action.apply ().then (() => {

@@ -1,6 +1,6 @@
 import './vendor/prism.js';
 import { FancyError } from '../src/lib/FancyError';
-import { $_ready } from '@aegis-framework/artemis/index';
+import { $_ready } from '@aegis-framework/artemis';
 
 window.addEventListener('error', (event) => {
 	const { message, lineno, filename } = event;

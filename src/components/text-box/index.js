@@ -29,6 +29,10 @@ class TextBox extends Component {
 	}
 
 	render () {
+		// In NVL mode, we don't want a static type-writer element
+		// as dialogs will be appended dynamically
+		const typeWriterElement = this.props.mode === 'nvl' ? '' : '<type-writer data-ui="say" data-content="dialog"></type-writer>';
+
 		return `
 			<div data-content="name">
 				<span data-ui="who" data-content="character-name"></span>
@@ -37,7 +41,7 @@ class TextBox extends Component {
 				<img data-ui="face" alt="" data-content="character-expression">
 			</div>
 			<div data-content="text">
-				<type-writer data-ui="say" data-content="dialog"></type-writer>
+				${typeWriterElement}
 			</div>
 		`;
 	}

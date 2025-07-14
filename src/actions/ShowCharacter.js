@@ -1,5 +1,5 @@
 import { Action } from './../lib/Action';
-import { $_ } from '@aegis-framework/artemis/index';
+import { $_ } from '@aegis-framework/artemis';
 
 export class ShowCharacter extends Action {
 

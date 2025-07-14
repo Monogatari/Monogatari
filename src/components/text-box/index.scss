@@ -66,9 +66,17 @@ text-box {
 		&.unread::after {
 			height: 2rem;
 		}
+
+		type-writer {
+			display: block;
+			width: 100%;
+			padding: 1rem;
+			margin: 0;
+		}
 	}
 
-	p {
+	p,
+	type-writer {
 		display: block;
 		width: 100%;
 		padding: 1rem;

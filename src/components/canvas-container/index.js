@@ -1,5 +1,5 @@
 import { Component } from '../../lib/Component';
-import { Util } from '@aegis-framework/artemis/index';
+import { Util } from '@aegis-framework/artemis';
 
 class CanvasContainer extends Component {
 

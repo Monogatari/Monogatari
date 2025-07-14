@@ -1,6 +1,6 @@
 import { Action } from './../lib/Action';
 // import Typed from './../lib/MonoTyped';
-import { $_ } from '@aegis-framework/artemis/index';
+import { $_ } from '@aegis-framework/artemis';
 
 export class Dialog extends Action {
 
@@ -9,8 +9,13 @@ export class Dialog extends Action {
 		let component = this.engine.element ().find ('type-writer').get (0);
 		const centeredDialog = this.engine.element ().find ('[data-component="centered-dialog"]');
 
-		if (centeredDialog.isVisible ()) {
+		if (centeredDialog.exists ()) {
 			component = centeredDialog.find ('[data-content="wrapper"]').get (0);
+		}
+
+		// In NVL mode, there might not be a type-writer element in the text-box
+		if (!component) {
+			return Promise.resolve (this.engine.global ('finished_typing'));
 		}
 
 		if (!this.engine.global ('finished_typing') && component.state.strings.length) {
@@ -24,7 +29,7 @@ export class Dialog extends Action {
 
 	static willProceed () {
 		const centeredDialog = this.engine.element ().find ('[data-component="centered-dialog"]');
-		if (centeredDialog.isVisible ()) {
+		if (centeredDialog.exists ()) {
 			centeredDialog.remove ();
 		}
 
@@ -233,9 +238,11 @@ export class Dialog extends Action {
 		const textBox = this.engine.element ().find ('[data-component="text-box"]');
 		const writer = textBox.find ('type-writer').get (0);
 
-		// If the text-box's typewriter is not emptied and ignored,
-		// it can cause the "finished_typing" variable to be set prematurely.
-		writer.setState ({ ignore: true, strings: [] });
+		// If the text-box's typewriter exists, set it to ignore
+		// (in NVL mode, there might not be a type-writer element)
+		if (writer) {
+			writer.setState ({ ignore: true, strings: [] });
+		}
 
 		textBox.hide ();
 		gameScreen.append (element);
@@ -276,40 +283,40 @@ export class Dialog extends Action {
 			if (character !== '_narrator') {
 				if (previous !== character) {
 					this.engine.element ().find ('[data-ui="say"] [data-spoke]').last().addClass ('nvl-dialog-footer');
-					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='named'><span style='color:${this.engine.character (character).color};'>${this.engine.replaceVariables (this.engine.character (character).name)}: </span><p></p></div>`);
+					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='named'><span style='color:${this.engine.character (character).color};'>${this.engine.replaceVariables (this.engine.character (character).name)}: </span><type-writer></type-writer></div>`);
 				} else {
-					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}"><p></p></div>`);
+					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}"><type-writer></type-writer></div>`);
 				}
 
 			} else {
 				if (previous !== character) {
 					this.engine.element ().find ('[data-ui="say"] [data-spoke]').last().addClass ('nvl-dialog-footer');
 				}
-				this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='unnamed'><p></p></div>`);
+				this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='unnamed'><type-writer></type-writer></div>`);
 			}
 
-			const elements = $_('[data-ui="say"] [data-spoke] p');
+			const elements = $_('[data-ui="say"] [data-spoke] type-writer');
 			const last = elements.last ().get (0);
 
 			this.engine.global ('typedConfiguration').strings = [dialog];
 			this.engine.global ('finished_typing', false);
-			// NVL mode needs to be tested properly.
-			this.engine.element ().find (last).collection[0].setState({ strings: [dialog] });
+
+			last.setState({ strings: [dialog] });
 
 		} else {
 			if (character !== '_narrator') {
 				if (previous !== character) {
 					this.engine.element ().find ('[data-ui="say"] [data-spoke]').last().addClass ('nvl-dialog-footer');
-					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='named'><span style='color:${this.engine.character (character).color};'>${this.engine.replaceVariables (this.engine.character (character).name)}: </span><p>${clearDialog}</p></div>`);
+					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='named'><span style='color:${this.engine.character (character).color};'>${this.engine.replaceVariables (this.engine.character (character).name)}: </span><type-writer>${clearDialog}</type-writer></div>`);
 				} else {
-					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}"><p>${dialog}</p></div>`);
+					this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}"><type-writer>${dialog}</type-writer></div>`);
 				}
 
 			} else {
 				if (previous !== character) {
 					this.engine.element ().find ('[data-ui="say"] [data-spoke]').last().addClass ('nvl-dialog-footer');
 				}
-				this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='unnamed'><p>${clearDialog}</p></div>`);
+				this.engine.element ().find ('[data-ui="say"]').append (`<div data-spoke="${character}" class='unnamed'><type-writer>${clearDialog}</type-writer></div>`);
 			}
 			this.engine.global ('finished_typing', true);
 			this.engine.trigger ('didFinishTyping');
@@ -460,7 +467,9 @@ export class Dialog extends Action {
 					}
 					return Promise.reject ('No more dialogs on history from where to recover previous state.');
 				}
-				const dialogs = textBox.content ('dialog').find ('[data-spoke]');
+
+				// Find all dialog entries and remove the last one
+				const dialogs = this.engine.element ().find ('[data-ui="say"] [data-spoke]');
 				// If it is being shown, then to go back, we need to remove the last dialog from it
 				dialogs.last ().remove ();
 				return Promise.resolve ();

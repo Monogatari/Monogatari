@@ -1,5 +1,5 @@
 import { ScreenComponent } from '../../lib/ScreenComponent';
-import { $_ } from '@aegis-framework/artemis/index';
+import { $_ } from '@aegis-framework/artemis';
 
 class GalleryScreen extends ScreenComponent {
 

@@ -1,5 +1,5 @@
 import { Action } from './../lib/Action';
-import { Util } from '@aegis-framework/artemis/index';
+import { Util } from '@aegis-framework/artemis';
 
 export class HideCanvas extends Action {
 

@@ -24,7 +24,7 @@ import '@fortawesome/fontawesome-free/js/all.js';
  * =============================================================================
  */
 
-export * from '@aegis-framework/artemis/index';
+export * from '@aegis-framework/artemis';
 
 export * from 'tsparticles-slim/tsparticles.slim.bundle.js';
 
@@ -195,8 +195,8 @@ import TextBox from './components/text-box';
 import TextInput from './components/text-input';
 import TimerDisplay from './components/timer-display';
 import VisualNovel from './components/visual-novel';
-import TypeWriter from './components/type-writer/index.js';
-import TypeCharacter from './components/type-character/index.js';
+import TypeWriter from './components/type-writer';
+import TypeCharacter from './components/type-character';
 
 Monogatari._components = [
 	AlertModal,

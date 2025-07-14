@@ -1,5 +1,5 @@
 import { Component } from './../../lib/Component';
-import { Text } from '@aegis-framework/artemis/index';
+import { Text } from '@aegis-framework/artemis';
 import { DateTime } from 'luxon';
 
 class SaveSlot extends Component {
