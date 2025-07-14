@@ -7,77 +7,6 @@ export class Stop extends Action {
 		return action === 'stop';
 	}
 
-	/**
-	 * Prepare the needed values to run the fade function on the given player
-	 *
-	 * @param {string} fadeTime - The time it will take the audio to reach 0
-	 * @param {AudioPlayer} player - The AudioPlayer object to modify
-	 *
-	 * @return {Promise} - This promise will resolve once the fadeOut has ended
-	 */
-	static fadeOut (fadeTime, player) {
-		const time = parseFloat (fadeTime.match (/\d*(\.\d*)?/));
-		const increments = time / 0.1;
-
-		// Get the current volume (considering volume percentage if set)
-		let currentVolume = player.volume;
-		if (player.dataset.volumePercentage) {
-			const percentage = parseInt(player.dataset.volumePercentage);
-			currentVolume = (percentage / 100) * player.volume;
-		}
-
-		const volume = currentVolume / increments;
-		const interval = (1000 * time) / increments;
-		const expected = Date.now () + interval;
-
-		player.dataset.fade = 'out';
-
-		if (Math.sign (volume) === 1) {
-			return new Promise ((resolve, reject) => {
-				setTimeout (() => {
-					Stop.fade (player, volume, interval, expected, resolve);
-				}, interval);
-			});
-		} else {
-			// If the volume is set to zero or not valid, the fade effect is disabled
-			// to prevent errors
-			return Promise.resolve ();
-		}
-	}
-
-	/**
-	 * Fade the player's audio on small iterations until it reaches 0
-	 *
-	 * @param {AudioPlayer} player The AudioPlayer to which the audio will fadeOut
-	 * @param {number} volume The amount to decrease the volume on each iteration
-	 * @param {number} interval The time in milliseconds between each iteration
-	 * @param {Date} expected The expected time the next iteration will happen
-	 * @param {function} resolve The resolve function of the promise returned by the fadeOut function
-	 *
-	 * @return {void}
-	 */
-	static fade (player, volume, interval, expected, resolve) {
-		const now = Date.now () - expected; // the drift (positive for overshooting)
-
-		if (now > interval) {
-			// something really bad happened. Maybe the browser (tab) was inactive?
-			// possibly special handling to avoid futile "catch up" run
-		}
-
-		if (player.volume > 0 && player.dataset.fade === 'out') {
-			if ((player.volume - volume) < 0) {
-				player.volume = 0;
-				resolve ();
-			} else {
-				player.volume -= volume;
-				expected += interval;
-				setTimeout (() => {
-					Stop.fade (player, volume, interval, expected, resolve);
-				}, Math.max (0, interval - now)); // take into account drift
-			}
-		}
-	}
-
 	constructor ([ action, type, media, ...props ]) {
 		super ();
 
@@ -112,21 +41,24 @@ export class Stop extends Action {
 		if (typeof this.player === 'object' && !(this.player instanceof AudioPlayer)) {
 			if (fadePosition > -1) {
 				for (const player of this.player) {
-					Stop.fadeOut (this.props[fadePosition + 1], player).then (() => {
-						this.engine.removeMediaPlayer (this.type, player.dataset.key);
+					const fadeTime = this.props[fadePosition + 1];
+					const duration = parseFloat(fadeTime.match(/\d*(\.\d*)?/)[0]);
+					player.fadeOut(duration).then(() => {
+						this.engine.removeMediaPlayer(this.type, player.dataset.key);
 					});
 				}
 			} else {
-				this.engine.removeMediaPlayer (this.type);
+				this.engine.removeMediaPlayer(this.type);
 			}
 		} else {
-
 			if (fadePosition > -1) {
-				Stop.fadeOut (this.props[fadePosition + 1], this.player).then (() => {
-					this.engine.removeMediaPlayer (this.type, this.media);
+				const fadeTime = this.props[fadePosition + 1];
+				const duration = parseFloat(fadeTime.match(/\d*(\.\d*)?/)[0]);
+				this.player.fadeOut(duration).then(() => {
+					this.engine.removeMediaPlayer(this.type, this.media);
 				});
 			} else {
-				this.engine.removeMediaPlayer (this.type, this.media);
+				this.engine.removeMediaPlayer(this.type, this.media);
 			}
 		}
 		return Promise.resolve ();

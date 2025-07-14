@@ -34,6 +34,11 @@ export class Play extends Action {
 			this.engine.audioContext = new (window.AudioContext || window.webkitAudioContext)();
 		}
 
+		// Initialize AudioPlayer worklets for the audio context
+		AudioPlayer.initialize(this.engine.audioContext).catch(error => {
+			console.warn('Failed to initialize AudioPlayer worklets:', error);
+		});
+
 		this.engine.history ('music');
 		this.engine.history ('sound');
 		this.engine.history ('voice');
@@ -171,81 +176,6 @@ export class Play extends Action {
 		this.engine.state ({ voice : [] });
 	}
 
-	/**
-	 * Prepare the needed values to run the fade function on the given player
-	 *
-	 * @param {string} fadeTime - The time it will take the audio to reach it's maximum audio
-	 * @param {AudioPlayer} player - The AudioPlayer object to modify
-	 *
-	 * @return {Promise} - This promise will resolve once the fadeIn has ended
-	 */
-	static fadeIn (fadeTime, player) {
-		const time = parseFloat (fadeTime.match (/\d*(\.\d*)?/));
-		const increments = time / 0.1;
-
-		let targetVolume = player.volume;
-
-		if (player.dataset.volumePercentage) {
-			const percentage = parseInt(player.dataset.volumePercentage);
-			targetVolume = (percentage / 100) * player.volume;
-		}
-
-		const volume = targetVolume / increments;
-		const interval = (1000 * time) / increments;
-		const expected = Date.now () + interval;
-
-		player.volume = 0;
-
-		player.dataset.fade = 'in';
-		player.dataset.maxVolume = targetVolume;
-
-		if (Math.sign (volume) === 1) {
-			return new Promise ((resolve, reject) => {
-				setTimeout (() => {
-					Play.fade (player, volume, targetVolume, interval, expected, resolve);
-				}, interval);
-			});
-		} else {
-			// If the volume is set to zero or not valid, the fade effect is disabled
-			// to prevent errors
-			return Promise.resolve ();
-		}
-	}
-
-	/**
-	 * Fade the player's audio on small iterations until it reaches the maximum value for it
-	 *
-	 * @param {AudioPlayer} player The AudioPlayer to which the audio will fadeIn
-	 * @param {number} volume The amount to increase the volume on each iteration
-	 * @param {number} interval The time in milliseconds between each iteration
-	 * @param {Date} expected The expected time the next iteration will happen
-	 * @param {function} resolve The resolve function of the promise returned by the fadeIn function
-	 *
-	 * @return {void}
-	 */
-	static fade (player, volume, targetVolume, interval, expected, resolve) {
-		const now = Date.now () - expected; // the drift (positive for overshooting)
-
-		if (now > interval) {
-			// something really bad happened. Maybe the browser (tab) was inactive?
-			// possibly special handling to avoid futile "catch up" run
-		}
-
-		if (player.volume < targetVolume && player.dataset.fade === 'in') {
-			if (player.volume + volume > targetVolume) {
-				player.volume = targetVolume;
-				delete player.dataset.fade;
-				resolve ();
-			} else {
-				player.volume += volume;
-				expected += interval;
-				setTimeout (() => {
-					Play.fade (player, volume, targetVolume, interval, expected, resolve);
-				}, Math.max (0, interval - now)); // take into account drift
-			}
-		}
-	}
-
 	constructor ([ action, type, media, ...props ]) {
 		super ();
 		this.type = type;
@@ -279,7 +209,7 @@ export class Play extends Action {
 		}
 	}
 
-	async createAudioPlayer () {
+	async createAudioPlayer (paused = false) {
 		const audioContext = this.engine.audioContext;
 		const gainNode = audioContext.createGain ();
 		gainNode.connect (audioContext.destination);
@@ -290,7 +220,46 @@ export class Play extends Action {
 		const arrayBuffer = await response.arrayBuffer ();
 		const audioBuffer = await audioContext.decodeAudioData (arrayBuffer);
 
-		return new AudioPlayer(audioContext, audioBuffer, gainNode);
+		// Parse effects from props
+		const effects = this.parseEffects();
+
+		return new AudioPlayer(audioContext, audioBuffer, { 
+			outputNode: gainNode, 
+			effects: effects,
+			paused: paused,
+		});
+	}
+
+	parseEffects () {
+		const availableEffects = AudioPlayer.effects ();
+		
+		const effects = {};
+		
+		for (const [id, config] of Object.entries (availableEffects)) {
+			const index = this.props.indexOf (id);
+			
+			if (index === -1) {
+				continue;
+			}
+
+			const params = {};
+			
+			// Parse parameters based on the effect's parameter list
+			for (let i = 0; i < config.params.length; i++) {
+				const paramName = config.params[i];
+				const paramValue = this.props[index + 1 + i];
+				
+				if (paramValue !== undefined) {
+					// Try to parse as number first, fallback to string
+					const numValue = parseFloat (paramValue);
+					params[paramName] = isNaN (numValue) ? paramValue : numValue;
+				}
+			}
+			
+			effects[id] = params;
+		}
+
+		return effects;
 	}
 
 	willApply () {
@@ -310,7 +279,7 @@ export class Play extends Action {
 
 		// Create player if it doesn't exist yet
 		if (this.player === null) {
-			this.player = await this.createAudioPlayer();
+			this.player = await this.createAudioPlayer(paused);
 			this.engine.mediaPlayer (this.type, this.mediaKey, this.player);
 		}
 
@@ -334,25 +303,26 @@ export class Play extends Action {
 			};
 
 			if (fadePosition > -1) {
-				Play.fadeIn (this.props[fadePosition + 1], this.player);
+				const fadeTime = this.props[fadePosition + 1];
+				const duration = parseFloat(fadeTime.match(/\d*(\.\d*)?/)[0]);
+				this.player.fadeIn(duration);
 			}
 
-			if (paused === true) {
-				// Do not start playback, but set the player as paused
-				this.player.isPaused = true;
-				this.player.isPlaying = false;
-				this.player.hasEnded = false;
+			if (paused === true) {	
 				return Promise.resolve();
-			} else {
-				return this.player.play ();
 			}
+			
+			return this.player.play ();
+			
 		}
 		else if (this.player instanceof Array) {
 			const promises = [];
 			for (const player of this.player) {
 				if (player.paused && !player.ended) {
 					if (fadePosition > -1) {
-						Play.fadeIn (this.props[fadePosition + 1], player);
+						const fadeTime = this.props[fadePosition + 1];
+						const duration = parseFloat(fadeTime.match(/\d*(\.\d*)?/)[0]);
+						player.fadeIn(duration);
 					}
 					promises.push (player.play ());
 				}

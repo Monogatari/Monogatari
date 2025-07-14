@@ -49,7 +49,9 @@ export class Pause extends Action {
 			state[this.type] = prev.map((item) => {
 				if (typeof item.statement === 'string') {
 					const [play, type, media] = item.statement.split(' ');
-					if (media === this.media) {
+					// If this.media is undefined, pause all items
+					// If this.media is defined, only pause matching items
+					if (this.media === undefined || media === this.media) {
 						return { ...item, paused: true };
 					}
 				}
@@ -94,7 +96,9 @@ export class Pause extends Action {
 				if (typeof item.statement === 'string') {
 					const [play, type, media] = item.statement.split (' ');
 
-					if (media === this.media) {
+					// If this.media is undefined, unpause all items
+					// If this.media is defined, only unpause matching items
+					if (this.media === undefined || media === this.media) {
 						return { ...item, paused: false };
 					}
 				}

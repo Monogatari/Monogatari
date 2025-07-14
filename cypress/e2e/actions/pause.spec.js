@@ -36,6 +36,7 @@ context ('Pause', function () {
 		cy.get ('text-box').contains ('One');
 
 		cy.proceed ();
+		cy.wait(100); // Add a small delay to ensure async operations complete
 		cy.wrap (this.monogatari).invoke ('state', 'music').should ('deep.equal', [{ statement: 'play music theme', paused: true }]);
 		cy.wrap (this.monogatari).invoke ('history', 'music').should ('deep.equal', ['play music theme']);
 		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 1);
@@ -89,6 +90,7 @@ context ('Pause', function () {
 		cy.get ('text-box').contains ('One');
 
 		cy.proceed ();
+		cy.wait(100); // Add a small delay to ensure async operations complete
 		cy.wrap (this.monogatari).invoke ('state', 'music').should ('deep.equal', [{ statement: 'play music theme loop', paused: true }, { statement: 'play music subspace loop', paused: true }]);
 		cy.wrap (this.monogatari).invoke ('history', 'music').should ('deep.equal', ['play music theme loop', 'play music subspace loop']);
 		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 2);
@@ -143,6 +145,7 @@ context ('Pause', function () {
 		cy.get ('text-box').contains ('One');
 
 		cy.proceed ();
+		cy.wait(100); // Add a small delay to ensure async operations complete
 		cy.wrap (this.monogatari).invoke ('state', 'music').should ('deep.equal', [{ statement: 'play music theme', paused: true }]);
 		cy.wrap (this.monogatari).invoke ('history', 'music').should ('deep.equal', ['play music theme']);
 		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 1);

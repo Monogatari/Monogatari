@@ -317,4 +317,7 @@ export * from './lib/ScreenComponent';
 export * from './lib/MenuComponent';
 export * from './lib/FancyError';
 
+import AudioPlayer from './lib/AudioPlayer';
+export { AudioPlayer };
+
 export default Monogatari;
