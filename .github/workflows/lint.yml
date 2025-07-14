@@ -6,7 +6,6 @@ on:
       - develop
     paths:
       - '.htmlhintrc'
-      - '.postcssrc'
       - '.stylelintrc'
       - '**.html'
       - '**.js'
@@ -18,7 +17,6 @@ on:
       - develop
     paths:
       - '.htmlhintrc'
-      - '.postcssrc'
       - '.stylelintrc'
       - '**.html'
       - '**.js'

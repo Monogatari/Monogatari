@@ -298,4 +298,172 @@ context ('Dialog', function () {
 		cy.get ('text-box').contains ('One');
 		cy.get ('text-box').should ('have.attr', 'mode', 'nvl');
 	});
+
+	it ('Applies custom classes to text-box when specified in dialog syntax', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'y:happy:custom-class Hello!',
+				'm:sad:another-class|second-class Hi there!',
+				'narrator:normal:special-style This is a test'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').should ('have.class', 'custom-class');
+		cy.get ('text-box').contains ('Hello!');
+
+		cy.proceed ();
+		cy.get ('text-box').should ('have.class', 'another-class');
+		cy.get ('text-box').should ('have.class', 'second-class');
+		cy.get ('text-box').should ('not.have.class', 'custom-class');
+		cy.get ('text-box').contains ('Hi there!');
+
+		cy.proceed ();
+		cy.get ('text-box').should ('have.class', 'special-style');
+		cy.get ('text-box').should ('not.have.class', 'another-class');
+		cy.get ('text-box').should ('not.have.class', 'second-class');
+		cy.get ('text-box').contains ('This is a test');
+	});
+
+	it ('Removes custom classes when rolling back dialogs', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'y:happy:first-class Hello!',
+				'm:sad:second-class Hi there!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').should ('have.class', 'first-class');
+		cy.get ('text-box').contains ('Hello!');
+
+		cy.proceed ();
+		cy.get ('text-box').should ('have.class', 'second-class');
+		cy.get ('text-box').should ('not.have.class', 'first-class');
+		cy.get ('text-box').contains ('Hi there!');
+
+		cy.rollback ();
+		cy.get ('text-box').should ('have.class', 'first-class');
+		cy.get ('text-box').should ('not.have.class', 'second-class');
+		cy.get ('text-box').contains ('Hello!');
+	});
+
+	it ('Applies custom classes to centered dialog', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'centered:normal:centered-style This is a centered dialog!',
+				'y:happy:character-style Hello from character!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('centered-dialog').should ('have.class', 'centered-style');
+		cy.get ('centered-dialog').contains ('This is a centered dialog!');
+
+		cy.proceed ();
+		cy.get ('text-box').should ('have.class', 'character-style');
+		cy.get ('text-box').should ('not.have.class', 'centered-style');
+		cy.get ('text-box').contains ('Hello from character!');
+	});
+
+	it ('Applies custom classes to NVL dialog', function () {
+		cy.loadTestAssets ({nvl: true});
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'nvl:normal:nvl-style This is an NVL dialog!',
+				'y:happy:character-style Hello from character!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').should ('have.class', 'nvl-style');
+		cy.get ('text-box').contains ('This is an NVL dialog!');
+
+		cy.proceed ();
+		cy.get ('text-box').should ('have.class', 'character-style');
+		cy.get ('text-box').should ('not.have.class', 'nvl-style');
+		cy.get ('text-box').contains ('Hello from character!');
+	});
+
+	it ('Supports multiple classes with pipe separator', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'y:happy:class1|class2|class3 Multiple classes test!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').should ('have.class', 'class1');
+		cy.get ('text-box').should ('have.class', 'class2');
+		cy.get ('text-box').should ('have.class', 'class3');
+		cy.get ('text-box').contains ('Multiple classes test!');
+	});
+
+	it ('Sets classes correctly after loading a save', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'y:happy:highlight Hello!',
+				'm:sad:warning|urgent This is important!',
+				'centered:normal:centered-style Centered message!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').should ('have.class', 'highlight');
+		cy.get ('text-box').contains ('Hello!');
+
+		cy.proceed ();
+		cy.get ('text-box').should ('have.class', 'warning');
+		cy.get ('text-box').should ('have.class', 'urgent');
+		cy.get ('text-box').contains ('This is important!');
+
+		cy.save(1).then(() => {
+			cy.load(1).then(() => {
+				cy.get ('text-box').should ('have.class', 'warning');
+				cy.get ('text-box').should ('have.class', 'urgent');
+				cy.get ('text-box').contains ('This is important!');
+			});
+		});
+	});
+
+	it ('Removes classes after ending the game', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'y:happy:highlight One',
+				'm:sad:warning Two',
+				'centered:normal:centered-style Three',
+				'end'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').should ('have.class', 'highlight');
+		cy.get ('text-box').contains ('One');
+
+		cy.proceed ();
+		cy.get ('text-box').should ('have.class', 'warning');
+		cy.get ('text-box').contains ('Two');
+
+		cy.proceed ();
+		cy.get ('centered-dialog').should ('have.class', 'centered-style');
+		cy.get ('centered-dialog').contains ('Three');
+		
+
+		cy.proceed ();
+
+		cy.get ('[data-component="main-menu"]').should ('be.visible');
+
+		cy.get ('text-box').should ('not.have.class', 'highlight');
+		cy.get ('text-box').should ('not.have.class', 'warning');
+		cy.get ('text-box').should ('not.have.class', 'centered-style');
+		cy.get ('centered-dialog').should ('not.exist');
+	});
+
 });

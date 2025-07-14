@@ -159,6 +159,16 @@ export class Dialog extends Action {
 		this.engine.element ().find ('[data-ui="face"]').attribute ('src', '');
 		this.engine.element ().find ('[data-ui="face"]').hide ();
 
+		// Remove all classes from the text-box
+		Array.from (textBox.classList).forEach (c => textBox.classList.remove (c));
+
+		// Remove all classes from the centered-dialog
+		const centeredDialog = this.engine.element ().find ('[data-component="centered-dialog"]').get (0);
+
+		if (centeredDialog) {
+			Array.from (centeredDialog.classList).forEach (c => centeredDialog.classList.remove (c));
+		}
+
 		return Promise.resolve ();
 	}
 
@@ -169,12 +179,15 @@ export class Dialog extends Action {
 	constructor ([ character, ...dialog ]) {
 		super ();
 
-		const [ id, expression ] = character.split (':');
+		// id:expression:class Dialog
+		const [id, expression, classes] = character.split (':');
 
 		this.dialog = dialog.join (' ');
 		this.clearDialog = this.dialog.replace (/\{pause:(\d+)\}/g, '').replace (/\{speed:(\d+)\}/g, '');
 
 		this.nvl = false;
+		
+		this.classes = (classes && classes.trim() !== '') ? classes.split ('|') : [];
 
 		if (typeof this.engine.character (id) !== 'undefined') {
 			this._setCharacter (id, expression);
@@ -205,6 +218,19 @@ export class Dialog extends Action {
 		this.engine.element ().find ('[data-component="text-box"]').removeData ('expression');
 
 		return Promise.resolve ();
+	}
+
+	_handleCustomClasses (element) {
+		if (!element) {
+			return;
+		}
+			
+		// The unread is a special one used by the nvl mode so we ignore that
+		Array.from (element.classList)
+			.filter (c => c !== 'unread')
+			.forEach (cls => element.classList.remove (cls));
+
+		this.classes.forEach (className => element.classList.add (className));
 	}
 
 	_setCharacter (id, expression) {
@@ -238,6 +264,8 @@ export class Dialog extends Action {
 		const textBox = this.engine.element ().find ('[data-component="text-box"]');
 		const writer = textBox.find ('type-writer').get (0);
 
+		this._handleCustomClasses (element);
+
 		// If the text-box's typewriter exists, set it to ignore
 		// (in NVL mode, there might not be a type-writer element)
 		if (writer) {
@@ -268,6 +296,9 @@ export class Dialog extends Action {
 		if (textBox.props.mode !== 'nvl') {
 			Dialog.reset ();
 			textBox.setProps ({ mode: 'nvl' });
+
+			// We need to re-apply any custom classes here because the reset clears them
+			this._handleCustomClasses (textBox);
 		}
 
 		// Remove contents from the dialog area.
@@ -430,11 +461,13 @@ export class Dialog extends Action {
 		}
 
 		if (typeof this.character !== 'undefined') {
+			this._handleCustomClasses (this.engine.element ().find ('[data-component="text-box"]').get (0));
 			this.engine.element ().find ('[data-component="text-box"]').get (0).show ();
 			return this.characterDialog ();
 		} else if (this.id === 'centered') {
 			return this.displayCenteredDialog (this.dialog, this.clearDialog, this.id, this.engine.setting ('CenteredTypeAnimation'));
 		} else {
+			this._handleCustomClasses (this.engine.element ().find ('[data-component="text-box"]').get (0));
 			this.engine.element ().find ('[data-component="text-box"]').get (0).show ();
 			return this.displayDialog (this.dialog, this.clearDialog, '_narrator', this.engine.setting ('NarratorTypeAnimation'));
 		}
@@ -449,6 +482,7 @@ export class Dialog extends Action {
 		this.engine.element ().find ('[data-character]').removeClass ('focus');
 		this.engine.element ().find ('[data-ui="face"]').hide ();
 		document.querySelector ('[data-ui="who"]').innerHTML = '';
+		
 		return Promise.resolve ();
 	}
 
@@ -457,6 +491,7 @@ export class Dialog extends Action {
 		if (this.nvl === true) {
 			//  Check if the NVL screen is currently being shown
 			const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
+			this._handleCustomClasses (textBox);
 
 			if (textBox.props.mode === 'nvl') {
 				if (this.engine.global ('_should_restore_nvl') === true) {
