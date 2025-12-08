@@ -20,12 +20,12 @@ Required Software:
 
 - [Git](https://git-scm.com/)
 - [Node](https://nodejs.org/)
-- [Yarn](https://yarnpkg.com/en/)
+- [Bun](https://bun.sh/)
 
 Recommended Software:
 
 You are free to choose your development environment regarding text editors or
-additional tools, however I recommend using either [Atom](https://atom.io/) or [Visual Studio Code](https://code.visualstudio.com/).
+additional tools, however I recommend using [Visual Studio Code](https://code.visualstudio.com/).
 
 ## Getting Ready
 
@@ -51,9 +51,9 @@ the way to contribute. So let's start!
    ```
 
 4. Change to the `develop` branch. Monogatari uses the [Git WorkFlow](https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows) so there are
-   two main branches, `master` where all the stable code is hosted
+   two main branches, `main` where all the stable code is hosted
    and `develop` where all the work in progress code is hosted. Following
-   this distinction, `master` usually hosts the code of the latest stable
+   this distinction, `main` usually hosts the code of the latest stable
    release while develop hosts the code for the upcoming releases. All
    your contributions should always use `develop` as its base.
 
@@ -61,10 +61,10 @@ the way to contribute. So let's start!
    git checkout develop
    ```
 
-5. Install all dependencies using [Yarn](https://yarnpkg.com/en/)
+5. Install all dependencies using [Bun](https://bun.sh/)
 
    ```bash
-   yarn install
+   bun install
    ```
 
 6. Make all the changes you want and build the code. Please follow the
@@ -72,7 +72,7 @@ the way to contribute. So let's start!
    changes to the code.
 
    ```bash
-   yarn run build
+   bun run build
    ```
 
 7. Test your changes and make sure everything works correctly, once
@@ -101,10 +101,6 @@ That's it! You ready to build and contribute. See **Code Styling**.
 
 ## Code Styling
 
-While Monogatari is mainly powered by JavaScript, its coding style is certainly
-different to that of most projects using JS. The style is inspired in the one used
-on the [elementary OS](https://elementary.io/docs/code/reference#reference) project.
-
 ### Single Quoted Strings
 
 Strings should use single `'` quotes but attributes inside an HTML element should
@@ -119,7 +115,7 @@ variables.
 
 ### Indentation and Whitespace
 
-Indentation should use 4 space sized Tab characters, not spaces.
+Indentation should use 2 space sized Space characters.
 
 Trailing whitespace should be removed and no trailing new line should be present.
 
@@ -160,8 +156,6 @@ if (something !== true) {
 ### Use Linters
 Monogatari ships with configurations for the following linters:
 * [ESlint](https://eslint.org/)
-* [Stylelint](https://stylelint.io/)
-* [HTMLHint](http://htmlhint.com/)
 
 Whenever possible, make sure to use the linters and comply with the
 specified rules on these files.

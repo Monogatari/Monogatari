@@ -1,0 +1,15 @@
+/**
+ * ===========================
+ * Credits Screen Component
+ * ===========================
+ */
+
+credits-screen {
+  p {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+}
