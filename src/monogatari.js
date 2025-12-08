@@ -1,19 +1,25 @@
-import { $_, $_ready, Space, SpaceAdapter, Platform, Preload, Util, FileSystem, Text, Debug } from '@aegis-framework/artemis';
+import {
+  $_,
+  $_ready,
+  Space,
+  SpaceAdapter,
+  Platform,
+  Preload,
+  Util,
+  FileSystem,
+  Text,
+  Debug
+} from '@aegis-framework/artemis';
+import { Registry } from '@aegis-framework/pandora';
 import mousetrap from 'mousetrap';
 import { FancyError } from './lib/FancyError';
 import deeply from 'deeply';
 import { version } from './../package.json';
-import { Random, browserCrypto } from './lib/vendor/random-js.min.js';
+import { Random, browserCrypto } from 'random-js';
 import migrate from './migrations';
 
 import { Settings, DateTime } from 'luxon';
 
-
-/**
- * @typedef {import('./lib/Action').Action} Action
- * @typedef {import('./lib/Component').Component} Component
- * @typedef {import('@aegis-framework/artemis/src/DOM').DOM} DOM
- */
 
 /**
  * Overcome the `this` is undefined
@@ -56,6 +62,7 @@ const merge = deeply.bind({});
  *
  */
 class Monogatari {
+  static _languageMetadata = {};
 
 	/**
 	 * @static onStart - This is the main onStart function, it acts as an event
@@ -2611,7 +2618,7 @@ class Monogatari {
 			// require being cached.
 			if (this.setting ('ServiceWorkers')) {
 				if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
-					navigator.serviceWorker.register(new URL('service-worker.js', import.meta.url)).then ((registration) => {
+					navigator.serviceWorker.register('./service-worker.js').then ((registration) => {
 
 						// Check if an update to the service worker was found
 						registration.onupdatefound = () => {
@@ -3068,12 +3075,63 @@ class Monogatari {
 		});
 	}
 
+	/**
+	 * @static _setupRegistry - Configure the Pandora Registry for centralized
+	 * component lifecycle tracking and error handling.
+	 *
+	 * This provides:
+	 * - Centralized error handling for all component lifecycle methods
+	 * - Debug logging when Monogatari debug mode is enabled
+	 * - Mount/unmount tracking for debugging purposes
+	 *
+	 * @private
+	 */
+	static _setupRegistry () {
+		// Enable Registry debug mode when Monogatari is in debug mode
+		if (typeof MonogatariDebug === 'object') {
+			Registry.debug = true;
+		}
+
+		// Centralized error handling for component errors
+		Registry.onError ((error, component, tag, lifecycle) => {
+			FancyError.show (
+				`Error in component <${tag}> during ${lifecycle}`,
+				`An error occurred while executing the ${lifecycle} lifecycle method.`,
+				{
+					'Component': tag,
+					'Lifecycle Method': lifecycle,
+					'Error Message': error.message,
+					'Stack Trace': error.stack,
+					'Help': {
+						'_': 'Check the console for more details about this error.',
+						'_1': 'Make sure all async operations in lifecycle methods are properly handled.'
+					}
+				}
+			);
+			// Also log to console for debugging
+			console.error (`[Monogatari] Component error in <${tag}> during ${lifecycle}:`, error);
+		});
+
+		// Track component mounts for debugging
+		Registry.onMount ((component, tag) => {
+			this.trigger ('componentDidMount', { component, tag });
+		});
+
+		// Track component unmounts for debugging
+		Registry.onUnmount ((component, tag) => {
+			this.trigger ('componentDidUnmount', { component, tag });
+		});
+	}
+
 	static init (selector = '#monogatari') {
 		this._selector = selector;
 
 		if (typeof window.Cypress !== 'undefined') {
 			this.setting ('ExperimentalFeatures', true);
 		}
+
+		// Setup Pandora Registry for centralized error handling and lifecycle tracking
+		this._setupRegistry ();
 
 		this.trigger ('willInit');
 

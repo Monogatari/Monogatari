@@ -1,0 +1,25 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"strict": true,
+		"allowJs": true,
+		"checkJs": false,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"outDir": "./dist",
+		"declaration": true,
+		"declarationMap": true,
+		"declarationDir": "./dist/types",
+		"sourceMap": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		"lib": ["ESNext", "DOM", "DOM.Iterable"]
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist", "lib", "cypress"]
+}
+

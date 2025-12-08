@@ -80,11 +80,9 @@ class TextInput extends Component {
 				inputValue = this.content ('field').value ();
 			}
 
-
 			// Run the validation function asynchronously. If it returns false,
 			// it means the input is invalid and we have to show the warning message.
 			this.engine.assertAsync (this.props.validate, this.engine, [inputValue]).then (() => {
-
 				// Once validation was done, we run the Save function where usually,
 				// the input received will be saved on the storage or used for other
 				// actions.
@@ -96,7 +94,7 @@ class TextInput extends Component {
 					this.remove ();
 					this.props.callback ();
 				});
-			}).catch (() => {
+			}).catch ((err) => {
 				// Show the warning message since the input was invalid
 				this.content ('warning').text (this.engine.replaceVariables (this.props.warning));
 			});
@@ -206,13 +204,11 @@ class TextInput extends Component {
 				<div>
 					<button type='submit' tabindex="0">${this.engine.string (this.props.actionString)}</button>
 				</div>
-			<form>
+			</form>
 		`;
 	}
 }
 
-
 TextInput.tag = 'text-input';
-
 
 export default TextInput;

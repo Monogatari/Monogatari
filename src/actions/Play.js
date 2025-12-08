@@ -55,7 +55,7 @@ export class Play extends Action {
 		const mediaPlayers = Object.keys (this.engine.mediaPlayers ());
 		// Set the volume of all the media components on the settings screen
 		for (const mediaType of mediaPlayers) {
-			const element = document.querySelector (`${selector} [data-target="${mediaType}"]`);
+			const element = this.engine.element ().find (`[data-target="${mediaType}"]`).get (0);
 
 			if (element !== null) {
 				let volume = this.engine.preference ('Volume')[Text.capitalize (mediaType)];

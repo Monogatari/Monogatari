@@ -1,5 +1,4 @@
 import { Action } from './../lib/Action';
-// import Typed from './../lib/MonoTyped';
 import { $_ } from '@aegis-framework/artemis';
 
 export class Dialog extends Action {
@@ -18,7 +17,10 @@ export class Dialog extends Action {
 			return Promise.resolve (this.engine.global ('finished_typing'));
 		}
 
-		if (!this.engine.global ('finished_typing') && component.state.strings.length) {
+		// Check if strings exist and have content before accessing
+		const hasStrings = component.state?.strings?.length > 0;
+
+		if (!this.engine.global ('finished_typing') && hasStrings) {
 			this.engine.stopTyping (component);
 
 			return Promise.reject ('TypeWriter effect has not finished.');
@@ -40,25 +42,29 @@ export class Dialog extends Action {
 
 	static willRollback () {
 		const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
-		if (this.engine.global ('textObject') !== null && textBox.props.mode !== 'nvl') {
+
+		if (this.engine.global ('textObject') !== null && textBox?.props?.mode !== 'nvl') {
 			this.engine.global ('textObject').destroy ();
 		}
 
 		this.engine.global ('finished_typing', true);
 
-		// this.engine.global ('_CurrentChoice');
-
-		this.engine.element ().find ('[data-component="text-box"]').get (0).show ();
+		if (textBox) {
+			textBox.show ();
+		}
 
 		const dialogLog = this.engine.component ('dialog-log');
 
 		const centeredDialog = this.engine.element ().find ('[data-component="centered-dialog"]');
 		if (centeredDialog.isVisible ()) {
 			centeredDialog.remove ();
-			this.engine.element ().find ('[data-component="text-box"]').get (0).show ();
+
+			if (textBox) {
+				textBox.show ();
+			}
 		}
 
-		document.querySelector ('[data-ui="who"]').innerHTML = '';
+		this.engine.element ().find ('[data-ui="who"]').html ('');
 
 		if (typeof dialogLog !== 'undefined' && this.engine.global ('_dialog_pending_revert') === true) {
 			dialogLog.instances (instance => instance.pop ());
@@ -186,7 +192,7 @@ export class Dialog extends Action {
 		this.clearDialog = this.dialog.replace (/\{pause:(\d+)\}/g, '').replace (/\{speed:(\d+)\}/g, '');
 
 		this.nvl = false;
-		
+
 		this.classes = (classes && classes.trim() !== '') ? classes.split ('|') : [];
 
 		if (typeof this.engine.character (id) !== 'undefined') {
@@ -213,7 +219,7 @@ export class Dialog extends Action {
 		this.engine.element ().find ('[data-character]').removeClass ('focus');
 		this.engine.element ().find ('[data-ui="face"]').hide ();
 
-		document.querySelector ('[data-ui="who"]').innerHTML = '';
+		this.engine.element ().find ('[data-ui="who"]').html ('');
 
 		this.engine.element ().find ('[data-component="text-box"]').removeData ('expression');
 
@@ -224,7 +230,7 @@ export class Dialog extends Action {
 		if (!element) {
 			return;
 		}
-			
+
 		// The unread is a special one used by the nvl mode so we ignore that
 		Array.from (element.classList)
 			.filter (c => c !== 'unread')
@@ -276,12 +282,17 @@ export class Dialog extends Action {
 		gameScreen.append (element);
 
 		element.ready (() => {
+			const wrapper = element.content ('wrapper');
+			const wrapperElement = wrapper?.get (0);
+
 			if (animation && this.engine.setting ('TypeAnimation') === true) {
 				this.engine.global ('typedConfiguration').strings = [dialog];
 				this.engine.global ('finished_typing', false);
-				element.content ('wrapper').get (0).setState ({ strings: [dialog] });
+				if (wrapperElement) {
+					wrapperElement.setState ({ strings: [dialog] });
+				}
 			} else {
-				element.content ('wrapper').html (clearDialog);
+				wrapper?.html (clearDialog);
 				this.engine.global ('finished_typing', true);
 				this.engine.trigger ('didFinishTyping');
 			}
@@ -293,7 +304,12 @@ export class Dialog extends Action {
 	displayNvlDialog (dialog, clearDialog, character, animation) {
 		const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
 
-		if (textBox.props.mode !== 'nvl') {
+		if (!textBox) {
+			this.engine.debug.error ('Text box component not found');
+			return;
+		}
+
+		if (textBox.props?.mode !== 'nvl') {
 			Dialog.reset ();
 			textBox.setProps ({ mode: 'nvl' });
 
@@ -366,7 +382,12 @@ export class Dialog extends Action {
 		if (this.nvl === false) {
 			const textBox = this.engine.element ().find ('[data-component="text-box"]').get (0);
 
-			if (textBox.props.mode === 'nvl' && this._cycle === 'Application' && this.engine.global ('_restoring_state') === false) {
+			if (!textBox) {
+				this.engine.debug.error ('Text box component not found');
+				return Promise.resolve ();
+			}
+
+			if (textBox.props?.mode === 'nvl' && this._cycle === 'Application' && this.engine.global ('_restoring_state') === false) {
 				this.engine.history ('nvl').push (textBox.content ('dialog').html ());
 			}
 
@@ -390,7 +411,10 @@ export class Dialog extends Action {
 				// no animation will be shown in the game.
 				this.engine.global ('typedConfiguration').strings = [dialog];
 				this.engine.global ('finished_typing', false);
-				this.engine.element ().find ('[data-ui="say"]').collection[0].setState({ strings: [dialog] });
+				const sayElement = this.engine.element ().find ('[data-ui="say"]').collection[0];
+				if (sayElement) {
+					sayElement.setState({ strings: [dialog] });
+				}
 			} else {
 				this.engine.element ().find ('[data-ui="say"]').html (clearDialog);
 				this.engine.global ('finished_typing', true);
@@ -430,8 +454,8 @@ export class Dialog extends Action {
 		// Check if an expression or face image was used and if it exists and
 		// display it
 		if (typeof this.image !== 'undefined' && !this.nvl) {
-			`${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`;
-			this.engine.element ().find ('[data-ui="face"]').attribute ('src', `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`);
+			const path = `${this.engine.setting ('AssetsPath').root}/${this.engine.setting ('AssetsPath').characters}/${directory}${this.image}`;
+			this.engine.element ().find ('[data-ui="face"]').attribute ('src', path);
 			this.engine.element ().find ('[data-ui="face"]').show ();
 			this.engine.element ().find ('[data-component="text-box"]').data ('expression', this.expression);
 		}
@@ -481,8 +505,8 @@ export class Dialog extends Action {
 	willRevert () {
 		this.engine.element ().find ('[data-character]').removeClass ('focus');
 		this.engine.element ().find ('[data-ui="face"]').hide ();
-		document.querySelector ('[data-ui="who"]').innerHTML = '';
-		
+		this.engine.element ().find ('[data-ui="who"]').html ('');
+
 		return Promise.resolve ();
 	}
 

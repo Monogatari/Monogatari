@@ -67,6 +67,14 @@ class TimerDisplay extends Component {
 		return Promise.resolve ();
 	}
 
+	willUnmount () {
+		// Clean up timer to prevent memory leaks
+		if (this.props.timer) {
+			clearTimeout(this.props.timer);
+		}
+		return Promise.resolve ();
+	}
+
 	render () {
 		return `
 			<div style="width: ${this.state.value}%;"></div>

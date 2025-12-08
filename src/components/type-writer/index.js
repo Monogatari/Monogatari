@@ -454,26 +454,24 @@ class TypeWriter extends Component {
 			}
 		});
 
-		// Force length of 'actions' to equal nodeCounter
-		actions[nodeCounter-1] = actions[nodeCounter - 1];
-
 		return [nodes, actions];
 	}
 
 	/**
 		@function executeAction — Execute the provided action asynchronously, even if it's not asynchronous.
 		- TODO: Make asynchronous call stop the typing animation(?)
-		@param {object} act The action to be executed.
+		@param {object} actionObj The action to be executed.
 		@returns {void}
 	**/
-	executeAction (action) {
+	executeAction (actionObj) {
 		const actions = this.constructor.actions ();
 
 		for (const key in actions) {
-			if (action.name === key) {
+			if (actionObj.action === key) {
 				// Since we already know what action it is, we don't need to send that data to the callback function.
-				// So we use destructuring to exclude it from the action.
-				const [action, ...variables] = Object.values (action);
+				// Extract values excluding the 'action' key
+				const { action: _, ...rest } = actionObj;
+				const variables = Object.values (rest);
 
 				actions[key].action.apply (this, variables);
 			}
@@ -673,7 +671,7 @@ class TypeWriter extends Component {
 		}
 
 		if (this.elements) {
-			this.elements.forEach (e => e.style = '');
+			this.elements.forEach (e => e.removeAttribute ('style'));
 		}
 
 		if (typeof this.state.config.onDestroy === 'function') {
@@ -690,8 +688,6 @@ class TypeWriter extends Component {
 	}
 
 	onStateUpdate (property, oldValue, newValue) {
-		super.onStateUpdate (property, oldValue, newValue);
-
 		if (property === 'strings') {
 			if (!this.state.ignore) {
 				this.forceRender ().then (() => {

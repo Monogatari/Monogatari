@@ -1,0 +1,39 @@
+/**
+ * ===========================
+ * Type Character Component
+ * ===========================
+ */
+
+@-webkit-keyframes cursorBlink {
+	to {
+		opacity: 0
+	}
+}
+
+@keyframes cursorBlink {
+	to {
+		opacity: 0
+	}
+}
+
+type-character[data-component] {
+	display: inline;
+
+	animation-duration: 1s;
+	animation-fill-mode: both;
+
+	&.cursor::after {
+		content: var(--cursor-blinker);
+
+		animation-name: cursorBlink;
+		animation-direction: alternate;
+		animation-duration: var(--cursor-speed);
+		animation-iteration-count: infinite;
+		animation-timing-function: var(--cursor-easing);
+
+		position: absolute;
+		margin-top: -0.2%;
+
+		color: var(--cursor-color)
+	}
+}

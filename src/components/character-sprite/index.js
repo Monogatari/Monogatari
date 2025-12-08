@@ -72,12 +72,23 @@ class CharacterSprite extends Component {
 	}
 
 	didMount () {
-		window.addEventListener('resize', () => {
+		// Store reference to bound resize handler for cleanup
+		this._resizeHandler = () => {
 			this.resize();
-		});
+		};
+		window.addEventListener('resize', this._resizeHandler);
 
 		this.resize();
 
+		return Promise.resolve ();
+	}
+
+	willUnmount () {
+		// Clean up window resize listener to prevent memory leaks
+		if (this._resizeHandler) {
+			window.removeEventListener('resize', this._resizeHandler);
+			this._resizeHandler = null;
+		}
 		return Promise.resolve ();
 	}
 

@@ -1,7 +1,7 @@
 import { $_ } from '@aegis-framework/artemis';
 
-import { FancyError } from './../../lib/FancyError';
-import { ScreenComponent } from './../../lib/ScreenComponent';
+import { FancyError } from '../../lib/FancyError';
+import { ScreenComponent } from '../../lib/ScreenComponent';
 
 class LanguageSelectionScreen extends ScreenComponent {
 
@@ -65,6 +65,16 @@ class LanguageSelectionScreen extends ScreenComponent {
 			this.engine.preference ('Language', language);
 			this.engine.localize ();
 		});
+
+		return Promise.resolve ();
+	}
+
+	willUnmount () {
+		// Clean up timer to prevent memory leaks
+		if (this.timer) {
+			clearTimeout (this.timer);
+			this.timer = null;
+		}
 
 		return Promise.resolve ();
 	}

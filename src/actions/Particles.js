@@ -1,5 +1,6 @@
 import { Action } from '../lib/Action';
-import { tsParticles } from 'tsparticles-slim/tsparticles.slim.bundle.js';
+import { tsParticles } from '@tsparticles/engine';
+import { loadSlim } from '@tsparticles/slim';
 
 export class Particles extends Action {
 
@@ -21,7 +22,7 @@ export class Particles extends Action {
 		this.engine.state ({
 			particles: ''
 		});
-		return Promise.resolve ();
+		return loadSlim (tsParticles);
 	}
 
 	static reset () {
@@ -81,7 +82,7 @@ export class Particles extends Action {
 	}
 
 	apply () {
-		return tsParticles.load ('tsparticles', this.particles);
+		return tsParticles.load ({ id: 'tsparticles', options: this.particles });
 	}
 
 	didApply ({ updateHistory = true, updateState = true } = {}) {
