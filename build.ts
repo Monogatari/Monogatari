@@ -1,7 +1,8 @@
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
 
-const OUT_DIR = './dist/engine/core';
+const OUT_DIR_BROWSER = './dist/engine/core';
+const OUT_DIR_MODULE = './lib';
 const SRC_DIR = './src';
 
 const commonBuildOptions = {
@@ -19,7 +20,7 @@ async function buildModule(): Promise<void> {
 
 	const result = await Bun.build({
 		entrypoints: [join(SRC_DIR, 'index.js')],
-		outdir: OUT_DIR,
+		outdir: OUT_DIR_MODULE,
 		naming: 'monogatari.module.js',
 		...commonBuildOptions,
 	});
@@ -43,7 +44,7 @@ async function buildBrowser(): Promise<void> {
 
 	const result = await Bun.build({
 		entrypoints: [join(SRC_DIR, 'browser.ts')],
-		outdir: OUT_DIR,
+		outdir: OUT_DIR_BROWSER,
 		naming: 'monogatari.js',
 		target: 'browser',
 		format: 'iife',
@@ -70,7 +71,7 @@ async function buildCSS(): Promise<void> {
 
 	const result = await Bun.build({
 		entrypoints: [join(SRC_DIR, 'index.css')],
-		outdir: OUT_DIR,
+		outdir: OUT_DIR_BROWSER,
 		naming: 'monogatari.css',
 		minify: true,
 		sourcemap: 'linked',
@@ -118,7 +119,7 @@ async function watchMode(): Promise<void> {
 	const srcWatcher = Bun.spawn(['bun', 'build', join(SRC_DIR, 'browser.ts'),
 		'--target', 'browser',
 		'--format', 'iife',
-		'--outdir', OUT_DIR,
+		'--outdir', OUT_DIR_BROWSER,
 		'--watch'
 	], {
 		stdout: 'inherit',
@@ -136,7 +137,8 @@ const args = process.argv.slice(2);
 const flags = new Set(args);
 
 // Ensure output directory exists
-await mkdir(OUT_DIR, { recursive: true });
+await mkdir(OUT_DIR_BROWSER, { recursive: true });
+await mkdir(OUT_DIR_MODULE, { recursive: true });
 
 // Execute based on flags
 if (flags.has('--watch')) {

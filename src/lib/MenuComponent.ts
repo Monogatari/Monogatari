@@ -89,7 +89,7 @@ class MenuComponent extends Component {
 
 		for (const element of elements) {
 			if (element instanceof Component) {
-				element.innerHTML = element.render();
+				element.innerHTML = element.render() as string;
 			}
 		}
 
@@ -128,3 +128,6 @@ class MenuComponent extends Component {
 MenuComponent.tag = 'lib-menu-component';
 
 export { MenuComponent };
+
+
+

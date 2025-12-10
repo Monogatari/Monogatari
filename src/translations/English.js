@@ -5,7 +5,7 @@
  *
  * Translators:
  *
- * Hyuchia <diego@hyuchia.com>
+ * Hyuchia <diana@hyuchia.com>
  */
 
 

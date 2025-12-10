@@ -136,7 +136,7 @@ class SettingsScreen extends ScreenComponent {
 			}
 
 			// Set the electron quit handler.
-			if (Platform.electron () && typeof window.electron === 'object') {
+			if (Platform.electron && typeof window.electron === 'object') {
 				if (typeof window.electron.send === 'function' && typeof window.electron.on === 'function') {
 					this.electron ();
 				}
@@ -170,8 +170,8 @@ class SettingsScreen extends ScreenComponent {
 		return `
 			<button class="top left" data-action="back"><span class="fas fa-arrow-left"></span></button>
 			<h2 data-string="Settings">Settings</h2>
-			<div class="row row--spaced padded text---center">
-				<div class="row__column row__column--12 row__column--phone--12 row__column--phablet--12 row__column--tablet--6 row__column--desktop--6 row__column--desktop-large--6 row__column--retina--6">
+			<div class="settings">
+				<div class="settings-group">
 					<div data-settings="audio" class="vertical vertical--center text--center" data-content="audio-settings">
 						<h3 data-string="Audio">Audio</h3>
 						<span data-string="Music">Music Volume:</span>
@@ -185,8 +185,7 @@ class SettingsScreen extends ScreenComponent {
 					</div>
 				</div>
 
-				<div class="row__column row__column--12 row__column--phone--12 row__column--phablet--12 row__column--tablet--6 row__column--desktop--6 row__column--desktop-large--6 row__column--retina--6">
-
+				<div class="settings-group">
 					<div data-settings="text-speed">
 						<h3 data-string="TextSpeed">Text Speed</h3>
 						<input type="range" min="1" max="50" step="1" data-action="set-text-speed">

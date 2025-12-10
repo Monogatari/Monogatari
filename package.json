@@ -7,9 +7,9 @@
 	"types": "./dist/types/index.d.ts",
 	"exports": {
 		".": {
-			"types": "./dist/types/index.d.ts",
-			"import": "./dist/engine/core/monogatari.module.js",
-			"default": "./dist/engine/core/monogatari.module.js"
+			"types": "./lib/index.d.ts",
+			"import": "./lib/engine/core/monogatari.module.js",
+			"default": "./lib/engine/core/monogatari.module.js"
 		},
 		"./browser": {
 			"types": "./dist/types/index.d.ts",
@@ -35,7 +35,7 @@
 		"watch:js": "bun build.ts --watch",
 		"watch:css": "bun build.ts --css --watch",
 		"check": "tsc --noEmit",
-		"clean": "rm -rf dist/engine/core dist/types",
+		"clean": "rm -rf dist/engine/core dist/types && rm -rf lib",
 		"lint": "bunx eslint ./src",
 		"test": "bunx cypress"
 	},
@@ -56,9 +56,9 @@
 		"typescript-eslint": "^8.48.1"
 	},
 	"dependencies": {
-		"@aegis-framework/artemis": "^0.4.1",
+		"@aegis-framework/artemis": "^0.5.0",
 		"@aegis-framework/kayros.css": "^0.5.1",
-		"@aegis-framework/pandora": "^0.3.1",
+		"@aegis-framework/pandora": "^0.4.0",
 		"@fortawesome/fontawesome-free": "^7.1.0",
 		"@tsparticles/engine": "^3.9.1",
 		"@tsparticles/slim": "^3.9.1",

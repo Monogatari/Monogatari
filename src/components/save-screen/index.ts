@@ -7,7 +7,7 @@ class SaveScreen extends ScreenComponent {
 			const value = this.instances().find('[data-content="slot-name"]').value();
 			const slotName = (typeof value === 'string' ? value : '').trim();
 			if (slotName !== '') {
-				
+
 				(this.engine as any).saveTo('SaveLabel', null, slotName);
 			}
 		});
@@ -23,7 +23,7 @@ class SaveScreen extends ScreenComponent {
 	}
 
 	render (): string {
-		
+
 		const engine = this.engine as any;
 		return `
 			<button class="top left" data-action="back"><span class="fas fa-arrow-left"></span></button>

@@ -969,7 +969,7 @@ class Monogatari {
 		// Check if asset preloading is enabled. Preloading will not be done in
 		// electron or cordova since the assets are expected to be available
 		// locally.
-		if (this.setting ('Preload') && !Platform.electron () && !Platform.cordova () && location.protocol.indexOf ('file') < 0) {
+		if (this.setting ('Preload') && !Platform.electron && !Platform.cordova && location.protocol.indexOf ('file') < 0) {
 			this.trigger ('willPreloadAssets');
 
 			// Iterate over every asset category: music, videos, scenes etc.
@@ -1452,7 +1452,7 @@ class Monogatari {
 					break;
 			}
 
-			if (window.navigator && !Platform.electron () && !Platform.cordova ()) {
+			if (window.navigator && !Platform.electron && !Platform.cordova) {
 				if (window.navigator.storage && window.navigator.storage.persist) {
 					window.navigator.storage.persist ().then ((persisted) => {
 						if (persisted !== true) {
@@ -2617,7 +2617,7 @@ class Monogatari {
 			// where the assets are expected to be available locally and thus don't
 			// require being cached.
 			if (this.setting ('ServiceWorkers')) {
-				if (!Platform.electron () && !Platform.cordova () && Platform.serviceWorkers ()) {
+				if (!Platform.electron && !Platform.cordova && Platform.serviceWorkers) {
 					navigator.serviceWorker.register('./service-worker.js').then ((registration) => {
 
 						// Check if an update to the service worker was found
@@ -2852,14 +2852,14 @@ class Monogatari {
 
 		// Add the orientation checker in case that a specific orientation was
 		// defined.
-		if (this.setting ('Orientation') !== 'any' && Platform.mobile ()) {
+		if (this.setting ('Orientation') !== 'any' && Platform.mobile) {
 
 			// Set the event listener for device orientation so we can display a message
 			window.addEventListener ('orientationchange', () => {
 
 				// Display or remove the device orientation notice depending on the
 				// current device orientation
-				if (Platform.orientation () !== this.setting ('Orientation')) {
+				if (Platform.orientation !== this.setting ('Orientation')) {
 					this.alert ('orientation-warning', {
 						message: 'OrientationWarning'
 					});
@@ -2881,6 +2881,8 @@ class Monogatari {
 		// Add listeners for the data-action properties
 		this.on ('click', '[data-action]', function (event) {
 			const element = $_(this);
+
+      console.log(event);
 
 			const action = element.data ('action');
 
@@ -2941,7 +2943,7 @@ class Monogatari {
 			const [w, h] = this.setting ('AspectRatio').split (':');
 			const proportionWidth = parseInt(w);
 			const proportionHeight = parseInt(h);
-			if (!(Platform.electron () && forceAspectRatio === 'Global')) {
+			if (!(Platform.electron && forceAspectRatio === 'Global')) {
 				this.resize (null, proportionWidth, proportionHeight);
 				$_(window).on ('resize', () => this.resize (null, proportionWidth, proportionHeight));
 			}
@@ -3166,7 +3168,7 @@ class Monogatari {
 				// Check if the orientation is correct, if it's not, show the warning
 				// message so the player will rotate its device.
 				if (this.setting ('Orientation') !== 'any') {
-					if (Platform.mobile () && Platform.orientation () !== this.setting ('Orientation')) {
+					if (Platform.mobile && Platform.orientation !== this.setting ('Orientation')) {
 						this.alert ('orientation-warning', {
 							message: 'OrientationWarning'
 						});
