@@ -5,39 +5,37 @@ on:
     branches:
       - develop
     paths:
-      - '**.html'
+      - '**.ts'
       - '**.js'
       - '**.json'
       - '**.css'
       - '**/test.yml'
-      - '!dist/engine/core/**'
+      - '!dist/**'
   pull_request:
     branches:
       - develop
     paths:
-      - '**.html'
+      - '**.ts'
       - '**.js'
       - '**.json'
       - '**.css'
-      - '!dist/engine/core/**'
+      - '!dist/**'
 
 jobs:
   cypress-run:
-
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
+          bun-version: latest
       - name: Run Tests
         uses: cypress-io/github-action@v6
         with:
           record: true
           browser: chrome
-          build: yarn run build
+          build: bun run build
         env:
-          # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

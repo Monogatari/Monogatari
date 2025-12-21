@@ -5,48 +5,35 @@ on:
     branches:
       - develop
     paths:
-      - '.htmlhintrc'
-      - '.stylelintrc'
-      - '**.html'
+      - '**.ts'
       - '**.js'
       - '**.json'
       - '**.css'
-      - '!dist/engine/core/**'
+      - '!dist/**'
+      - '!cypress/**'
   pull_request:
     branches:
       - develop
     paths:
-      - '.htmlhintrc'
-      - '.stylelintrc'
-      - '**.html'
+      - '**.ts'
       - '**.js'
       - '**.json'
       - '**.css'
-      - '!dist/engine/core/**'
+      - '!dist/**'
+      - '!cypress/**'
 
 jobs:
   lint:
-
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
+          bun-version: latest
       - name: Install Dependencies
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: install # will run `yarn install` command
-      - name: Lint HTML
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: lint:html # will run `yarn lint:html` command
-      - name: Lint JavaScript
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: lint:js # will run `yarn lint:js` command
-      - name: Lint CSS
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: lint:css # will run `yarn lint:css` command
+        run: bun install
+      - name: Lint
+        run: bun run lint
+      - name: Type Check
+        run: bun run check
