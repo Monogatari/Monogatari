@@ -1,10 +1,15 @@
-import { ScreenComponent } from '../../lib/ScreenComponent';
+import ScreenComponent from '../../lib/ScreenComponent';
 
 class LoadScreen extends ScreenComponent {
-	render (): string {
-		
-		const engine = this.engine as any;
-		const autoSaveEnabled = engine.setting('AutoSave') != 0 && typeof engine.setting('AutoSave') === 'number';
+  static override tag = 'load-screen';
+
+	override render (): string {
+
+		const engine = this.engine;
+
+		const autoSaveInterval = engine.setting('AutoSave');
+
+		const autoSaveEnabled = typeof autoSaveInterval === 'number' && autoSaveInterval > 0 ;
 
 		return `
 			<button class="top left" data-action="back"><span class="fas fa-arrow-left"></span></button>
@@ -24,7 +29,5 @@ class LoadScreen extends ScreenComponent {
 		`;
 	}
 }
-
-LoadScreen.tag = 'load-screen';
 
 export default LoadScreen;

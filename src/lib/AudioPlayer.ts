@@ -45,7 +45,7 @@ class AudioPlayer {
 		return Array.from(this.effectRegistry.values());
 	}
 
-	static initialize (audioContext: AudioContext): Promise<unknown[]> {
+	static async initialize (audioContext: AudioContext): Promise<unknown[]> {
 		if (this.workletReadyPromises.has(audioContext)) {
 			return this.workletReadyPromises.get(audioContext)!;
 		}
@@ -136,12 +136,14 @@ class AudioPlayer {
 			`
 		};
 
-		const workletPromises = Object.entries(workletDefs).map(([name, code]) => {
+		const workletPromises = Object.entries(workletDefs).map(async ([name, code]) => {
 			const blob = new Blob([code], { type: 'application/javascript' });
 			const url = URL.createObjectURL(blob);
-			return audioContext.audioWorklet.addModule(url).catch(e => {
+			try {
+				await audioContext.audioWorklet.addModule(url);
+			} catch (e) {
 				console.error(`Failed to load worklet: ${name}`, e);
-			});
+			}
 		});
 
 		const readyPromise = Promise.all(workletPromises);
@@ -270,17 +272,19 @@ class AudioPlayer {
 		}
 	}
 
-	play (): Promise<void> {
+	async play (): Promise<void> {
 		if (this._isPlaying) {
-			return Promise.resolve();
+			return;
 		}
 
 		// Ensure worklets are ready before trying to create nodes that might use them
 		const readyPromise = AudioPlayer.workletReadyPromises.get(this.audioContext) || Promise.resolve([]);
 
-		return readyPromise.then(() => {
+		try {
+			await readyPromise;
+
 			if (this.audioContext.state === 'suspended') {
-				this.audioContext.resume();
+				await this.audioContext.resume();
 			}
 
 			this.sourceNode = this.createSourceNode();
@@ -294,10 +298,10 @@ class AudioPlayer {
 
 			this._isPlaying = true;
 			this._isPaused = false;
-		}).catch(error => {
+		} catch (error) {
 			console.error('Error during playback:', error);
-			return Promise.reject(error);
-		});
+			throw error;
+		}
 	}
 
 	pause (): void {
@@ -383,36 +387,34 @@ class AudioPlayer {
 		return this.gainNode;
 	}
 
-	fadeIn (duration: number): Promise<void> {
+	async fadeIn (duration: number): Promise<void> {
 		if (!this._isPlaying) {
-			return Promise.resolve();
+			return;
 		}
 
-		return new Promise((resolve) => {
-			const startTime = this.audioContext.currentTime;
-			const endTime = startTime + duration;
+		const startTime = this.audioContext.currentTime;
+		const endTime = startTime + duration;
 
-			this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, startTime);
-			this.gainNode.gain.linearRampToValueAtTime(this.volume, endTime);
+		this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, startTime);
+		this.gainNode.gain.linearRampToValueAtTime(this.volume, endTime);
 
-			setTimeout(resolve, duration * 1000);
-		});
+		// Wait for the fade to complete
+		await new Promise<void>(resolve => setTimeout(resolve, duration * 1000));
 	}
 
-	fadeOut (duration: number): Promise<void> {
+	async fadeOut (duration: number): Promise<void> {
 		if (!this._isPlaying) {
-			return Promise.resolve();
+			return;
 		}
 
-		return new Promise((resolve) => {
-			const startTime = this.audioContext.currentTime;
-			const endTime = startTime + duration;
+		const startTime = this.audioContext.currentTime;
+		const endTime = startTime + duration;
 
-			this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, startTime);
-			this.gainNode.gain.linearRampToValueAtTime(0, endTime);
+		this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, startTime);
+		this.gainNode.gain.linearRampToValueAtTime(0, endTime);
 
-			setTimeout(resolve, duration * 1000);
-		});
+		// Wait for the fade to complete
+		await new Promise<void>(resolve => setTimeout(resolve, duration * 1000));
 	}
 }
 

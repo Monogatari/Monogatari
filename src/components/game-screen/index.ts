@@ -1,54 +1,49 @@
-import { ScreenComponent } from '../../lib/ScreenComponent';
+import ScreenComponent from '../../lib/ScreenComponent';
 
 class GameScreen extends ScreenComponent {
-	static override shouldProceed (): Promise<unknown[]> {
-
-		if ((this.engine as any).element().find('[data-screen="game"]').isVisible()) {
-			return Promise.resolve([]);
+	static override async shouldProceed() {
+		if (this.engine.element().find('[data-screen="game"]').isVisible()) {
+			return;
 		}
-		return Promise.reject('Game screen is not visible.');
+
+		throw new Error('Game screen is not visible.');
 	}
 
-	static override bind (_selector?: string): Promise<void> {
-		const self = this;
+	static override async bind() {
+		const engine = this.engine;
 
-		const engine = this.engine as any;
-
-		engine.on('click', '[data-screen="game"] *:not([data-choice])', function () {
+		engine.on('click', '[data-screen="game"] *:not([data-choice])', async () => {
 			engine.debug.debug('Next Statement Listener');
-			engine.proceed({ userInitiated: true, skip: false, autoPlay: false }).then(() => {
-				// Nothing to do here
-			}).catch((e: unknown) => {
-				engine.debug.log(`Proceed Prevented\nReason: ${e}`);
-			});
+      try {
+        await engine.proceed({ userInitiated: true, skip: false, autoPlay: false });
+      } catch (e: unknown) {
+        engine.debug.log(`Click Proceed Prevented\nReason: ${e}`);
+      }
 		});
 
 		if (engine.setting('AllowRollback') === true) {
 			engine.registerListener('back', {
 				keys: 'left',
-				callback: () => {
+				callback: async () => {
 					engine.global('block', false);
-					engine.rollback().then(() => {
-						// Nothing to do here
-					}).catch((e: unknown) => {
-						(self.engine as any).debug.log(`Proceed Prevented\nReason: ${e}`);
-					});
+					try {
+						await engine.rollback();
+					} catch (e: unknown) {
+						engine.debug.log(`Rollback Prevented\nReason: ${e}`);
+					}
 				}
 			});
 		}
-
-		return Promise.resolve();
 	}
 
-	didMount (): Promise<void> {
+	async didMount (): Promise<void> {
+		this.engine.on('didUpdateState', (event: Event) => {
+      const { detail: { newState: { label } } } = event as CustomEvent<{ newState: { label?: string } }>;
 
-		(this.engine as any).on('didUpdateState', ({ detail: { newState: { label } } }: { detail: { newState: { label?: string } } }) => {
 			if (label) {
 				this.element().data('label', label);
 			}
 		});
-
-		return Promise.resolve();
 	}
 
 	render (): string {

@@ -1,0 +1,401 @@
+import { $_, Text } from '@aegis-framework/artemis';
+
+import Action from './../lib/Action';
+import AudioPlayer from './../lib/AudioPlayer';
+import { ActionApplyResult, ActionRevertResult, MediaType, MediaStateItem, ActionInstance } from '../lib/types';
+
+export class Play extends Action {
+
+	static override id = 'Play';
+
+	static override async shouldProceed(context?: any): Promise<void> {
+		if (typeof context === 'object') {
+			const { userInitiated, skip } = context;
+			if (userInitiated === false && skip === false) {
+				const voicePlayers = this.engine.mediaPlayers('voice') as (HTMLAudioElement | HTMLVideoElement)[];
+
+				for (const player of voicePlayers) {
+					if (!player.ended) {
+						throw new Error('Voice player still playing.');
+					}
+				}
+			}
+		}
+	}
+
+	static override async willProceed(): Promise<void> {
+		Play.shutUp();
+	}
+
+	static override async willRollback(): Promise<void> {
+		Play.shutUp();
+	}
+
+	static override async setup(): Promise<void> {
+		if (!this.engine.audioContext) {
+			this.engine.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+		}
+
+		// Initialize AudioPlayer worklets for the audio context
+		AudioPlayer.initialize(this.engine.audioContext).catch((error: any) => {
+			console.warn('Failed to initialize AudioPlayer worklets:', error);
+		});
+
+		this.engine.history('music');
+		this.engine.history('sound');
+		this.engine.history('voice');
+		this.engine.state({
+			music: [],
+			sound: [],
+			voice: []
+		});
+	}
+
+	static override async init(selector: string): Promise<void> {
+		const mediaPlayers = Object.keys(this.engine.mediaPlayers());
+		// Set the volume of all the media components on the settings screen
+		for (const mediaType of mediaPlayers) {
+			const element = this.engine.element().find(`[data-target="${mediaType}"]`).get(0) as HTMLInputElement | undefined;
+
+			if (element) {
+				const volumeSettings = this.engine.preference('Volume') as Record<string, number>;
+				let volume = volumeSettings[Text.capitalize(mediaType)];
+
+				if (typeof volume === 'string') {
+					volume = parseFloat(volume as unknown as string);
+				}
+
+				element.value = String(volume);
+			}
+		}
+	}
+
+	static override async bind(selector: string): Promise<void> {
+		const engine = this.engine;
+
+		// Volume bars listeners
+		$_(`${selector} [data-action="set-volume"]`).on('change mouseover', function (this: HTMLInputElement) {
+			const target = this.dataset.target as string;
+			let value: string | number = this.value;
+
+			if (typeof value === 'string') {
+				value = parseFloat(value);
+			}
+
+			if (target === 'video') {
+				$_('[data-video]').each((element: any) => {
+					(element as HTMLMediaElement).volume = value as number;
+				});
+			} else {
+				const players = engine.mediaPlayers(target) as (HTMLAudioElement & { dataset: { volumePercentage?: string } })[];
+
+				// Music volume should also affect the main screen ambient music
+				if (target === 'music') {
+					const ambientPlayer = engine.ambientPlayer as (HTMLAudioElement & { gainNode?: GainNode }) | null;
+					if (ambientPlayer && ambientPlayer.gainNode && engine.audioContext) {
+						ambientPlayer.gainNode.gain.setValueAtTime(value as number, engine.audioContext.currentTime);
+					} else if (ambientPlayer && ambientPlayer.volume !== undefined) {
+						ambientPlayer.volume = value as number;
+					}
+				}
+
+				for (const player of players) {
+					if (player.dataset.volumePercentage && !isNaN(parseInt(player.dataset.volumePercentage))) {
+						player.volume = (parseInt(player.dataset.volumePercentage) / 100) * (value as number);
+					} else {
+						player.volume = value as number;
+					}
+				}
+			}
+
+			const volumeSettings = engine.preference('Volume') as Record<string, number>;
+			volumeSettings[Text.capitalize(target)] = value as number;
+
+			engine.preferences(engine.preferences(), true);
+		});
+	}
+
+	static override async onLoad(): Promise<void> {
+		const mediaPlayers = Object.keys(this.engine.mediaPlayers());
+		const promises: Promise<unknown>[] = [];
+
+		for (const mediaType of mediaPlayers) {
+			const state = this.engine.state(mediaType as keyof import('../lib/types').StateMap) as MediaStateItem[] | undefined;
+
+				if (typeof state !== 'undefined' && Array.isArray(state)) {
+				if (state.length > 0) {
+					for (const s of state) {
+						const action = this.engine.prepareAction(s.statement, { cycle: 'Application' }) as ActionInstance | null;
+						if (action !== null) {
+							const promise = action.willApply().then(() => {
+								return action.apply().then(() => {
+									return action.didApply({ updateHistory: false, updateState: false });
+								});
+							});
+
+							promises.push(promise);
+						}
+					}
+				}
+			}
+		}
+
+		if (promises.length > 0) {
+			await Promise.all(promises);
+		}
+	}
+
+	static override async reset(): Promise<void> {
+		const players = this.engine.mediaPlayers();
+
+		// Stop and remove all the media players
+		for (const playerType of Object.keys(players)) {
+			this.engine.removeMediaPlayer(playerType);
+		}
+
+		this.engine.state({
+			music: [],
+			sound: [],
+			voice: []
+		});
+	}
+
+	static override matchString([action]: string[]): boolean {
+		return action === 'play';
+	}
+
+	// Stop the voice player
+	static shutUp(): void {
+		const players = this.engine.mediaPlayers('voice', true);
+		for (const media of Object.keys(players)) {
+			this.engine.removeMediaPlayer('voice', media);
+		}
+
+		this.engine.state({ voice: [] });
+	}
+
+	type: MediaType;
+	directory: string;
+	mediaKey: string;
+	props: string[];
+	mediaVolume: number;
+	media: string;
+	player: any;
+
+	constructor([action, type, media, ...props]: string[]) {
+		super();
+		this.type = type as MediaType;
+		this.media = '';
+
+		if (this.type === 'music') {
+			this.directory = this.type;
+		} else {
+			// Directories are always plural so we need to add an "s"
+			this.directory = this.type + 's';
+		}
+
+		this.mediaKey = media;
+		this.props = props;
+
+		const volumeSettings = this.engine.preference('Volume') as Record<string, number>;
+		this.mediaVolume = volumeSettings[Text.capitalize(this.type)];
+
+		// Check if a media was defined or just a `play music` was stated
+		if (typeof media !== 'undefined' && media !== 'with') {
+			if (typeof this.engine.asset(this.directory, media) !== 'undefined') {
+				this.media = this.engine.asset(this.directory, media) as string;
+			} else {
+				this.media = media;
+			}
+
+			const player = this.engine.mediaPlayer(this.type, this.mediaKey);
+
+			// We'll create the player in the apply method since it's async
+			this.player = typeof player === 'undefined' ? null : player;
+		} else {
+			this.player = this.engine.mediaPlayers(this.type);
+		}
+	}
+
+	async createAudioPlayer(paused = false): Promise<any> {
+		const audioContext = this.engine.audioContext!;
+		const gainNode = audioContext.createGain();
+		gainNode.connect(audioContext.destination);
+		gainNode.gain.setValueAtTime(this.mediaVolume, audioContext.currentTime);
+
+		// Load audio file
+		const assetsPath = this.engine.setting('AssetsPath') as Record<string, string>;
+		const response = await fetch(`${assetsPath.root}/${assetsPath[this.directory]}/${this.media}`);
+		const arrayBuffer = await response.arrayBuffer();
+		const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+		// Parse effects from props
+		const effects = this.parseEffects();
+
+		return new AudioPlayer(audioContext, audioBuffer, {
+			outputNode: gainNode,
+			effects: effects,
+			paused: paused,
+		});
+	}
+
+	parseEffects(): Record<string, any> {
+		const availableEffects = AudioPlayer.effects();
+
+		const effects: Record<string, any> = {};
+
+		for (const [id, config] of Object.entries(availableEffects)) {
+			const index = this.props.indexOf(id);
+
+			if (index === -1) {
+				continue;
+			}
+
+			const params: Record<string, any> = {};
+
+			// Parse parameters based on the effect's parameter list
+			for (let i = 0; i < config.params.length; i++) {
+				const paramName = config.params[i];
+				const paramValue = this.props[index + 1 + i];
+
+				if (paramValue !== undefined) {
+					// Try to parse as number first, fallback to string
+					const numValue = parseFloat(paramValue);
+					params[paramName] = isNaN(numValue) ? paramValue : numValue;
+				}
+			}
+
+			effects[id] = params;
+		}
+
+		return effects;
+	}
+
+	override async willApply(): Promise<void> {
+		if (this.player || this.mediaKey) {
+			if (this.player instanceof AudioPlayer) {
+				this.player.loop = false;
+			}
+			return Promise.resolve();
+		}
+
+		throw new Error('Media player was not defined.');
+	}
+
+	override async apply({ paused = false } = {}): Promise<void> {
+		// Check if the audio should have a fade time
+		const fadePosition = this.props.indexOf('fade');
+
+		// Create player if it doesn't exist yet
+		if (this.player === null) {
+			this.player = await this.createAudioPlayer(paused);
+			this.engine.mediaPlayer(this.type, this.mediaKey, this.player);
+		}
+
+		if (this.player instanceof AudioPlayer) {
+			// Make the audio loop if it was provided as a prop
+			if (this.props.indexOf('loop') > -1) {
+				this.player.loop = true;
+			}
+
+			if (this.props.indexOf('volume') > -1) {
+				const percentage = parseInt(this.props[this.props.indexOf('volume') + 1]);
+				this.player.dataset.volumePercentage = percentage.toString();
+				this.player.volume = (percentage * this.mediaVolume) / 100;
+			}
+
+			this.player.onended = () => {
+				const endState: Record<string, any> = {};
+				endState[this.type] = this.engine.state(this.type).filter((s: any) => s.statement !== this._statement);
+				this.engine.state(endState);
+				this.engine.removeMediaPlayer(this.type, this.mediaKey);
+			};
+
+			if (fadePosition > -1) {
+				const fadeTime = this.props[fadePosition + 1];
+				const match = fadeTime.match(/\d*(\.\d*)?/);
+				const duration = match ? parseFloat(match[0]) : 0;
+				this.player.fadeIn(duration);
+			}
+
+			if (paused === true) {
+				return Promise.resolve();
+			}
+
+			return this.player.play();
+
+		}
+		else if (this.player instanceof Array) {
+			const promises = [];
+			for (const player of this.player) {
+				if (player.paused && !player.ended) {
+					if (fadePosition > -1) {
+						const fadeTime = this.props[fadePosition + 1];
+						const match = fadeTime.match(/\d*(\.\d*)?/);
+						const duration = match ? parseFloat(match[0]) : 0;
+						player.fadeIn(duration);
+					}
+					promises.push(player.play());
+				}
+			}
+			await Promise.all(promises);
+		} else {
+			throw new Error('An error occurred, you probably have a typo on the media you want to play.');
+		}
+	}
+
+	override async didApply({ updateHistory = true, updateState = true } = {}): Promise<ActionApplyResult> {
+		if (updateHistory === true) {
+			if (this.player instanceof AudioPlayer || this.mediaKey) {
+				this.engine.history(this.type).push(this._statement as string);
+			}
+		}
+
+		if (updateState === true) {
+			const currentState = this.engine.state(this.type);
+			if (this.player instanceof AudioPlayer || this.mediaKey) {
+				const newItem: MediaStateItem = { statement: this._statement as string, paused: false };
+				this.engine.state({ [this.type]: [...currentState, newItem] });
+			} else if (this.player instanceof Array) {
+				const updatedState = currentState.map((item: MediaStateItem) => ({
+					...item,
+					paused: false
+				}));
+				this.engine.state({ [this.type]: updatedState });
+			}
+		}
+
+		return { advance: true };
+	}
+
+	override async revert(): Promise<void> {
+		if (typeof this.mediaKey !== 'undefined') {
+			this.engine.removeMediaPlayer(this.type, this.mediaKey);
+		} else if (this.player instanceof Array) {
+			for (const player of this.player) {
+				if (!player.paused && !player.ended) {
+					player.pause();
+				}
+			}
+		}
+	}
+
+	override async didRevert(): Promise<ActionRevertResult> {
+		const currentState = this.engine.state(this.type);
+
+		if (typeof this.mediaKey !== 'undefined') {
+			this.engine.history(this.type).pop();
+			const filteredState = currentState.filter((m: MediaStateItem) => m.statement !== this._statement);
+			this.engine.state({ [this.type]: filteredState });
+		} else if (this.player instanceof Array) {
+			const updatedState = currentState.map((item: MediaStateItem) => ({
+				...item,
+				paused: true
+			}));
+			this.engine.state({ [this.type]: updatedState });
+		}
+		return { advance: true, step: true };
+	}
+}
+
+export default Play;

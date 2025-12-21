@@ -198,6 +198,7 @@ import VisualNovel from './components/visual-novel/index.js';
 import TypeWriter from './components/type-writer/index.js';
 import TypeCharacter from './components/type-character/index.js';
 
+// Type cast needed as components extend Component but TypeScript has trouble with the complex static interfaces
 Monogatari._components = [
 	AlertModal,
 	CanvasContainer,
@@ -226,7 +227,7 @@ Monogatari._components = [
 	VisualNovel,
 	TypeWriter,
 	TypeCharacter
-];
+] as unknown as typeof Monogatari._components;
 
 /**
  * =============================================================================
@@ -271,6 +272,7 @@ import Video from './actions/Video.js';
 import Wait from './actions/Wait.js';
 
 // The order in which actions are registered is important.
+// Type cast needed as actions extend Action but TypeScript has trouble with the complex static interfaces
 Monogatari._actions = [
 	Canvas,
 	Choice,
@@ -306,7 +308,7 @@ Monogatari._actions = [
 
 	// Dialog must always go last
 	Dialog,
-];
+] as unknown as typeof Monogatari._actions;
 
 /**
  * Export Monogatari Core

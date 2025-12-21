@@ -1,4 +1,5 @@
-import { Component } from './Component';
+import type { Properties } from '@aegis-framework/pandora';
+import Component from './Component';
 import type { MenuButton } from './types';
 
 /**
@@ -6,8 +7,14 @@ import type { MenuButton } from './types';
  * Menus manage a collection of buttons that can be dynamically added, removed, or reordered.
  *
  * @class MenuComponent
+ * @template P - The type of the component's props (must extend Properties)
+ * @template S - The type of the component's state (must extend Properties)
  */
-class MenuComponent extends Component {
+class MenuComponent<
+	P extends Properties = Properties,
+	S extends Properties = Properties
+> extends Component<P, S> {
+	static override tag: string = 'menu-component';
 	/**
 	 * Add a button to the menu
 	 */
@@ -84,7 +91,7 @@ class MenuComponent extends Component {
 	/**
 	 * Called when configuration is updated - re-renders all instances
 	 */
-	static onConfigurationUpdate (): Promise<void> {
+	static async onConfigurationUpdate (): Promise<void> {
 		const elements = document.querySelectorAll(this.tag);
 
 		for (const element of elements) {
@@ -92,8 +99,6 @@ class MenuComponent extends Component {
 				element.innerHTML = element.render() as string;
 			}
 		}
-
-		return Promise.resolve();
 	}
 
 	/**
@@ -125,9 +130,4 @@ class MenuComponent extends Component {
 	}
 }
 
-MenuComponent.tag = 'lib-menu-component';
-
 export { MenuComponent };
-
-
-

@@ -1,7 +1,8 @@
-import { Component } from './Component';
+import type { Properties } from '@aegis-framework/pandora';
+import Component from './Component';
 
 
-interface ScreenState extends Record<string, unknown> {
+export interface ScreenState extends Properties {
 	open: boolean;
 }
 
@@ -10,22 +11,28 @@ interface ScreenState extends Record<string, unknown> {
  * Screens can be opened and closed, with visual state managed automatically.
  *
  * @class ScreenComponent
+ * @template P - The type of the component's props (must extend Properties)
+ * @template S - The type of the component's state (must extend ScreenState)
  */
-class ScreenComponent extends Component {
+class ScreenComponent<
+	P extends Properties = Properties,
+	S extends ScreenState = ScreenState
+> extends Component<P, S> {
 	constructor () {
 		super();
 
+		// Cast needed because we only initialize base properties
+		// Subclasses will add their own properties in their constructor
 		this.state = {
 			open: false
-		};
+		} as S;
 	}
 
-	willMount (): Promise<void> {
+	async willMount (): Promise<void> {
 		this.dataset.screen = (this.constructor as typeof ScreenComponent).tag.replace('-screen', '');
-		return Promise.resolve();
 	}
 
-	onStateUpdate (property: string, oldValue: unknown, newValue: unknown): Promise<void> {
+	async onStateUpdate (property: string, oldValue: unknown, newValue: unknown): Promise<void> {
 		if (property === 'open') {
 			if (newValue === true) {
 				this.classList.add('active');
@@ -33,7 +40,6 @@ class ScreenComponent extends Component {
 				this.classList.remove('active');
 			}
 		}
-		return Promise.resolve();
 	}
 
 	render (): string {
@@ -41,7 +47,5 @@ class ScreenComponent extends Component {
 	}
 }
 
+export default ScreenComponent;
 export { ScreenComponent };
-
-export type { ScreenState };
-

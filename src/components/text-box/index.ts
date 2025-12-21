@@ -1,8 +1,14 @@
-import { Component } from '../../lib/Component';
+import type { Properties } from '@aegis-framework/pandora';
+import Component from '../../lib/Component';
 
-class TextBox extends Component {
+interface TextBoxProps extends Properties {
+	mode: 'adv' | 'nvl';
+}
+
+class TextBox extends Component<TextBoxProps, Properties> {
 	constructor () {
 		super();
+
 		this.props = {
 			mode: 'adv',
 		};
@@ -27,10 +33,10 @@ class TextBox extends Component {
 		}
 	}
 
-	render (): string {
+	override async render (): Promise<string> {
 		// In NVL mode, we don't want a static type-writer element
 		// as dialogs will be appended dynamically
-		const typeWriterElement = (this.props as { mode: string }).mode === 'nvl' ? '' : '<type-writer data-ui="say" data-content="dialog"></type-writer>';
+		const typeWriterElement = this.props.mode === 'nvl' ? '' : '<type-writer data-ui="say" data-content="dialog"></type-writer>';
 
 		return `
 			<div data-content="name">

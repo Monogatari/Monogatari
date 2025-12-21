@@ -1,6 +1,15 @@
-import { ScreenComponent } from '../../lib/ScreenComponent';
+import ScreenComponent, { ScreenState } from '../../lib/ScreenComponent';
+import type { Properties } from '@aegis-framework/pandora';
 
-class LoadingScreen extends ScreenComponent {
+interface LoadingScreenProps extends Properties {
+	max: number;
+}
+
+interface LoadingScreenState extends ScreenState {
+	progress: number;
+}
+class LoadingScreen extends ScreenComponent<LoadingScreenProps, LoadingScreenState> {
+  static override tag = 'loading-screen';
 	constructor () {
 		super();
 
@@ -14,55 +23,30 @@ class LoadingScreen extends ScreenComponent {
 		};
 	}
 
-	didMount (): Promise<void> {
-		
-		(this.engine as any).on('willPreloadAssets', () => {
-			this.setState({
-				open: true
-			});
-		});
+	override async didMount() {
+    const engine = this.engine;
 
-		
-		(this.engine as any).on('assetQueued', () => {
-			const max = (this.props as { max: number }).max;
-			this.setProps({
-				max: max + 1
-			});
-		});
-
-		
-		(this.engine as any).on('didPreloadAssets', () => {
-			this.setState({
-				open: false
-			});
-		});
-
-		
-		(this.engine as any).on('assetLoaded', () => {
-			const progress = (this.state as { progress: number }).progress;
-			this.setState({
-				progress: progress + 1
-			});
-		});
-		return Promise.resolve();
+		engine.on('willPreloadAssets', () => this.setState({ open: true }));
+		engine.on('assetQueued', () => this.setProps({ max: this.props.max + 1 }));
+    engine.on('didPreloadAssets', () => this.setState({ open: false }));
+		engine.on('assetLoaded', () => this.setState({ progress: this.state.progress + 1 }));
 	}
 
-	override onStateUpdate (property: string, oldValue: unknown, newValue: unknown): Promise<void> {
+	override async onStateUpdate (property: string, oldValue: unknown, newValue: unknown) {
 		super.onStateUpdate(property, oldValue, newValue);
+
 		if (property === 'progress') {
 			this.content('progress').value(newValue as string);
 		}
-		return Promise.resolve();
 	}
 
-	onPropsUpdate (property: string, _oldValue: unknown, newValue: unknown): Promise<void> {
+	override async onPropsUpdate (property: string, _oldValue: unknown, newValue: unknown) {
 		if (property === 'max') {
 			this.content('progress').attribute('max', newValue as number);
 		}
-		return Promise.resolve();
 	}
 
-	render (): string {
+	override render (): string {
 		return `
 			<div data-content="wrapper">
 				<h2 data-string="Loading" data-content="title">Loading</h2>
@@ -72,7 +56,5 @@ class LoadingScreen extends ScreenComponent {
 		`;
 	}
 }
-
-LoadingScreen.tag = 'loading-screen';
 
 export default LoadingScreen;

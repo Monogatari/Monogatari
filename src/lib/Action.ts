@@ -5,8 +5,9 @@ import type {
   ActionRunContext,
   ActionRevertContext,
   SaveSlot,
-  MonogatariEngine,
 } from './types';
+
+import type Monogatari from '../monogatari';
 
 /**
  * An action describes the functionality for a Monogatari statement, when Monogatari
@@ -115,27 +116,28 @@ class Action {
 	/**
 	 * Reference to the Monogatari engine (set by engine on registration)
 	 */
-	static engine: MonogatariEngine;
+	static engine: typeof Monogatari;
 
 	/**
 	 * The original statement this action was instantiated with
 	 */
-	protected _statement: string | string[] | Record<string, unknown> | ((...args: unknown[]) => unknown) | undefined;
+	_statement: string | string[] | Record<string, unknown> | ((...args: unknown[]) => unknown) | undefined;
 
 	/**
 	 * Current cycle: 'Application' or 'Revert'
 	 */
-	protected _cycle: string | undefined;
+	_cycle: 'Application' | 'Revert' | undefined;
 
 	/**
 	 * Extra context passed to the action
 	 */
-	protected _extras: Record<string, unknown> | undefined;
+	_extras: Record<string, unknown> | undefined;
 
 	/**
 	 * Context reference (usually the Monogatari class)
+   * @deprecated - This property is deprecated and will be removed in a future version. Use the engine property instead.
 	 */
-	context: MonogatariEngine | undefined;
+	context: typeof Monogatari | undefined;
 
 	/**
 	 * @static configuration - A simple function providing access to the configuration
@@ -152,15 +154,15 @@ class Action {
 	 * object.
 	 */
 	static configuration (object: string | Configuration | null = null): Configuration | unknown {
-		if (object !== null) {
-			if (typeof object === 'string') {
-				return this._configuration[object];
-			} else {
-				this._configuration = Object.assign({}, this._configuration, object);
-			}
-		} else {
-			return this._configuration;
-		}
+		if (object === null) {
+      return this._configuration;
+    }
+
+    if (typeof object === 'string') {
+      return this._configuration[object];
+    }
+
+    this._configuration = Object.assign({}, this._configuration, object);
 	}
 
 	/**
@@ -169,11 +171,13 @@ class Action {
 	 * all actions if it's ok to proceed. Every action should implement its own
 	 * logic for it according to its requirements.
 	 *
+	 * @param {Object} options - Options for proceeding
+	 * @param {boolean} options.userInitiated - Whether the proceed was initiated by user click
+	 * @param {boolean} options.skip - Whether skip mode is active
+	 * @param {boolean} options.autoPlay - Whether auto-play mode is active
 	 * @return {Promise} - Resolved if proceeding is alright or rejected if its not
 	 */
-	static shouldProceed (): Promise<void> {
-		return Promise.resolve();
-	}
+	static async shouldProceed (_options?: { userInitiated?: boolean; skip?: boolean; autoPlay?: boolean }): Promise<void> {}
 
 	/**
 	 * @static willProceed - Once the shouldProceed check is passed, each action
@@ -182,9 +186,7 @@ class Action {
 	 *
 	 * @return {Promise}
 	 */
-	static willProceed (): Promise<void> {
-		return Promise.resolve();
-	}
+	static async willProceed (): Promise<void> {}
 
 	/**
 	 * @static shouldRollback - Similarly to the shouldProceed () function, this one takes
@@ -194,9 +196,7 @@ class Action {
 	 *
 	 * @return {Promise} - Resolved if going back is alright or rejected if its not
 	 */
-	static shouldRollback (): Promise<void> {
-		return Promise.resolve();
-	}
+	static async shouldRollback (): Promise<void> {}
 
 	/**
 	 * @static willRollback - Once the shouldRollback check is passed, each action
@@ -205,9 +205,7 @@ class Action {
 	 *
 	 * @return {Promise}
 	 */
-	static willRollback (): Promise<void> {
-		return Promise.resolve();
-	}
+	static async willRollback (): Promise<void> {}
 
 	/**
 	 * @static onStart - This function acts as an event listener for when the game
@@ -217,9 +215,7 @@ class Action {
 	 *
 	 * @return {Promise}
 	 */
-	static onStart (): Promise<void> {
-		return Promise.resolve();
-	}
+	static async onStart (): Promise<void> {}
 
 	/**
 	 * @static onLoad - This function acts as an event listener for when a game
@@ -230,9 +226,7 @@ class Action {
 	 *
 	 * @return {Promise}  description
 	 */
-	static onLoad (): Promise<void> {
-		return Promise.resolve();
-	}
+	static async onLoad (): Promise<void> {}
 
 	/**
 	 * @static onSave - This function acts as an event listener for when a game
@@ -246,9 +240,7 @@ class Action {
 	 *
 	 * @return {Promise}  description
 	 */
-	static onSave (_slot?: SaveSlot): Promise<void> {
-		return Promise.resolve();
-	}
+	static async onSave (_slot?: SaveSlot): Promise<void> {}
 
 	/**
 	 * @static reset - When a game ends using the 'end' statement or before a game
@@ -259,9 +251,7 @@ class Action {
 	 *
 	 * @return {Promise} - Result of the reset operation
 	 */
-	static reset (): Promise<void> {
-		return Promise.resolve();
-	}
+	static async reset (): Promise<void> {}
 
 	/**
 	 * @static setup - The setup is the first step of the Mounting cycle, all
@@ -271,9 +261,7 @@ class Action {
 	 *                             initialized
 	 * @return {Promise} - Result of the setup operation
 	 */
-	static setup (_selector?: string): Promise<void> {
-		return Promise.resolve();
-	}
+	static async setup (_selector?: string): Promise<void> {}
 
 	/**
 	 * @static bind - The binding is the second step of the Mounting cycle, all
@@ -284,9 +272,7 @@ class Action {
 	 *                             initialized
 	 * @return {Promise} - Result of the binding operation
 	 */
-	static bind (_selector?: string): Promise<void> {
-		return Promise.resolve();
-	}
+	static async bind (_selector?: string): Promise<void> {}
 
 	/**
 	 * @static init - The initialization is the last step of the Mounting cycle,
@@ -296,9 +282,7 @@ class Action {
 	 *                             initialized
 	 * @return {Promise} - Result of the initialization operation
 	 */
-	static init (_selector?: string): Promise<void> {
-		return Promise.resolve();
-	}
+	static async init (_selector?: string): Promise<void> {}
 
 	/**
 	 * @static match - Currently this function is saved up for future uses.
@@ -334,21 +318,12 @@ class Action {
 		return false;
 	}
 
-	static beforeRun (_context: ActionRunContext): Promise<void> {
-		return Promise.resolve();
-	}
+	static async beforeRun (_context: ActionRunContext): Promise<void> {}
+	static async beforeRevert (_context: ActionRevertContext): Promise<void> {}
 
-	static beforeRevert (_context: ActionRevertContext): Promise<void> {
-		return Promise.resolve();
-	}
+	static async afterRun (_context: ActionRunContext): Promise<void> {}
 
-	static afterRun (_context: ActionRunContext): Promise<void> {
-		return Promise.resolve();
-	}
-
-	static afterRevert (_context: ActionRevertContext): Promise<void> {
-		return Promise.resolve();
-	}
+	static async afterRevert (_context: ActionRevertContext): Promise<void> {}
 
 	/**
 	 * constuctor - Once the action has been matched through one of the match
@@ -358,20 +333,18 @@ class Action {
 	 *
 	 * @param  {string[]|Object} statement - The statement it matched
 	 */
-	constructor (_statement?: string[] | Record<string, unknown>) {
-		// Statement is set via _setStatement
-	}
+	constructor (_statement?: string[] | Record<string, unknown>) {}
 
 	/**
 	 * The engine to which this action registered to.
 	 *
 	 * @type {Monogatari}
 	 */
-	get engine (): MonogatariEngine {
+	get engine (): typeof Monogatari {
 		return (this.constructor as typeof Action).engine;
 	}
 
-	set engine (_value: MonogatariEngine) {
+	set engine (_value: typeof Monogatari) {
 		throw new Error('Component engine reference is hold at static level and cannot be modified.');
 	}
 
@@ -380,10 +353,12 @@ class Action {
 	 * the action will always be the Monogatari class. This is mainly used for
 	 * cases where the action can't import or reference directly the Monogatari
 	 * class so it can simply use this.context instead.
+   *
+   * @deprecated - This function is deprecated and will be removed in a future version. Use the engine property instead.
 	 *
 	 * @param  {Monogatari} context - The Monogatari Class
 	 */
-	setContext (context: MonogatariEngine): void {
+	setContext (context: typeof Monogatari): void {
 		this.context = context;
 	}
 
@@ -410,7 +385,7 @@ class Action {
 	 * @param  {string} cycle - 'Application' if the action is running the application
 	 * cycle or 'Revert' if it's running the revert cycle.
 	 */
-	_setCycle (cycle: string): void {
+	_setCycle (cycle: 'Application' | 'Revert'): void {
 		this._cycle = cycle;
 	}
 
@@ -421,8 +396,10 @@ class Action {
 	 *
 	 * @param {Object} extras
 	 */
-	setExtras (extras: Record<string, unknown>): void {
+	setExtras (extras: Record<string, unknown>): Record<string, unknown> {
 		this._extras = extras;
+
+    return this._extras;
 	}
 
 	/**
@@ -432,9 +409,7 @@ class Action {
 	 * returns a rejected promise, the cycle will be interrupted and the action
 	 * will not be applied.
 	 */
-	willApply (): Promise<void> {
-		return Promise.resolve();
-	}
+	async willApply (): Promise<void> {}
 
 	/**
 	 * apply - Method for the actual application of an action, this is where
@@ -442,9 +417,7 @@ class Action {
 	 *
 	 * @return {Promise} - Result of the application operation
 	 */
-	apply (): Promise<void> {
-		return Promise.resolve();
-	}
+	async apply (): Promise<void> {}
 
 	/**
 	 * didApply - If the cycle has reached this far, it means the action has
@@ -455,10 +428,10 @@ class Action {
 	 * it should resolve to a boolean value, true if the game should go to the
 	 * next statement right away, false if it should wait for user's interaction.
 	 */
-	didApply (): Promise<ActionApplyResult> {
-		return Promise.resolve({
+	async didApply (options?: { updateHistory?: boolean; updateState?: boolean }): Promise<ActionApplyResult> {
+		return {
 			advance: false
-		});
+		};
 	}
 
 	/**
@@ -468,9 +441,7 @@ class Action {
 	 *
 	 * @return {Promsie} - Result of the interruption
 	 */
-	interrupt (): Promise<void> {
-		return Promise.resolve();
-	}
+	async interrupt (): Promise<void> {}
 
 	/**
 	 * willRevert - Method called before an action is reverted
@@ -479,9 +450,7 @@ class Action {
 	 * returns a rejected promise, the cycle will be interrupted and the action
 	 * will not be reverted.
 	 */
-	willRevert (): Promise<void> {
-		return Promise.resolve();
-	}
+	async willRevert (): Promise<void> {}
 
 	/**
 	 * revert - Method called for the actual reversion of an action, this is where
@@ -489,9 +458,7 @@ class Action {
 	 *
 	 * @return {Promise} - Result of the reversion operation
 	 */
-	revert (): Promise<void> {
-		return Promise.resolve();
-	}
+	async revert (): Promise<void> {}
 
 	/**
 	 * didApply - If the cycle has reached this far, it means the action has
@@ -502,13 +469,12 @@ class Action {
 	 * it should resolve to a boolean value, true if the game should go to the
 	 * previous statement right away, false if it should wait for user's interaction.
 	 */
-	didRevert (): Promise<ActionRevertResult> {
-		return Promise.resolve({
+	async didRevert (): Promise<ActionRevertResult> {
+		return {
 			advance: false,
 			step: true
-		});
+		};
 	}
 }
 
-export { Action };
-
+export default Action;

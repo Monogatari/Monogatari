@@ -1,6 +1,36 @@
-import { Component } from '../../lib/Component';
+import type { Properties } from '@aegis-framework/pandora';
 
-class TypeCharacter extends Component {
+import Component from '../../lib/Component';
+
+/**
+ * Props for TypeCharacter component.
+ * Either displays a single character OR a void HTML element.
+ */
+export interface TypeCharacterProps extends Properties {
+	/** The character to display (false if this is a void element) */
+	letter: string | false;
+	/** Marks this as a <br> void element */
+	br?: boolean;
+	/** Marks this as a <hr> void element */
+	hr?: boolean;
+	/** Marks this as an <img> void element */
+	img?: boolean;
+}
+
+/**
+ * State for TypeCharacter component.
+ */
+export interface TypeCharacterState extends Properties {
+	/** Enclosed action IDs that apply to this character (e.g., { "style-123": true }) */
+	special?: Record<string, boolean>;
+	/** For void elements: HTML attributes like src, alt, class, etc. */
+	[key: string]: unknown;
+}
+
+/** The void element types supported */
+type VoidElementType = 'br' | 'hr' | 'img';
+
+class TypeCharacter extends Component<TypeCharacterProps, TypeCharacterState> {
 	constructor () {
 		super();
 
@@ -9,27 +39,31 @@ class TypeCharacter extends Component {
 		};
 	}
 
+	/**
+	 * Get the void element type if this character represents one.
+	 */
+	private _getVoidElementType (): VoidElementType | null {
+		if (this.props.br) return 'br';
+		if (this.props.hr) return 'hr';
+		if (this.props.img) return 'img';
+		return null;
+	}
+
 	render (): string {
-		const letter = (this.props as { letter: string | false }).letter;
+		const { letter } = this.props;
+		const voidType = this._getVoidElementType();
 
-		const _props = (this as any)._props as Record<string, unknown>;
+		// Render void element
+		if (voidType) {
+			const attrs = Object.entries(this.state)
+				.filter(([key, value]) => value !== undefined && key !== 'special')
+				.map(([key, value]) => `${key}="${value}"`)
+				.join(' ');
 
-		const _state = (this as any)._state as Record<string, unknown>;
-
-		const props = Object.keys(_props).map(e => (e !== 'letter' ? e : false));
-
-		if (props[1]) {
-			let text = props[1] as string;
-
-			if (Object.values(_state).length) {
-				text += ' ' + Object.entries(_state)
-					.map(([key, value]) => value && key === text ? `${key}="${value}"` : '')
-					.join(' ');
-			}
-
-			return `<${text} />`;
+			return attrs ? `<${voidType} ${attrs} />` : `<${voidType} />`;
 		}
 
+		// Render character
 		return letter || '';
 	}
 }
