@@ -161,6 +161,7 @@ context ('Pause', function () {
 			cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 0);
 
 			cy.load(1).then(() => {
+				cy.wait(100); // Add a small delay to ensure media is properly restored
 				cy.wrap (this.monogatari).invoke ('state', 'music').should ('deep.equal', [{ statement: 'play music theme', paused: true }]);
 				cy.wrap (this.monogatari).invoke ('history', 'music').should ('deep.equal', ['play music theme']);
 				cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 1);

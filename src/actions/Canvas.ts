@@ -159,59 +159,25 @@ export class Canvas extends Action {
 
 	override async willApply(): Promise<void> {
 		if (Canvas._configuration.modes.indexOf(this.mode) === -1) {
-			FancyError.show(
-				`The canvas mode provided ("${this.mode}") is not valid.`,
-				`Monogatari attempted to show a canvas object but the mode "${this.mode}" was not found in the canvas action configuration as a valid mode.`,
-				{
-					'Mode Provided': this.mode,
-					'You may have meant one of these': (this.constructor as any)._configuration.modes,
-					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
-					'Label': this.engine.state('label'),
-					'Step': this.engine.state('step'),
-					'Help': {
-						'_': 'Check your statement and make sure there are no typos on the mode you provided.'
-					}
-				}
-			);
+			FancyError.show('action:canvas:invalid_mode', {
+				mode: this.mode,
+				validModes: (this.constructor as any)._configuration.modes,
+				statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
 			return Promise.reject('Invalid canvas mode provided.');
 		}
 
 		this.object = Canvas.objects(this.name);
 
 		if (typeof this.object !== 'object') {
-			FancyError.show(
-				`The canvas object "${this.name}" was not found or is invalid`,
-				`Monogatari attempted to retrieve an object named "${this.name}" but it didn't exist in the canvas objects.`,
-				{
-					'Canvas': this.name,
-					'You may have meant': Object.keys(Canvas.objects()),
-					'Label': this.engine.state('label'),
-					'Step': this.engine.state('step'),
-					'Help': {
-						'_': 'Check the object\'s name is correct and that you have defined it previously. A canvas object is defined as follows:',
-						'_1': `
-							<pre>
-								<code class='language-javascript'>
-									this.engine.action ('Canvas').objects ({
-										stars: {
-											start: () => {},
-											stop: () => {},
-											restart: () => {},
-											layers: [],
-											state: {},
-											props: {}
-										}
-									});
-								</code>
-							</pre>
-						`,
-						'_2': 'Notice the object defined uses a name or an id, in this case it was set to "stars" and to show it, you must use that exact name:',
-						'_3': `
-							<pre><code class='language-javascript'>"show canvas stars background"</code></pre>
-						`
-					}
-				}
-			);
+			FancyError.show('action:canvas:object_not_found', {
+				name: this.name,
+				availableObjects: Object.keys(Canvas.objects()),
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
 
 			return Promise.reject('Canvas object did not exist or is invalid');
 		}

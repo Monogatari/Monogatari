@@ -26,27 +26,12 @@ export class Vibrate extends Action {
 					if (!isNaN(Number(time[i]))) {
 						this.time[i] = parseInt(time[i]);
 					} else {
-						FancyError.show(
-							'The specified time was not an integer',
-							'Monogatari attempted to transform the given time into an integer value but failed.',
-							{
-								'Specified time': time[i],
-								'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
-								'Label': this.engine.state('label'),
-								'Step': this.engine.state('step'),
-								'Help': {
-									'_': 'Check if the value you provided is actually an integer (whole number). Remember the value used must be given in milliseconds and must not be mixed with characters other than numbers.',
-									'_1': 'For example, the following statement would make the device vibrate for 5 seconds:',
-									'_3': `
-										<pre><code class='language-javascript'>"vibrate 5000"</code></pre>
-									`,
-									'_4': 'If you wanted to make the device vibrate on a pattern, this is a correct syntax:',
-									'_5': `
-										<pre><code class='language-javascript'>"vibrate 5000 100 4000 200 3000"</code></pre>
-									`
-								}
-							}
-						);
+						FancyError.show('action:vibrate:invalid_time', {
+							time: time[i],
+							statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+							label: this.engine.state('label'),
+							step: this.engine.state('step')
+						});
 					}
 				}
 			} else {

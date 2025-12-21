@@ -123,7 +123,7 @@ class GalleryScreen extends ScreenComponent<Properties, GalleryScreenState> {
 			</div>
 			<button class='fas fa-arrow-left top left' data-action='back'></button>
 			<h2 data-string='Gallery'>Gallery</h2>
-			<div class='row row--spaced text--center' data-ui="gallery">
+			<div data-ui="gallery">
 				${images}
 			</div>
 		`;

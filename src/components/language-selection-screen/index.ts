@@ -116,28 +116,10 @@ class LanguageSelectionScreen extends ScreenComponent<LanguageSelectionScreenPro
 						</button>
 					`;
 				} else {
-					FancyError.show(
-						`Metadata for language "${language}" could not be found.`,
-						'Monogatari attempted to retrieve the metadata for this language but it does not exists',
-						{
-							'Language Not Found': language,
-							'You may have meant one of these': Object.keys(this.engine._script),
-							'Help': {
-								'_': 'Please check that you have defined the metadata for this language. Remember the metadata is defined as follows:',
-								'_1': `
-									<pre>
-										<code class='language-javascript'>
-										monogatari.languageMetadata ("Español", {
-											"code": "es",
-											"icon": "🇲🇽"
-										});
-										</code>
-									</pre>
-								`,
-								'Documentation': '<a href="https://developers.monogatari.io/documentation/v/develop/configuration-options/game-configuration/internationalization/" target="_blank">Internationalization</a>'
-							}
-						}
-					);
+					FancyError.show('component:language_selection_screen:metadata_not_found', {
+						language: language,
+						availableLanguages: Object.keys(this.engine._script)
+					});
 					return '';
 				}
 			}).filter(Boolean);

@@ -577,62 +577,19 @@ class Monogatari {
 			if (typeof this._translations[language][key] !== 'undefined') {
 				return this._translations[language][key];
 			} else {
-				FancyError.show (
-					`Translation for string "${key}" could not be found`,
-					'Monogatari attempted to find a translation for the current language set in the preferences but there was none.',
-					{
-						'String Not Found': key,
-						'Language': language,
-						'Found in these elements': $_(`[data-string="${key}"]`).collection,
-						'You may have meant one of these': Object.keys (this._translations[language]),
-						'Help': {
-							'_': 'Please check that this string has been correctly defined in your translations. A translation is defined as follows:',
-							'_1': `
-								<pre>
-									<code class='language-javascript'>
-									monogatari.translation ("YourLanguage", {
-										"SomeString": "Your Translation"
-									});
-									</code>
-								</pre>
-							`,
-							'_2': 'You may also want to check if the [data-string] property of the HTML elements above is correct or if they have a typo.',
-							'Documentation': '<a href="https://developers.monogatari.io/documentation/v/develop/configuration-options/game-configuration/internationalization/" target="_blank">Internationalization</a>'
-						}
-					}
-				);
+				FancyError.show ('engine:translation:key_not_found', {
+					key: key,
+					language: language,
+					elements: $_(`[data-string="${key}"]`).collection,
+					availableStrings: Object.keys (this._translations[language])
+				});
 			}
 		} else {
-			FancyError.show (
-				'Language could not be found',
-				`Monogatari attempted to translate the UI using the current language set in the preferences but no translations could be found
-				for it.`,
-				{
-					'Problematic Language': language,
-					'You may have meant one of these': Object.keys (this._translations),
-					'Help': {
-						'_': 'Please check if you have defined correctly the translations for this language, translations are defined as follows:',
-						'_1': `
-							<pre>
-								<code class='language-javascript'>
-								monogatari.translation ("YourLanguage", {
-									"SomeString": "Your Translation"
-								});
-								</code>
-							</pre>
-						`,
-						'_2': 'You may also want to check if the value of your language selector is right:',
-						'_3': `
-							<pre>
-								<code class='language-markup'>
-								${$_('[data-action="set-language"]').value ()}
-								</code>
-							</pre>
-						`,
-						'Documentation': '<a href="https://developers.monogatari.io/documentation/v/develop/configuration-options/game-configuration/internationalization/" target="_blank">Internationalization</a>'
-					}
-				}
-			);
+			FancyError.show ('engine:translation:language_not_found', {
+				language: language,
+				availableLanguages: Object.keys (this._translations),
+				languageSelectorValue: `<pre><code class='language-markup'>${$_('[data-action="set-language"]').value ()}</code></pre>`
+			});
 		}
 	}
 
@@ -776,28 +733,14 @@ class Monogatari {
 	 * component must have an unique ID.
 	 */
 	static registerComponent (component: StaticMonogatariComponent) {
-
-    Registry.register(component.tag, component);
 		const alreadyRegistered = this.components ().findIndex (c => c.tag === component.tag) > -1;
 
 		if (typeof window.customElements.get (component.tag) !== 'undefined') {
-			FancyError.show (
-				`Unable to register component "${component.tag}"`,
-				'Monogatari attempted to register a component but another component had already been registered for the same tag.',
-				{
-					'Component / Tag': component,
-					'Help': {
-						'_': 'Once a component for a tag has been registered and the setup has completed, it can not be replaced or removed. Try removing the conflicting component first:',
-						'_1': `
-							<pre>
-								<code class='language-javascript'>
-									monogatari.unregisterComponent ('${component.tag}')
-								</code>
-							</pre>
-						`,
-					}
-				}
-			);
+			FancyError.show ('engine:component:already_registered', {
+				tag: component.tag,
+				component: component,
+				unregisterCode: `<pre><code class='language-javascript'>monogatari.unregisterComponent ('${component.tag}')</code></pre>`
+			});
 		}
 
 		component.engine = this;
@@ -806,7 +749,7 @@ class Monogatari {
 			// Remove the previous one
 			this.unregisterComponent (component.tag);
 		} else if (!alreadyRegistered && this.global ('_didSetup')) {
-			window.customElements.define (component.tag, component);
+      Registry.register(component.tag, component);
 		}
 
 		this._components.push (component);
@@ -824,17 +767,9 @@ class Monogatari {
 		if (!this.global ('_didSetup')) {
 			this._components = this.components ().filter ((c) => c.tag.toLowerCase() !== component.toLowerCase());
 		} else {
-			FancyError.show (
-				`Unable to unregister component "${component}"`,
-				'Monogatari attempted to unregister a component but the setup had already happened.',
-				{
-					'Component': component,
-					'Help': {
-						'_': 'Components can only be unregistered before the setup step is completed.',
-						'_1': 'Try performing this action before the <code class="language-javascript">monogatari.init ()</code> function is called.'
-					}
-				}
-			);
+			FancyError.show ('engine:component:unregister_after_setup', {
+				component: component
+			});
 		}
 	}
 
@@ -1156,54 +1091,11 @@ class Monogatari {
 			if (this.setting ('MultiLanguage') === true) {
 				if (!Object.keys (script).includes (language)) {
 					// First check if the label exists in the current script
-					FancyError.show (
-						`Script Language "${language}" Was Not Found`,
-						'Monogatari attempted to retrieve the script for this language but it does not exists',
-						{
-							'Language Not Found': language,
-							'MultiLanguage Setting': 'The Multilanguage Setting is set to '+ this.setting ('MultiLanguage'),
-							'You may have meant one of these': Object.keys (script),
-							'Help': {
-								'_': 'If your game is not a multilanguage game, change the setting on your options.js file',
-								'_1': `
-									<pre>
-										<code class='language-javascript'>
-										"MultiLanguage": false,
-										</code>
-									</pre>
-								`,
-								'_2': 'If your game is a multilanguage game, please check that the language label is correctly written on your script. Remember a multilanguage script looks like this:',
-								'_3': `
-									<pre>
-										<code class='language-javascript'>
-										monogatari.script ({
-											'English': {
-												'Start': [
-													'Hi, welcome to your first Visual Novel with Monogatari.'
-												]
-											},
-											'Español': {
-												'Start': [
-													'Hola, bienvenido a tu primer Novela Visual con Monogatari'
-												]
-											}
-										});
-										</code>
-									</pre>
-								`,
-								'Documentation': '<a href="https://developers.monogatari.io/documentation/v/develop/configuration-options/game-configuration/internationalization/" target="_blank">Internationalization</a>',
-								'_4': `If ${language} should not be the default language, you can change that preference on your options.js file.`,
-								'_5': `
-									<pre>
-										<code class='language-javascript'>
-										'Language': 'English',
-										</code>
-									</pre>
-								`,
-
-							}
-						}
-					);
+					FancyError.show ('engine:script:language_not_found', {
+						language: language,
+						multiLanguageSetting: 'The Multilanguage Setting is set to '+ this.setting ('MultiLanguage'),
+						availableLanguages: Object.keys (script)
+					});
 				} else {
 					script = script[language] as Record<string, unknown>;
 				}
@@ -1599,20 +1491,12 @@ class Monogatari {
 					if (typeof data === 'object' && data !== null && name in data) {
 						data = (data as Record<string, unknown>)[name];
 					} else {
-						FancyError.show (
-							`Variable "${match}" does not exists in your storage`,
-							'Monogatari attempted to interpolate a variable from your storage but it doesn\'t exists.',
-							{
-								'Script Statement': statement,
-								'Part Not Found': name,
-								'Variables Available in Storage': typeof data === 'object' && data !== null ? Object.keys (data) : [],
-								'Help': {
-									'_': 'Please check your storage object and make sure the variable you are using exists.',
-									'_1': 'You should also make sure that there is no typo in your script and that the variable names in your script and storage match.',
-									'Documentation': '<a href="https://developers.monogatari.io/documentation/v/develop/building-blocks/data-storage/" target="_blank">Storage</a>'
-								}
-							}
-						);
+						FancyError.show ('engine:storage:variable_not_found', {
+							variable: match,
+							statement: statement,
+							partNotFound: name,
+							availableVariables: typeof data === 'object' && data !== null ? Object.keys (data) : []
+						});
 						return '';
 					}
 				}
@@ -1621,38 +1505,6 @@ class Monogatari {
 			return this.replaceVariables (statement);
 		}
 		return statement;
-	}
-
-	/**
-	 * @static getMaxSlotId - Get the highest ID currently assigned to a slot on
-	 * the storage.
-	 *
-	 * Each slot identifier has two parts i.e SaveLabel_{number}, it's label,
-	 * defined by the 'SaveLabel' and 'AutoSaveLabel' configuration variables and
-	 * a number similar to an auto-incrementing ID on a database. This function
-	 * is used to retrieve the highest number assigned to a slot, given its
-	 * label prefix.
-	 *
-	 * @param {string} prefix - The Slot prefix from where to retrieve the numeric ID,
-	 * should be the value of either the 'SaveLabel' or 'AutoSaveLabel' configuration
-	 * variables.
-	 *
-	 * @returns {int} - Highest available ID number
-	 */
-	static getMaxSlotId (prefix = 'SaveLabel'): Promise<number> {
-		return this.Storage.keys ().then ((keys) => {
-			let max = 1;
-			const prefixValue = this.setting (prefix) as string;
-			for (const saveKey of keys) {
-				if (saveKey.indexOf (prefixValue) === 0) {
-					const number = parseInt(saveKey.split (prefixValue + '_')[1]);
-					if (number > max) {
-						max = number;
-					}
-				}
-			}
-			return max;
-		});
 	}
 
 	/**
@@ -1668,48 +1520,44 @@ class Monogatari {
 	 *
 	 * @returns {Promise} - The promise of the save operation
 	 */
-	static saveTo (prefix = 'SaveLabel', id: number | null = null, name: string | null = null): Promise<unknown> | undefined {
+	static async saveTo (prefix = 'SaveLabel', id: number | null = null, name: string | null = null): Promise<unknown> {
 		// Check if the player is actually playing
-		if (this.global ('playing')) {
-			const date = DateTime.now().toISO();
-
-			if (name === null || name.trim () === '') {
-				name = date;
-			}
-
-			// We have to get the last ID available for the slots
-			return this.getMaxSlotId (prefix).then ((max) => {
-
-				// Make it the next one to the max
-				if (id === null) {
-					id = max + 1;
-				}
-
-				let image = '';
-
-				const backgroundState = this.state ('background') as string | undefined;
-				const sceneState = this.state ('scene') as string | undefined;
-
-				if (backgroundState) {
-					image = backgroundState.split (' ')[2];
-				} else if (sceneState) {
-					image = sceneState.split (' ')[2];
-				}
-
-				return this.Storage.set (`${this.setting (prefix)}_${id}`, {
-					name,
-					date,
-					image,
-					game: this.object ()
-				}).then ((response) => {
-					if (response instanceof Response) {
-						return Promise.resolve (response.json ());
-					}
-
-					return Promise.resolve (response);
-				});
-			});
+		if (!this.global ('playing')) {
+			return;
 		}
+
+    const now = DateTime.now();
+    const date = now.toISO();
+    const timestamp = now.toMillis();
+    const gameData = this.object();
+
+    if (name === null || name.trim () === '') {
+      name = date;
+    }
+
+    let image = '';
+
+    const backgroundState = this.state ('background');
+    const sceneState = this.state ('scene');
+
+    if (backgroundState) {
+      image = backgroundState.split (' ')[2];
+    } else if (sceneState) {
+      image = sceneState.split (' ')[2];
+    }
+
+    const response = await this.Storage.set (`${this.setting (prefix)}_${id || timestamp}`, {
+      name,
+      date,
+      image,
+      game: gameData
+    });
+
+    if (response instanceof Response) {
+      return Promise.resolve (response.json ());
+    }
+
+    return Promise.resolve (response);
 	}
 
 	/**
@@ -2326,11 +2174,11 @@ class Monogatari {
           error['Error Message'] = e;
         }
 
-        FancyError.show (
-          'An error occurred while trying to run a Function.',
-          'Monogatari attempted to run a function on the script but an error occurred.',
-          error
-        );
+        FancyError.show ('engine:run:function_error', {
+          label: String(this.state ('label')),
+          step: Number(this.state ('step')),
+          ...error
+        });
 
         this.debug.trace ();
         this.debug.groupEnd ();
@@ -2663,16 +2511,9 @@ class Monogatari {
 			} catch (e) {
 				console.error (e);
 				const errorMessage = e instanceof Error ? e.message : String(e);
-				FancyError.show (
-					'An error ocurred while trying to execute a shouldProceed function.',
-					'Monogatari attempted to execute the function but an error ocurred.',
-					{
-						'Error Message': errorMessage,
-						'Help': {
-							'_': 'More details should be available at the console.',
-						}
-					}
-				);
+				FancyError.show ('engine:lifecycle:should_proceed_error', {
+					errorMessage: errorMessage
+				});
 			}
 
 			this.debug.debug ('Checking Extra Conditions');
@@ -2727,16 +2568,9 @@ class Monogatari {
 		} catch (e) {
 			console.error (e);
 			const errorMessage = e instanceof Error ? e.message : String(e);
-			FancyError.show (
-				'An error ocurred while trying to execute a willProceed function.',
-				'Monogatari attempted to execute the function but an error ocurred.',
-				{
-					'Error Message': errorMessage,
-					'Help': {
-						'_': 'More details should be available at the console.',
-					}
-				}
-			);
+			FancyError.show ('engine:lifecycle:will_proceed_error', {
+				errorMessage: errorMessage
+			});
 		}
 
 		return Promise.all (promises).then ((...args) => {
@@ -2843,16 +2677,9 @@ class Monogatari {
 			}  catch (e) {
 				console.error (e);
 				const errorMessage = e instanceof Error ? e.message : String(e);
-				FancyError.show (
-					'An error ocurred while trying to execute a shouldRollback function.',
-					'Monogatari attempted to execute the function but an error ocurred.',
-					{
-						'Error Message': errorMessage,
-						'Help': {
-							'_': 'More details should be available at the console.',
-						}
-					}
-				);
+				FancyError.show ('engine:lifecycle:should_rollback_error', {
+					errorMessage: errorMessage
+				});
 			}
 
 			return Promise.all (promises).then ((...args) => {
@@ -2895,16 +2722,9 @@ class Monogatari {
 		} catch (e) {
 			console.error (e);
 			const errorMessage = e instanceof Error ? e.message : String(e);
-			FancyError.show (
-				'An error ocurred while trying to execute a willRollback function.',
-				'Monogatari attempted to execute the function but an error ocurred.',
-				{
-					'Error Message': errorMessage,
-					'Help': {
-						'_': 'More details should be available at the console.',
-					}
-				}
-			);
+			FancyError.show ('engine:lifecycle:will_rollback_error', {
+				errorMessage: errorMessage
+			});
 		}
 
 		return Promise.all (promises).then ((...args) => {
@@ -2976,24 +2796,10 @@ class Monogatari {
 				});
 			} else {
 				const musicAssets = this.assets ('music') as Record<string, unknown> | undefined;
-				FancyError.show (
-					`The music "${mainScreenMusic}" is not defined.`,
-					'Monogatari attempted to find a definition of a music asset but there was none.',
-					{
-						'Music Not Found': mainScreenMusic,
-						'You may have meant one of these': Object.keys (musicAssets ?? {}),
-						'Help': {
-							'_': 'Please check that you have correctly defined this music asset and wrote its name correctly in the `MainScreenMusic` variable',
-							'_1': `
-								<pre>
-									<code class='language-javascript'>
-									'MainScreenMusic': 'TheKeyToYourMusicAsset'
-									</code>
-								</pre>
-							`,
-						}
-					}
-				);
+				FancyError.show ('engine:music:not_defined', {
+					music: mainScreenMusic,
+					availableMusic: Object.keys (musicAssets ?? {})
+				});
 			}
 		}
 	}
@@ -3120,6 +2926,7 @@ class Monogatari {
 	}
 
 	static setup (selector: string): Promise<void | undefined> {
+    const components = this.components();
 
 		// Set the initial settings if they don't exist or load them from the
 		// Storage if they do.
@@ -3141,28 +2948,16 @@ class Monogatari {
 
 		return loadPreferencesPromise.then(() => {
 			// Define all the components that were registered to this point
-			for (const component of this.components ()) {
-				if (typeof window.customElements.get (component.tag) === 'undefined') {
+			for (const component of components) {
+				try {
 					component.engine = this;
-					window.customElements.define (component.tag, component);
-				} else {
-					FancyError.show (
-						`Unable to register component "${component.tag}"`,
-						'Monogatari attempted to register a component but another component had already been registered for the same tag.',
-						{
-							'Component / Tag': component,
-							'Help': {
-								'_': 'Once a component for a tag has been registered and the setup has completed, it can not be replaced or removed. Try removing the conflicting component first:',
-								'_1': `
-									<pre>
-										<code class='language-javascript'>
-											monogatari.unregisterComponent ('${component.tag}')
-										</code>
-									</pre>
-								`,
-							}
-						}
-					);
+					Registry.register(component.tag, component);
+				} catch (e) {
+					FancyError.show ('engine:component:already_registered', {
+						tag: component.tag,
+						component: component,
+						unregisterCode: `<pre><code class='language-javascript'>monogatari.unregisterComponent ('${component.tag}')</code></pre>`
+					});
 				}
 			}
 
@@ -3297,6 +3092,7 @@ class Monogatari {
 				action.engine = this;
 				promises.push (action.setup (selector));
 			}
+
 			return Promise.all (promises).then (() => {
 				this.global ('_didSetup', true);
 				return Promise.resolve ();
@@ -3458,8 +3254,6 @@ class Monogatari {
 		this.on ('click', '[data-action]', function (this: HTMLElement, event) {
 			const element = $_(this);
 
-      console.log(event);
-
 			const action = element.data ('action');
 
 			if (action) {
@@ -3522,7 +3316,7 @@ class Monogatari {
 			const proportionHeight = parseInt(h);
 			if (!(Platform.electron && forceAspectRatio === 'Global')) {
 				this.resize (null, proportionWidth, proportionHeight);
-				$_(window as unknown as string).on ('resize', () => this.resize (null, proportionWidth, proportionHeight));
+        window.addEventListener('resize', () => this.resize (null, proportionWidth, proportionHeight));
 			}
 		}
 
@@ -3579,25 +3373,7 @@ class Monogatari {
 		// main element when the DOM has not been loaded yet, thus causing an
 		// error since the element does not exists yet.
 		if (exists === false && handled === false) {
-			FancyError.show (
-				'Main element is not ready yet',
-				'Monogatari attempted to execute a function when the main element was not fully loaded yet.',
-				{
-					'Trace': 'You should be able to see an error with the order in which functions were executed in your browser\'s console (Ctrl + Shift + i). The last one should be part of your code and that\'s the one that needs to be changed.',
-					'Help': {
-						'_': 'Please wrap or move your code into a $_ready () function block to wait for the page to be fully loaded before executing it.',
-						'_1': `
-							<pre>
-								<code class='language-javascript'>
-								monogatari.ready ('#monogatari', () => {
-									// Your code should go here
-								});
-								</code>
-							</pre>
-						`
-					}
-				}
-			);
+			FancyError.show ('engine:element:not_ready', {});
 		}
 
 		return element;
@@ -3663,17 +3439,10 @@ class Monogatari {
 				this.showSplashScreen ();
 			} else {
 				const scriptData = this.script () as Record<string, unknown> | undefined;
-				FancyError.show (
-					`"${this.setting ('Label')}" Label was not found`,
-					'Monogatari tried to get your start label but it couldn\'t find it in your script.',
-					{
-						'Start Label on your Settings': this.setting ('Label'),
-						'Labels Available': Object.keys (scriptData ?? {}),
-						'Help': {
-							'_': 'Please check that the label exists in your script.'
-						}
-					}
-				);
+				FancyError.show ('engine:script:label_not_found', {
+					startLabel: this.setting ('Label'),
+					availableLabels: Object.keys (scriptData ?? {})
+				});
 			}
 		});
 	}
@@ -3697,20 +3466,12 @@ class Monogatari {
 
 		// Centralized error handling for component errors
 		Registry.onError ((error, component, tag, lifecycle) => {
-			FancyError.show (
-				`Error in component <${tag}> during ${lifecycle}`,
-				`An error occurred while executing the ${lifecycle} lifecycle method.`,
-				{
-					'Component': tag,
-					'Lifecycle Method': lifecycle,
-					'Error Message': error.message,
-					'Stack Trace': error.stack,
-					'Help': {
-						'_': 'Check the console for more details about this error.',
-						'_1': 'Make sure all async operations in lifecycle methods are properly handled.'
-					}
-				}
-			);
+			FancyError.show ('engine:component:lifecycle_error', {
+				tag: tag,
+				lifecycle: lifecycle,
+				errorMessage: error.message,
+				stackTrace: error.stack
+			});
 			// Also log to console for debugging
 			console.error (`[Monogatari] Component error in <${tag}> during ${lifecycle}:`, error);
 		});

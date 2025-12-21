@@ -118,6 +118,7 @@ export class Play extends Action {
 	static override async onLoad(): Promise<void> {
 		const mediaPlayers = Object.keys(this.engine.mediaPlayers());
 		const promises: Promise<unknown>[] = [];
+		const pausedMedia: { type: string; media: string }[] = [];
 
 		for (const mediaType of mediaPlayers) {
 			const state = this.engine.state(mediaType as keyof import('../lib/types').StateMap) as MediaStateItem[] | undefined;
@@ -134,6 +135,15 @@ export class Play extends Action {
 							});
 
 							promises.push(promise);
+
+							// Track media that should be paused after restore
+							if (s.paused) {
+								const parts = s.statement.split(' ');
+								// Statement format: "play <type> <media> [options]"
+								if (parts.length >= 3) {
+									pausedMedia.push({ type: parts[1], media: parts[2] });
+								}
+							}
 						}
 					}
 				}
@@ -142,6 +152,14 @@ export class Play extends Action {
 
 		if (promises.length > 0) {
 			await Promise.all(promises);
+		}
+
+		// Restore paused state for media that was paused when saved
+		for (const { type, media } of pausedMedia) {
+			const player = this.engine.mediaPlayer(type, media);
+			if (player) {
+				player.pause();
+			}
 		}
 	}
 

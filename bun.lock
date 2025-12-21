@@ -7,7 +7,7 @@
       "dependencies": {
         "@aegis-framework/artemis": "^0.5.1",
         "@aegis-framework/kayros.css": "^0.5.1",
-        "@aegis-framework/pandora": "^0.4.1",
+        "@aegis-framework/pandora": "^0.4.2",
         "@fortawesome/fontawesome-free": "^7.1.0",
         "@tsparticles/engine": "^3.9.1",
         "@tsparticles/slim": "^3.9.1",
@@ -41,7 +41,7 @@
 
     "@aegis-framework/kayros.css": ["@aegis-framework/kayros.css@0.5.1", "", {}, "sha512-Wbn44PhzgItTQ3PHYp5plAjYIf+pLJjfeQ5hcZT0gcljPgZcWZ0CFSUOpVudQOCdRMO+Eu2BpFMSB9xB4AcgnQ=="],
 
-    "@aegis-framework/pandora": ["@aegis-framework/pandora@0.4.1", "", { "dependencies": { "lit-html": "^3.0.0" } }, "sha512-py8AgIWqUCzPl/VXLnQhfiN8J8tvZt3769oJGEHzD+tG6kIEL2O2yU0fzCWPV7luxSLGJqlPTqYh2ZaQ5Up4mw=="],
+    "@aegis-framework/pandora": ["@aegis-framework/pandora@0.4.2", "", { "dependencies": { "lit-html": "^3.0.0" } }, "sha512-uNZO7Lhct+ouKbGqPz1XwFxcDGD8WCgzFpW3QVxC6WrMhN8xul+8GAjcMxj8hLHraesgCPU0oJYBy4W1U32Bvw=="],
 
     "@babel/helper-string-parser": ["@babel/helper-string-parser@7.27.1", "", {}, "sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA=="],
 

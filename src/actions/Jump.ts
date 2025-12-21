@@ -37,20 +37,13 @@ export class Jump extends Action {
 			return Promise.resolve();
 		}
 
-			FancyError.show(
-			`The label "${this.label}" does not exist`,
-			`Monogatari attempted to jump to the label named "${this.label}" but it wasn't found on the script.`,
-			{
-				'Missing Label': this.label,
-				'You may have meant one of these': Object.keys(this.engine.script() as Record<string, unknown>),
-				'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
-				'Label': this.engine.state('label'),
-				'Step': this.engine.state('step'),
-				'Help': {
-					'_': 'Check if the label in your jump statement is correct and that you have also defined it correctly.'
-				}
-			}
-		);
+		FancyError.show('action:jump:label_not_found', {
+			targetLabel: this.label,
+			availableLabels: Object.keys(this.engine.script() as Record<string, unknown>),
+			statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+			label: this.engine.state('label'),
+			step: this.engine.state('step')
+		});
 
 		throw new Error('Label does not exist.');
 	}

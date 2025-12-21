@@ -117,20 +117,13 @@ export class Video extends Action {
 
 	override async willApply(): Promise<void> {
 		if (Video._configuration.modes.indexOf(this.mode) === -1) {
-			FancyError.show(
-				`The video mode provided ("${this.mode}") is not valid.`,
-				`Monogatari attempted to play a video but the mode "${this.mode}" was not found in the video action configuration as a valid mode.`,
-				{
-					'Mode Provided': this.mode,
-					'You may have meant one of these': Video._configuration.modes,
-					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
-					'Label': this.engine.state('label'),
-					'Step': this.engine.state('step'),
-					'Help': {
-						'_': 'Check your statement and make sure there are no typos on the mode you provided.'
-					}
-				}
-			);
+			FancyError.show('action:video:invalid_mode', {
+				mode: this.mode,
+				validModes: Video._configuration.modes,
+				statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
 			throw new Error('Invalid video mode provided.');
 		}
 	}

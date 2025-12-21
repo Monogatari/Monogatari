@@ -6,28 +6,30 @@ export class Choice extends Action {
 	static override id = 'Choice';
 
 	static override async setup(): Promise<void> {
-		this.engine.global('_CurrentChoice', []);
-		this.engine.global('_ChoiceTimer', []);
-
-		this.engine.global('_choice_pending_rollback', []);
-		this.engine.global('_choice_just_rolled_back', []);
+    this.engine.globals({
+      _CurrentChoice: [],
+      _ChoiceTimer: [],
+      _choice_pending_rollback: [],
+      _choice_just_rolled_back: [],
+    });
 
 		this.engine.history('choice');
 	}
 
 
 	static override async afterRevert(): Promise<void> {
+    const engine = this.engine;
 		// When a choice gets reverted, it pushes a `true` value to this global variable.
 		// As soon as it gets reverted, this function is run and it pops the `true` out of
 		// the array, meaning it was just reverted and the choice should be showing on screeen again.
-		if (this.engine.global('_choice_just_rolled_back').pop()) {
-			return Promise.resolve();
+		if (engine.global('_choice_just_rolled_back').pop()) {
+			return;
 		}
 
 		// If the player reverts once more while the choice is being shown, then we'll reach this part
 		// and we can clean up any variables we need to.
-		if (this.engine.global('_choice_pending_rollback').pop()) {
-			this.engine.global('_ChoiceTimer').pop();
+		if (engine.global('_choice_pending_rollback').pop()) {
+			engine.global('_ChoiceTimer').pop();
 		}
 	}
 
@@ -101,11 +103,14 @@ export class Choice extends Action {
 	}
 
 	static override async reset(): Promise<void> {
-		this.engine.global('_CurrentChoice', []);
-		this.engine.global('_ChoiceTimer', []);
+    const engine = this.engine;
+    engine.globals({
+      _CurrentChoice: [],
+      _ChoiceTimer: [],
 
-		this.engine.global('_choice_pending_rollback', []);
-		this.engine.global('_choice_just_rolled_back', []);
+      _choice_pending_rollback: [],
+      _choice_just_rolled_back: [],
+    });
 	}
 
 	static override matchObject(statement: any): boolean {

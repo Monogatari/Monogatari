@@ -28,20 +28,13 @@ export class HideCharacterLayer extends Action {
 			this.parent = this.engine.element().find(`[data-character="${this.asset}"]`).last();
 			this.element = this.parent.find(`[data-layer="${this.layer}"]`).last();
 		} else {
-			FancyError.show(
-				`The character "${this.asset}" does not exist`,
-				`Monogatari attempted to get information about the character "${this.asset}" but it wasn't found on the characters object.`,
-				{
-					'Missing Character': this.asset,
-					'You may have meant one of these': Object.keys(this.engine.characters()),
-					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
-					'Label': this.engine.state('label'),
-					'Step': this.engine.state('step'),
-					'Help': {
-						'_': 'Check your characters object and your script to make sure the character exists and that it does not have a typo in it.'
-					}
-				}
-			);
+			FancyError.show('action:hide_character_layer:character_not_found', {
+				asset: this.asset,
+				availableCharacters: Object.keys(this.engine.characters()),
+				statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
 		}
 
 		if (typeof classes !== 'undefined') {
@@ -55,21 +48,14 @@ export class HideCharacterLayer extends Action {
 	override async willApply(): Promise<void> {
 
 		if (!this.element.exists()) {
-			FancyError.show(
-				`The character layer "${this.layer}" can't hide because it's not being shown`,
-				`Monogatari attempted to hide the layer "${this.layer}" of the character "${this.asset}" but it was not being shown.`,
-				{
-					'Missing Layer': this.layer,
-					'Character': this.asset,
-					'You may have meant one of these': Object.keys(this.engine.characters()),
-					'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
-					'Label': this.engine.state('label'),
-					'Step': this.engine.state('step'),
-					'Help': {
-						'_': 'Check that before this hide action you have a show action that shows the character you want to hide.'
-					}
-				}
-			);
+			FancyError.show('action:hide_character_layer:layer_not_shown', {
+				layer: this.layer,
+				asset: this.asset,
+				availableCharacters: Object.keys(this.engine.characters()),
+				statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
 			throw new Error('Attempted to hide a character that was not being shown.');
 		}
 	}

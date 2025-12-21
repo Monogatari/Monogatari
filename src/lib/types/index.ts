@@ -293,6 +293,22 @@ export interface FancyErrorProps {
 }
 
 /**
+ * Error template for registered errors
+ */
+export interface ErrorTemplate {
+  title: string;
+  message: string;
+  props: FancyErrorProps;
+}
+
+/**
+ * Context object for error template interpolation
+ */
+export interface ErrorContext {
+  [key: string]: unknown;
+}
+
+/**
  * Queued error object
  */
 export interface QueuedError {

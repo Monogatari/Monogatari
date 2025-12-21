@@ -316,6 +316,7 @@ export class ShowCharacterLayer extends Action {
 								await action.apply();
 								await action.didApply({ updateHistory: false, updateState: true });
 							}
+							return;
 						}
 
 

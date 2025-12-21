@@ -57,36 +57,12 @@ export class Message extends Action {
 			}
 			return Promise.resolve();
 		} else {
-			FancyError.show(
-				`The message "${this.id}" was not found`,
-				`Monogatari attempted to retrieve a message named "${this.id}" but it didn't exist in the messages object.`,
-				{
-					'Message': this.id,
-					'You may have meant': Object.keys(Message.messages()),
-					'Label': this.engine.state('label'),
-					'Step': this.engine.state('step'),
-					'Help': {
-						'_': 'Check the message name is correct and that you have defined it previously. A Message is defined as follows:',
-						'_1': `
-							<pre>
-								<code class='language-javascript'>
-									this.engine.action ('message').mesages ({
-										'Welcome': {
-											title: 'Welcome!',
-											subtitle: 'This is the Monogatari VN Engine',
-											body: 'This is where the magic gets done!'
-										}
-									});
-								</code>
-							</pre>
-						`,
-						'_2': 'Notice the message defined uses a name or an id, in this case it was set to "Welcome" and to show it, you must use that exact name:',
-						'_3': `
-							<pre><code class='language-javascript'>"show message Welcome"</code></pre>
-						`
-					}
-				}
-			);
+			FancyError.show('action:message:not_found', {
+				id: this.id,
+				availableMessages: Object.keys(Message.messages()),
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
 		}
 
 		return Promise.reject();

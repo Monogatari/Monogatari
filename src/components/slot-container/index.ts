@@ -7,7 +7,7 @@ import Component from '../../lib/Component';
  */
 export interface SlotContainerProps extends Properties {
 	type: 'load' | 'save';
-	label: string;
+	label?: string;
 }
 
 /**
@@ -23,7 +23,9 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 	static override bind(): Promise<void> {
 		this.engine.registerListener('overwrite-slot', {
 			callback: (element: unknown) => {
-				const customName = $_(element as HTMLElement).closest('[data-content="context"]').value()?.trim() ?? '';
+				// Find the modal wrapper first, then find the input within it
+				const wrapper = $_(element as HTMLElement).closest('[data-content="wrapper"]');
+				const customName = wrapper.find('[data-content="context"]').value()?.trim() ?? '';
 				if (customName !== '') {
 					this.engine.saveTo('SaveLabel', this.engine.global('overwrite_slot') as number, customName);
 
@@ -39,8 +41,8 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 		super();
 
 		this.props = {
-			type: 'load',
-			label: ''
+			type: undefined as unknown as 'load' | 'save',
+			label: undefined
 		};
 
 		this.state = {
@@ -49,7 +51,6 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 	}
 
 	override willMount(): Promise<void> {
-		this.classList.add('row', 'row--spaced');
 		const fullLabel = `${this.props.label}_`;
 
 		return (this.engine.Storage.each((key: string, value: unknown) => {
@@ -89,7 +90,10 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 	override didMount(): Promise<void> {
 		const engine = this.engine;
 
-		if (this.props.type === 'load') {
+		// Read type from attribute directly because of props proxy priority issue
+		const type = this.getAttribute('type') || this.props.type;
+
+		if (type === 'load') {
 			// Load a saved game slot when it is pressed
 			this.element().on('click', '[data-component="save-slot"]', function(this: HTMLElement, event: Event) {
 				const target = event.target as HTMLElement;
@@ -103,7 +107,7 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 					}
 				}
 			});
-		} else if (this.props.type === 'save') {
+		} else if (type === 'save') {
 			const self = this;
 			// Save to slot when a slot is pressed.
 			this.element().on('click', '[data-component="save-slot"]', function(this: HTMLElement, event: Event) {
@@ -143,6 +147,7 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 		}
 
 		this.engine.Storage.onCreate((key: string, value: unknown) => {
+      console.log(key, value);
 			// We only want to react to those items that we believe are save files
 			// by their key and making sure they're an actual object
 			if (key.indexOf(`${this.props.label}_`) === 0) {

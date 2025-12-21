@@ -3,9 +3,6 @@ import Component from '../../lib/Component';
 import { Text } from '@aegis-framework/artemis';
 import { DateTime } from 'luxon';
 
-/**
- * Save slot data interface
- */
 interface SaveSlotData {
 	name?: string;
 	date: string;
@@ -24,11 +21,8 @@ interface SaveSlotData {
 	};
 }
 
-/**
- * Props for SaveSlot component
- */
 interface SaveSlotProps extends Properties {
-	slot: string;
+	slot?: string;
 	name: string;
 	date: string;
 	screenshot: string;
@@ -96,7 +90,7 @@ class SaveSlot extends Component<SaveSlotProps, Properties> {
 	constructor() {
 		super();
 		this.props = {
-			slot: '',
+			slot: undefined,
 			name: '',
 			date: '',
 			screenshot: '',
@@ -107,9 +101,13 @@ class SaveSlot extends Component<SaveSlotProps, Properties> {
 	}
 
 	override willMount(): Promise<void> {
-		this.classList.add('row__column', 'row_column--6', 'row__column--tablet--4', 'row__column--desktop--3', 'row__column--desktop-large--2');
+		const slotKey = this.props.slot;
+		if (!slotKey) {
+			this.engine.debug.error('SaveSlot: No slot key provided');
+			return Promise.resolve();
+		}
 
-		return this.engine.Storage.get(this.props.slot).then((rawData: unknown) => {
+		return this.engine.Storage.get(slotKey).then((rawData: unknown) => {
 			const data = rawData as SaveSlotData;
 			this.data = data;
 

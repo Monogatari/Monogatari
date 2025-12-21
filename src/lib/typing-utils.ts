@@ -1,6 +1,6 @@
 /**
  * Shared utilities for typing animation components.
- * Used by both TypeWriter (component) and MonoTyped (standalone).
+ * Used by the TypeWriter component.
  */
 
 // ============================================================================
@@ -206,4 +206,5 @@ export function createAnimationTimingState (): AnimationTimingState {
 export function humanizeSpeed (speed: number): number {
 	return Math.round((Math.random() * speed) / 2) + speed;
 }
+
 

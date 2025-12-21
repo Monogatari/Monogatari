@@ -60,10 +60,7 @@ class CreditsScreen extends ScreenComponent<CreditsScreenProps, ScreenState> {
 			const content = this.props.credits[section];
 
 			if (typeof content === 'string') {
-				return `
-					<p class='row row--spaced'>
-						<span class="row__column row__column--phone--12">${content}</span>
-					</p>`;
+				return `<p><span>${content}</span></p>`;
 			}
 
 			for (const key of Object.keys(content)) {
@@ -79,14 +76,9 @@ class CreditsScreen extends ScreenComponent<CreditsScreenProps, ScreenState> {
 				}
 
 				if (title.indexOf('_') === 0) {
-					html += `<p class='row row--spaced'>
-								<span class="row__column row__column--phone--12">${value}</span>
-							</p>`;
+					html += `<p><span>${value}</span></p>`;
 				} else {
-					html += `<p class='row row--spaced'>
-								<b class="row__column row__column--phone--6">${title}</b>
-								<span class="row__column row__column--phone--6">${value}</span>
-							</p>`;
+					html += `<p><b>${title}</b><span>${value}</span></p>`;
 				}
 			}
 			html += '</div>';

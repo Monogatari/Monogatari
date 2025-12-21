@@ -455,6 +455,7 @@ export class ShowCharacter extends Action {
 								}
 							}
 						}
+						return;
 					} else {
 						if (typeof this.image === 'object') {
 							for (let j = characterLayerHistory.length - 1; j >= 0; j--) {
@@ -477,6 +478,7 @@ export class ShowCharacter extends Action {
 							await action.apply();
 							await action.didApply({ updateHistory: false, updateState: true });
 						}
+						return;
 					}
 				}
 				break;

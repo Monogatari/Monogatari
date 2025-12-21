@@ -32,10 +32,6 @@ export * as RandomJS from 'random-js';
 
 export * as Luxon from 'luxon';
 
-import Typed from './lib/MonoTyped.js';
-export { Typed };
-
-
 import Monogatari from './monogatari.js';
 
 /**

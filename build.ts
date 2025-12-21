@@ -2,8 +2,10 @@ import { mkdir } from 'fs/promises';
 import { join } from 'path';
 
 const OUT_DIR_BROWSER = './dist/engine/core';
+const OUT_DIR_DEBUG = './dist/engine/debug';
 const OUT_DIR_MODULE = './lib';
 const SRC_DIR = './src';
+const DEBUG_DIR = './debug';
 
 const commonBuildOptions = {
 	target: 'browser' as const,
@@ -61,6 +63,33 @@ async function buildBrowser(): Promise<void> {
 	}
 
 	console.log('✅ Browser bundle built successfully');
+}
+
+/**
+ * Build the debug script for browser
+ */
+async function buildDebug(): Promise<void> {
+	console.log('🐛 Building debug script...');
+
+	const result = await Bun.build({
+		entrypoints: [join(DEBUG_DIR, 'index.js')],
+		outdir: OUT_DIR_DEBUG,
+		naming: 'debug.js',
+		target: 'browser',
+		format: 'iife',
+		sourcemap: 'linked',
+		minify: true,
+	});
+
+	if (!result.success) {
+		console.error('❌ Debug build failed:');
+		for (const log of result.logs) {
+			console.error(log);
+		}
+		process.exit(1);
+	}
+
+	console.log('✅ Debug script built successfully');
 }
 
 /**
@@ -136,8 +165,9 @@ async function watchMode(): Promise<void> {
 const args = process.argv.slice(2);
 const flags = new Set(args);
 
-// Ensure output directory exists
+// Ensure output directories exist
 await mkdir(OUT_DIR_BROWSER, { recursive: true });
+await mkdir(OUT_DIR_DEBUG, { recursive: true });
 await mkdir(OUT_DIR_MODULE, { recursive: true });
 
 // Execute based on flags
@@ -149,6 +179,8 @@ if (flags.has('--watch')) {
 	await buildBrowser();
 } else if (flags.has('--css')) {
 	await buildCSS();
+} else if (flags.has('--debug')) {
+	await buildDebug();
 } else if (flags.has('--types')) {
 	await buildTypes();
 } else {
@@ -159,6 +191,7 @@ if (flags.has('--watch')) {
 		buildModule(),
 		buildBrowser(),
 		buildCSS(),
+		buildDebug(),
 	]);
 
 	await buildTypes();

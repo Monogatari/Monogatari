@@ -8,6 +8,7 @@ interface LoadingScreenProps extends Properties {
 interface LoadingScreenState extends ScreenState {
 	progress: number;
 }
+
 class LoadingScreen extends ScreenComponent<LoadingScreenProps, LoadingScreenState> {
   static override tag = 'loading-screen';
 	constructor () {

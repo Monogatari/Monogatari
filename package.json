@@ -59,7 +59,7 @@
 	"dependencies": {
 		"@aegis-framework/artemis": "^0.5.1",
 		"@aegis-framework/kayros.css": "^0.5.1",
-		"@aegis-framework/pandora": "^0.4.1",
+		"@aegis-framework/pandora": "^0.4.2",
 		"@fortawesome/fontawesome-free": "^7.1.0",
 		"@tsparticles/engine": "^3.9.1",
 		"@tsparticles/slim": "^3.9.1",

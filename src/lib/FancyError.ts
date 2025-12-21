@@ -1,5 +1,5 @@
 import { $_, Text, Util, $_ready } from '@aegis-framework/artemis';
-import type { FancyErrorProps, QueuedError } from './types';
+import type { FancyErrorProps, QueuedError, ErrorTemplate, ErrorContext } from './types';
 
 declare const Prism: { highlightAll: () => void } | undefined;
 declare const MonogatariDebug: object | undefined;
@@ -10,6 +10,58 @@ declare const MonogatariDebug: object | undefined;
  */
 export class FancyError {
 	static queue: QueuedError[] = [];
+	static registry: Map<string, ErrorTemplate> = new Map();
+
+	/**
+	 * Register an error template by ID.
+	 * IDs follow the convention: type:identifier:error_id (snake_case)
+	 * Examples:
+	 *   - action:jump:label_not_found
+	 *   - component:language_selection_screen:metadata_not_found
+	 *   - engine:translation:key_not_found
+	 */
+	static register (id: string, template: ErrorTemplate): void {
+		FancyError.registry.set(id, template);
+	}
+
+	/**
+	 * Interpolate placeholders in a string with context values.
+	 * Placeholders use the format: {{key}}
+	 */
+	private static interpolate (text: string, context: ErrorContext): string {
+		return text.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+			const value = context[key];
+			if (value === undefined) {
+				return match; // Keep placeholder if no value provided
+			}
+			return String(value);
+		});
+	}
+
+	/**
+	 * Deep interpolate an object, replacing all string placeholders with context values.
+	 */
+	private static interpolateProps (props: FancyErrorProps, context: ErrorContext): FancyErrorProps {
+		const result: FancyErrorProps = {};
+
+		for (const key of Object.keys(props)) {
+			const value = props[key];
+
+			if (typeof value === 'string') {
+				result[key] = FancyError.interpolate(value, context);
+			} else if (Array.isArray(value)) {
+				result[key] = value.map(item =>
+					typeof item === 'string' ? FancyError.interpolate(item, context) : item
+				);
+			} else if (typeof value === 'object' && value !== null && !(value instanceof NodeList)) {
+				result[key] = FancyError.interpolateProps(value as FancyErrorProps, context);
+			} else {
+				result[key] = value;
+			}
+		}
+
+		return result;
+	}
 
 	static init (): void {
 		// Reserved for future initialization
@@ -53,8 +105,45 @@ export class FancyError {
 		}
 	}
 
-	static show (title: string = 'Error', message: string = 'An error has ocurred! Please check the console so you get more insight.', props: FancyErrorProps = {}): void {
+	/**
+	 * Show an error by registered ID with context, or with explicit title/message/props.
+	 *
+	 * Usage with registered error ID:
+	 *   FancyError.show('action:jump:label_not_found', { label: 'my_label', step: 5 });
+	 *
+	 * Usage with explicit parameters (legacy):
+	 *   FancyError.show('Error Title', 'Error message', { prop: 'value' });
+	 */
+	static show (idOrTitle: string, contextOrMessage?: ErrorContext | string, propsArg?: FancyErrorProps): void {
 		if (typeof MonogatariDebug === 'object') {
+			let title: string;
+			let message: string;
+			let props: FancyErrorProps;
+
+			// Check if this is a registered error ID
+			const template = FancyError.registry.get(idOrTitle);
+
+			if (template && typeof contextOrMessage !== 'string') {
+				// ID-based call: FancyError.show('error:id', { context })
+				const context = (contextOrMessage || {}) as ErrorContext;
+				title = FancyError.interpolate(template.title, context);
+				message = FancyError.interpolate(template.message, context);
+				props = FancyError.interpolateProps(template.props, context);
+
+				// Merge any additional context properties that look like display props
+				// (keys starting with capital letter or containing spaces) into the final props
+				for (const key of Object.keys(context)) {
+					if (/^[A-Z]/.test(key) || key.includes(' ')) {
+						props[key] = context[key];
+					}
+				}
+			} else {
+				// Legacy call: FancyError.show('title', 'message', { props })
+				title = idOrTitle || 'Error';
+				message = (contextOrMessage as string) || 'An error has ocurred! Please check the console so you get more insight.';
+				props = propsArg || {};
+			}
+
 			const id = Util.uuid();
 
 			const object: QueuedError = {

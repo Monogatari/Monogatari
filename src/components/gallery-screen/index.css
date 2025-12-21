@@ -23,6 +23,13 @@ gallery-screen {
 			background-position: center;
 		}
 	}
+
+  [data-ui="gallery"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+  }
 }
 
 @media screen and (min-width: 37.56255em) {

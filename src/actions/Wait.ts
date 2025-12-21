@@ -18,23 +18,12 @@ export class Wait extends Action {
 			this.time = parseInt(time);
 		} else {
 			if (typeof time !== 'undefined') {
-				FancyError.show(
-					'The specified time was not an integer',
-					'Monogatari attempted to transform the given time into an integer value but failed.',
-					{
-						'Specified time': time,
-						'Statement': `<code class='language=javascript'>"${this._statement}"</code>`,
-						'Label': this.engine.state('label'),
-						'Step': this.engine.state('step'),
-						'Help': {
-							'_': 'Check if the value you provided is actually an integer (whole number). Remember the value used must be given in milliseconds and must not be mixed with characters other than numbers.',
-							'_1': 'For example, the following statement would make the game wait for 5 seconds:',
-							'_3': `
-								<pre><code class='language-javascript'>"wait 5000"</code></pre>
-							`
-						}
-					}
-				);
+				FancyError.show('action:wait:invalid_time', {
+					time: time,
+					statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+					label: this.engine.state('label'),
+					step: this.engine.state('step')
+				});
 			}
 		}
 	}

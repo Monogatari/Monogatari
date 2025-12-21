@@ -27,6 +27,7 @@ const { $_ready, $_ } = Monogatari;
 
 // 1. Outside the $_ready function:
 
+monogatari.debug.level(5);
 
 $_ready (() => {
 	// 2. Inside the $_ready function:

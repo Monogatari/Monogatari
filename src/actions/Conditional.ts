@@ -82,26 +82,18 @@ export class Conditional extends Action {
 
 			if (typeof returnValue === 'number') {
 				if (returnValue < 0) {
-					FancyError.show(
-						`Conditional condition returned a negative numer "${returnValue}".`,
-						`The \`Condition\` function returned "${returnValue}" and only positive numbers are allowed for numeric values.`,
-						{
-							'Problematic Value': returnValue,
-							'You may have meant one of these': Object.keys(this.statement).filter(b => b !== 'Condition')
-						}
-					);
+					FancyError.show('action:conditional:negative_value', {
+						value: returnValue,
+						availableBranches: Object.keys(this.statement).filter(b => b !== 'Condition')
+					});
 					throw new Error('Invalid negative value');
 				}
 
 				if (!Number.isInteger(returnValue)) {
-					FancyError.show(
-						`Conditional condition returned a non-integer value "${returnValue}".`,
-						`The \`Condition\` function returned "${returnValue}" and only integer numbers are allowed for numeric values.`,
-						{
-							'Problematic Value': returnValue,
-							'You may have meant one of these': Object.keys(this.statement).filter(b => b !== 'Condition')
-						}
-					);
+					FancyError.show('action:conditional:non_integer_value', {
+						value: returnValue,
+						availableBranches: Object.keys(this.statement).filter(b => b !== 'Condition')
+					});
 					throw new Error('Invalid non-integer value');
 				}
 
@@ -121,14 +113,10 @@ export class Conditional extends Action {
 				const branch = this.statement[returnValue];
 
 				if (typeof branch === 'undefined') {
-					FancyError.show(
-						`Conditional attempted to execute a non existent branch "${returnValue}"`,
-						`The \`Condition\` function returned "${returnValue}" as the branch to execute but it does not exist.`,
-						{
-							'Problematic Branch': returnValue,
-							'You may have meant one of these': Object.keys(this.statement).filter(b => b !== 'Condition')
-						}
-					);
+					FancyError.show('action:conditional:branch_not_found', {
+						branch: returnValue,
+						availableBranches: Object.keys(this.statement).filter(b => b !== 'Condition')
+					});
 					throw new Error('Non existent branch');
 				}
 
