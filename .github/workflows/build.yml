@@ -5,6 +5,7 @@ on:
     branches:
       - develop
     paths:
+      - '**.ts'
       - '**.js'
       - '**.json'
       - '**.css'
@@ -13,27 +14,14 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
+          bun-version: latest
       - name: Install Dependencies
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: install # will run `yarn install` command
+        run: bun install
       - name: Build Core
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: build # will run `yarn build` command
-      - name: Commit changed files
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: Update engine core
-          branch: develop
-          file_pattern: dist/engine/core
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bun run build

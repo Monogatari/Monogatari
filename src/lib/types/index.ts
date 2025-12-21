@@ -1,11 +1,3 @@
-/**
- * Monogatari Type Definitions
- */
-
-import type { DOM, EventCallback } from '@aegis-framework/artemis';
-import type { Component as ComponentBase } from '@aegis-framework/pandora';
-import type Monogatari from '../../monogatari';
-import type ActionInstance from '../Action';
 import type TimerDisplayComponent from './../../components/timer-display';
 /**
  * Generic configuration object type
@@ -208,6 +200,10 @@ export interface GlobalsMap {
   _ChoiceTimer: unknown[];
   _choice_pending_rollback: boolean[];
   _choice_just_rolled_back: boolean[];
+
+  // Conditional state
+  _conditional_pending_rollback: boolean[];
+  _conditional_just_rolled_back: boolean[];
 
   // Index signature for extension and backward compatibility
   [key: string]: unknown;
@@ -432,176 +428,8 @@ export interface AudioPlayerOptions {
 
 export type Constructor<T = object> = new (...args: any[]) => T;
 
-
-export type StaticMonogatariComponent = typeof ComponentBase & {
-  tag: string;
-  engine: typeof Monogatari;
-  _experimental: boolean;
-  _configuration: Configuration;
-  _priority: number;
-
-  // Lifecycle static methods
-  setup: (...args: unknown[]) => Promise<void>;
-  bind: (selector?: string) => Promise<void>;
-  init: (...args: unknown[]) => Promise<void>;
-  onStart: () => Promise<void>;
-  onLoad: () => Promise<void>;
-  onSave: () => Promise<void>;
-  onReset: () => Promise<unknown[]>;
-
-  // Proceed/Rollback hooks
-  shouldProceed: (options?: { userInitiated?: boolean; skip?: boolean; autoPlay?: boolean }) => Promise<void[] | void>;
-  willProceed: () => Promise<unknown[]>;
-  shouldRollback: () => Promise<unknown[] | void>;
-  willRollback: () => Promise<unknown[] | void>;
-
-  // Constructor - uses HTMLElement as base to be compatible with all component types
-  new (...args: any[]): HTMLElement;
-}
-
-/**
- * Type for Action class constructors (not instances)
- */
-
-
-/**
- * Listener definition for game events
- */
-export interface GameListener {
-  name: string;
-  keys?: string | string[];
-  callback: (...args: unknown[]) => unknown;
-}
-
-/**
- * Monogatari engine interface (forward declaration)
- * This is a comprehensive interface that matches the Monogatari class implementation
- */
-export interface MonogatariEngine {
-  // Configuration methods
-  configuration: (key?: string | Record<string, unknown>, object?: Record<string, unknown>) => unknown;
-  setting: (key: string, value?: unknown) => unknown;
-  preference: (key: string, value?: unknown) => unknown;
-  preferences: (object?: Record<string, unknown>, save?: boolean) => Record<string, unknown> | undefined;
-
-  // DOM methods - element() returns DOM by default, HTMLElement only when pure=true
-  element: {
-    (): DOM;
-    (pure: true, handled?: boolean): HTMLElement | null;
-    (pure: false, handled?: boolean): DOM;
-    (pure?: boolean, handled?: boolean): DOM | HTMLElement | null;
-  };
-  on: (event: string, target: string | EventCallback, callback?: EventCallback) => DOM | MonogatariEngine;
-  off: (event: string, callback: EventCallback) => DOM | MonogatariEngine;
-  trigger: (event: string, detail?: Record<string, unknown>) => void;
-  all: () => DOM;
-  instances: () => DOM;
-
-  // Listener/Action registration
-  registerListener: (name: string, listener: Partial<GameListener>, replace?: boolean) => void;
-  unregisterListener: (name: string) => void;
-  registerAction: (action: ActionInstance, naturalPosition?: boolean) => void;
-  unregisterAction: (action: string) => void;
-
-  // Audio methods
-  playAmbient: () => void;
-  stopAmbient: () => void;
-
-  // Global state
-  global: (key: string, value?: unknown) => unknown;
-  globals: (obj?: Record<string, unknown>) => Record<string, unknown>;
-
-  // History and state
-  history: {
-    (): Record<string, unknown[]>;
-    (key: string): unknown[];
-    (object: Record<string, unknown[]>): void;
-  };
-  state: {
-    (): Record<string, unknown>;
-    (key: string): Array<unknown>;
-    (object: Record<string, unknown>): Record<string, unknown>;
-  };
-
-  // Component/Action access
-  component: (name: string) => StaticMonogatariComponent | undefined;
-  action: (id: string) => ActionInstance | undefined;
-  actions: () => ActionInstance[];
-  components: () => StaticMonogatariComponent[];
-
-  // Character and asset access
-  character: (id: string, object?: Record<string, unknown>) => unknown;
-  characters: (object?: Record<string, unknown>) => Record<string, unknown>;
-  asset: (type: string, name: string, value?: unknown) => string | undefined;
-  assets: (type?: string, object?: Record<string, string>) => Record<string, Record<string, string>> | Record<string, string> | undefined;
-
-  // Media player methods
-  mediaPlayers: (type?: string, object?: boolean) => Record<string, Record<string, unknown>> | unknown[] | Record<string, unknown>;
-  mediaPlayer: (type: string, key: string, value?: unknown) => unknown;
-  removeMediaPlayer: (type: string, key?: string) => void;
-
-  // Script methods
-  script: (object?: string | Record<string, unknown>) => unknown;
-  label: {
-    (): unknown[];
-    (key: string): unknown;
-  };
-  $: (name: string, value?: unknown) => unknown;
-
-  // Game flow
-  prepareAction: (statement: unknown, options: { cycle: string; extras?: Record<string, unknown> }) => ActionInstance;
-  run: (statement: unknown, advance?: boolean) => Promise<{ advance: boolean }>;
-  revert: (statement?: unknown, shouldAdvance?: boolean, shouldStepBack?: boolean) => Promise<{ advance: boolean; step: boolean } | void>;
-  proceed: (options?: { userInitiated?: boolean; skip?: boolean; autoPlay?: boolean }) => Promise<void>;
-  rollback: () => Promise<void>;
-  next: () => Promise<void>;
-  previous: () => Promise<void>;
-
-  // Text processing
-  replaceVariables: (statement: string) => string;
-  translate: (statement: string) => string;
-  string: (key: string) => string | undefined;
-  localize: () => void;
-
-  // Typing control
-  stopTyping: (component: unknown) => void;
-
-  // UI methods
-  alert: (id: string, options: Record<string, unknown>) => void;
-  dismissAlert: (id?: string) => void;
-  hideScreens: () => void;
-  showScreen: (name: string) => void;
-  showMainScreen: () => void;
-  distractionFree: () => void;
-
-  // Game lifecycle
-  resetGame: () => Promise<unknown[]>;
-  saveTo: (prefix?: string, id?: number | null, name?: string | null) => Promise<unknown> | undefined;
-  loadFromSlot: (slot: string) => Promise<void>;
-  assertAsync: (callable: (...args: unknown[]) => unknown, self?: unknown, args?: unknown[] | null) => Promise<void>;
-
-  // Utility methods
-  random: (min: number, max: number) => number;
-  width: () => number;
-  height: () => number;
-
-  // Debug
-  debug: {
-    log: (...args: unknown[]) => void;
-    debug: (...args: unknown[]) => void;
-    warn: (...args: unknown[]) => void;
-    error: (...args: unknown[]) => void;
-    trace: () => void;
-    groupCollapsed: (label: string) => void;
-    groupEnd: (label?: string) => void;
-  };
-
-  // Properties
-  ambientPlayer: HTMLAudioElement | null;
-  audioContext?: AudioContext;
-  _languageMetadata: Record<string, { code: string; icon: string }>;
-}
-
 export * from './Action';
+export * from './Component';
 export * from './GameSettings';
 export * from './PlayerPreferences';
+export * from './Monogatari';

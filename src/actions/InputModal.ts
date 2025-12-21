@@ -2,6 +2,7 @@ import Action from './../lib/Action';
 import { Util } from '@aegis-framework/artemis';
 import { ActionRevertResult } from '../lib/types';
 import type TimerDisplayComponent from './../components/timer-display';
+import type TextInputComponent from './../components/text-input';
 
 export class InputModal extends Action {
 
@@ -102,11 +103,11 @@ export class InputModal extends Action {
 	override async apply(): Promise<void> {
 		this.engine.global('block', true);
 
-		const input = document.createElement('text-input');
+		const input = document.createElement('text-input') as TextInputComponent;
 
 		const { Text, Warning, Save, Validation, actionString, Class, Type, Options, Default, Timer, Attributes } = this.statement;
 
-		(input as any).setProps({
+		input.setProps({
 			text: this.engine.replaceVariables(Text),
 			type: Type,
 			options: Options,

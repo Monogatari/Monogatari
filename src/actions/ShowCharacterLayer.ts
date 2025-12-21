@@ -311,7 +311,7 @@ export class ShowCharacterLayer extends Action {
 						characterLayerHistory.splice(i, 1);
 
 						if (typeof previous !== 'undefined' && previous !== null) {
-							const action = this.engine.prepareAction(previous, { cycle: 'Apply' }) as ActionInstance | null;
+							const action = this.engine.prepareAction(previous, { cycle: 'Application' }) as ActionInstance | null;
 							if (action !== null) {
 								await action.apply();
 								await action.didApply({ updateHistory: false, updateState: true });

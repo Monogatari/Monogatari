@@ -8,6 +8,7 @@ import type {
 } from './types';
 
 import type Monogatari from '../monogatari';
+import type { VisualNovelEngine } from './types/Monogatari';
 
 /**
  * An action describes the functionality for a Monogatari statement, when Monogatari
@@ -116,7 +117,7 @@ class Action {
 	/**
 	 * Reference to the Monogatari engine (set by engine on registration)
 	 */
-	static engine: typeof Monogatari;
+	static engine: VisualNovelEngine;
 
 	/**
 	 * The original statement this action was instantiated with
@@ -137,7 +138,7 @@ class Action {
 	 * Context reference (usually the Monogatari class)
    * @deprecated - This property is deprecated and will be removed in a future version. Use the engine property instead.
 	 */
-	context: typeof Monogatari | undefined;
+	context: VisualNovelEngine | undefined;
 
 	/**
 	 * @static configuration - A simple function providing access to the configuration
@@ -340,11 +341,11 @@ class Action {
 	 *
 	 * @type {Monogatari}
 	 */
-	get engine (): typeof Monogatari {
+	get engine (): VisualNovelEngine {
 		return (this.constructor as typeof Action).engine;
 	}
 
-	set engine (_value: typeof Monogatari) {
+	set engine (_value: VisualNovelEngine) {
 		throw new Error('Component engine reference is hold at static level and cannot be modified.');
 	}
 
@@ -358,7 +359,7 @@ class Action {
 	 *
 	 * @param  {Monogatari} context - The Monogatari Class
 	 */
-	setContext (context: typeof Monogatari): void {
+	setContext (context: VisualNovelEngine): void {
 		this.context = context;
 	}
 

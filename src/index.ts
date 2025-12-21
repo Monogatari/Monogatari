@@ -13,7 +13,7 @@
  * =============================================================================
  */
 
-import '@fortawesome/fontawesome-free/js/all.js';
+import '@fortawesome/fontawesome-free/js/all';
 
 /**
  * =============================================================================
@@ -32,7 +32,9 @@ export * as RandomJS from 'random-js';
 
 export * as Luxon from 'luxon';
 
-import Monogatari from './monogatari.js';
+import Monogatari from './monogatari';
+import type { StaticComponent } from './lib/types/Component';
+import type { StaticAction } from './lib/types/Action';
 
 /**
  * =============================================================================
@@ -42,24 +44,24 @@ import Monogatari from './monogatari.js';
  * =============================================================================
  */
 
-import arabic from './translations/العربية.js';
-import belarusian from './translations/Беларуская.js';
-import brazilianPortuguese from './translations/Portugues_Brasil.js';
-import chineseTraditional from './translations/繁體中文.js';
-import chineseSimplified from './translations/简体中文.js';
-import dutch from './translations/Nederlands.js';
-import english from './translations/English.js';
-import french from './translations/Francais.js';
-import german from './translations/Deutsch.js';
-import hungarian from './translations/Hungarian.js';
-import indonesian from './translations/Bahasa_Indonesia.js';
-import japanese from './translations/日本語.js';
-import korean from './translations/한국어.js';
-import portuguese from './translations/Portugues.js';
-import russian from './translations/Russian.js';
-import spanish from './translations/Espanol.js';
-import tokipona from './translations/tokipona.js';
-import bulgarian from './translations/Bulgarian.js';
+import arabic from './translations/العربية';
+import belarusian from './translations/Беларуская';
+import brazilianPortuguese from './translations/Portugues_Brasil';
+import chineseTraditional from './translations/繁體中文';
+import chineseSimplified from './translations/简体中文';
+import dutch from './translations/Nederlands';
+import english from './translations/English';
+import french from './translations/Francais';
+import german from './translations/Deutsch';
+import hungarian from './translations/Hungarian';
+import indonesian from './translations/Bahasa_Indonesia';
+import japanese from './translations/日本語';
+import korean from './translations/한국어';
+import portuguese from './translations/Portugues';
+import russian from './translations/Russian';
+import spanish from './translations/Espanol';
+import tokipona from './translations/tokipona';
+import bulgarian from './translations/Bulgarian';
 
 Monogatari._translations = {
 	'Bahasa Indonesia': indonesian,
@@ -166,33 +168,33 @@ Monogatari._languageMetadata = {
  * =============================================================================
  */
 
-import AlertModal from './components/alert-modal/index.js';
-import CanvasContainer from './components/canvas-container/index.js';
-import CenteredDialog from './components/centered-dialog/index.js';
-import CharacterSprite from './components/character-sprite/index.js';
-import ChoiceContainer from './components/choice-container/index.js';
-import CreditsScreen from './components/credits-screen/index.js';
-import DialogLog from './components/dialog-log/index.js';
-import GalleryScreen from './components/gallery-screen/index.js';
-import GameScreen from './components/game-screen/index.js';
-import HelpScreen from './components/help-screen/index.js';
-import LanguageSelectionScreen from './components/language-selection-screen/index.js';
-import LoadScreen from './components/load-screen/index.js';
-import LoadingScreen from './components/loading-screen/index.js';
-import MainMenu from './components/main-menu/index.js';
-import MainScreen from './components/main-screen/index.js';
-import MessageModal from './components/message-modal/index.js';
-import QuickMenu from './components/quick-menu/index.js';
-import SaveScreen from './components/save-screen/index.js';
-import SaveSlot from './components/save-slot/index.js';
-import SettingsScreen from './components/settings-screen/index.js';
-import SlotContainer from './components/slot-container/index.js';
-import TextBox from './components/text-box/index.js';
-import TextInput from './components/text-input/index.js';
-import TimerDisplay from './components/timer-display/index.js';
-import VisualNovel from './components/visual-novel/index.js';
-import TypeWriter from './components/type-writer/index.js';
-import TypeCharacter from './components/type-character/index.js';
+import AlertModal from './components/alert-modal/index';
+import CanvasContainer from './components/canvas-container/index';
+import CenteredDialog from './components/centered-dialog/index';
+import CharacterSprite from './components/character-sprite/index';
+import ChoiceContainer from './components/choice-container/index';
+import CreditsScreen from './components/credits-screen/index';
+import DialogLog from './components/dialog-log/index';
+import GalleryScreen from './components/gallery-screen/index';
+import GameScreen from './components/game-screen/index';
+import HelpScreen from './components/help-screen/index';
+import LanguageSelectionScreen from './components/language-selection-screen/index';
+import LoadScreen from './components/load-screen/index';
+import LoadingScreen from './components/loading-screen/index';
+import MainMenu from './components/main-menu/index';
+import MainScreen from './components/main-screen/index';
+import MessageModal from './components/message-modal/index';
+import QuickMenu from './components/quick-menu/index';
+import SaveScreen from './components/save-screen/index';
+import SaveSlot from './components/save-slot/index';
+import SettingsScreen from './components/settings-screen/index';
+import SlotContainer from './components/slot-container/index';
+import TextBox from './components/text-box/index';
+import TextInput from './components/text-input/index';
+import TimerDisplay from './components/timer-display/index';
+import VisualNovel from './components/visual-novel/index';
+import TypeWriter from './components/type-writer/index';
+import TypeCharacter from './components/type-character/index';
 
 // Type cast needed as components extend Component but TypeScript has trouble with the complex static interfaces
 Monogatari._components = [
@@ -223,7 +225,8 @@ Monogatari._components = [
 	VisualNovel,
 	TypeWriter,
 	TypeCharacter
-] as unknown as typeof Monogatari._components;
+] as unknown as StaticComponent[];
+
 
 /**
  * =============================================================================
@@ -234,38 +237,38 @@ Monogatari._components = [
  * =============================================================================
  */
 
-import Canvas from './actions/Canvas.js';
-import Choice from './actions/Choice.js';
-import Clear from './actions/Clear.js';
-import Conditional from './actions/Conditional.js';
-import Dialog from './actions/Dialog.js';
-import End from './actions/End.js';
-import Function from './actions/Function.js';
-import Gallery from './actions/Gallery.js';
-import HideCanvas from './actions/HideCanvas.js';
-import HideCharacter from './actions/HideCharacter.js';
-import HideCharacterLayer from './actions/HideCharacterLayer.js';
-import HideImage from './actions/HideImage.js';
-import HideParticles from './actions/HideParticles.js';
-import HideVideo from './actions/HideVideo.js';
-import InputModal from './actions/InputModal.js';
-import Jump from './actions/Jump.js';
-import Message from './actions/Message.js';
-import Next from './actions/Next.js';
-import Notify from './actions/Notify.js';
-import Particles from './actions/Particles.js';
-import Pause from './actions/Pause.js';
-import Placeholder from './actions/Placeholder.js';
-import Play from './actions/Play.js';
-import Scene from './actions/Scene.js';
-import ShowBackground from './actions/ShowBackground.js';
-import ShowCharacter from './actions/ShowCharacter.js';
-import ShowCharacterLayer from './actions/ShowCharacterLayer.js';
-import ShowImage from './actions/ShowImage.js';
-import Stop from './actions/Stop.js';
-import Vibrate from './actions/Vibrate.js';
-import Video from './actions/Video.js';
-import Wait from './actions/Wait.js';
+import Canvas from './actions/Canvas';
+import Choice from './actions/Choice';
+import Clear from './actions/Clear';
+import Conditional from './actions/Conditional';
+import Dialog from './actions/Dialog';
+import End from './actions/End';
+import Function from './actions/Function';
+import Gallery from './actions/Gallery';
+import HideCanvas from './actions/HideCanvas';
+import HideCharacter from './actions/HideCharacter';
+import HideCharacterLayer from './actions/HideCharacterLayer';
+import HideImage from './actions/HideImage';
+import HideParticles from './actions/HideParticles';
+import HideVideo from './actions/HideVideo';
+import InputModal from './actions/InputModal';
+import Jump from './actions/Jump';
+import Message from './actions/Message';
+import Next from './actions/Next';
+import Notify from './actions/Notify';
+import Particles from './actions/Particles';
+import Pause from './actions/Pause';
+import Placeholder from './actions/Placeholder';
+import Play from './actions/Play';
+import Scene from './actions/Scene';
+import ShowBackground from './actions/ShowBackground';
+import ShowCharacter from './actions/ShowCharacter';
+import ShowCharacterLayer from './actions/ShowCharacterLayer';
+import ShowImage from './actions/ShowImage';
+import Stop from './actions/Stop';
+import Vibrate from './actions/Vibrate';
+import Video from './actions/Video';
+import Wait from './actions/Wait';
 
 // The order in which actions are registered is important.
 // Type cast needed as actions extend Action but TypeScript has trouble with the complex static interfaces
@@ -304,19 +307,19 @@ Monogatari._actions = [
 
 	// Dialog must always go last
 	Dialog,
-] as unknown as typeof Monogatari._actions;
+] as StaticAction[];
 
 /**
  * Export Monogatari Core
  */
-export * from './lib/Action.js';
-export * from './lib/Component.js';
-export * from './lib/ShadowComponent.js';
-export * from './lib/ScreenComponent.js';
-export * from './lib/MenuComponent.js';
-export * from './lib/FancyError.js';
+export * from './lib/Action';
+export * from './lib/Component';
+export * from './lib/ShadowComponent';
+export * from './lib/ScreenComponent';
+export * from './lib/MenuComponent';
+export * from './lib/FancyError';
 
-import AudioPlayer from './lib/AudioPlayer.js';
+import AudioPlayer from './lib/AudioPlayer';
 export { AudioPlayer };
 
 export default Monogatari;

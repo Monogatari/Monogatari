@@ -1,8 +1,5 @@
 import type { MediaStateItem, SaveGameData } from '../lib/types';
 
-/**
- * Save data structure for migration
- */
 interface MigrationSaveData {
 	state: {
 		music?: (string | MediaStateItem)[];

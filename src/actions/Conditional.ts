@@ -36,12 +36,12 @@ export class Conditional extends Action {
 	static override async afterRevert(): Promise<void> {
 		// Prevent modifying the history if the action that was just reverted was
 		// this conditional
-		const justRolledBack = this.engine.global('_conditional_just_rolled_back') as boolean[];
+		const justRolledBack = this.engine.global('_conditional_just_rolled_back');
 		if (justRolledBack.pop()) {
 			return Promise.resolve();
 		}
 
-		const pendingRollback = this.engine.global('_conditional_pending_rollback') as boolean[];
+		const pendingRollback = this.engine.global('_conditional_pending_rollback');
 		while (pendingRollback.pop()) {
 			const currentStatement = this.engine.label()[this.engine.state('step') as number] as { Conditional?: object } | undefined;
 			if (typeof currentStatement !== 'undefined' && currentStatement !== null) {
@@ -56,7 +56,7 @@ export class Conditional extends Action {
 		// const restoringState = this.engine.global ('_restoring_state');
 
 		// if (!restoringState) {
-		const pendingRollback = this.engine.global('_conditional_pending_rollback') as boolean[];
+		const pendingRollback = this.engine.global('_conditional_pending_rollback');
 		pendingRollback.pop();
 		// }
 	}
@@ -180,8 +180,8 @@ export class Conditional extends Action {
 	}
 
 	override async didRevert(): Promise<ActionRevertResult> {
-		const pendingRollback = this.engine.global('_conditional_pending_rollback') as boolean[];
-		const justRolledBack = this.engine.global('_conditional_just_rolled_back') as boolean[];
+		const pendingRollback = this.engine.global('_conditional_pending_rollback');
+		const justRolledBack = this.engine.global('_conditional_just_rolled_back');
 		pendingRollback.push(true);
 		justRolledBack.push(true);
 		return { advance: false, step: false };
