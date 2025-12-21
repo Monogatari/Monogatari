@@ -1,8 +1,5 @@
 import type { CharacterHistoryItem, SaveGameData } from '../lib/types';
 
-/**
- * Save data structure for migration
- */
 interface MigrationSaveData {
 	state?: Record<string, unknown>;
 	history: {

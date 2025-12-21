@@ -8,8 +8,6 @@
  * Hyuchia <diana@hyuchia.com>
  */
 
-
-
 export default {
 	'AdvanceHelp': 'To advance through the game, left-click or tap anywhere on the game screen or press the space key',
 	'AllowPlayback': 'Click here to allow audio playback',

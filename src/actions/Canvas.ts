@@ -5,13 +5,10 @@ import { FancyError } from './../lib/FancyError';
 import { ActionApplyResult, ActionRevertResult, ActionInstance } from '../lib/types';
 
 export class Canvas extends Action {
-
 	static override id = 'Canvas';
 
 	static _configuration: any = {
-		objects: {
-
-		},
+		objects: {},
 		modes: ['modal', 'displayable', 'immersive', 'background', 'character']
 	};
 
@@ -28,18 +25,14 @@ export class Canvas extends Action {
 	}
 
 	static override async shouldProceed(): Promise<void> {
-		return new Promise((resolve, reject) => {
-      const element = this.engine.element();
+    const element = this.engine.element();
 
-			element.find('[data-component="canvas-container"]').each((element: any) => {
-				const { mode, canvas } = element.props;
-				if (['immersive', 'modal'].indexOf(mode) > -1) {
-					reject(`Canvas "${canvas}" must be removed before proceeding.`);
-				}
-			});
-
-			resolve();
-		});
+    element.find('[data-component="canvas-container"]').each((element: any) => {
+      const { mode, canvas } = element.props;
+      if (['immersive', 'modal'].indexOf(mode) > -1) {
+        throw new Error(`Canvas "${canvas}" must be removed before proceeding.`);
+      }
+    });
 	}
 
 	static override async onLoad(): Promise<void> {

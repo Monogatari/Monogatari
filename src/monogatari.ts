@@ -16,7 +16,7 @@ import mousetrap, { ExtendedKeyboardEvent } from 'mousetrap';
 import { FancyError } from './lib/FancyError';
 import Component  from './lib/Component';
 import Action from './lib/Action';
-import type { StaticMonogatariComponent, StaticAction, ActionApplyResult, FancyErrorProps, Character, LegacySaveData, GameSettings, PlayerPreferences, StateMap, HistoryMap, GlobalsMap, ActionInstance } from './lib/types';
+import type { StaticComponent, StaticAction, ActionApplyResult, FancyErrorProps, Character, LegacySaveData, GameSettings, PlayerPreferences, StateMap, HistoryMap, GlobalsMap, ActionInstance } from './lib/types';
 import deeply from 'deeply';
 import { version } from '../package.json';
 import { Random, browserCrypto } from 'random-js';
@@ -24,6 +24,7 @@ import migrate from './migrations';
 import type TypeWriterComponent from './components/type-writer';
 
 import { Settings, DateTime } from 'luxon';
+import type { VisualNovelEngine } from './lib/types/Monogatari';
 
 // Declare MonogatariDebug as a global variable (set by debug module when loaded)
 declare const MonogatariDebug: object | undefined;
@@ -76,13 +77,32 @@ const merge = deeply.bind({});
  *
  */
 class Monogatari {
+  // =========================================================================
+  // Type Helpers
+  // =========================================================================
+
+  /**
+   * Returns the class typed as VisualNovelEngine.
+   * This enables type-safe access while allowing external users to extend
+   * the VisualNovelEngine interface via declaration merging.
+   *
+   * @internal
+   */
+  private static asEngine(): VisualNovelEngine {
+    return this.asEngine();
+  }
+
+  // =========================================================================
+  // Static Properties
+  // =========================================================================
+
   static _languageMetadata: Record<string, { code: string; icon: string }> = {};
   static _events: Record<string, unknown> = {};
 
   static _selector = '#monogatari';
 
   static _actions: StaticAction[] = [];
-  static _components: StaticMonogatariComponent[] = [];
+  static _components: StaticComponent[] = [];
   static _translations: Record<string, Record<string, string>> = {};
   static _script: Record<string, unknown> = {};
   static _characters: Record<string, Character> = {};
@@ -679,7 +699,7 @@ class Monogatari {
 	 * have an unique ID.
 	 */
 	static registerAction (action: StaticAction, naturalPosition = false) {
-		action.engine = this;
+		action.engine = this.asEngine();
 
 		if (naturalPosition) {
 			this._actions.push (action);
@@ -732,7 +752,7 @@ class Monogatari {
 	 * @param  {Component} component - Component to register. Remember each
 	 * component must have an unique ID.
 	 */
-	static registerComponent (component: StaticMonogatariComponent) {
+	static registerComponent (component: StaticComponent) {
 		const alreadyRegistered = this.components ().findIndex (c => c.tag === component.tag) > -1;
 
 		if (typeof window.customElements.get (component.tag) !== 'undefined') {
@@ -743,7 +763,7 @@ class Monogatari {
 			});
 		}
 
-		component.engine = this;
+		component.engine = this.asEngine();
 
 		if (alreadyRegistered && !this.global ('_didSetup')) {
 			// Remove the previous one
@@ -778,7 +798,7 @@ class Monogatari {
 	 *
 	 * @return {Component[]} - List of registered Components
 	 */
-	static components (): StaticMonogatariComponent[] {
+	static components (): StaticComponent[] {
 		/** @type {boolean} */
 		const experimentalFeatures = this.setting ('ExperimentalFeatures');
 
@@ -842,7 +862,7 @@ class Monogatari {
 	 * @return {Object} - If this function is called with no arguments, the whole
 	 * assets object will be returned.
 	 */
-	static asset (type: string, name: string, value = null) {
+	static asset (type: string, name: string, value: string | null = null) {
 		if (typeof this._assets[type] !== 'undefined') {
 			if (value !== null) {
 				this._assets[type][name] = value;
@@ -1060,7 +1080,7 @@ class Monogatari {
 		}
 	}
 
-	static status (object = null) {
+	static status (object: Record<string, boolean> | null = null) {
 		if (object !== null) {
 			this._status = Object.assign ({}, this._status, object);
 		}
@@ -1897,11 +1917,11 @@ class Monogatari {
 		};
 	}
 
-  static prepareAction(statement: string, { cycle, extras }: { cycle: string; extras?: Record<string, unknown> }): ActionInstance | null;
-  static prepareAction(statement: Record<string, unknown>, { cycle, extras }: { cycle: string; extras?: Record<string, unknown> }): ActionInstance | null;
-  static prepareAction(statement: ((...args: unknown[]) => unknown), { cycle, extras }: { cycle: string; extras?: Record<string, unknown> }): ((...args: unknown[]) => unknown);
-  static prepareAction(statement: string | Record<string, unknown> | ((...args: unknown[]) => unknown), { cycle, extras }: { cycle: string; extras?: Record<string, unknown> }): ActionInstance | ((...args: unknown[]) => unknown) | null;
-	static prepareAction (statement: unknown, { cycle, extras }: { cycle: string; extras?: Record<string, unknown> }): ((...args: unknown[]) => unknown) | ActionInstance | null {
+  static prepareAction(statement: string, { cycle, extras }: { cycle: 'Application' | 'Revert'; extras?: Record<string, unknown> }): ActionInstance | null;
+  static prepareAction(statement: Record<string, unknown>, { cycle, extras }: { cycle: 'Application' | 'Revert'; extras?: Record<string, unknown> }): ActionInstance | null;
+  static prepareAction(statement: ((...args: unknown[]) => unknown), { cycle, extras }: { cycle: 'Application' | 'Revert'; extras?: Record<string, unknown> }): ((...args: unknown[]) => unknown);
+  static prepareAction(statement: string | Record<string, unknown> | ((...args: unknown[]) => unknown), { cycle, extras }: { cycle: 'Application' | 'Revert'; extras?: Record<string, unknown> }): ActionInstance | ((...args: unknown[]) => unknown) | null;
+	static prepareAction (statement: unknown, { cycle, extras }: { cycle: 'Application' | 'Revert'; extras?: Record<string, unknown> }): ((...args: unknown[]) => unknown) | ActionInstance | null {
 		if (typeof statement === 'function') {
 			return statement as ((...args: unknown[]) => unknown);
 		}
@@ -1928,8 +1948,9 @@ class Monogatari {
 			const act = new action (typeof statement === 'string' ? interpolatedStatement : statement);
 
 			// The original statement is set just in case the action needs
-			// access to it
-			act._setStatement (statement);
+			// access to it. By this point, statement is known to be string | Record<string, unknown>
+			// (functions are handled earlier and returned directly).
+			act._setStatement (statement as string | Record<string, unknown>);
 
 			// The current cycle is also set just in case the action needs to
 			// know what cycle it's currently being performed.
@@ -1937,7 +1958,7 @@ class Monogatari {
 
 			// Monogatari is set as the context of the action so that it can
 			// access all its functionalities
-			act.setContext (this);
+			act.setContext (this.asEngine());
 
 			act.setExtras(extras || {});
 
@@ -2425,7 +2446,7 @@ class Monogatari {
 		});
 	}
 
-	static async proceed ({ userInitiated = false, skip = false, autoPlay = false }): Promise<void> {
+	static async proceed ({ userInitiated = false, skip = false, autoPlay = false } = {}): Promise<void> {
 		await this.shouldProceed ({ userInitiated, skip, autoPlay });
 
     this.global ('_engine_block', true);
@@ -2950,7 +2971,7 @@ class Monogatari {
 			// Define all the components that were registered to this point
 			for (const component of components) {
 				try {
-					component.engine = this;
+					component.engine = this.asEngine();
 					Registry.register(component.tag, component);
 				} catch (e) {
 					FancyError.show ('engine:component:already_registered', {
@@ -3084,13 +3105,13 @@ class Monogatari {
 			const promises = [];
 
 			for (const component of this.components ()) {
-				component.engine = this;
-				promises.push (component.setup (selector));
+				component.engine = this.asEngine();
+				promises.push (component.setup ());
 			}
 
 			for (const action of this.actions ()) {
-				action.engine = this;
-				promises.push (action.setup (selector));
+				action.engine = this.asEngine();
+				promises.push (action.setup ());
 			}
 
 			return Promise.all (promises).then (() => {
@@ -3323,11 +3344,11 @@ class Monogatari {
 		const promises = [];
 
 		for (const component of this.components ()) {
-			promises.push (component.bind (selector));
+			promises.push (component.bind ());
 		}
 
 		for (const action of this.actions ()) {
-			promises.push (action.bind (selector));
+			promises.push (action.bind ());
 		}
 
 		return Promise.all (promises).then (() => {
@@ -3379,28 +3400,25 @@ class Monogatari {
 		return element;
 	}
 
-	static on (event: string, target: string | EventCallback, callback?: EventCallback) {
+	static on (event: string, target: string | EventCallback, callback?: EventCallback): void {
     const element = this.element() as DOM;
 
     if (element) {
       // If callback is not provided, treat target as callback (for simple event binding)
       if (typeof target === 'function' && callback === undefined) {
-        return element.on (event, target as EventCallback);
+        element.on (event, target as EventCallback);
+      } else {
+        element.on (event, target as string, callback!);
       }
-      return element.on (event, target as string, callback!);
     }
-
-    return this;
 	}
 
-  static off (event: string, callback: EventCallback) {
+  static off (event: string, callback: EventCallback): void {
     const element = this.element() as DOM;
 
     if (element) {
-      return element.off (event, callback);
+      element.off (event, callback);
     }
-
-    return this;
   }
 
 	static parentElement (): DOM {
@@ -3542,11 +3560,11 @@ class Monogatari {
 				const init: Promise<void>[] = [];
 
 				for (const component of this.components ()) {
-					init.push (component.init (selector));
+					init.push (component.init ());
 				}
 
 				for (const action of this.actions ()) {
-					init.push (action.init (selector));
+					init.push (action.init ());
 				}
 
 				if (this.setting ('AutoSave') != 0 && typeof this.setting ('AutoSave') === 'number') {
@@ -3612,6 +3630,26 @@ class Monogatari {
 		}
 	}
 }
+
+// =============================================================================
+// Compile-time Type Check
+// =============================================================================
+// This ensures that the Monogatari class implements the VisualNovelEngine
+// interface. If any method or property is missing or has an incompatible type,
+// TypeScript will report an error here.
+//
+// The VisualNovelEngine interface can be extended by external users via
+// declaration merging:
+//
+// declare module '@monogatari/core' {
+//   interface VisualNovelEngine {
+//     myCustomMethod: () => void;
+//   }
+// }
+// =============================================================================
+const _engineTypeCheck: VisualNovelEngine = Monogatari;
+// Suppress unused variable warning
+void _engineTypeCheck;
 
 export { Monogatari };
 

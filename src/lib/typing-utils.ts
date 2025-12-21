@@ -1,12 +1,3 @@
-/**
- * Shared utilities for typing animation components.
- * Used by the TypeWriter component.
- */
-
-// ============================================================================
-// Types
-// ============================================================================
-
 export interface BaseTypedAction {
 	action: string;
 	n?: string;
@@ -23,10 +14,6 @@ export interface TypingCallbacks<T> {
 	onDestroy?: (self: T) => void;
 }
 
-// ============================================================================
-// Pre-compiled Patterns
-// ============================================================================
-
 /** Pattern to match whitespace characters */
 export const WHITESPACE_PATTERN = /\s/;
 
@@ -35,10 +22,6 @@ export const BASIC_ACTION_PATTERN = /(\{(?:pause|speed):\d+\})/;
 
 /** Pattern to extract action name and value */
 export const ACTION_EXTRACT_PATTERN = /\{(?<action>pause|speed):(?<n>\d+)\}/;
-
-// ============================================================================
-// DOM Utilities
-// ============================================================================
 
 /**
  * Get all leaf (text) nodes from a DOM tree.
@@ -66,10 +49,6 @@ export function getLeafNodes (node: Node | null): Node[] {
 
 	return leafNodes;
 }
-
-// ============================================================================
-// Parsing Utilities
-// ============================================================================
 
 /**
  * Parse a string into nodes and actions using the basic action pattern.
@@ -168,10 +147,6 @@ export function parseBasicStringToFragment (curString: string): [DocumentFragmen
 
 	return [fragment, actions];
 }
-
-// ============================================================================
-// Animation Utilities
-// ============================================================================
 
 /**
  * Interface for RAF-based animation timing state.

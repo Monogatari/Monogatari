@@ -1,7 +1,8 @@
 import { $_, DOM } from '@aegis-framework/artemis';
 import { Component as PandoraComponent, Properties } from '@aegis-framework/pandora';
-import type { Configuration } from './types';
+import type { Configuration, StaticComponent } from './types';
 import type Monogatari from '../monogatari';
+import type { VisualNovelEngine } from './types/Monogatari';
 
 /**
  * A component represents an object or content in the game such as screens, menus
@@ -53,7 +54,7 @@ class Component<P extends Properties = Properties, S extends Properties = Proper
 	/**
 	 * Reference to the Monogatari engine (set by engine on registration)
 	 */
-	static engine: typeof Monogatari;
+	static engine: VisualNovelEngine;
 
 	/**
 	 * Parent component reference
@@ -254,14 +255,14 @@ class Component<P extends Properties = Properties, S extends Properties = Proper
 	 *
 	 * @return {Promise} - Result of the reset operation
 	 */
-	static async onReset (): Promise<void[]> {
+	static async onReset (): Promise<void> {
 		const promises: Promise<void>[] = [];
 
 		this.instances((instance: any) => {
 			promises.push(instance.onReset());
 		});
 
-		return Promise.all(promises);
+		await Promise.all(promises);
 	}
 
 	/**
@@ -306,7 +307,7 @@ class Component<P extends Properties = Properties, S extends Properties = Proper
 	 * Find an instance by ID within this component type
 	 */
 	instance (id: string): ReturnType<typeof $_> {
-		const ctor = this.constructor as typeof Component;
+		const ctor = this.constructor as StaticComponent;
 		return $_(`${ctor.tag}[data-${ctor.name.toLowerCase()}="${id}"`);
 	}
 
@@ -324,11 +325,11 @@ class Component<P extends Properties = Properties, S extends Properties = Proper
 	/**
 	 * Get the engine reference
 	 */
-	get engine (): typeof Monogatari {
+	get engine (): VisualNovelEngine {
 		return (this.constructor as typeof Component).engine;
 	}
 
-	set engine (_value: typeof Monogatari) {
+	set engine (_value: VisualNovelEngine) {
 		throw new Error('Component engine reference is hold at static level and cannot be modified.');
 	}
 

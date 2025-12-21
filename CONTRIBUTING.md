@@ -117,18 +117,6 @@ variables.
 
 Indentation should use 2 space sized Space characters.
 
-Trailing whitespace should be removed and no trailing new line should be present.
-
-### Function spacing
-
-There should be a space before every function call or declaration parenthesis.
-
-```javascript
-function something () {
-	someCall ();
-}
-```
-
 ### Semiconlons
 
 All statements should have their respective ending semicolon.

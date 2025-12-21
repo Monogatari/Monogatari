@@ -2,6 +2,7 @@ import { $_, DOM } from '@aegis-framework/artemis';
 import { ShadowComponent as PandoraShadowComponent, Component as PandoraComponent, Properties } from '@aegis-framework/pandora';
 import type { Configuration } from './types';
 import type Monogatari from '../monogatari';
+import type { VisualNovelEngine } from './types/Monogatari';
 
 /**
  * A shadow component represents an object or content in the game that uses
@@ -42,7 +43,7 @@ class ShadowComponent<P extends Properties = Properties, S extends Properties = 
 	/**
 	 * Reference to the Monogatari engine (set by engine on registration)
 	 */
-	static engine: typeof Monogatari;
+	static engine: VisualNovelEngine;
 
 	/**
 	 * Parent component reference
@@ -313,11 +314,11 @@ class ShadowComponent<P extends Properties = Properties, S extends Properties = 
 	/**
 	 * Get the engine reference
 	 */
-	get engine (): typeof Monogatari {
+	get engine (): VisualNovelEngine {
 		return (this.constructor as typeof ShadowComponent).engine;
 	}
 
-	set engine (_value: typeof Monogatari) {
+	set engine (_value: VisualNovelEngine) {
 		throw new Error('Component engine reference is hold at static level and cannot be modified.');
 	}
 
