@@ -30,12 +30,16 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Run Tests
-        uses: cypress-io/github-action@v6
-        with:
-          record: true
-          browser: chrome
-          build: bun run build
+      - name: Install Dependencies
+        run: bun install
+      - name: Build
+        run: bun run build
+      - name: Start Server
+        run: bunx serve dist -l 8080 &
+      - name: Wait for Server
+        run: bunx wait-on http://localhost:8080
+      - name: Run Cypress Tests
+        run: bunx cypress run --record --browser chrome
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

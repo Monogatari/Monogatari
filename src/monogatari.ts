@@ -89,7 +89,7 @@ class Monogatari {
    * @internal
    */
   private static asEngine(): VisualNovelEngine {
-    return this.asEngine();
+    return this as unknown as VisualNovelEngine;
   }
 
   // =========================================================================
