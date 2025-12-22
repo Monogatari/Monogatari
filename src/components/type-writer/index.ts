@@ -147,6 +147,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	private _numberActionsCache: string | null = null;
 	private _enclosedActionsCache: string | null = null;
 	private _instanceActionsCache: string | null = null;
+	private _patternCacheVersion: number = 0;
 
 	constructor () {
 		super();
@@ -186,6 +187,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 
 	/**
 	 * Get a specific action or add a new one to the actions config.
+	 * Note: Adding a new action invalidates the pattern cache for all instances.
 	 */
 	static action (action: string | TypeWriterAction | null = null): TypeWriterAction | TypeWriterActions {
 		if (typeof action === 'string') {
@@ -197,6 +199,8 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 
 			if (requiredFields.every(field => Object.keys(action).includes(field))) {
 				this._configuration.actions[action.name] = action;
+				// Invalidate pattern cache for all instances when a new action is added
+				this._invalidateAllPatternCaches();
 				return action;
 			}
 
@@ -204,6 +208,23 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		}
 
 		return this._configuration.actions;
+	}
+
+	/**
+	 * Invalidate the pattern cache for all TypeWriter instances.
+	 * Called when new actions are registered.
+	 */
+	private static _invalidateAllPatternCaches (): void {
+		// Use a WeakSet or similar mechanism if we need to track instances
+		// For now, we'll just set a flag that instances check
+		(this as any)._patternCacheVersion = ((this as any)._patternCacheVersion || 0) + 1;
+	}
+
+	/**
+	 * Get the current pattern cache version.
+	 */
+	static get patternCacheVersion (): number {
+		return (this as any)._patternCacheVersion || 0;
 	}
 
 	/**
@@ -237,7 +258,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		const patterns: string[] = [];
 
 		if (this._numberActionsCache) {
-			patterns.push(`\\{(?:${this._numberActionsCache}):\\d+\\}`);
+			patterns.push(`\\{(?:${this._numberActionsCache})[:\\s]\\d+\\}`);
 		}
 		if (this._enclosedActionsCache) {
 			patterns.push(`\\{\\/(?:${this._enclosedActionsCache}).*?\\}`);
@@ -264,7 +285,22 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 
 		const { config, strings } = this.state;
 
-		this.setProps({ string: strings[0] });
+		// Handle empty strings array
+		if (!strings || strings.length === 0) {
+			this.engine.debug.warn('TypeWriter: No strings to type');
+			this.state.config.onStringTyped?.(0, this);
+			return;
+		}
+
+		const currentString = strings[0] ?? '';
+		this.setProps({ string: currentString });
+
+		// Handle empty string
+		if (!currentString) {
+			this.engine.debug.warn('TypeWriter: Empty string provided');
+			this.state.config.onStringTyped?.(0, this);
+			return;
+		}
 
 		// Apply cursor styles if configured
 		if (Object.values(this.state.cursor).length) {
@@ -295,12 +331,14 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		this.parseIndex = 0;
 		this.actionsPlayed = 0;
 
-		// Build action patterns if not cached
-		if (!this._actionPatternCache) {
+		// Build action patterns if not cached or if static cache version changed
+		const staticVersion = (this.constructor as typeof TypeWriter).patternCacheVersion;
+		if (!this._actionPatternCache || this._patternCacheVersion !== staticVersion) {
+			this._patternCacheVersion = staticVersion;
 			this._buildActionPatterns();
 		}
 
-		this.setDisplay(strings[0]);
+		this.setDisplay(currentString);
 		this.elements = this.querySelectorAll('type-character') as NodeListOf<TypeCharacter>;
 
 		// Callbacks
@@ -536,7 +574,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		// Try number action
 		if (this._numberActionsCache) {
 			type = 'number';
-			match = section.match(new RegExp(`^\\{(?<action>${this._numberActionsCache}):(?<n>\\d+)\\}$`));
+			match = section.match(new RegExp(`^\\{(?<action>${this._numberActionsCache})[:\\s](?<n>\\d+)\\}$`));
 		}
 
 		// Try enclosed action

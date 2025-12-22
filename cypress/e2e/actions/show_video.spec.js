@@ -6,6 +6,35 @@ context ('Show Video', function () {
 		cy.window ().its ('Monogatari.default').as ('monogatari');
 	});
 
+	it ('Displays a video in modal mode correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show video kirino modal with fadeIn close',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-video="kirino"][data-mode="modal"]').should ('be.visible');
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('deep.equal', ['show video kirino modal with fadeIn close']);
+	});
+
+	it ('Displays a video in displayable mode correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show video kirino displayable with fadeIn loop',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-video="kirino"][data-mode="displayable"]').should ('be.visible');
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('deep.equal', ['show video kirino displayable with fadeIn loop']);
+		cy.get ('text-box').contains ('Tada!');
+	});
+
 	it ('Allows the game to continue while playing a background video', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
@@ -210,5 +239,127 @@ context ('Show Video', function () {
 				cy.get ('text-box').contains ('Two');
 			});
 		});
+	});
+
+	it ('Applies loop attribute when specified', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show video kirino displayable loop',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-video="kirino"]').should ('have.attr', 'loop');
+	});
+
+	it ('Applies controls attribute when specified', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show video kirino displayable controls',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-video="kirino"]').should ('have.attr', 'controls');
+	});
+
+	it ('Blocks game progression in modal mode until video ends', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show video kirino modal',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-video="kirino"][data-mode="modal"]').should ('be.visible');
+		// Game should be blocked - trying to proceed shouldn't work immediately
+		cy.wrap (this.monogatari).invoke ('global', 'block').should ('eq', true);
+	});
+
+	it ('Blocks game progression in immersive mode', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show video kirino immersive',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-video="kirino"][data-mode="immersive"]').should ('be.visible');
+		cy.wrap (this.monogatari).invoke ('global', 'block').should ('eq', true);
+	});
+
+	it ('Does not block game progression in displayable mode', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show video kirino displayable loop',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-video="kirino"][data-mode="displayable"]').should ('be.visible');
+		cy.get ('text-box').contains ('Tada!');
+	});
+
+	it ('Handles multiple videos of different modes', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show video kirino background loop',
+				'show video dandelion displayable loop',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-video="kirino"][data-mode="background"]').should ('exist');
+		cy.get ('[data-video="dandelion"][data-mode="displayable"]').should ('be.visible');
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('have.length', 2);
+		cy.get ('text-box').contains ('Tada!');
+	});
+
+	it ('Applies animation classes correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show video kirino displayable with fadeIn loop',
+				'y Tada!'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-video="kirino"]').should ('have.class', 'animated');
+		cy.get ('[data-video="kirino"]').should ('have.class', 'fadeIn');
+	});
+
+	it ('Clears all videos on game reset', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show video kirino displayable loop',
+				'show video dandelion background loop',
+				'y Tada!',
+				'end'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-video="kirino"]').should ('be.visible');
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('have.length', 2);
+
+		cy.proceed ();
+		cy.get('main-screen').should ('be.visible');
+		cy.get ('[data-video]').should ('not.exist');
+		cy.wrap (this.monogatari).invoke ('state', 'videos').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('history', 'video').should ('be.empty');
 	});
 });

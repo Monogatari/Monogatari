@@ -1,5 +1,5 @@
 import type { Properties } from '@aegis-framework/pandora';
-import { $_ } from '@aegis-framework/artemis';
+import { $_, DOM } from '@aegis-framework/artemis';
 import Component from '../../lib/Component';
 
 /**
@@ -22,9 +22,9 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 
 	static override bind(): Promise<void> {
 		this.engine.registerListener('overwrite-slot', {
-			callback: (element: unknown) => {
+			callback: (event: Event, element: DOM) => {
 				// Find the modal wrapper first, then find the input within it
-				const wrapper = $_(element as HTMLElement).closest('[data-content="wrapper"]');
+				const wrapper = element.closest('[data-content="wrapper"]');
 				const customName = wrapper.find('[data-content="context"]').value()?.trim() ?? '';
 				if (customName !== '') {
 					this.engine.saveTo('SaveLabel', this.engine.global('overwrite_slot') as number, customName);

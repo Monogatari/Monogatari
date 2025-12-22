@@ -6,6 +6,47 @@ context ('Pause', function () {
 		cy.window ().its ('Monogatari.default').as ('monogatari');
 	});
 
+	it ('Pauses sound correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'Zero',
+				'play sound beep loop',
+				'One',
+				'pause sound beep',
+				'Two'
+			]
+		});
+
+		cy.start ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'sound').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'sound').should ('have.length', 0);
+
+		cy.get ('text-box').contains ('Zero');
+
+		cy.proceed ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'sound').should ('deep.equal', [{ statement: 'play sound beep loop', paused: false }]);
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'sound').should ('have.length', 1);
+		cy.wrap (this.monogatari.mediaPlayers ('sound', true)).its ('beep.paused').should ('equal', false);
+
+		cy.get ('text-box').contains ('One');
+
+		cy.proceed ();
+		cy.wait(100);
+		cy.wrap (this.monogatari).invoke ('state', 'sound').should ('deep.equal', [{ statement: 'play sound beep loop', paused: true }]);
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'sound').should ('have.length', 1);
+		cy.wrap (this.monogatari.mediaPlayers ('sound', true)).its ('beep.paused').should ('equal', true);
+
+		cy.get ('text-box').contains ('Two');
+
+		cy.rollback ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'sound').should ('deep.equal', [{ statement: 'play sound beep loop', paused: false }]);
+		cy.wrap (this.monogatari.mediaPlayers ('sound', true)).its ('beep.paused').should ('equal', false);
+	});
+
 	it ('Pauses music correctly', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({

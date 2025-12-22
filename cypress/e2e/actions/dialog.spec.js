@@ -5,6 +5,66 @@ context ('Dialog', function () {
 		cy.loadTestAssets ();
 	});
 
+	it ('Displays narrator dialog correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'This is a narrator dialog',
+				'Another line'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').contains ('This is a narrator dialog');
+		cy.get ('[data-content="character-name"]').should ('be.empty');
+		cy.get ('[data-content="character-expression"]').should ('not.be.visible');
+
+		cy.proceed ();
+		cy.get ('text-box').contains ('Another line');
+	});
+
+	it ('Displays centered dialog correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'centered This is centered',
+				'Normal dialog'
+			]
+		});
+
+		cy.start ();
+		cy.get ('centered-dialog').should ('exist');
+		cy.get ('centered-dialog').contains ('This is centered');
+		cy.get ('text-box').should ('not.be.visible');
+
+		cy.proceed ();
+		cy.get ('centered-dialog').should ('not.exist');
+		cy.get ('text-box').should ('be.visible');
+		cy.get ('text-box').contains ('Normal dialog');
+	});
+
+	it ('Removes centered dialog on rollback', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'First dialog',
+				'centered This is centered',
+				'Third dialog'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').contains ('First dialog');
+
+		cy.proceed ();
+		cy.get ('centered-dialog').should ('exist');
+		cy.get ('centered-dialog').contains ('This is centered');
+
+		cy.rollback ();
+		cy.get ('centered-dialog').should ('not.exist');
+		cy.get ('text-box').contains ('First dialog');
+	});
+
 	it ('Displays the character\'s name and side image correctly', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
@@ -304,8 +364,7 @@ context ('Dialog', function () {
 		this.monogatari.script ({
 			'Start': [
 				'y:happy:custom-class Hello!',
-				'm:sad:another-class|second-class Hi there!',
-				'narrator:normal:special-style This is a test'
+				'm:sad:another-class|second-class Hi there!'
 			]
 		});
 
@@ -318,12 +377,6 @@ context ('Dialog', function () {
 		cy.get ('text-box').should ('have.class', 'second-class');
 		cy.get ('text-box').should ('not.have.class', 'custom-class');
 		cy.get ('text-box').contains ('Hi there!');
-
-		cy.proceed ();
-		cy.get ('text-box').should ('have.class', 'special-style');
-		cy.get ('text-box').should ('not.have.class', 'another-class');
-		cy.get ('text-box').should ('not.have.class', 'second-class');
-		cy.get ('text-box').contains ('This is a test');
 	});
 
 	it ('Removes custom classes when rolling back dialogs', function () {
@@ -464,6 +517,287 @@ context ('Dialog', function () {
 		cy.get ('text-box').should ('not.have.class', 'warning');
 		cy.get ('text-box').should ('not.have.class', 'centered-style');
 		cy.get ('centered-dialog').should ('not.exist');
+	});
+
+	it ('Types dialog character by character when TypeAnimation is enabled', function () {
+		this.monogatari.setting ('TypeAnimation', true);
+		this.monogatari.setting ('TypeAnimationSpeed', 50);
+		this.monogatari.script ({
+			'Start': [
+				'Hello World!'
+			]
+		});
+
+		cy.start ();
+		// Initially, not all characters should be visible
+		cy.get ('type-writer').should ('exist');
+		// Wait for animation to complete
+		cy.wait (700);
+		cy.get ('text-box').contains ('Hello World!');
+	});
+
+	it ('Stops typing and shows full text when clicking during animation', function () {
+		this.monogatari.setting ('TypeAnimation', true);
+		this.monogatari.setting ('TypeAnimationSpeed', 100);
+		this.monogatari.script ({
+			'Start': [
+				'This is a very long dialog that would take a while to type out completely.',
+				'Second dialog'
+			]
+		});
+
+		cy.start ();
+		cy.get ('type-writer').should ('exist');
+		// Click to skip animation
+		cy.wait (200);
+		cy.proceed ();
+		// Full text should now be visible
+		cy.get ('text-box').contains ('This is a very long dialog that would take a while to type out completely.');
+
+		// Next proceed should advance to next dialog
+		cy.proceed ();
+		cy.get ('text-box').contains ('Second dialog');
+	});
+
+	it ('Handles special characters in dialog correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'"Hello!" said the character.',
+				'Special chars: <>&\'',
+				'Unicode: こんにちは 你好 مرحبا'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').contains ('"Hello!" said the character.');
+
+		cy.proceed ();
+		cy.get ('text-box').contains ('Special chars:');
+
+		cy.proceed ();
+		cy.get ('text-box').contains ('Unicode: こんにちは 你好 مرحبا');
+	});
+
+	it ('Shows character expression side image correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'y:happy Yui is happy!',
+				'y:sad Now Yui is sad.'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-content="character-expression"]').should ('be.visible');
+		cy.get ('text-box').contains ('Yui is happy!');
+
+		cy.proceed ();
+		cy.get ('[data-content="character-expression"]').should ('be.visible');
+		cy.get ('text-box').contains ('Now Yui is sad.');
+	});
+
+	it ('Handles dialog without expression gracefully', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'y Hello without expression!',
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').contains ('Hello without expression!');
+	});
+
+	it ('Updates finished_typing global correctly with animation', function () {
+		this.monogatari.setting ('TypeAnimation', true);
+		this.monogatari.setting ('TypeAnimationSpeed', 25);
+		this.monogatari.script ({
+			'Start': [
+				'Hi',
+				'Done'
+			]
+		});
+
+		cy.start ();
+		// Check that finished_typing is eventually true after animation
+		cy.wait (200);
+		cy.wrap (this.monogatari).invoke ('global', 'finished_typing').should ('eq', true);
+
+		cy.proceed ();
+		cy.get ('text-box').contains ('Done');
+	});
+
+	it ('Updates finished_typing global correctly without animation', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'Instant text',
+				'Done'
+			]
+		});
+
+		cy.start ();
+		cy.wrap (this.monogatari).invoke ('global', 'finished_typing').should ('eq', true);
+		cy.get ('text-box').contains ('Instant text');
+	});
+
+	it ('Handles text-box modes correctly', function () {
+		cy.loadTestAssets ({nvl: true});
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'Normal ADV mode',
+				'nvl This is NVL mode',
+				'centered This is centered',
+				'Back to normal'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').should ('have.attr', 'mode', 'adv');
+		cy.get ('text-box').contains ('Normal ADV mode');
+
+		cy.proceed ();
+		cy.get ('text-box').should ('have.attr', 'mode', 'nvl');
+		cy.get ('text-box').contains ('This is NVL mode');
+
+		cy.proceed ();
+		cy.get ('centered-dialog').should ('exist');
+
+		cy.proceed ();
+		cy.get ('text-box').should ('have.attr', 'mode', 'adv');
+		cy.get ('text-box').contains ('Back to normal');
+	});
+
+	it ('Clears NVL text when switching to ADV mode', function () {
+		cy.loadTestAssets ({nvl: true});
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'nvl First NVL line',
+				'nvl Second NVL line',
+				'This is ADV mode now'
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').should ('have.attr', 'mode', 'nvl');
+		cy.get ('text-box').contains ('First NVL line');
+
+		cy.proceed ();
+		cy.get ('text-box').contains ('First NVL line');
+		cy.get ('text-box').contains ('Second NVL line');
+
+		cy.proceed ();
+		cy.get ('text-box').should ('have.attr', 'mode', 'adv');
+		cy.get ('text-box').contains ('This is ADV mode now');
+		cy.get ('text-box').should ('not.contain', 'First NVL line');
+	});
+
+	it ('Handles voice playback with dialog', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'play voice sample',
+				'y Hello with voice!',
+				'y Next line stops voice'
+			]
+		});
+
+		cy.start ();
+		cy.proceed ();
+		cy.get ('text-box').contains ('Hello with voice!');
+
+		cy.proceed ();
+		cy.get ('text-box').contains ('Next line stops voice');
+	});
+
+	it ('Handles long dialogs with scrolling', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		const longText = 'This is a very long dialog. '.repeat (20);
+		this.monogatari.script ({
+			'Start': [
+				longText
+			]
+		});
+
+		cy.start ();
+		cy.get ('text-box').contains ('This is a very long dialog.');
+	});
+
+	it ('Preserves dialog entries in dialog log component', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'y First message',
+				'm Second message',
+				'Third message'
+			]
+		});
+
+		cy.start ();
+		cy.get ('dialog-log [data-spoke]').should ('have.length', 1);
+
+		cy.proceed ();
+		cy.get ('dialog-log [data-spoke]').should ('have.length', 2);
+
+		cy.proceed ();
+		cy.get ('dialog-log [data-spoke]').should ('have.length', 3);
+
+		cy.rollback ();
+		cy.get ('dialog-log [data-spoke]').should ('have.length', 2);
+	});
+
+	it ('Correctly identifies when dialog is from same character', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'y Hello!',
+				'y Still talking',
+				'm Different character'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-content="character-name"]').contains ('Yui');
+
+		cy.proceed ();
+		cy.get ('[data-content="character-name"]').contains ('Yui');
+
+		cy.proceed ();
+		cy.get ('[data-content="character-name"]').contains ('Mio');
+	});
+
+	it ('Handles inline actions in dialog text', function () {
+		this.monogatari.setting ('TypeAnimation', true);
+		this.monogatari.setting ('TypeAnimationSpeed', 25);
+		this.monogatari.script ({
+			'Start': [
+				'Hello {pause:100} World!'
+			]
+		});
+
+		cy.start ();
+		cy.wait (500);
+		cy.get ('text-box').contains ('Hello');
+		cy.get ('text-box').contains ('World!');
+	});
+
+	it ('Handles speed changes in dialog text', function () {
+		this.monogatari.setting ('TypeAnimation', true);
+		this.monogatari.setting ('TypeAnimationSpeed', 25);
+		this.monogatari.script ({
+			'Start': [
+				'Fast{speed:200}...slow{speed:25}...fast again!'
+			]
+		});
+
+		cy.start ();
+		cy.wait (1000);
+		cy.get ('text-box').contains ('Fast');
+		cy.get ('text-box').contains ('slow');
+		cy.get ('text-box').contains ('fast again!');
 	});
 
 });

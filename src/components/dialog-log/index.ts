@@ -1,7 +1,7 @@
 import type { Properties } from '@aegis-framework/pandora';
 import Component from '../../lib/Component';
 import type { Character } from '../../lib/types';
-
+import type { DOM } from '@aegis-framework/artemis';
 /**
  * Dialog entry for the log
  */
@@ -37,7 +37,7 @@ class DialogLog extends Component<Properties, DialogLogState> {
 
 	static override bind(): Promise<void> {
 		this.engine.registerListener('dialog-log', {
-			callback: () => {
+			callback: (event: Event, element: DOM) => {
 				this.instances((element: DialogLog) => {
 					const active = element.state.active;
 					element.setState({
@@ -79,7 +79,9 @@ class DialogLog extends Component<Properties, DialogLogState> {
 
 	pop(): void {
 		const last = this.content('log').find('[data-spoke]').last();
-		last.remove();
+		if (last.exists()) {
+			last.remove();
+		}
 	}
 
 	override onStateUpdate(property: string, _oldValue: unknown, newValue: unknown): Promise<void> {

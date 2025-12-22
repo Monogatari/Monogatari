@@ -1,5 +1,5 @@
 import { $_, Text } from '@aegis-framework/artemis';
-
+import type { DOM } from '@aegis-framework/artemis';
 import Action from './../lib/Action';
 import AudioPlayer from './../lib/AudioPlayer';
 import { ActionApplyResult, ActionRevertResult, MediaType, MediaStateItem, ActionInstance } from '../lib/types';
@@ -12,10 +12,12 @@ export class Play extends Action {
 		if (typeof context === 'object') {
 			const { userInitiated, skip } = context;
 			if (userInitiated === false && skip === false) {
-				const voicePlayers = this.engine.mediaPlayers('voice') as (HTMLAudioElement | HTMLVideoElement)[];
+				const voicePlayers = this.engine.mediaPlayers('voice') as (HTMLAudioElement | HTMLVideoElement | AudioPlayer)[];
 
 				for (const player of voicePlayers) {
-					if (!player.ended) {
+					// Handle both HTMLAudioElement and AudioPlayer
+					const hasEnded = player instanceof AudioPlayer ? player.ended : player.ended;
+					if (!hasEnded) {
 						throw new Error('Voice player still playing.');
 					}
 				}
@@ -73,45 +75,47 @@ export class Play extends Action {
 	static override async bind(selector: string): Promise<void> {
 		const engine = this.engine;
 
-		// Volume bars listeners
-		$_(`${selector} [data-action="set-volume"]`).on('change mouseover', function (this: HTMLInputElement) {
-			const target = this.dataset.target as string;
-			let value: string | number = this.value;
+		engine.registerListener('set-volume', {
+			callback: (event, element) => {
+				const target = element.data('target') as string;
+				let value: string | number = element.value() as string;
 
-			if (typeof value === 'string') {
-				value = parseFloat(value);
-			}
+				if (typeof value === 'string') {
+					value = parseFloat(value);
+				}
 
-			if (target === 'video') {
-				$_('[data-video]').each((element: any) => {
-					(element as HTMLMediaElement).volume = value as number;
-				});
-			} else {
-				const players = engine.mediaPlayers(target) as (HTMLAudioElement & { dataset: { volumePercentage?: string } })[];
+				if (target === 'video') {
+					$_('[data-video]').each((el: any) => {
+						(el as HTMLMediaElement).volume = value as number;
+					});
+				} else {
+					const players = engine.mediaPlayers(target) as (HTMLAudioElement | AudioPlayer)[];
 
-				// Music volume should also affect the main screen ambient music
-				if (target === 'music') {
-					const ambientPlayer = engine.ambientPlayer as (HTMLAudioElement & { gainNode?: GainNode }) | null;
-					if (ambientPlayer && ambientPlayer.gainNode && engine.audioContext) {
-						ambientPlayer.gainNode.gain.setValueAtTime(value as number, engine.audioContext.currentTime);
-					} else if (ambientPlayer && ambientPlayer.volume !== undefined) {
-						ambientPlayer.volume = value as number;
+					// Music volume should also affect the main screen ambient music
+					if (target === 'music') {
+						const ambientPlayer = engine.ambientPlayer as (HTMLAudioElement & { gainNode?: GainNode }) | null;
+						if (ambientPlayer && ambientPlayer.gainNode && engine.audioContext) {
+							ambientPlayer.gainNode.gain.setValueAtTime(value as number, engine.audioContext.currentTime);
+						} else if (ambientPlayer && ambientPlayer.volume !== undefined) {
+							ambientPlayer.volume = value as number;
+						}
+					}
+
+					for (const player of players) {
+						// Handle both HTMLAudioElement and AudioPlayer
+						const volumePercentage = player.dataset?.volumePercentage;
+						if (volumePercentage && !isNaN(parseInt(volumePercentage))) {
+							player.volume = (parseInt(volumePercentage) / 100) * (value as number);
+						} else {
+							player.volume = value as number;
+						}
 					}
 				}
 
-				for (const player of players) {
-					if (player.dataset.volumePercentage && !isNaN(parseInt(player.dataset.volumePercentage))) {
-						player.volume = (parseInt(player.dataset.volumePercentage) / 100) * (value as number);
-					} else {
-						player.volume = value as number;
-					}
-				}
+				const volumeSettings = engine.preference('Volume') as Record<string, number>;
+				volumeSettings[Text.capitalize(target)] = value as number;
+				engine.preferences(engine.preferences(), true);
 			}
-
-			const volumeSettings = engine.preference('Volume') as Record<string, number>;
-			volumeSettings[Text.capitalize(target)] = value as number;
-
-			engine.preferences(engine.preferences(), true);
 		});
 	}
 
@@ -262,8 +266,8 @@ export class Play extends Action {
 
 		const effects: Record<string, any> = {};
 
-		for (const [id, config] of Object.entries(availableEffects)) {
-			const index = this.props.indexOf(id);
+		for (const config of availableEffects) {
+			const index = this.props.indexOf(config.id);
 
 			if (index === -1) {
 				continue;
@@ -283,7 +287,7 @@ export class Play extends Action {
 				}
 			}
 
-			effects[id] = params;
+			effects[config.id] = params;
 		}
 
 		return effects;
@@ -329,18 +333,22 @@ export class Play extends Action {
 				this.engine.removeMediaPlayer(this.type, this.mediaKey);
 			};
 
-			if (fadePosition > -1) {
-				const fadeTime = this.props[fadePosition + 1];
-				const match = fadeTime.match(/\d*(\.\d*)?/);
-				const duration = match ? parseFloat(match[0]) : 0;
-				this.player.fadeIn(duration);
-			}
-
 			if (paused === true) {
 				return Promise.resolve();
 			}
 
-			return this.player.play();
+			// Start playback first, then apply fade if requested
+			await this.player.play();
+
+			if (fadePosition > -1) {
+				const fadeTime = this.props[fadePosition + 1];
+				const match = fadeTime.match(/\d*(\.\d*)?/);
+				const duration = match ? parseFloat(match[0]) : 0;
+				// Don't await fadeIn - let it run in background while playback continues
+				this.player.fadeIn(duration);
+			}
+
+			return;
 
 		}
 		else if (this.player instanceof Array) {

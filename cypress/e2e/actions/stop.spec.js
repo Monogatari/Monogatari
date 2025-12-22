@@ -6,6 +6,48 @@ context ('Stop', function () {
 		cy.window ().its ('Monogatari.default').as ('monogatari');
 	});
 
+	it ('Stops sound correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'Zero',
+				'play sound beep loop',
+				'One',
+				'stop sound beep',
+				'Two'
+			]
+		});
+
+		cy.start ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'sound').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('history', 'sound').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'sound').should ('have.length', 0);
+
+		cy.get ('text-box').contains ('Zero');
+
+		cy.proceed ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'sound').should ('deep.equal', [{ statement: 'play sound beep loop', paused: false }]);
+		cy.wrap (this.monogatari).invoke ('history', 'sound').should ('deep.equal', ['play sound beep loop']);
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'sound').should ('have.length', 1);
+
+		cy.get ('text-box').contains ('One');
+
+		cy.proceed ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'sound').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('history', 'sound').should ('deep.equal', ['play sound beep loop']);
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'sound').should ('have.length', 0);
+
+		cy.get ('text-box').contains ('Two');
+
+		cy.rollback ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'sound').should ('deep.equal', [{ statement: 'play sound beep loop', paused: false }]);
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'sound').should ('have.length', 1);
+	});
+
 	it ('Stops music correctly', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
@@ -232,6 +274,81 @@ context ('Stop', function () {
 		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('subspace.paused').should ('equal', false);
 
 		cy.get ('text-box').contains ('Two');
+	});
+
+	it ('Stops music with fade out correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'Zero',
+				'play music theme',
+				'One',
+				'stop music theme with fade 0.3',
+				'Two'
+			]
+		});
+
+		cy.start ();
+
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 0);
+
+		cy.get ('text-box').contains ('Zero');
+
+		cy.proceed ();
+
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 1);
+		cy.wrap (this.monogatari.mediaPlayers ('music', true)).its ('theme.paused').should ('equal', false);
+
+		cy.get ('text-box').contains ('One');
+
+		cy.proceed ();
+		// Wait for fade to complete
+		cy.wait(400);
+
+		cy.wrap (this.monogatari).invoke ('state', 'music').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'music').should ('have.length', 0);
+
+		cy.get ('text-box').contains ('Two');
+	});
+
+	it ('Stops all sounds correctly', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'Zero',
+				'play sound beep loop',
+				'play sound coin loop',
+				'One',
+				'stop sound',
+				'Two'
+			]
+		});
+
+		cy.start ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'sound').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'sound').should ('have.length', 0);
+
+		cy.get ('text-box').contains ('Zero');
+
+		cy.proceed ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'sound').should ('have.length', 2);
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'sound').should ('have.length', 2);
+
+		cy.get ('text-box').contains ('One');
+
+		cy.proceed ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'sound').should ('be.empty');
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'sound').should ('have.length', 0);
+
+		cy.get ('text-box').contains ('Two');
+
+		cy.rollback ();
+
+		cy.wrap (this.monogatari).invoke ('state', 'sound').should ('have.length', 2);
+		cy.wrap (this.monogatari).invoke ('mediaPlayers', 'sound').should ('have.length', 2);
 	});
 
 });

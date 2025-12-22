@@ -34,7 +34,7 @@ export class Pause extends Action {
 	}
 
 	override async apply(): Promise<void> {
-		if (this.player instanceof Array) {
+		if (Array.isArray(this.player)) {
 			for (const player of this.player) {
 				player.pause();
 			}
@@ -46,7 +46,7 @@ export class Pause extends Action {
 	override async didApply(): Promise<ActionApplyResult> {
 		const currentState = this.engine.state(this.type);
 
-		if (this.player instanceof Array) {
+		if (Array.isArray(this.player)) {
 			const updatedState = currentState.map((s: MediaStateItem) => ({
 				...s,
 				paused: true
@@ -79,7 +79,7 @@ export class Pause extends Action {
 	}
 
 	override async revert(): Promise<void> {
-		if (this.player instanceof Array) {
+		if (Array.isArray(this.player)) {
 			const promises = [];
 			for (const player of this.player) {
 				promises.push(player.play());
@@ -93,7 +93,7 @@ export class Pause extends Action {
 	override async didRevert(): Promise<ActionRevertResult> {
 		const currentState = this.engine.state(this.type);
 
-		if (this.player instanceof Array) {
+		if (Array.isArray(this.player)) {
 			const updatedState = currentState.map((s: MediaStateItem) => ({
 				...s,
 				paused: false

@@ -1,7 +1,7 @@
 import Action from './../lib/Action';
 import { FancyError } from '../lib/FancyError';
 import { ActionApplyResult, ActionRevertResult, LabelHistoryItem } from '../lib/types';
-
+import type { DOM } from '@aegis-framework/artemis';
 export class Jump extends Action {
 
 	static override id = 'Jump';
@@ -13,7 +13,7 @@ export class Jump extends Action {
 
 	static override async bind(selector: string): Promise<void> {
 		this.engine.registerListener('jump', {
-			callback: (element: any) => {
+			callback: (event: Event, element: DOM) => {
 				this.engine.run(`jump ${element.data('jump')}`, false);
 			}
 		});

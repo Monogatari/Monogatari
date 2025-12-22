@@ -14,10 +14,22 @@ export class Video extends Action {
 		modes: ['modal', 'displayable', 'immersive', 'fullscreen', 'background']
 	};
 
+	/**
+	 * Properly cleanup a video element to prevent memory leaks
+	 */
+	static cleanupVideoElement(element: HTMLVideoElement): void {
+		element.pause();
+		element.onended = null;
+		element.onerror = null;
+		element.src = '';
+		element.load(); // Reset the element
+	}
+
 	static override async shouldProceed(): Promise<void> {
 		return new Promise((resolve, reject) => {
-			$_('[data-video]').each((element: any) => {
-				if (element.ended !== true && element.dataset.mode !== 'background' && element.dataset.mode !== 'displayable') {
+			$_('[data-video]').each((element: HTMLElement) => {
+				const videoElement = element as HTMLVideoElement;
+				if (videoElement.ended !== true && videoElement.dataset.mode !== 'background' && videoElement.dataset.mode !== 'displayable') {
 					reject('Playing video must end before proceeding.');
 				}
 			});
@@ -68,6 +80,10 @@ export class Video extends Action {
 	}
 
 	static override async reset(): Promise<void> {
+		// Properly clean up all video elements before removing
+		this.engine.element().find('[data-video]').each((element: HTMLElement) => {
+			Video.cleanupVideoElement(element as HTMLVideoElement);
+		});
 		this.engine.element().find('[data-video]').remove();
 
 		this.engine.history({
@@ -132,7 +148,8 @@ export class Video extends Action {
 		// TODO: Find a way to remove the resize listeners once the video is stopped
 		const element = document.createElement('video');
 
-    const { Video: videoVolume } = this.engine.preference('Volume') as { Video: number };
+		const volumePrefs = this.engine.preference('Volume') as { Video?: number } | undefined;
+		const videoVolume = volumePrefs?.Video ?? 1;
 
 		element.volume = videoVolume;
 
@@ -143,21 +160,37 @@ export class Video extends Action {
 			element.classList.add(newClass);
 		}
 
-
-    const { root, videos: videoPath } = this.engine.setting('AssetsPath') as { root: string, videos: string };
+		const { root, videos: videoPath } = this.engine.setting('AssetsPath') as { root: string, videos: string };
 
 		$_(element).attribute('src', `${root}/${videoPath}/${this.src}`);
 
+		// Add error handler for video loading failures
+		element.onerror = () => {
+			this.engine.debug.error(`Failed to load video: ${this.name}`);
+		};
+
 		if (this.props.indexOf('close') > -1) {
 			element.onended = () => {
-				this.engine.element().find(`[data-video="${this.name}"][data-mode="${this.mode}"]`).remove();
+				// Exit fullscreen if we're in fullscreen mode
+				if (this.mode === 'fullscreen' && document.fullscreenElement) {
+					document.exitFullscreen().catch(() => {
+						// Ignore errors when exiting fullscreen
+					});
+				}
+
+				// Cleanup and remove the element
+				const videoElement = this.engine.element().find(`[data-video="${this.name}"][data-mode="${this.mode}"]`).get(0) as HTMLVideoElement | undefined;
+				if (videoElement) {
+					Video.cleanupVideoElement(videoElement);
+					videoElement.remove();
+				}
 
 				let index = -1;
 
 				const state = this.engine.state('videos');
 				for (let i = state.length - 1; i >= 0; i--) {
 					const last = state[i];
-					const [show, video, name, mode] = last.split(' ');
+					const [, , name, mode] = last.split(' ');
 					if (name === this.name && mode === this.mode) {
 						index = i;
 						break;
@@ -233,7 +266,22 @@ export class Video extends Action {
 	}
 
 	override async revert(): Promise<void> {
-		this.engine.element().find(`[data-video="${this.name}"][data-mode="${this.mode}"]`).remove();
+		const element = this.engine.element().find(`[data-video="${this.name}"][data-mode="${this.mode}"]`).get(0) as HTMLVideoElement | undefined;
+		if (element) {
+			// Exit fullscreen if we're in fullscreen mode
+			if (this.mode === 'fullscreen' && document.fullscreenElement) {
+				await document.exitFullscreen().catch(() => {
+					// Ignore errors when exiting fullscreen
+				});
+			}
+			Video.cleanupVideoElement(element);
+			element.remove();
+		}
+
+		// Unblock if this was a blocking video
+		if (this.mode === 'immersive' || this.mode === 'fullscreen' || this.mode === 'modal') {
+			this.engine.global('block', false);
+		}
 	}
 
 	override async didRevert(): Promise<ActionRevertResult> {

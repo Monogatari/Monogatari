@@ -84,6 +84,16 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 		'subspace': 'subspace.mp3'
 	});
 
+	// Use same audio files for sounds and voices since they exist on test server
+	this.monogatari.assets ('sounds', {
+		'beep': 'theme.mp3',
+		'coin': 'subspace.mp3'
+	});
+
+	this.monogatari.assets ('voices', {
+		'sample': 'theme.mp3'
+	});
+
 	this.monogatari.action ('particles').particles ({
 		'snow': {
 			'particles': {

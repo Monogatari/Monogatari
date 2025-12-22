@@ -25,7 +25,10 @@ class TextBox extends Component<TextBoxProps, Properties> {
 	 * and scrolls the element.
 	 */
 	checkUnread (): void {
-		const text = this.content('text').get(0) as HTMLElement;
+		const text = this.content('text').get(0) as HTMLElement | undefined;
+		if (!text) {
+			return;
+		}
 		if ((text.clientHeight + text.scrollTop) < text.scrollHeight) {
 			this.classList.add('unread');
 		} else {

@@ -143,6 +143,9 @@ class AudioPlayer {
 				await audioContext.audioWorklet.addModule(url);
 			} catch (e) {
 				console.error(`Failed to load worklet: ${name}`, e);
+			} finally {
+				// Revoke the blob URL to prevent memory leak
+				URL.revokeObjectURL(url);
 			}
 		});
 
@@ -375,37 +378,68 @@ class AudioPlayer {
 
 	get currentTime (): number {
 		if (this._isPaused) {
-			return this.pausedAt;
+			return this._loop ? this.pausedAt % this.duration : this.pausedAt;
 		}
 		if (this._isPlaying) {
-			return this.audioContext.currentTime - this.startedAt;
+			const elapsed = this.audioContext.currentTime - this.startedAt;
+			return this._loop ? elapsed % this.duration : elapsed;
 		}
 		return 0;
+	}
+
+	set currentTime (value: number) {
+		if (value < 0 || value > this.duration) {
+			return;
+		}
+
+		const wasPlaying = this._isPlaying;
+
+		if (wasPlaying) {
+			this.cleanup();
+		}
+
+		this.pausedAt = value;
+		this._isPaused = true;
+		this._isPlaying = false;
+
+		if (wasPlaying) {
+			this.play();
+		}
 	}
 
 	get output (): GainNode {
 		return this.gainNode;
 	}
 
-	async fadeIn (duration: number): Promise<void> {
+	private _targetVolume: number = 1;
+
+	async fadeIn (duration: number, targetVolume?: number): Promise<void> {
 		if (!this._isPlaying) {
 			return;
 		}
 
+		// Use provided target volume, or stored target volume, or current gain value
+		const target = targetVolume ?? this._targetVolume;
+		this._targetVolume = target;
+
 		const startTime = this.audioContext.currentTime;
 		const endTime = startTime + duration;
 
-		this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, startTime);
-		this.gainNode.gain.linearRampToValueAtTime(this.volume, endTime);
+		// Start from 0 (or current value if already partially faded) and ramp to target
+		this.gainNode.gain.setValueAtTime(0, startTime);
+		this.gainNode.gain.linearRampToValueAtTime(target, endTime);
 
 		// Wait for the fade to complete
 		await new Promise<void>(resolve => setTimeout(resolve, duration * 1000));
 	}
 
-	async fadeOut (duration: number): Promise<void> {
+	async fadeOut (duration: number, stopAfterFade: boolean = false): Promise<void> {
 		if (!this._isPlaying) {
 			return;
 		}
+
+		// Save current volume as target for potential fadeIn later
+		this._targetVolume = this.gainNode.gain.value;
 
 		const startTime = this.audioContext.currentTime;
 		const endTime = startTime + duration;
@@ -415,6 +449,17 @@ class AudioPlayer {
 
 		// Wait for the fade to complete
 		await new Promise<void>(resolve => setTimeout(resolve, duration * 1000));
+
+		// Optionally stop the audio after fade completes
+		if (stopAfterFade) {
+			this.stop();
+		}
+	}
+
+	destroy (): void {
+		this.stop();
+		this.gainNode.disconnect();
+		this.onended = null;
 	}
 }
 

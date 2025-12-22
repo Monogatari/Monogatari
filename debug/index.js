@@ -1,5 +1,18 @@
 import './vendor/prism.js';
-import { FancyError } from '../src/lib/FancyError';
+
+// ============================================================================
+// Debug Mode Marker
+// ============================================================================
+// This global object signals to FancyError that we're in debug mode and
+// fancy errors should be displayed. Without this, FancyError.show() will
+// not display any errors.
+// ============================================================================
+if (typeof window === 'object') {
+  window.MonogatariDebug = {
+    enabled: true,
+    version: '1.0.0'
+  };
+}
 
 // ============================================================================
 // Error Registry
@@ -9,6 +22,14 @@ import { FancyError } from '../src/lib/FancyError';
 //   component:component_tag:error_id
 //   engine:category:error_id
 // ============================================================================
+
+/**
+ * Register all error templates with the FancyError class.
+ * This is called after the Monogatari engine is loaded to ensure we use
+ * the same FancyError instance that the engine uses.
+ * @param {typeof import('../src/lib/FancyError').FancyError} FancyError
+ */
+function registerErrors(FancyError) {
 
 // ----------------------------------------------------------------------------
 // Action Errors
@@ -626,28 +647,60 @@ FancyError.register('engine:component:lifecycle_error', {
   }
 });
 
+} // End of registerErrors function
+
+// ============================================================================
+// Deferred Registration
+// ============================================================================
+// Wait for Monogatari to be available, then register all errors with its
+// FancyError instance. This ensures we use the same instance the engine uses.
+// ============================================================================
+
+if (typeof window === 'object') {
+  // Poll for Monogatari to be available (it loads after this script)
+  const waitForMonogatari = () => {
+    if (window.Monogatari && window.Monogatari.FancyError) {
+      registerErrors(window.Monogatari.FancyError);
+    } else {
+      // Check again on next frame
+      requestAnimationFrame(waitForMonogatari);
+    }
+  };
+
+  // Start checking
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', waitForMonogatari);
+  } else {
+    waitForMonogatari();
+  }
+}
+
 // ============================================================================
 // Global Error Handler
 // ============================================================================
 
-if (typeof window === 'object' && typeof $_ready === 'function') {
+if (typeof window === 'object') {
   window.addEventListener('error', (event) => {
     const { message, lineno, filename } = event;
 
     // Once the DOM is ready, a Fancy Error will be shown providing more information
-    $_ready (() => {
-      FancyError.show (
-        'An Unknown Error Occurred',
-        message,
-        {
-          'File': filename,
-          'Line': lineno,
-          'Help': {
-            '_': 'This is most likely a scripting error, please check your script and JavaScript code for missing commas or incorrect syntax.',
-            '_1': 'There may be additional information on your browser\'s console. You can open your console by pressing Ctrl + Shift + I'
+    window.addEventListener('DOMContentLoaded', () => {
+      // Use Monogatari's FancyError if available
+      const FancyError = window.Monogatari?.FancyError;
+      if (FancyError) {
+        FancyError.show (
+          'An Unknown Error Occurred',
+          message,
+          {
+            'File': filename,
+            'Line': lineno,
+            'Help': {
+              '_': 'This is most likely a scripting error, please check your script and JavaScript code for missing commas or incorrect syntax.',
+              '_1': 'There may be additional information on your browser\'s console. You can open your console by pressing Ctrl + Shift + I'
+            }
           }
-        }
-      );
+        );
+      }
     });
   });
 }

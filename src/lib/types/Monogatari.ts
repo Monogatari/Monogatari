@@ -13,6 +13,7 @@ import type { StaticComponent } from './Component';
 import type { GameSettings } from './GameSettings';
 import type { PlayerPreferences } from './PlayerPreferences';
 import type TypeWriterComponent from '../../components/type-writer';
+import type AudioPlayer from '../AudioPlayer';
 import type {
   StateMap,
   HistoryMap,
@@ -330,7 +331,7 @@ export interface VisualNovelEngine {
    * @param listener - Listener configuration with optional keys and callback
    * @param replace - If true, replace existing listener with same name
    */
-  registerListener: (name: string, listener: { keys?: string | string[]; callback: (...args: unknown[]) => unknown }, replace?: boolean) => void;
+  registerListener: (name: string, listener: { keys?: string | string[]; callback: (this: VisualNovelEngine, event: Event, element: DOM) => unknown }, replace?: boolean) => void;
 
   /**
    * Remove a listener by name.
@@ -344,7 +345,7 @@ export interface VisualNovelEngine {
    * @param element - Optional DOM element context
    * @param event - Optional event that triggered the listener
    */
-  runListener: (name: string, element?: DOM | null, event?: Event | null) => void;
+  runListener: (name: string, event?: Event | null, element?: DOM | null) => Promise<void>;
 
   /**
    * Register a keyboard shortcut.
@@ -569,7 +570,7 @@ export interface VisualNovelEngine {
    * @param object - If true, return as object; if false, return as array
    * @returns Media players
    */
-  mediaPlayers: (type?: string, object?: boolean) => Record<string, Record<string, HTMLAudioElement | HTMLVideoElement>> | (HTMLAudioElement | HTMLVideoElement)[] | Record<string, unknown>;
+  mediaPlayers: (type?: string, object?: boolean) => Record<string, Record<string, HTMLAudioElement | HTMLVideoElement | AudioPlayer>> | (HTMLAudioElement | HTMLVideoElement | AudioPlayer)[] | Record<string, unknown>;
 
   /**
    * Get or set a specific media player.
@@ -578,7 +579,7 @@ export interface VisualNovelEngine {
    * @param value - Optional player element to set
    * @returns Media player element or undefined
    */
-  mediaPlayer: (type: string, key: string, value?: HTMLAudioElement | HTMLVideoElement) => HTMLAudioElement | HTMLVideoElement | undefined;
+  mediaPlayer: (type: string, key: string, value?: HTMLAudioElement | HTMLVideoElement | AudioPlayer) => HTMLAudioElement | HTMLVideoElement | AudioPlayer | undefined;
 
   /**
    * Remove media player(s) by type and optionally key.

@@ -30,8 +30,8 @@ export class Stop extends Action {
 
 	override async willApply(): Promise<void> {
 		if (this.player) {
-			if (typeof this.player === 'object' && !(this.player instanceof AudioPlayer)) {
-				for (const player of Object.values(this.player) as any[]) {
+			if (Array.isArray(this.player)) {
+				for (const player of this.player) {
 					player.loop = false;
 				}
 			} else {
@@ -44,12 +44,15 @@ export class Stop extends Action {
 		// Check if the audio should have a fade time
 		const fadePosition = this.props.indexOf('fade');
 
-		if (typeof this.player === 'object' && !(this.player instanceof AudioPlayer)) {
+		if (Array.isArray(this.player)) {
 			if (fadePosition > -1) {
-				for (const player of (this.player as any)) {
-					const fadeTime = this.props[fadePosition + 1];
-					const duration = parseFloat((fadeTime.match(/\d*(\.\d*)?/) as RegExpMatchArray)[0]);
-					await player.fadeOut(duration);
+				const fadeTime = this.props[fadePosition + 1];
+				const duration = parseFloat((fadeTime.match(/\d*(\.\d*)?/) as RegExpMatchArray)[0]);
+				for (const player of this.player) {
+					// Only AudioPlayer has fadeOut, HTMLAudioElement doesn't
+					if (player instanceof AudioPlayer) {
+						await player.fadeOut(duration);
+					}
 					this.engine.removeMediaPlayer(this.type, player.dataset.key);
 				}
 			} else {
@@ -59,7 +62,10 @@ export class Stop extends Action {
 			if (fadePosition > -1) {
 				const fadeTime = this.props[fadePosition + 1];
 				const duration = parseFloat((fadeTime.match(/\d*(\.\d*)?/) as RegExpMatchArray)[0]);
-				await this.player.fadeOut(duration);
+				// Only AudioPlayer has fadeOut, HTMLAudioElement doesn't
+				if (this.player instanceof AudioPlayer) {
+					await this.player.fadeOut(duration);
+				}
 				this.engine.removeMediaPlayer(this.type, this.media);
 			} else {
 				this.engine.removeMediaPlayer(this.type, this.media);

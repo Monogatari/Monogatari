@@ -8,7 +8,7 @@ export class Dialog extends Action {
 	static override id = 'Dialog';
 
 	static override async shouldProceed() {
-    const element = this.engine.element();
+		const element = this.engine.element();
 		// Check if the type animation has finished and the Typed object still exists
 		let component: TypeWriterComponent | undefined;
 
@@ -17,15 +17,19 @@ export class Dialog extends Action {
 		if (centeredDialog.exists()) {
 			component = centeredDialog.find('[data-content="wrapper"]').get(0) as TypeWriterComponent | undefined;
 		} else {
-      component = element.find('type-writer').get(0) as TypeWriterComponent | undefined
-    }
+			// In NVL mode, get the last (most recent) type-writer which is the active one
+			const typeWriters = element.find('type-writer');
+			if (typeWriters.exists()) {
+				component = typeWriters.last().get(0) as TypeWriterComponent | undefined;
+			}
+		}
 
 		// In NVL mode, there might not be a type-writer element in the text-box
 		if (!component) {
 			return;
 		}
 
-		const hasStrings = (component.state.strings.length || 0) > 0;
+		const hasStrings = (component.state?.strings?.length || 0) > 0;
 
 		if (!this.engine.global('finished_typing') && hasStrings) {
 			this.engine.stopTyping(component);
@@ -206,6 +210,8 @@ export class Dialog extends Action {
 
 			if (id === 'nvl') {
 				this.nvl = true;
+			} else if (id === 'narrator') {
+				// Do nothing, just consume 'narrator'
 			} else {
 				this.dialog = `${character} ${this.dialog}`;
 				this.clearDialog = `${character} ${this.clearDialog}`;
@@ -337,13 +343,17 @@ export class Dialog extends Action {
 				this.engine.element().find('[data-ui="say"]').append(`<div data-spoke="${character}" class='unnamed'><type-writer></type-writer></div>`);
 			}
 
-			const elements = $_('[data-ui="say"] [data-spoke] type-writer');
-			const last = elements.last().get(0) as any;
+			// Use requestAnimationFrame to ensure the element is in the DOM and mounted
+			requestAnimationFrame(() => {
+				const elements = $_('[data-ui="say"] [data-spoke] type-writer');
+				const last = elements.last().get(0) as any;
 
-			this.engine.global('typedConfiguration').strings = [dialog];
-			this.engine.global('finished_typing', false);
-
-			last.setState({ strings: [dialog] });
+				if (last) {
+					this.engine.global('typedConfiguration').strings = [dialog];
+					this.engine.global('finished_typing', false);
+					last.setState({ strings: [dialog] });
+				}
+			});
 
 		} else {
 			if (character !== '_narrator') {
@@ -402,10 +412,11 @@ export class Dialog extends Action {
 				// no animation will be shown in the game.
 				this.engine.global('typedConfiguration').strings = [dialog];
 				this.engine.global('finished_typing', false);
-				const say = this.engine.element().find('[data-ui="say"]');
-				const sayElement = say.collection[0] as any;
-				if (sayElement) {
-					sayElement.setState({ strings: [dialog] });
+
+				// Find the type-writer component inside the text-box (ADV mode has it)
+				const typeWriter = this.engine.element().find('[data-component="text-box"] type-writer').get(0) as any;
+				if (typeWriter) {
+					typeWriter.setState({ strings: [dialog] });
 				}
 			} else {
 				this.engine.element().find('[data-ui="say"]').html(clearDialog);

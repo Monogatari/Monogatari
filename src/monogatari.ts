@@ -10,12 +10,13 @@ import {
   Text,
   Debug
 } from '@aegis-framework/artemis';
-import type { DOM, EventCallback } from '@aegis-framework/artemis';
+import type { DOM, EventCallback, Callable } from '@aegis-framework/artemis';
 import {  Registry } from '@aegis-framework/pandora';
 import mousetrap, { ExtendedKeyboardEvent } from 'mousetrap';
 import { FancyError } from './lib/FancyError';
 import Component  from './lib/Component';
 import Action from './lib/Action';
+import AudioPlayer from './lib/AudioPlayer';
 import type { StaticComponent, StaticAction, ActionApplyResult, FancyErrorProps, Character, LegacySaveData, GameSettings, PlayerPreferences, StateMap, HistoryMap, GlobalsMap, ActionInstance } from './lib/types';
 import deeply from 'deeply';
 import { version } from '../package.json';
@@ -113,7 +114,7 @@ class Monogatari {
 
   static Storage: Space = new Space ();
 
-  static _mediaPlayers: Record<string, Record<string, HTMLAudioElement | HTMLVideoElement | (HTMLAudioElement & { stop?: () => void }) | (HTMLVideoElement & { stop?: () => void })>> = {
+  static _mediaPlayers: Record<string, Record<string, HTMLAudioElement | HTMLVideoElement | AudioPlayer | (HTMLAudioElement & { stop?: () => void }) | (HTMLVideoElement & { stop?: () => void })>> = {
     music: {},
     sound: {},
     voice: {},
@@ -361,7 +362,7 @@ class Monogatari {
     _didInit: false,
   };
 
-  static _listeners: Array<{ name: string; keys?: string | string[]; callback: (...args: unknown[]) => unknown }> = [];
+  static _listeners: Array<{ name: string; keys?: string | string[]; callback: (this: VisualNovelEngine, event: Event, element: DOM) => unknown }> = [];
 
   static _configuration: Record<string, unknown> = {
     'main-menu': {
@@ -1230,9 +1231,9 @@ class Monogatari {
 		return this._mediaPlayers;
 	}
 
-	static mediaPlayer (type: string, key: string, value?: HTMLAudioElement | HTMLVideoElement): HTMLAudioElement | HTMLVideoElement | undefined {
+	static mediaPlayer (type: string, key: string, value?: HTMLAudioElement | HTMLVideoElement | AudioPlayer): HTMLAudioElement | HTMLVideoElement | AudioPlayer | undefined {
 		if (typeof value === 'undefined') {
-			const players = this.mediaPlayers (type, true) as Record<string, HTMLAudioElement | HTMLVideoElement>;
+			const players = this.mediaPlayers (type, true) as Record<string, HTMLAudioElement | HTMLVideoElement | AudioPlayer>;
 			return players?.[key];
 		} else {
 			value.dataset.type = type;
@@ -1243,36 +1244,39 @@ class Monogatari {
 	}
 
 	static removeMediaPlayer (type: string, key?: string): void {
-		const players = this.mediaPlayers (type, true) as Record<string, HTMLAudioElement | HTMLVideoElement> | undefined;
+		const players = this.mediaPlayers (type, true) as Record<string, HTMLAudioElement | HTMLVideoElement | AudioPlayer> | undefined;
+
+		const cleanupPlayer = (player: HTMLAudioElement | HTMLVideoElement | AudioPlayer): void => {
+			if (player instanceof AudioPlayer) {
+				// Use AudioPlayer's destroy method which handles cleanup properly
+				player.destroy();
+			} else {
+				// Handle HTMLAudioElement/HTMLVideoElement
+				if (typeof player.pause === 'function') {
+					player.pause();
+				}
+				if (typeof player.setAttribute === 'function') {
+					player.setAttribute('src', '');
+					player.currentTime = 0;
+				}
+			}
+		};
+
 		if (typeof key === 'undefined') {
 			if (players) {
-				for (const mediaKey of Object.keys (players)) {
-					const player = this._mediaPlayers[type][mediaKey] as (HTMLAudioElement | HTMLVideoElement) & { stop?: () => void };
-					if (player && typeof player.pause === 'function') {
-						player.pause();
-					}
-					if (player && typeof player.stop === 'function') {
-						player.stop();
-					}
-					if (player && typeof player.setAttribute === 'function') {
-						player.setAttribute ('src', '');
-						player.currentTime = 0;
+				for (const mediaKey of Object.keys(players)) {
+					const player = this._mediaPlayers[type][mediaKey];
+					if (player) {
+						cleanupPlayer(player);
 					}
 					delete this._mediaPlayers[type][mediaKey];
 				}
 			}
 		} else {
 			if (typeof this._mediaPlayers[type]?.[key] !== 'undefined') {
-				const player = this._mediaPlayers[type][key] as (HTMLAudioElement | HTMLVideoElement) & { stop?: () => void };
-				if (player && typeof player.pause === 'function') {
-					player.pause();
-				}
-				if (player && typeof player.stop === 'function') {
-					player.stop();
-				}
-				if (player && typeof player.setAttribute === 'function') {
-					player.setAttribute ('src', '');
-					player.currentTime = 0;
+				const player = this._mediaPlayers[type][key];
+				if (player) {
+					cleanupPlayer(player);
 				}
 				delete this._mediaPlayers[type][key];
 			}
@@ -1742,13 +1746,13 @@ class Monogatari {
 	 *
 	 * @returns {void}
 	 */
-	static keyboardShortcut (shortcut: string | string[], callback: (event: KeyboardEvent) => void): void {
+	static keyboardShortcut (shortcut: string | string[], callback: (this: VisualNovelEngine, event: KeyboardEvent, element: DOM) => void): void {
 		this.debug.log (`Binding Keyboard Shortcut: ${shortcut}`);
 		mousetrap.bind (shortcut, (event: ExtendedKeyboardEvent) => {
 			const target = event.target as HTMLElement | null;
 			if (target && target.tagName?.toLowerCase () !== 'input') {
 				event.preventDefault ();
-				callback.call (null, event);
+				callback.apply (this, [event, $_(target)]);
 			}
 		});
 	}
@@ -1828,7 +1832,7 @@ class Monogatari {
 		}
 	}
 
-	static registerListener (name: string, listener: { keys?: string | string[]; callback: (...args: unknown[]) => unknown }, replace = false): void {
+	static registerListener (name: string, listener: { keys?: string | string[]; callback: (this: VisualNovelEngine, event: Event, element: DOM) => unknown }, replace = false): void {
 		const listenerWithName = { ...listener, name };
 		if (replace === true) {
 			const index = this._listeners.findIndex (l => l.name === name);
@@ -1842,7 +1846,7 @@ class Monogatari {
 		// If a listener is registered post-bind, we want to register the keyboard
 		// shortcut as well or else it will not happen automatically
 		if (this.global ('_didBind') === true && listenerWithName.keys) {
-			this.keyboardShortcut (listenerWithName.keys, listenerWithName.callback as (event: KeyboardEvent) => void);
+			this.keyboardShortcut (listenerWithName.keys, listenerWithName.callback);
 		}
 
 		this._listeners.push (listenerWithName);
@@ -1860,7 +1864,7 @@ class Monogatari {
 		}
 	}
 
-	static runListener (name: string, element: DOM | null = null, event: Event | null = null): void {
+	static async runListener (name: string, event: Event | null = null, element: DOM | null = null): Promise<void> {
 		const promises: Promise<void>[] = [];
 		let actionName = name;
 
@@ -1880,7 +1884,8 @@ class Monogatari {
 
 		for (const listener of this._listeners) {
 			if (listener.name === actionName) {
-				promises.push (Util.callAsync (listener.callback , Monogatari, element, event).then ((data) => {
+
+				promises.push (Util.callAsync(listener.callback as Callable<unknown>, this, event, element).then ((data) => {
 					if (data) {
 						return Promise.resolve ();
 					}
@@ -3033,8 +3038,7 @@ class Monogatari {
 			// data-screen property of the object it's in and then opens that
 			// menu, meaning it hides everything else and shows that one.
 			this.registerListener ('open-screen', {
-				callback: (...args: unknown[]) => {
-					const element = args[0] as DOM;
+				callback: (event: Event, element: DOM) => {
 					this.showScreen (element.data('open') as string);
 				}
 			});
@@ -3276,12 +3280,13 @@ class Monogatari {
 			const element = $_(this);
 
 			const action = element.data ('action');
+      console.log(action);
 
 			if (action) {
-				self.runListener (action, element, event);
+				self.runListener (action, event, element);
 			}
 
-			return false;
+			return action === 'set-volume';
 		});
 
 		this.keyboardShortcut (['right', 'space'], () => {
@@ -3521,8 +3526,6 @@ class Monogatari {
 		if (!storageConfigInit || storageConfigInit.name === '') {
 			this.setupStorage ();
 		}
-
-		FancyError.init ();
 
 		this.trigger ('willSetup');
 

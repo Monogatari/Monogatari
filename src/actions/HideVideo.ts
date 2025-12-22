@@ -1,4 +1,5 @@
 import Action from './../lib/Action';
+import Video from './Video';
 import { ActionApplyResult, ActionRevertResult } from '../lib/types';
 
 export class HideVideo extends Action {
@@ -24,6 +25,8 @@ export class HideVideo extends Action {
 
 	override async apply(): Promise<void> {
 		const element = this.engine.element().find(`[data-video="${this.name}"]`);
+		const videoElement = element.get(0) as HTMLVideoElement | undefined;
+
 		if (this.classes.length > 0) {
 			element.addClass('animated');
 			for (const newClass of this.classes) {
@@ -33,14 +36,20 @@ export class HideVideo extends Action {
 			}
 
 			element.data('visibility', 'invisible');
-			element.on('animationend', (e: any) => {
-				if (e.target.dataset.visibility === 'invisible') {
-					// Remove only if the animation ends while the element is not visible
-					e.target.remove();
+			element.on('animationend', (e: Event) => {
+				const target = e.target as HTMLVideoElement;
+				if (target.dataset?.visibility === 'invisible') {
+					// Cleanup video before removal
+					Video.cleanupVideoElement(target);
+					target.remove();
 				}
 			});
 		} else {
-			this.engine.element().find(`[data-video="${this.name}"]`).remove();
+			// Cleanup video before removal
+			if (videoElement) {
+				Video.cleanupVideoElement(videoElement);
+			}
+			element.remove();
 		}
 	}
 
