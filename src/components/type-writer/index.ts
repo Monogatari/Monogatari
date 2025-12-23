@@ -149,7 +149,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	private _instanceActionsCache: string | null = null;
 	private _patternCacheVersion: number = 0;
 
-	constructor () {
+	constructor() {
 		super();
 
 		this.state = {
@@ -166,7 +166,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Get or set the component configuration.
 	 */
-	static override configuration (object: string | TypeWriterConfiguration | null = null): TypeWriterConfiguration | unknown {
+	static override configuration(object: string | TypeWriterConfiguration | null = null): TypeWriterConfiguration | unknown {
 		if (object !== null) {
 			if (typeof object === 'string') {
 				return this._configuration[object as keyof TypeWriterConfiguration];
@@ -181,7 +181,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Return the list of all actions from the actions config.
 	 */
-	static actions (): TypeWriterActions {
+	static actions(): TypeWriterActions {
 		return this._configuration.actions;
 	}
 
@@ -189,7 +189,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	 * Get a specific action or add a new one to the actions config.
 	 * Note: Adding a new action invalidates the pattern cache for all instances.
 	 */
-	static action (action: string | TypeWriterAction | null = null): TypeWriterAction | TypeWriterActions {
+	static action(action: string | TypeWriterAction | null = null): TypeWriterAction | TypeWriterActions {
 		if (typeof action === 'string') {
 			return this._configuration.actions[action];
 		}
@@ -214,7 +214,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	 * Invalidate the pattern cache for all TypeWriter instances.
 	 * Called when new actions are registered.
 	 */
-	private static _invalidateAllPatternCaches (): void {
+	private static _invalidateAllPatternCaches(): void {
 		// Use a WeakSet or similar mechanism if we need to track instances
 		// For now, we'll just set a flag that instances check
 		(this as any)._patternCacheVersion = ((this as any)._patternCacheVersion || 0) + 1;
@@ -223,21 +223,21 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Get the current pattern cache version.
 	 */
-	static get patternCacheVersion (): number {
+	static get patternCacheVersion(): number {
 		return (this as any)._patternCacheVersion || 0;
 	}
 
 	/**
 	 * Get all strings.
 	 */
-	get strings (): string[] {
+	get strings(): string[] {
 		return this.state.strings;
 	}
 
 	/**
 	 * Build and cache the action pattern regex for better performance.
 	 */
-	private _buildActionPatterns (): void {
+	private _buildActionPatterns(): void {
 		const acts: Record<string, string[]> = Object.entries((this.constructor as typeof TypeWriter).actions())
 			.map(([action, value]) => ({ [value.type]: [action] }))
 			.reduce((a, b) => {
@@ -275,7 +275,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Start the typing animation with a fresh configuration.
 	 */
-	initiate (): void {
+	initiate(): void {
 		// Set the typed configuration on each initiation.
 		this.setState({ config: this.engine.global('typedConfiguration') as Partial<TypedConfig> });
 
@@ -360,7 +360,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Check for non-enclosing html tags and return properties for them.
 	 */
-	checkVoidTags (element: Node): VoidElementResult | false {
+	checkVoidTags(element: Node): VoidElementResult | false {
 		if (!(element instanceof Element)) {
 			return false;
 		}
@@ -392,7 +392,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		if (element.localName && voidProperties[element.localName.toLowerCase()]) {
 			const { props, state } = voidProperties[element.localName.toLowerCase()];
 			const node = document.createElement('type-character') as TypeCharacter;
-			node.style.visibility = 'hidden';
+			node.style.opacity = '0';
 
 			return { props, state, node };
 		}
@@ -404,7 +404,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	 * Setup the current string with the proper elements to run the typing animation.
 	 * Uses DocumentFragment for batched DOM operations.
 	 */
-	setDisplay (curString: string): void {
+	setDisplay(curString: string): void {
 		const typingElement = document.createElement('div');
 		typingElement.innerHTML = curString;
 
@@ -446,7 +446,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Stop the typing animation.
 	 */
-	stop (): void {
+	stop(): void {
 		this._isAnimating = false;
 		if (this._animationFrameId !== null) {
 			cancelAnimationFrame(this._animationFrameId);
@@ -461,7 +461,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Start the typing animation again.
 	 */
-	start (): void {
+	start(): void {
 		if (this._isAnimating) {
 			return;
 		}
@@ -477,7 +477,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	 * Parse through the current string and return a DocumentFragment with type-character elements.
 	 * Uses DocumentFragment for better performance with batch DOM operations.
 	 */
-	parseStringToFragment (curString: string, voidCount: number): [DocumentFragment, (ParsedAction | undefined)[]] {
+	parseStringToFragment(curString: string, voidCount: number): [DocumentFragment, (ParsedAction | undefined)[]] {
 		const fragment = document.createDocumentFragment();
 		const actions: (ParsedAction | undefined)[] = [];
 
@@ -522,12 +522,12 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 							node.setState({ special } as any);
 						}
 
-						node.style.visibility = 'hidden';
+						node.style.opacity = '0';
 						fragment.appendChild(node);
 					}
 				}
 
-			// action section (odd indices)
+				// action section (odd indices)
 			} else {
 				const result = this._parseActionSection(section, nodeCounter, voidCount);
 				if (result) {
@@ -547,14 +547,14 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Parse text without any actions directly into a DocumentFragment (fast path).
 	 */
-	private _parseTextOnlyToFragment (curString: string, fragment: DocumentFragment): void {
+	private _parseTextOnlyToFragment(curString: string, fragment: DocumentFragment): void {
 		for (const char of curString) {
 			if (WHITESPACE_PATTERN.test(char)) {
 				fragment.appendChild(document.createTextNode(char));
 			} else {
 				const node = document.createElement('type-character') as TypeCharacter;
 				node.setProps({ letter: char });
-				node.style.visibility = 'hidden';
+				node.style.opacity = '0';
 				fragment.appendChild(node);
 			}
 		}
@@ -563,7 +563,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Parse an action section and return the parsed action.
 	 */
-	private _parseActionSection (
+	private _parseActionSection(
 		section: string,
 		nodeCounter: number,
 		voidCount: number
@@ -637,7 +637,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Parse options from an enclosed action.
 	 */
-	private _parseOptions (optionsStr: string): Record<string, string> {
+	private _parseOptions(optionsStr: string): Record<string, string> {
 		const options: Record<string, string> = {};
 		let opts: string | string[] = optionsStr.trim();
 
@@ -673,7 +673,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Execute the provided action.
 	 */
-	executeAction (actionObj: ParsedAction): void {
+	executeAction(actionObj: ParsedAction): void {
 		const actions = (this.constructor as typeof TypeWriter).actions();
 
 		for (const key in actions) {
@@ -690,14 +690,14 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	 * Adjust the received speed and return it with some randomization.
 	 * Uses shared utility from typing-utils.
 	 */
-	humanizer (speed: number): number {
+	humanizer(speed: number): number {
 		return humanizeSpeed(speed);
 	}
 
 	/**
 	 * Set the cursor on an element, and unset it from the previous element.
 	 */
-	setCursor (element: Element | undefined, unset: Element | undefined): void {
+	setCursor(element: Element | undefined, unset: Element | undefined): void {
 		if (unset) {
 			this.unsetCursor(unset);
 		}
@@ -710,7 +710,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Unset the cursor on an element.
 	 */
-	unsetCursor (element: NodeList | Element): void {
+	unsetCursor(element: NodeList | Element): void {
 		if (element instanceof NodeList) {
 			element.forEach(e => (e as Element).classList.remove('cursor'));
 		} else if (element instanceof Element) {
@@ -721,7 +721,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Unset all cursors at once.
 	 */
-	unsetAllCursors (ignore: boolean = false): void {
+	unsetAllCursors(ignore: boolean = false): void {
 		if (typeof this.props.showCursor === 'boolean' || typeof this.props.showCursor === 'number') {
 			if (this.props.showCursor) {
 				if (this.props.hideCursorOnEnd || ignore) {
@@ -739,7 +739,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	 * Main typing loop - reveals one character at a time using requestAnimationFrame.
 	 * Uses RAF for smoother animations and better performance.
 	 */
-	typewrite (): void {
+	typewrite(): void {
 		// Execute actions that appear before the current character
 		if (this.actions[this.nodeCounter]) {
 			this.executeAction(this.actions[this.nodeCounter]!);
@@ -769,7 +769,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Animation frame loop for smooth typing.
 	 */
-	private _animationLoop (timestamp: number): void {
+	private _animationLoop(timestamp: number): void {
 		if (!this._isAnimating) {
 			return;
 		}
@@ -791,7 +791,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Reveal the next character and schedule the next one.
 	 */
-	private _revealNextCharacter (): void {
+	private _revealNextCharacter(): void {
 		if (this.nextPause) {
 			this.nextPause = null;
 
@@ -815,7 +815,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 
 		// Reveal character using visibility (avoids layout recalculation)
 		if (this.elements?.[this.nodeCounter]) {
-			this.elements[this.nodeCounter].style.visibility = '';
+			this.elements[this.nodeCounter].style.opacity = '';
 		}
 		this.nodeCounter += 1;
 
@@ -860,14 +860,14 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	 * Get the leaf nodes of a provided node.
 	 * Uses shared utility from typing-utils.
 	 */
-	private _getLeafNodes (node: Node | null): Node[] {
+	private _getLeafNodes(node: Node | null): Node[] {
 		return getLeafNodes(node);
 	}
 
 	/**
 	 * Stop and destroy the current typing animation.
 	 */
-	destroy (loop?: boolean): void {
+	destroy(loop?: boolean): void {
 		// Cancel any pending animation frame
 		this._isAnimating = false;
 		if (this._animationFrameId !== null) {
@@ -899,7 +899,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		}
 	}
 
-	override onStateUpdate (property: string, _oldValue: unknown, _newValue: unknown): Promise<void> {
+	override onStateUpdate(property: string, _oldValue: unknown, _newValue: unknown): Promise<void> {
 		if (property === 'strings') {
 			if (!this.state.ignore) {
 				this.forceRender().then(() => {
@@ -915,7 +915,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		return Promise.resolve();
 	}
 
-	override didMount (): Promise<void> {
+	override didMount(): Promise<void> {
 		if (this.props.start) {
 			this.initiate();
 		}
@@ -923,11 +923,11 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		return Promise.resolve();
 	}
 
-	override render (): string {
+	override render(): string {
 		return '<div class="type-writer-container"></div>';
 	}
 
-	override willUnmount (): Promise<void> {
+	override willUnmount(): Promise<void> {
 		this.destroy(true);
 
 		this.elements = null;
