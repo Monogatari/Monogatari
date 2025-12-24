@@ -351,7 +351,7 @@ export class Play extends Action {
 				const match = fadeTime.match(/\d*(\.\d*)?/);
 				const duration = match ? parseFloat(match[0]) : 0;
 				// Don't await fadeIn - let it run in background while playback continues
-				this.player.fadeIn(duration);
+				this.player.fadeIn(duration, this.player.volume);
 			}
 
 			return;
