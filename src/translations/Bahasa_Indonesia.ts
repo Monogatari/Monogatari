@@ -8,8 +8,6 @@
  * mnafisalmukhdi1 <contact.mnam@gmail.com>
  */
 
-
-
 export default {
 	'AdvanceHelp': 'Untuk melanjutkan permainan, klik kiri atau ketuk di mana saja pada layar permainan atau tekan tombol spasi',
 	'AllowPlayback': 'Klik di sini untuk menyalakan putar balik audio',

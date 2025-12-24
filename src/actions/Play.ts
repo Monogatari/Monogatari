@@ -76,7 +76,7 @@ export class Play extends Action {
 		const engine = this.engine;
 
 		engine.registerListener('set-volume', {
-			callback: (event, element) => {
+			callback: (event: Event, element: DOM) => {
 				const target = element.data('target') as string;
 				let value: string | number = element.value() as string;
 
@@ -245,11 +245,17 @@ export class Play extends Action {
 		gainNode.connect(audioContext.destination);
 		gainNode.gain.setValueAtTime(this.mediaVolume, audioContext.currentTime);
 
-		// Load audio file
-		const assetsPath = this.engine.setting('AssetsPath') as Record<string, string>;
-		const response = await fetch(`${assetsPath.root}/${assetsPath[this.directory]}/${this.media}`);
-		const arrayBuffer = await response.arrayBuffer();
-		const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+		// Check if audio is already cached
+		const cacheKey = `${this.directory}/${this.mediaKey}`;
+		let audioBuffer = this.engine.audioBufferCache(cacheKey);
+
+		if (!audioBuffer) {
+			// Load and decode audio file
+			const assetsPath = this.engine.setting('AssetsPath') as Record<string, string>;
+			const response = await fetch(`${assetsPath.root}/${assetsPath[this.directory]}/${this.media}`);
+			const arrayBuffer = await response.arrayBuffer();
+			audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+		}
 
 		// Parse effects from props
 		const effects = this.parseEffects();

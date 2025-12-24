@@ -1,7 +1,7 @@
 import { $_ } from '@aegis-framework/artemis';
 import Action from './../lib/Action';
 import { ActionApplyResult, ActionRevertResult } from '../lib/types';
-import type TypeWriterComponent from './../components/type-writer';
+import TypeWriter from './../components/type-writer';
 import type TextBoxComponent from './../components/text-box';
 
 export class Dialog extends Action {
@@ -10,17 +10,17 @@ export class Dialog extends Action {
 	static override async shouldProceed() {
 		const element = this.engine.element();
 		// Check if the type animation has finished and the Typed object still exists
-		let component: TypeWriterComponent | undefined;
+		let component: TypeWriter | undefined;
 
 		const centeredDialog = element.find('[data-component="centered-dialog"]');
 
 		if (centeredDialog.exists()) {
-			component = centeredDialog.find('[data-content="wrapper"]').get(0) as TypeWriterComponent | undefined;
+			component = centeredDialog.find('[data-content="wrapper"]').get(0) as TypeWriter | undefined;
 		} else {
 			// In NVL mode, get the last (most recent) type-writer which is the active one
 			const typeWriters = element.find('type-writer');
 			if (typeWriters.exists()) {
-				component = typeWriters.last().get(0) as TypeWriterComponent | undefined;
+				component = typeWriters.last().get(0) as TypeWriter | undefined;
 			}
 		}
 
@@ -78,24 +78,6 @@ export class Dialog extends Action {
 	static override async setup(): Promise<void> {
 		this.engine.globals({
 			finished_typing: false,
-			typedConfiguration: {
-				strings: [],
-				typeSpeed: this.engine.preference('TextSpeed'),
-				loop: 0, // Set to true for infinite looping.
-				showCursor: false,
-				hideCursorOnEnd: false, // If the cursor is being shown, hide it once the text ends.
-				preStringTyped: () => {
-					this.engine.global('finished_typing', false);
-					this.engine.trigger('didStartTyping');
-				},
-				onStringTyped: () => {
-					this.engine.global('finished_typing', true);
-					this.engine.trigger('didFinishTyping');
-				},
-				onDestroy: () => {
-					this.engine.global('finished_typing', true);
-				}
-			},
 			_dialog_pending_revert: false,
 		});
 
@@ -106,12 +88,10 @@ export class Dialog extends Action {
 	}
 
 	static override async bind(selector: string): Promise<void> {
-		// Add listener for the text speed setting
+		// Add listener for the text speed setting (TypeWriter reads from preference directly)
 		$_(`${selector} [data-action="set-text-speed"]`).on('change mouseover', function (this: HTMLInputElement) {
 			const maxTextSpeed = Dialog.engine.setting('maxTextSpeed') as number;
 			const value = maxTextSpeed - parseInt(this.value);
-			const typedConfig = Dialog.engine.global('typedConfiguration') as { typeSpeed?: number };
-			typedConfig.typeSpeed = value;
 			Dialog.engine.preference('TextSpeed', value);
 		});
 
@@ -191,7 +171,7 @@ export class Dialog extends Action {
 		const [id, expression, classes] = character.split(':');
 
 		this.dialog = dialog.join(' ');
-		this.clearDialog = this.dialog.replace(/\{pause:(\d+)\}/g, '').replace(/\{speed:(\d+)\}/g, '');
+		this.clearDialog = TypeWriter.stripActionMarkers(this.dialog);
 
 		this.nvl = false;
 
@@ -270,7 +250,7 @@ export class Dialog extends Action {
 		const element = document.createElement('centered-dialog') as any;
 		const gameScreen = this.engine.element().find('[data-screen="game"]');
 		const textBox = this.engine.element().find('[data-component="text-box"]');
-		const writer = textBox.find('type-writer').get(0) as any;
+		const writer = textBox.find('type-writer').get(0) as TypeWriter | undefined;
 
 		this._handleCustomClasses(element);
 
@@ -285,18 +265,10 @@ export class Dialog extends Action {
 
 		element.ready(() => {
 			const wrapper = element.content('wrapper');
-			const wrapperElement = wrapper?.get(0) as any;
+			const wrapperElement = wrapper?.get(0) as TypeWriter | undefined;
 
-			if (animation && this.engine.setting('TypeAnimation') === true) {
-				this.engine.global('typedConfiguration').strings = [dialog];
-				this.engine.global('finished_typing', false);
-				if (wrapperElement) {
-					wrapperElement.setState({ strings: [dialog] });
-				}
-			} else {
-				wrapper?.html(clearDialog);
-				this.engine.global('finished_typing', true);
-				this.engine.trigger('didFinishTyping');
+			if (wrapperElement) {
+				wrapperElement.setContent(dialog, animation);
 			}
 		});
 	}
@@ -321,59 +293,34 @@ export class Dialog extends Action {
 		const previous = this.engine.element().find('[data-component="text-box"]').data('speaking');
 		this.engine.element().find('[data-component="text-box"]').data('speaking', character);
 
-		// Check if the typing animation flag is set to true in order to show it
-		if (animation === true && this.engine.setting('TypeAnimation') === true && this.engine.setting('NVLTypeAnimation') === true) {
+		// Determine if we should animate (respects NVLTypeAnimation setting)
+		const shouldAnimate = animation && this.engine.setting('NVLTypeAnimation') === true;
 
-			// If the property is set to true, the animation will be shown
-			// if it is set to false, even if the flag was set to true,
-			// no animation will be shown in the game.
-			if (character !== '_narrator') {
-				const charData = this.engine.character(character);
-				if (previous !== character) {
-					this.engine.element().find('[data-ui="say"] [data-spoke]').last().addClass('nvl-dialog-footer');
-					this.engine.element().find('[data-ui="say"]').append(`<div data-spoke="${character}" class='named'><span style='color:${charData?.color ?? ''};'>${this.engine.replaceVariables(charData?.name ?? '')}: </span><type-writer></type-writer></div>`);
-				} else {
-					this.engine.element().find('[data-ui="say"]').append(`<div data-spoke="${character}"><type-writer></type-writer></div>`);
-				}
-
+		// Build the dialog entry HTML
+		if (character !== '_narrator') {
+			const charData = this.engine.character(character);
+			if (previous !== character) {
+				this.engine.element().find('[data-ui="say"] [data-spoke]').last().addClass('nvl-dialog-footer');
+				this.engine.element().find('[data-ui="say"]').append(`<div data-spoke="${character}" class='named'><span style='color:${charData?.color ?? ''};'>${this.engine.replaceVariables(charData?.name ?? '')}: </span><type-writer></type-writer></div>`);
 			} else {
-				if (previous !== character) {
-					this.engine.element().find('[data-ui="say"] [data-spoke]').last().addClass('nvl-dialog-footer');
-				}
-				this.engine.element().find('[data-ui="say"]').append(`<div data-spoke="${character}" class='unnamed'><type-writer></type-writer></div>`);
+				this.engine.element().find('[data-ui="say"]').append(`<div data-spoke="${character}"><type-writer></type-writer></div>`);
 			}
-
-			// Use requestAnimationFrame to ensure the element is in the DOM and mounted
-			requestAnimationFrame(() => {
-				const elements = $_('[data-ui="say"] [data-spoke] type-writer');
-				const last = elements.last().get(0) as any;
-
-				if (last) {
-					this.engine.global('typedConfiguration').strings = [dialog];
-					this.engine.global('finished_typing', false);
-					last.setState({ strings: [dialog] });
-				}
-			});
-
 		} else {
-			if (character !== '_narrator') {
-				const charData2 = this.engine.character(character);
-				if (previous !== character) {
-					this.engine.element().find('[data-ui="say"] [data-spoke]').last().addClass('nvl-dialog-footer');
-					this.engine.element().find('[data-ui="say"]').append(`<div data-spoke="${character}" class='named'><span style='color:${charData2?.color ?? ''};'>${this.engine.replaceVariables(charData2?.name ?? '')}: </span><type-writer>${clearDialog}</type-writer></div>`);
-				} else {
-					this.engine.element().find('[data-ui="say"]').append(`<div data-spoke="${character}"><type-writer>${dialog}</type-writer></div>`);
-				}
-
-			} else {
-				if (previous !== character) {
-					this.engine.element().find('[data-ui="say"] [data-spoke]').last().addClass('nvl-dialog-footer');
-				}
-				this.engine.element().find('[data-ui="say"]').append(`<div data-spoke="${character}" class='unnamed'><type-writer>${clearDialog}</type-writer></div>`);
+			if (previous !== character) {
+				this.engine.element().find('[data-ui="say"] [data-spoke]').last().addClass('nvl-dialog-footer');
 			}
-			this.engine.global('finished_typing', true);
-			this.engine.trigger('didFinishTyping');
+			this.engine.element().find('[data-ui="say"]').append(`<div data-spoke="${character}" class='unnamed'><type-writer></type-writer></div>`);
 		}
+
+		// Use requestAnimationFrame to ensure the element is in the DOM and mounted
+		requestAnimationFrame(() => {
+			const elements = $_('[data-ui="say"] [data-spoke] type-writer');
+			const last = elements.last().get(0) as TypeWriter | undefined;
+
+			if (last) {
+				last.setContent(dialog, shouldAnimate);
+			}
+		});
 
 		const text_box = this.engine.element().find('[data-component="text-box"]');
 		if (text_box.exists()) {
@@ -404,24 +351,10 @@ export class Dialog extends Action {
 			this.engine.element().find('[data-ui="say"]').html('');
 			this.engine.element().find('[data-component="text-box"]').data('speaking', character);
 
-			// Check if the typing animation flag is set to true in order to show it
-			if (animation === true && this.engine.setting('TypeAnimation') === true) {
-
-				// If the property is set to true, the animation will be shown
-				// if it is set to false, even if the flag was set to true,
-				// no animation will be shown in the game.
-				this.engine.global('typedConfiguration').strings = [dialog];
-				this.engine.global('finished_typing', false);
-
-				// Find the type-writer component inside the text-box (ADV mode has it)
-				const typeWriter = this.engine.element().find('[data-component="text-box"] type-writer').get(0) as any;
-				if (typeWriter) {
-					typeWriter.setState({ strings: [dialog] });
-				}
-			} else {
-				this.engine.element().find('[data-ui="say"]').html(clearDialog);
-				this.engine.global('finished_typing', true);
-				this.engine.trigger('didFinishTyping');
+			// Find the type-writer component inside the text-box (ADV mode has it)
+			const typeWriter = this.engine.element().find('[data-component="text-box"] type-writer').get(0) as TypeWriter | undefined;
+			if (typeWriter) {
+				typeWriter.setContent(dialog, animation);
 			}
 		} else {
 			this.displayNvlDialog(dialog, clearDialog, character, animation);

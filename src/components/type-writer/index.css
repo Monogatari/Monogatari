@@ -1,0 +1,731 @@
+/**
+ * ===========================
+ * TypeWriter Text Effects
+ * ===========================
+ *
+ * Effects are applied via data attributes on type-character elements.
+ * Usage in dialogue: {/effect}text{/effect}
+ *
+ * Available effects:
+ * - shake, shake-hard, shake-slow, shake-little, shake-horizontal, shake-vertical
+ * - wave, wave-slow, wave-fast
+ * - fade, fade-slow, blur, scale, scale-bounce
+ * - glitch, glitch-hard, glitch-slow
+ * - bold, italic, big, small
+ * - redacted, invisible-ink, handwriting
+ * - emotion presets: angry, scared, happy, sad, mysterious
+ */
+
+/* ============================================================================
+ * CSS Custom Properties for Effects
+ * ============================================================================ */
+
+type-character[data-component] {
+	--effect-shake-intensity: 2px;
+	--effect-wave-amplitude: 0.3em;
+	--effect-wave-speed: 0.8s;
+	--effect-glitch-color-1: #ff0040;
+	--effect-glitch-color-2: #00ffff;
+	--effect-reveal-duration: 0.4s;
+}
+
+/* ============================================================================
+ * SHAKE EFFECTS
+ * Uses existing CSShake animations but scoped to type-character
+ * ============================================================================ */
+
+type-character[data-effect-shake] {
+	animation-name: shake;
+	animation-duration: 0.8s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+	display: inline-block;
+	transform-origin: center center;
+}
+
+type-character[data-effect-shake-hard] {
+	animation-name: shake-hard;
+	animation-duration: 0.6s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+	display: inline-block;
+	transform-origin: center center;
+}
+
+type-character[data-effect-shake-slow] {
+	animation-name: shake-slow;
+	animation-duration: 3s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+	display: inline-block;
+	transform-origin: center center;
+}
+
+type-character[data-effect-shake-little] {
+	animation-name: shake-little;
+	animation-duration: 0.8s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+	display: inline-block;
+	transform-origin: center center;
+}
+
+type-character[data-effect-shake-horizontal] {
+	animation-name: shake-horizontal;
+	animation-duration: 0.8s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+	display: inline-block;
+	transform-origin: center center;
+}
+
+type-character[data-effect-shake-vertical] {
+	animation-name: shake-vertical;
+	animation-duration: 0.8s;
+	animation-timing-function: ease-in-out;
+	animation-iteration-count: infinite;
+	display: inline-block;
+	transform-origin: center center;
+}
+
+/* ============================================================================
+ * WAVE EFFECTS
+ * Sine wave animation with staggered delays per character
+ * ============================================================================ */
+
+@keyframes text-wave {
+	0%, 100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(var(--effect-wave-amplitude, -0.3em));
+	}
+}
+
+type-character[data-effect-wave] {
+	animation: text-wave var(--effect-wave-speed, 0.8s) ease-in-out infinite;
+	animation-delay: calc(var(--char-index, 0) * 0.05s);
+	display: inline-block;
+}
+
+type-character[data-effect-wave-slow] {
+	animation: text-wave 1.5s ease-in-out infinite;
+	animation-delay: calc(var(--char-index, 0) * 0.08s);
+	display: inline-block;
+}
+
+type-character[data-effect-wave-fast] {
+	animation: text-wave 0.4s ease-in-out infinite;
+	animation-delay: calc(var(--char-index, 0) * 0.03s);
+	display: inline-block;
+}
+
+/* ============================================================================
+ * FADE/SCALE REVEAL VARIATIONS
+ * Alternative character reveal animations
+ * ============================================================================ */
+
+/* Fade reveal - smooth opacity transition */
+@keyframes reveal-fade {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+type-character[data-effect-fade] {
+	animation: reveal-fade 0.3s ease-out forwards;
+}
+
+type-character[data-effect-fade-slow] {
+	animation: reveal-fade 0.8s ease-out forwards;
+}
+
+/* Blur reveal - starts blurry and sharpens */
+@keyframes reveal-blur {
+	from {
+		opacity: 0;
+		filter: blur(8px);
+	}
+	to {
+		opacity: 1;
+		filter: blur(0);
+	}
+}
+
+type-character[data-effect-blur] {
+	animation: reveal-blur 0.4s ease-out forwards;
+}
+
+/* Scale reveal - pop in effect */
+@keyframes reveal-scale {
+	from {
+		opacity: 0;
+		transform: scale(0);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+type-character[data-effect-scale] {
+	animation: reveal-scale 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+	display: inline-block;
+}
+
+/* Scale bounce - exaggerated pop with overshoot */
+@keyframes reveal-scale-bounce {
+	0% {
+		opacity: 0;
+		transform: scale(0);
+	}
+	50% {
+		opacity: 1;
+		transform: scale(1.3);
+	}
+	70% {
+		transform: scale(0.9);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+type-character[data-effect-scale-bounce] {
+	animation: reveal-scale-bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+	display: inline-block;
+}
+
+/* Slide up reveal */
+@keyframes reveal-slide-up {
+	from {
+		opacity: 0;
+		transform: translateY(0.5em);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+type-character[data-effect-slide-up] {
+	animation: reveal-slide-up 0.3s ease-out forwards;
+	display: inline-block;
+}
+
+/* Slide down reveal */
+@keyframes reveal-slide-down {
+	from {
+		opacity: 0;
+		transform: translateY(-0.5em);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+type-character[data-effect-slide-down] {
+	animation: reveal-slide-down 0.3s ease-out forwards;
+	display: inline-block;
+}
+
+/* ============================================================================
+ * GLITCH EFFECTS
+ * Digital corruption / horror aesthetic
+ * ============================================================================ */
+
+@keyframes glitch {
+	0%, 100% {
+		text-shadow: none;
+		transform: none;
+	}
+	7% {
+		text-shadow:
+			-2px 0 var(--effect-glitch-color-1),
+			2px 0 var(--effect-glitch-color-2);
+		transform: translateX(-1px);
+	}
+	10% {
+		text-shadow: none;
+		transform: translateX(1px);
+	}
+	27% {
+		text-shadow: none;
+		transform: none;
+	}
+	30% {
+		text-shadow:
+			-3px 0 var(--effect-glitch-color-1),
+			3px 0 var(--effect-glitch-color-2);
+		transform: translateX(-2px) skewX(-2deg);
+	}
+	35% {
+		text-shadow: none;
+		transform: none;
+	}
+	52% {
+		text-shadow:
+			2px 0 var(--effect-glitch-color-1),
+			-2px 0 var(--effect-glitch-color-2);
+		transform: translateX(2px);
+	}
+	55% {
+		text-shadow: none;
+		transform: none;
+	}
+	72% {
+		text-shadow:
+			-1px 0 var(--effect-glitch-color-1),
+			1px 0 var(--effect-glitch-color-2);
+	}
+	75% {
+		text-shadow: none;
+	}
+}
+
+type-character[data-effect-glitch] {
+	animation: glitch 2s ease-in-out infinite;
+	display: inline-block;
+}
+
+/* Hard glitch - more intense, faster */
+@keyframes glitch-hard {
+	0%, 100% {
+		text-shadow: none;
+		transform: none;
+		opacity: 1;
+	}
+	5% {
+		text-shadow:
+			-4px 0 var(--effect-glitch-color-1),
+			4px 0 var(--effect-glitch-color-2);
+		transform: translateX(-3px) skewX(-5deg);
+	}
+	10% {
+		opacity: 0.8;
+		transform: translateX(3px) skewX(3deg);
+	}
+	15% {
+		text-shadow: none;
+		transform: none;
+		opacity: 1;
+	}
+	20% {
+		text-shadow:
+			3px 0 var(--effect-glitch-color-2),
+			-3px 0 var(--effect-glitch-color-1);
+		transform: translateY(-2px);
+	}
+	25% {
+		text-shadow: none;
+		transform: none;
+	}
+	40% {
+		text-shadow:
+			-5px 0 var(--effect-glitch-color-1),
+			5px 0 var(--effect-glitch-color-2);
+		transform: translateX(-4px) skewX(-8deg);
+		opacity: 0.9;
+	}
+	45% {
+		text-shadow: none;
+		transform: none;
+		opacity: 1;
+	}
+	70% {
+		text-shadow:
+			2px 2px var(--effect-glitch-color-1),
+			-2px -2px var(--effect-glitch-color-2);
+		transform: scale(1.02);
+	}
+	75% {
+		text-shadow: none;
+		transform: none;
+	}
+}
+
+type-character[data-effect-glitch-hard] {
+	animation: glitch-hard 0.8s ease-in-out infinite;
+	display: inline-block;
+}
+
+/* Slow glitch - subtle, unsettling */
+@keyframes glitch-slow {
+	0%, 85%, 100% {
+		text-shadow: none;
+		transform: none;
+	}
+	87% {
+		text-shadow:
+			-2px 0 var(--effect-glitch-color-1),
+			2px 0 var(--effect-glitch-color-2);
+		transform: translateX(-1px);
+	}
+	90% {
+		text-shadow: none;
+		transform: translateX(1px);
+	}
+	93% {
+		text-shadow:
+			1px 0 var(--effect-glitch-color-1),
+			-1px 0 var(--effect-glitch-color-2);
+	}
+	96% {
+		text-shadow: none;
+		transform: none;
+	}
+}
+
+type-character[data-effect-glitch-slow] {
+	animation: glitch-slow 4s ease-in-out infinite;
+	animation-delay: calc(var(--char-index, 0) * 0.1s);
+	display: inline-block;
+}
+
+/* ============================================================================
+ * EMPHASIS MARKERS
+ * Bold, italic, size changes with smooth animations
+ * ============================================================================ */
+
+type-character[data-effect-bold] {
+	font-weight: 700;
+}
+
+type-character[data-effect-italic] {
+	font-style: italic;
+}
+
+type-character[data-effect-big] {
+	font-size: 1.3em;
+	display: inline-block;
+	transform-origin: bottom center;
+}
+
+type-character[data-effect-small] {
+	font-size: 0.8em;
+}
+
+/* Growing emphasis - text grows slightly as typed */
+@keyframes emphasis-grow {
+	from {
+		transform: scale(1.5);
+	}
+	to {
+		transform: scale(1);
+	}
+}
+
+type-character[data-effect-impact] {
+	animation: emphasis-grow 0.2s ease-out forwards;
+	font-weight: 700;
+	display: inline-block;
+}
+
+/* ============================================================================
+ * REVEAL STYLES
+ * Special reveal animations for dramatic effect
+ * ============================================================================ */
+
+/* Redacted - black bar that lifts away */
+@keyframes reveal-redacted {
+	0% {
+		background: currentColor;
+		color: transparent;
+	}
+	70% {
+		background: currentColor;
+		color: transparent;
+	}
+	100% {
+		background: transparent;
+		color: inherit;
+	}
+}
+
+type-character[data-effect-redacted] {
+	animation: reveal-redacted 0.6s ease-out forwards;
+	padding: 0 0.05em;
+}
+
+/* Invisible ink - fades in like being revealed by light */
+@keyframes reveal-invisible-ink {
+	0% {
+		opacity: 0;
+		filter: brightness(3) blur(2px);
+		color: rgba(255, 255, 200, 0.3);
+	}
+	50% {
+		opacity: 0.7;
+		filter: brightness(1.5) blur(1px);
+	}
+	100% {
+		opacity: 1;
+		filter: brightness(1) blur(0);
+		color: inherit;
+	}
+}
+
+type-character[data-effect-invisible-ink] {
+	animation: reveal-invisible-ink 0.8s ease-out forwards;
+}
+
+/* Handwriting - stroke-based reveal simulation */
+@keyframes reveal-handwriting {
+	0% {
+		opacity: 0;
+		clip-path: inset(0 100% 0 0);
+	}
+	100% {
+		opacity: 1;
+		clip-path: inset(0 0 0 0);
+	}
+}
+
+type-character[data-effect-handwriting] {
+	animation: reveal-handwriting 0.15s ease-out forwards;
+	display: inline-block;
+}
+
+/* Typewriter strike - like a typewriter key hitting */
+@keyframes reveal-strike {
+	0% {
+		opacity: 0;
+		transform: translateY(-0.5em) scale(1.2);
+	}
+	60% {
+		opacity: 1;
+		transform: translateY(0.05em) scale(0.95);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+type-character[data-effect-strike] {
+	animation: reveal-strike 0.12s ease-out forwards;
+	display: inline-block;
+}
+
+/* Flicker - horror-style reveal */
+@keyframes reveal-flicker {
+	0%, 15%, 25%, 35% {
+		opacity: 0;
+	}
+	10%, 20%, 30% {
+		opacity: 0.5;
+	}
+	40%, 100% {
+		opacity: 1;
+	}
+}
+
+type-character[data-effect-flicker] {
+	animation: reveal-flicker 0.4s ease-out forwards;
+}
+
+/* ============================================================================
+ * EMOTION PRESETS
+ * Combined effects for common emotional expressions
+ * ============================================================================ */
+
+/* Angry - shake + red tint + bold */
+type-character[data-effect-angry] {
+	animation: shake-hard 0.5s ease-in-out infinite;
+	color: #ff4444;
+	font-weight: 700;
+	display: inline-block;
+	transform-origin: center center;
+}
+
+/* Scared - shake-little + slightly faded */
+type-character[data-effect-scared] {
+	animation: shake-little 0.6s ease-in-out infinite;
+	opacity: 0.85;
+	display: inline-block;
+	transform-origin: center center;
+}
+
+/* Happy - wave + bright */
+type-character[data-effect-happy] {
+	animation: text-wave 0.6s ease-in-out infinite;
+	animation-delay: calc(var(--char-index, 0) * 0.04s);
+	filter: brightness(1.1);
+	display: inline-block;
+}
+
+/* Sad - slow sink + desaturated */
+@keyframes sad-sink {
+	0%, 100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(0.1em);
+	}
+}
+
+type-character[data-effect-sad] {
+	animation: sad-sink 2s ease-in-out infinite;
+	animation-delay: calc(var(--char-index, 0) * 0.1s);
+	filter: saturate(0.5) brightness(0.9);
+	display: inline-block;
+}
+
+/* Mysterious - glitch-slow + purple tint */
+type-character[data-effect-mysterious] {
+	animation: glitch-slow 5s ease-in-out infinite;
+	animation-delay: calc(var(--char-index, 0) * 0.15s);
+	color: #aa88ff;
+	text-shadow: 0 0 8px rgba(170, 136, 255, 0.5);
+	display: inline-block;
+}
+
+/* Excited - fast wave + scale */
+@keyframes excited-bounce {
+	0%, 100% {
+		transform: translateY(0) scale(1);
+	}
+	25% {
+		transform: translateY(-0.2em) scale(1.05);
+	}
+	75% {
+		transform: translateY(0.1em) scale(0.98);
+	}
+}
+
+type-character[data-effect-excited] {
+	animation: excited-bounce 0.4s ease-in-out infinite;
+	animation-delay: calc(var(--char-index, 0) * 0.03s);
+	display: inline-block;
+}
+
+/* Whisper - small + faded + italic */
+type-character[data-effect-whisper] {
+	font-size: 0.85em;
+	font-style: italic;
+	opacity: 0.7;
+}
+
+/* Shout - big + bold + shake */
+type-character[data-effect-shout] {
+	animation: shake 0.4s ease-in-out infinite;
+	font-size: 1.25em;
+	font-weight: 700;
+	display: inline-block;
+	transform-origin: center center;
+}
+
+/* Dizzy - rotation + wave */
+@keyframes dizzy-spin {
+	0%, 100% {
+		transform: rotate(0deg) translateY(0);
+	}
+	25% {
+		transform: rotate(3deg) translateY(-0.1em);
+	}
+	75% {
+		transform: rotate(-3deg) translateY(0.1em);
+	}
+}
+
+type-character[data-effect-dizzy] {
+	animation: dizzy-spin 0.8s ease-in-out infinite;
+	animation-delay: calc(var(--char-index, 0) * 0.06s);
+	display: inline-block;
+}
+
+/* Dreamy - slow float + blur hint */
+@keyframes dreamy-float {
+	0%, 100% {
+		transform: translateY(0);
+		filter: blur(0);
+	}
+	50% {
+		transform: translateY(-0.15em);
+		filter: blur(0.3px);
+	}
+}
+
+type-character[data-effect-dreamy] {
+	animation: dreamy-float 2s ease-in-out infinite;
+	animation-delay: calc(var(--char-index, 0) * 0.15s);
+	font-style: italic;
+	display: inline-block;
+}
+
+/* Robotic - monospace + step animation */
+type-character[data-effect-robotic] {
+	font-family: monospace;
+	letter-spacing: 0.05em;
+}
+
+/* Static - TV noise effect */
+@keyframes static-noise {
+	0%, 100% {
+		opacity: 1;
+	}
+	10% {
+		opacity: 0.8;
+	}
+	20% {
+		opacity: 1;
+	}
+	30% {
+		opacity: 0.9;
+	}
+	50% {
+		opacity: 0.7;
+	}
+	70% {
+		opacity: 1;
+	}
+	90% {
+		opacity: 0.85;
+	}
+}
+
+type-character[data-effect-static] {
+	animation: static-noise 0.3s steps(3) infinite;
+	text-shadow:
+		1px 0 var(--effect-glitch-color-1),
+		-1px 0 var(--effect-glitch-color-2);
+}
+
+/* ============================================================================
+ * COLOR EFFECTS
+ * ============================================================================ */
+
+type-character[data-effect-rainbow] {
+	animation: rainbow-shift 2s linear infinite;
+	animation-delay: calc(var(--char-index, 0) * 0.1s);
+}
+
+@keyframes rainbow-shift {
+	0% { color: #ff0000; }
+	16% { color: #ff8800; }
+	33% { color: #ffff00; }
+	50% { color: #00ff00; }
+	66% { color: #0088ff; }
+	83% { color: #8800ff; }
+	100% { color: #ff0000; }
+}
+
+/* Pulse glow */
+@keyframes pulse-glow {
+	0%, 100% {
+		text-shadow: 0 0 4px currentColor;
+	}
+	50% {
+		text-shadow: 0 0 12px currentColor, 0 0 20px currentColor;
+	}
+}
+
+type-character[data-effect-glow] {
+	animation: pulse-glow 1.5s ease-in-out infinite;
+}
+

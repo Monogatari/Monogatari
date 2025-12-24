@@ -108,3 +108,83 @@ self.addEventListener ('fetch', (event) => {
 		})
 	);
 });
+
+// Message handlers for communication with main thread
+// Message format: { type: string, data: object }
+// Response format varies by type
+self.addEventListener ('message', async (event) => {
+	const { type, data } = event.data || {};
+	const respond = (response, transfer) => {
+		event.ports[0]?.postMessage (response, transfer);
+	};
+
+	switch (type) {
+		// Cache multiple assets on demand
+		// data: { urls: string[] }
+		// response: { success: boolean, cached?: number, total?: number, error?: string }
+		case 'CACHE_ASSETS': {
+			const { urls } = data || {};
+			if (!Array.isArray (urls)) {
+				respond ({ success: false, error: 'urls must be an array' });
+				return;
+			}
+			try {
+				const cache = await caches.open (`${name}-v${version}`);
+				const results = await Promise.allSettled (
+					urls.map ((assetUrl) => cache.add (assetUrl))
+				);
+				const successCount = results.filter ((r) => r.status === 'fulfilled').length;
+				respond ({ success: true, cached: successCount, total: urls.length });
+			} catch (error) {
+				respond ({ success: false, error: error.message });
+			}
+			break;
+		}
+
+		// Check if a single asset is in cache
+		// data: { url: string }
+		// response: { cached: boolean, error?: string }
+		case 'CHECK_CACHE': {
+			const { url } = data || {};
+			if (!url) {
+				respond ({ cached: false, error: 'url is required' });
+				return;
+			}
+			try {
+				const cache = await caches.open (`${name}-v${version}`);
+				const response = await cache.match (url);
+				respond ({ cached: !!response });
+			} catch (error) {
+				respond ({ cached: false, error: error.message });
+			}
+			break;
+		}
+
+		// Get raw cached response for an asset (for decoding)
+		// data: { url: string }
+		// response: { found: boolean, data?: ArrayBuffer, error?: string }
+		case 'GET_CACHED': {
+			const { url } = data || {};
+			if (!url) {
+				respond ({ found: false, error: 'url is required' });
+				return;
+			}
+			try {
+				const cache = await caches.open (`${name}-v${version}`);
+				const response = await cache.match (url);
+				if (response) {
+					const arrayBuffer = await response.arrayBuffer ();
+					respond ({ found: true, data: arrayBuffer }, [arrayBuffer]);
+				} else {
+					respond ({ found: false });
+				}
+			} catch (error) {
+				respond ({ found: false, error: error.message });
+			}
+			break;
+		}
+
+		default:
+			respond ({ error: `Unknown message type: ${type}` });
+	}
+});

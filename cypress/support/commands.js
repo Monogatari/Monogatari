@@ -60,7 +60,12 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 	this.monogatari.settings ({
 		'AssetsPath': {
 			root: 'https://datadyne.perfectdark.space/monogatari/assets',
+			music: 'music',
+			sounds: 'sounds',
+			voices: 'voices',
 			scenes: 'images',
+			images: 'images',
+			characters: 'characters',
 		},
 		'ExperimentalFeatures': true
 	});

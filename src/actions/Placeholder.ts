@@ -3,7 +3,6 @@ import { Util } from '@aegis-framework/artemis';
 import { ActionApplyResult, ActionRevertResult } from '../lib/types';
 
 export class Placeholder extends Action {
-
 	static override id = 'Placeholder';
 
 	static override matchString([action]: string[]): boolean {
@@ -28,6 +27,7 @@ export class Placeholder extends Action {
 		}
 
 		this.action = this.engine.prepareAction(this.action, { cycle: this._cycle as 'Application' | 'Revert' });
+
 		await this.action.willApply();
 	}
 
@@ -45,6 +45,7 @@ export class Placeholder extends Action {
 		}
 
 		this.action = this.engine.prepareAction(this.action, { cycle: this._cycle as 'Application' | 'Revert' });
+
 		await this.action.willRevert();
 	}
 
@@ -56,7 +57,5 @@ export class Placeholder extends Action {
 		return await this.action.didRevert(context);
 	}
 }
-
-// Placeholder satisfies StaticAction;
 
 export default Placeholder;

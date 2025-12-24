@@ -8,8 +8,6 @@
  * Lee Yunseok <ironyunseok@protonmail.com>
  */
 
-
-
 export default {
 	'AdvanceHelp': '게임을 진행하려면 게임 화면을 좌클릭 또는 탭하거나 스페이스 키를 누르세요',
 	'AllowPlayback': '오디오 재생을 허용하려면 여기를 클릭하세요',

@@ -260,12 +260,14 @@ import Particles from './actions/Particles';
 import Pause from './actions/Pause';
 import Placeholder from './actions/Placeholder';
 import Play from './actions/Play';
+import Preload from './actions/Preload';
 import Scene from './actions/Scene';
 import ShowBackground from './actions/ShowBackground';
 import ShowCharacter from './actions/ShowCharacter';
 import ShowCharacterLayer from './actions/ShowCharacterLayer';
 import ShowImage from './actions/ShowImage';
 import Stop from './actions/Stop';
+import Unload from './actions/Unload';
 import Vibrate from './actions/Vibrate';
 import Video from './actions/Video';
 import Wait from './actions/Wait';
@@ -295,12 +297,14 @@ Monogatari._actions = [
 	Pause,
 	Play,
 	Placeholder,
+	Preload,
 	Scene,
 	ShowBackground,
 	ShowCharacter,
 	ShowCharacterLayer,
 	ShowImage,
 	Stop,
+	Unload,
 	Vibrate,
 	Video,
 	Wait,

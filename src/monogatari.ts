@@ -22,7 +22,10 @@ import deeply from 'deeply';
 import { version } from '../package.json';
 import { Random, browserCrypto } from 'random-js';
 import migrate from './migrations';
+
+// TODO: We need to decouple these.
 import type TypeWriterComponent from './components/type-writer';
+import type PreloadAction from './actions/Preload';
 
 import { Settings, DateTime } from 'luxon';
 import type { VisualNovelEngine } from './lib/types/Monogatari';
@@ -78,9 +81,6 @@ const merge = deeply.bind({});
  *
  */
 class Monogatari {
-  // =========================================================================
-  // Type Helpers
-  // =========================================================================
 
   /**
    * Returns the class typed as VisualNovelEngine.
@@ -92,10 +92,6 @@ class Monogatari {
   private static asEngine(): VisualNovelEngine {
     return this as unknown as VisualNovelEngine;
   }
-
-  // =========================================================================
-  // Static Properties
-  // =========================================================================
 
   static _languageMetadata: Record<string, { code: string; icon: string }> = {};
   static _events: Record<string, unknown> = {};
@@ -111,6 +107,16 @@ class Monogatari {
 
   // Web Audio API context for audio playback with effects
   static audioContext: AudioContext | undefined;
+
+  // Asset caches for decoded audio and images
+  static _audioBufferCache: Map<string, AudioBuffer> = new Map();
+  static _imageCache: Map<string, HTMLImageElement> = new Map();
+
+  // Persistent audio buffer storage
+  static _audioBufferSpace: Space | null = null;
+
+  // Track IndexedDB availability: null = not checked, true = available, false = unavailable
+  static _indexedDBAvailable: boolean | null = null;
 
   static Storage: Space = new Space ();
 
@@ -164,12 +170,6 @@ class Monogatari {
   static _functions: Record<string, { apply: () => boolean; revert: () => boolean }> = {};
 
   static _$: Record<string, unknown> = {};
-
-  static _status: Record<string, boolean> = {
-    block: false,
-    playing: false,
-    finished_typing: true
-  };
 
   static _assets: Record<string, Record<string, string>> = {
     music: {},
@@ -875,6 +875,331 @@ class Monogatari {
 		}
 	}
 
+	/**
+	 * Get or set a cached AudioBuffer
+	 * @param key - Cache key (e.g., 'music/theme')
+	 * @param buffer - AudioBuffer to cache (if setting)
+	 * @returns The cached AudioBuffer if getting, undefined otherwise
+	 */
+	static audioBufferCache(key: string): AudioBuffer | undefined;
+	static audioBufferCache(key: string, buffer: AudioBuffer): void;
+	static audioBufferCache(key?: string, buffer?: AudioBuffer): AudioBuffer | undefined | void {
+		if (buffer !== undefined && key !== undefined) {
+			this._audioBufferCache.set(key, buffer);
+		} else if (key !== undefined) {
+			return this._audioBufferCache.get(key);
+		}
+		return undefined;
+	}
+
+	/**
+	 * Remove an AudioBuffer from the cache
+	 * @param key - Cache key to remove
+	 * @returns true if the key existed and was removed
+	 */
+	static audioBufferUncache(key: string): boolean {
+		return this._audioBufferCache.delete(key);
+	}
+
+	/**
+	 * Clear AudioBuffer cache, optionally filtered by prefix
+	 * @param pattern - If provided, only clear keys starting with this pattern
+	 */
+	static audioBufferClearCache(pattern?: string): void {
+		if (!pattern) {
+			this._audioBufferCache.clear();
+		} else {
+			for (const key of this._audioBufferCache.keys()) {
+				if (key.startsWith(pattern)) {
+					this._audioBufferCache.delete(key);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get or set a cached HTMLImageElement
+	 * @param key - Cache key (e.g., 'scenes/forest')
+	 * @param image - HTMLImageElement to cache (if setting)
+	 * @returns The cached HTMLImageElement if getting, undefined otherwise
+	 */
+	static imageCache(key: string): HTMLImageElement | undefined;
+	static imageCache(key: string, image: HTMLImageElement): void;
+	static imageCache(key?: string, image?: HTMLImageElement): HTMLImageElement | undefined | void {
+		if (image !== undefined && key !== undefined) {
+			this._imageCache.set(key, image);
+		} else if (key !== undefined) {
+			return this._imageCache.get(key);
+		}
+		return undefined;
+	}
+
+	/**
+	 * Remove an HTMLImageElement from the cache
+	 * @param key - Cache key to remove
+	 * @returns true if the key existed and was removed
+	 */
+	static imageUncache(key: string): boolean {
+		return this._imageCache.delete(key);
+	}
+
+	/**
+	 * Clear image cache, optionally filtered by prefix
+	 * @param pattern - If provided, only clear keys starting with this pattern
+	 */
+	static imageClearCache(pattern?: string): void {
+		if (!pattern) {
+			this._imageCache.clear();
+		} else {
+			for (const key of this._imageCache.keys()) {
+				if (key.startsWith(pattern)) {
+					this._imageCache.delete(key);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Clear all asset caches (audio and image)
+	 */
+	static clearAllCaches(): void {
+		this._audioBufferCache.clear();
+		this._imageCache.clear();
+	}
+
+	// =========================================================================
+	// Service Worker Communication
+	// =========================================================================
+
+	/**
+	 * Send a message to the service worker and wait for response
+	 * @param message - Message to send
+	 * @returns Promise resolving to the response
+	 */
+	private static sendServiceWorkerMessage<T>(message: Record<string, unknown>): Promise<T> {
+		return new Promise((resolve, reject) => {
+			if (!navigator.serviceWorker?.controller) {
+				reject(new Error('Service worker not available'));
+				return;
+			}
+
+			const messageChannel = new MessageChannel();
+			messageChannel.port1.onmessage = (event) => {
+				resolve(event.data as T);
+			};
+
+			navigator.serviceWorker.controller.postMessage(message, [messageChannel.port2]);
+
+			// Timeout after 10 seconds
+			setTimeout(() => {
+				reject(new Error('Service worker message timeout'));
+			}, 10000);
+		});
+	}
+
+	/**
+	 * Request the service worker to cache specified asset URLs
+	 * @param urls - Array of URLs to cache
+	 * @returns Promise resolving to cache result
+	 */
+	static async cacheInServiceWorker(urls: string[]): Promise<{ success: boolean; cached?: number; total?: number; error?: string }> {
+		try {
+			return await this.sendServiceWorkerMessage<{ success: boolean; cached?: number; total?: number; error?: string }>({
+				type: 'CACHE_ASSETS',
+				data: { urls }
+			});
+		} catch (error) {
+			return { success: false, error: (error as Error).message };
+		}
+	}
+
+	/**
+	 * Check if an asset URL is cached in the service worker
+	 * @param url - URL to check
+	 * @returns Promise resolving to whether the URL is cached
+	 */
+	static async isInServiceWorkerCache(url: string): Promise<boolean> {
+		try {
+			const result = await this.sendServiceWorkerMessage<{ cached: boolean }>({
+				type: 'CHECK_CACHE',
+				data: { url }
+			});
+			return result.cached;
+		} catch {
+			return false;
+		}
+	}
+
+	/**
+	 * Get cached raw data from service worker (for decoding)
+	 * @param url - URL of the cached asset
+	 * @returns Promise resolving to ArrayBuffer if found, undefined otherwise
+	 */
+	static async getFromServiceWorkerCache(url: string): Promise<ArrayBuffer | undefined> {
+		try {
+			const result = await this.sendServiceWorkerMessage<{ found: boolean; data?: ArrayBuffer }>({
+				type: 'GET_CACHED',
+				data: { url }
+			});
+			return result.found ? result.data : undefined;
+		} catch {
+			return undefined;
+		}
+	}
+
+	/**
+	 * Serialized AudioBuffer format for IndexedDB storage
+	 */
+	static serializeAudioBuffer(buffer: AudioBuffer): {
+		channels: Float32Array[];
+		sampleRate: number;
+		length: number;
+		numberOfChannels: number;
+	} {
+		const channels: Float32Array[] = [];
+		for (let i = 0; i < buffer.numberOfChannels; i++) {
+			// Create a copy of the channel data
+			channels.push(new Float32Array(buffer.getChannelData(i)));
+		}
+		return {
+			channels,
+			sampleRate: buffer.sampleRate,
+			length: buffer.length,
+			numberOfChannels: buffer.numberOfChannels
+		};
+	}
+
+	/**
+	 * Reconstruct an AudioBuffer from serialized data
+	 * This is much faster than re-decoding from raw audio file
+	 */
+	static deserializeAudioBuffer(
+		data: { channels: ArrayLike<number>[]; sampleRate: number; length: number; numberOfChannels: number },
+		audioContext: AudioContext
+	): AudioBuffer {
+		const buffer = audioContext.createBuffer(
+			data.numberOfChannels,
+			data.length,
+			data.sampleRate
+		);
+		for (let i = 0; i < data.numberOfChannels; i++) {
+			// Create a new Float32Array from the stored data to ensure correct type
+			const channelData = new Float32Array(data.channels[i]);
+			buffer.copyToChannel(channelData, i);
+		}
+		return buffer;
+	}
+
+	/**
+	 * Get the persistent audio buffer Space instance (IndexedDB)
+	 * Lazily initialized on first access. Returns null if IndexedDB is unavailable.
+	 */
+	static async audioBufferSpace(): Promise<Space | null> {
+		// If we already know IndexedDB isn't available, skip
+		if (this._indexedDBAvailable === false) {
+			return null;
+		}
+
+		if (!this._audioBufferSpace) {
+			try {
+				this._audioBufferSpace = new Space(SpaceAdapter.IndexedDB, {
+					name: `${Text.friendly(this.setting('Name') as string)}_AudioCache`,
+					version: '1',
+					store: 'decodedAudio'
+				} as ConstructorParameters<typeof Space>[1]);
+				await this._audioBufferSpace.open();
+				this._indexedDBAvailable = true;
+			} catch (error) {
+				console.warn('IndexedDB not available for audio caching. Audio will still work but won\'t persist across sessions:', error);
+				this._indexedDBAvailable = false;
+				return null;
+			}
+		}
+		return this._audioBufferSpace;
+	}
+
+	/**
+	 * Check if IndexedDB is available for audio caching
+	 * @returns true if available, false if not, null if not yet checked
+	 */
+	static isIndexedDBAvailable(): boolean | null {
+		return this._indexedDBAvailable;
+	}
+
+	/**
+	 * Store a decoded AudioBuffer in persistent storage (IndexedDB)
+	 * @param key - Cache key (e.g., 'music/theme')
+	 * @param buffer - AudioBuffer to store
+	 */
+	static async storeAudioBufferPersistent(key: string, buffer: AudioBuffer): Promise<void> {
+		const space = await this.audioBufferSpace();
+		if (!space) {
+			return; // IndexedDB not available, silently skip
+		}
+
+		try {
+			const serialized = this.serializeAudioBuffer(buffer);
+			await space.set(key, serialized);
+		} catch (error) {
+			console.warn('Failed to store audio buffer in IndexedDB:', error);
+		}
+	}
+
+	/**
+	 * Retrieve a decoded AudioBuffer from persistent storage (IndexedDB)
+	 * @param key - Cache key (e.g., 'music/theme')
+	 * @returns The AudioBuffer if found, undefined otherwise
+	 */
+	static async getAudioBufferPersistent(key: string): Promise<AudioBuffer | undefined> {
+		const space = await this.audioBufferSpace();
+		if (!space) {
+			return undefined; // IndexedDB not available
+		}
+
+		try {
+			const data = await space.get(key) as { channels: Float32Array[]; sampleRate: number; length: number; numberOfChannels: number } | undefined;
+			if (data && data.channels && this.audioContext) {
+				return this.deserializeAudioBuffer(data, this.audioContext);
+			}
+		} catch (error) {
+			console.warn('Failed to retrieve audio buffer from IndexedDB:', error);
+		}
+		return undefined;
+	}
+
+	/**
+	 * Remove an AudioBuffer from persistent storage (IndexedDB)
+	 * @param key - Cache key to remove
+	 */
+	static async removeAudioBufferPersistent(key: string): Promise<void> {
+		const space = await this.audioBufferSpace();
+		if (!space) {
+			return; // IndexedDB not available
+		}
+
+		try {
+			await space.remove(key);
+		} catch (error) {
+			console.warn('Failed to remove audio buffer from IndexedDB:', error);
+		}
+	}
+
+	/**
+	 * Clear all AudioBuffers from persistent storage (IndexedDB)
+	 */
+	static async clearAudioBufferPersistent(): Promise<void> {
+		const space = await this.audioBufferSpace();
+		if (!space) {
+			return; // IndexedDB not available
+		}
+
+		try {
+			await space.clear();
+		} catch (error) {
+			console.warn('Failed to clear audio buffers from IndexedDB:', error);
+		}
+	}
+
 	static characters (object: Record<string, Character> | null = null): Record<string, Character> {
 		if (object !== null) {
 			// const identifiers = Object.keys (object);
@@ -1079,14 +1404,6 @@ class Monogatari {
 		} else if (typeof key === 'undefined') {
 			return this._configuration;
 		}
-	}
-
-	static status (object: Record<string, boolean> | null = null) {
-		if (object !== null) {
-			this._status = Object.assign ({}, this._status, object);
-		}
-
-    return this._status;
 	}
 
 	static storage (object: string | Record<string, unknown> | null = null): unknown {
@@ -1327,71 +1644,137 @@ class Monogatari {
 	 * Preload game assets
 	 */
 	static preload () {
-		const promises = [];
-
-		// Check if asset preloading is enabled. Preloading will not be done in
+    // Check if asset preloading is enabled. Preloading will not be done in
 		// electron or cordova since the assets are expected to be available
 		// locally.
-		if (this.setting ('Preload') && !Platform.electron && !Platform.cordova && location.protocol.indexOf ('file') < 0) {
-			this.trigger ('willPreloadAssets');
+    const preloadEnabled = this.setting ('Preload') && !Platform.electron && !Platform.cordova && location.protocol.indexOf ('file') < 0;
 
-			const allAssets = this.assets () || {};
-			const assetsPath = this.setting ('AssetsPath') as { root: string; characters: string; [key: string]: string };
+    if (!preloadEnabled) {
+      return Promise.resolve ();
+    }
+
+		const promises: Promise<void>[] = [];
+
+		this.trigger('willPreloadAssets');
+
+		const assetsPath = this.setting('AssetsPath');
+
+		// Check if Preload action has a 'default' block configured
+		const preloadAction = this.action('Preload') as typeof PreloadAction | undefined;
+		const blocks = preloadAction?.blocks?.();
+		const defaultBlock = blocks?.['default'];
+
+		if (defaultBlock && preloadAction) {
+			// Use the registry-based preloading for the 'default' block
+			for (const [category, assets] of Object.entries(defaultBlock)) {
+				// Handle characters separately (nested structure)
+				if (category === 'characters' && typeof assets === 'object' && !Array.isArray(assets)) {
+					for (const [charId, sprites] of Object.entries(assets as Record<string, string[]>)) {
+						const character = this.character(charId);
+						if (!character) continue;
+
+						let directory = character.directory ? `${character.directory}/` : '';
+						directory = `${assetsPath.root}/${assetsPath.characters}/${directory}`;
+
+						for (const spriteName of sprites) {
+							const spriteFile = character.sprites?.[spriteName];
+							if (!spriteFile || typeof spriteFile !== 'string') continue;
+
+							const url = `${directory}${spriteFile}`;
+							promises.push(
+								Preload.image(url).then((img) => {
+									this.imageCache(`characters/${charId}/${spriteName}`, img);
+									this.trigger('assetLoaded', { name: spriteName, type: 'image', category: 'characters' });
+								})
+							);
+							this.trigger('assetQueued');
+						}
+					}
+					continue;
+				}
+
+				if (!Array.isArray(assets)) continue;
+
+				// Use the Preload action's registry to determine how to load this category
+				const loaderType = preloadAction.getLoaderType(category);
+				if (!loaderType) {
+					console.warn(`Preload: No loader registered for category "${category}" in default block`);
+					continue;
+				}
+
+				const loaderConfig = preloadAction.getLoader(loaderType);
+				if (!loaderConfig) {
+					console.warn(`Preload: Loader type "${loaderType}" not found`);
+					continue;
+				}
+
+				for (const assetName of assets) {
+					const assetFile = (this.assets(category) as Record<string, string>)?.[assetName];
+					if (!assetFile) continue;
+
+					const url = `${assetsPath.root}/${assetsPath[category as keyof typeof assetsPath]}/${assetFile}`;
+					const cacheKey = `${category}/${assetName}`;
+
+					promises.push(
+						loaderConfig.loader(url, this).then((asset: unknown) => {
+							loaderConfig.cache.set(this, cacheKey, asset);
+							this.trigger('assetLoaded', { name: assetName, type: loaderType, category });
+						})
+					);
+					this.trigger('assetQueued');
+				}
+			}
+		} else {
+			// Fallback: Legacy preloading when no 'default' block is configured
+			// This preloads ALL registered assets to browser cache (not decoded/cached for immediate use)
+			const allAssets = this.assets() || {};
 
 			// Iterate over every asset category: music, videos, scenes etc.
-			for (const category of Object.keys (allAssets)) {
+			for (const category of Object.keys(allAssets)) {
 				// Iterate over every key on each category
-				const categoryAssets = this.assets (category) || {};
-				for (const asset of Object.values (categoryAssets)) {
+				const categoryAssets = this.assets(category) || {};
+
+				for (const asset of Object.values(categoryAssets)) {
 					if (typeof asset !== 'string') {
 						continue;
 					}
+
 					// Get the directory from where to load this asset
-					const directory = `${assetsPath.root}/${assetsPath[category]}`;
+					const directory = `${assetsPath.root}/${assetsPath[category as keyof typeof assetsPath]}`;
 
-					if (FileSystem.isImage (asset)) {
+          const onSuccess = (name: string, type: string, category: string) => {
+            this.trigger('assetLoaded', { name, type, category });
+          }
 
-						promises.push (Preload.image (`${directory}/${asset}`).then (() => {
-							this.trigger ('assetLoaded', {
-								name: asset,
-								type: 'image',
-								category
-							});
-						}));
+					if (FileSystem.isImage(asset)) {
+						promises.push(Preload.image(`${directory}/${asset}`).then(() => onSuccess(asset, 'image', category)));
 					} else {
-						promises.push (Preload.file (`${directory}/${asset}`).then (() => {
-							this.trigger ('assetLoaded', {
-								name: asset,
-								type: 'file',
-								category
-							});
-						}));
+						promises.push(Preload.file(`${directory}/${asset}`).then(() => onSuccess(asset, 'file', category)));
 					}
 
-					this.trigger ('assetQueued');
+					this.trigger('assetQueued');
 				}
 			}
 
-			for (const key in this.characters ()) {
-				const character = this.character (key);
+			for (const key in this.characters()) {
+				const character = this.character(key);
 				if (!character) continue;
 
 				let directory = '';
 
-				// Check if the character has a directory defined where its images
-				// are located
+				// Check if the character has a directory defined where its images are located
 				if (typeof character.directory !== 'undefined') {
 					directory = character.directory + '/';
 				}
 				directory = `${assetsPath.root}/${assetsPath.characters}/${directory}`;
 
 				if (typeof character.sprites !== 'undefined') {
-					for (const image of Object.values (character.sprites)) {
+					for (const image of Object.values(character.sprites)) {
 						if (typeof image !== 'string') {
 							continue;
 						}
-						promises.push (Preload.image (`${directory}${image}`).then (() => {
-							this.trigger ('assetLoaded', {
+						promises.push(Preload.image(`${directory}${image}`).then(() => {
+							this.trigger('assetLoaded', {
 								name: image,
 								type: 'image',
 								category: 'characters'
@@ -1401,12 +1784,12 @@ class Monogatari {
 				}
 
 				if (typeof character.expressions !== 'undefined') {
-					for (const image of Object.values (character.expressions)) {
+					for (const image of Object.values(character.expressions)) {
 						if (typeof image !== 'string') {
 							continue;
 						}
-						promises.push (Preload.image (`${directory}${image}`).then (() => {
-							this.trigger ('assetLoaded', {
+						promises.push(Preload.image(`${directory}${image}`).then(() => {
+							this.trigger('assetLoaded', {
 								name: image,
 								type: 'image',
 								category: 'characters'
@@ -1416,8 +1799,8 @@ class Monogatari {
 				}
 
 				if (typeof character.default_expression === 'string') {
-					promises.push (Preload.image (`${directory}${character.default_expression}`).then (() => {
-						this.trigger ('assetLoaded', {
+					promises.push(Preload.image(`${directory}${character.default_expression}`).then(() => {
+						this.trigger('assetLoaded', {
 							name: character.default_expression as string,
 							type: 'image',
 							category: 'characters'
@@ -1428,8 +1811,8 @@ class Monogatari {
 				if (typeof character.layer_assets === 'object' && character.layer_assets) {
 					for (const [_layer, obj] of Object.entries(character.layer_assets)) {
 						for (const [assetKey, value] of Object.entries(obj)) {
-							promises.push (Preload.image (`${directory}${value}`).then (() => {
-								this.trigger ('assetLoaded', {
+							promises.push(Preload.image(`${directory}${value}`).then(() => {
+								this.trigger('assetLoaded', {
 									name: assetKey,
 									type: 'image',
 									category: 'characters'
@@ -1439,16 +1822,14 @@ class Monogatari {
 					}
 				}
 
-				this.trigger ('assetQueued');
+				this.trigger('assetQueued');
 			}
-
-			return Promise.all (promises).then (() => {
-				this.trigger ('didPreloadAssets');
-				return Promise.resolve ();
-			});
-		} else {
-			return Promise.resolve ();
 		}
+
+    return Promise.all (promises).then (() => {
+      this.trigger ('didPreloadAssets');
+      return Promise.resolve ();
+    });
 	}
 
 	/**
@@ -2611,56 +2992,14 @@ class Monogatari {
 	/**
 	 * @static stopTyping - Stop the typing effect.
 	 *
-	 * @param {any} component - A typed.js-like component instance
+	 * @param component - A TypeWriter component instance
 	 * @returns {void}
 	 */
-	static stopTyping (component: TypeWriterComponent) {
-		const speedReader = !this.setting ('InstantText');
+	static stopTyping (component: TypeWriterComponent): void {
+		const instant = this.setting('InstantText') as boolean;
 
-		if (speedReader) {
-			component.speed = 0;
-			component.ignorePause = true;
-
-			if (component.loops) {
-				component.loops = false;
-
-				// If this doesn't get set, it'll just start looping again.
-				component.stopLoop = true;
-			}
-		} else {
-			// Get the string it was typing
-			const str = component.state.strings[0]; // TODO: Multi-String Capability?
-
-			// Get the element it was typing to
-			// NOTE: Since "querySelector" selects the first element, we don't have to worry about it selecting the wrong element
-			const element = component.querySelector ('div');
-
-			if (element === null) {
-				throw new Error('Element not found');
-			}
-
-			component.destroy ();
-
-			// We want to dynamically replace all actions, including custom ones.
-			let replaced = str;
-			const actions = (component.constructor as typeof TypeWriterComponent).actions ();
-
-			for (const action in actions) {
-				if (actions[action].type === 'number') {
-					replaced = replaced.replace (new RegExp(`\\{${action}:(\\d+)\\}`, 'g'), '');
-				} else if (actions[action].type === 'enclosed') {
-					replaced = replaced.replace (new RegExp(`\\{\\/${action}.*?\\}`, 'g'), '');
-				} else if (actions[action].type === 'instance') {
-					replaced = replaced.replace (new RegExp(`\\{${action}\\}`, 'g'), '');
-				}
-			}
-
-			element.innerHTML = replaced;
-		}
-
-		this.global ('finished_typing', true);
-
-		this.trigger ('didFinishTyping');
+		// TypeWriter.finish() handles setting finished_typing and triggering events
+		component.finish(instant);
 	}
 
 	/**
@@ -2843,16 +3182,18 @@ class Monogatari {
 	static showMainScreen () {
 		this.global ('on_splash_screen', false);
 
-		if (!this.setting ('ShowMainScreen')) {
-			this.global ('playing', true);
-			this.showScreen ('game');
+		if (this.setting ('ShowMainScreen')) {
+      this.showScreen ('main');
+      return;
+    }
 
-			const currentLabel = this.label () as unknown[];
-			const step = this.state ('step') as number;
-			this.run (currentLabel[step]);
-		} else {
-			this.showScreen ('main');
-		}
+    const currentLabel = this.label () as unknown[];
+    const step = this.state ('step') as number;
+
+    this.global ('playing', true);
+    this.showScreen ('game');
+
+    this.run (currentLabel[step]);
 	}
 
 	static showSplashScreen () {

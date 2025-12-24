@@ -507,7 +507,7 @@ context ('Dialog', function () {
 		cy.proceed ();
 		cy.get ('centered-dialog').should ('have.class', 'centered-style');
 		cy.get ('centered-dialog').contains ('Three');
-		
+
 
 		cy.proceed ();
 
@@ -798,6 +798,350 @@ context ('Dialog', function () {
 		cy.get ('text-box').contains ('Fast');
 		cy.get ('text-box').contains ('slow');
 		cy.get ('text-box').contains ('fast again!');
+	});
+
+	// =========================================================================
+	// Text Effect Tests
+	// =========================================================================
+
+	describe ('Text Effects', function () {
+
+		it ('Applies shake effect to characters', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'Hello {/shake}shaking{/shake} world!'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('text-box').contains ('Hello');
+			cy.get ('text-box').contains ('shaking');
+			cy.get ('text-box').contains ('world!');
+			// Check that shake effect data attribute is applied
+			cy.get ('type-character[data-effect-shake]').should ('have.length.at.least', 1);
+		});
+
+		it ('Applies wave effect to characters', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'This is {/wave}wavy text{/wave}!'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('text-box').contains ('wavy text');
+			cy.get ('type-character[data-effect-wave]').should ('have.length.at.least', 1);
+		});
+
+		it ('Applies glitch effect to characters', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'A {/glitch}corrupted{/glitch} message'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('text-box').contains ('corrupted');
+			cy.get ('type-character[data-effect-glitch]').should ('have.length.at.least', 1);
+		});
+
+		it ('Applies emotion preset effects', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'{/angry}I AM FURIOUS!{/angry}'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('text-box').contains ('I AM FURIOUS!');
+			cy.get ('type-character[data-effect-angry]').should ('have.length.at.least', 1);
+		});
+
+		it ('Applies emphasis effects (bold, italic, big)', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'This is {/bold}important{/bold} and {/italic}emphasized{/italic}!'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('text-box').contains ('important');
+			cy.get ('text-box').contains ('emphasized');
+			cy.get ('type-character[data-effect-bold]').should ('have.length.at.least', 1);
+			cy.get ('type-character[data-effect-italic]').should ('have.length.at.least', 1);
+		});
+
+		it ('Applies reveal style effects', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'The {/redacted}CLASSIFIED{/redacted} information'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('text-box').contains ('CLASSIFIED');
+			cy.get ('type-character[data-effect-redacted]').should ('have.length.at.least', 1);
+		});
+
+		it ('Supports multiple effects on different parts of text', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'{/shake}Scary{/shake} and {/happy}joyful{/happy}!'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('text-box').contains ('Scary');
+			cy.get ('text-box').contains ('joyful');
+			cy.get ('type-character[data-effect-shake]').should ('have.length.at.least', 1);
+			cy.get ('type-character[data-effect-happy]').should ('have.length.at.least', 1);
+		});
+
+		it ('Strips effect markers when TypeAnimation is disabled', function () {
+			this.monogatari.setting ('TypeAnimation', false);
+			this.monogatari.script ({
+				'Start': [
+					'Hello {/shake}world{/shake}!'
+				]
+			});
+
+			cy.start ();
+			cy.get ('text-box').contains ('Hello world!');
+			// Effect markers should not appear in text
+			cy.get ('text-box').should ('not.contain', '{/shake}');
+			cy.get ('text-box').should ('not.contain', '{/');
+		});
+
+		it ('Strips multiple effect markers when TypeAnimation is disabled', function () {
+			this.monogatari.setting ('TypeAnimation', false);
+			this.monogatari.script ({
+				'Start': [
+					'{/angry}FURIOUS{/angry} and {/wave}wavy{/wave} and {/glitch}glitchy{/glitch}!'
+				]
+			});
+
+			cy.start ();
+			cy.get ('text-box').contains ('FURIOUS and wavy and glitchy!');
+			cy.get ('text-box').should ('not.contain', '{/angry}');
+			cy.get ('text-box').should ('not.contain', '{/wave}');
+			cy.get ('text-box').should ('not.contain', '{/glitch}');
+		});
+
+		it ('Combines effects with pause and speed actions', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'Hello{pause:50} {/shake}shaking{/shake}{speed:50}...done!'
+				]
+			});
+
+			cy.start ();
+			cy.wait (800);
+			cy.get ('text-box').contains ('Hello');
+			cy.get ('text-box').contains ('shaking');
+			cy.get ('text-box').contains ('done!');
+			cy.get ('type-character[data-effect-shake]').should ('have.length.at.least', 1);
+		});
+
+		it ('Applies effects in centered dialog', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('CenteredTypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'centered {/mysterious}A mysterious message{/mysterious}'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('centered-dialog').should ('exist');
+			cy.get ('centered-dialog').contains ('A mysterious message');
+			cy.get ('centered-dialog type-character[data-effect-mysterious]').should ('have.length.at.least', 1);
+		});
+
+		it ('Applies effects in NVL mode', function () {
+			cy.loadTestAssets ({nvl: true});
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('NVLTypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'nvl {/scared}Trembling with fear{/scared}'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('text-box').contains ('Trembling with fear');
+			cy.get ('type-character[data-effect-scared]').should ('have.length.at.least', 1);
+		});
+
+		it ('Handles all shake variants', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'{/shake-hard}HARD{/shake-hard} {/shake-slow}slow{/shake-slow} {/shake-little}little{/shake-little}'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('type-character[data-effect-shake-hard]').should ('have.length.at.least', 1);
+			cy.get ('type-character[data-effect-shake-slow]').should ('have.length.at.least', 1);
+			cy.get ('type-character[data-effect-shake-little]').should ('have.length.at.least', 1);
+		});
+
+		it ('Handles all wave variants', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'{/wave-slow}slow{/wave-slow} {/wave-fast}fast{/wave-fast}'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('type-character[data-effect-wave-slow]').should ('have.length.at.least', 1);
+			cy.get ('type-character[data-effect-wave-fast]').should ('have.length.at.least', 1);
+		});
+
+		it ('Handles all glitch variants', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'{/glitch-hard}HARD{/glitch-hard} {/glitch-slow}slow{/glitch-slow}'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('type-character[data-effect-glitch-hard]').should ('have.length.at.least', 1);
+			cy.get ('type-character[data-effect-glitch-slow]').should ('have.length.at.least', 1);
+		});
+
+		it ('Handles fade and scale reveal effects', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'{/fade}fading{/fade} {/scale}scaling{/scale} {/blur}blurry{/blur}'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('type-character[data-effect-fade]').should ('have.length.at.least', 1);
+			cy.get ('type-character[data-effect-scale]').should ('have.length.at.least', 1);
+			cy.get ('type-character[data-effect-blur]').should ('have.length.at.least', 1);
+		});
+
+		it ('Handles color effects', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'{/rainbow}colorful{/rainbow} {/glow}glowing{/glow}'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('type-character[data-effect-rainbow]').should ('have.length.at.least', 1);
+			cy.get ('type-character[data-effect-glow]').should ('have.length.at.least', 1);
+		});
+
+		it ('Handles all emotion presets', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 5);
+			this.monogatari.script ({
+				'Start': [
+					'{/happy}joy{/happy} {/sad}tears{/sad} {/excited}wow{/excited} {/whisper}shh{/whisper}'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('type-character[data-effect-happy]').should ('have.length.at.least', 1);
+			cy.get ('type-character[data-effect-sad]').should ('have.length.at.least', 1);
+			cy.get ('type-character[data-effect-excited]').should ('have.length.at.least', 1);
+			cy.get ('type-character[data-effect-whisper]').should ('have.length.at.least', 1);
+		});
+
+		it ('Sets char-index CSS variable for staggered animations', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'{/wave}Hello{/wave}'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			// Check that characters have --char-index CSS variable set
+			cy.get ('type-character[data-effect-wave]').first ().should (($el) => {
+				const style = $el[0].style;
+				expect (style.getPropertyValue ('--char-index')).to.not.be.empty;
+			});
+		});
+
+		it ('Effects work with character dialog', function () {
+			this.monogatari.setting ('TypeAnimation', true);
+			this.monogatari.setting ('TypeAnimationSpeed', 10);
+			this.monogatari.script ({
+				'Start': [
+					'y:happy {/excited}I am so happy!{/excited}'
+				]
+			});
+
+			cy.start ();
+			cy.wait (500);
+			cy.get ('[data-content="character-name"]').contains ('Yui');
+			cy.get ('text-box').contains ('I am so happy!');
+			cy.get ('type-character[data-effect-excited]').should ('have.length.at.least', 1);
+		});
+
+		it ('Strips all effect types when animation disabled', function () {
+			this.monogatari.setting ('TypeAnimation', false);
+			this.monogatari.script ({
+				'Start': [
+					'{/shake}a{/shake}{/wave}b{/wave}{/glitch}c{/glitch}{/bold}d{/bold}{/angry}e{/angry}{/redacted}f{/redacted}{pause:100}{speed:50}g'
+				]
+			});
+
+			cy.start ();
+			cy.get ('text-box').contains ('abcdefg');
+			cy.get ('text-box').should ('not.contain', '{/');
+			cy.get ('text-box').should ('not.contain', '{pause');
+			cy.get ('text-box').should ('not.contain', '{speed');
+		});
+
 	});
 
 });

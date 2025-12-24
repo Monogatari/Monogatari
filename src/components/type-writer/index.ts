@@ -8,28 +8,24 @@ import {
 	type TypingCallbacks,
 } from '../../lib/typing-utils';
 
-// ============================================================================
-// Types
-// ============================================================================
+export type ActionType = 'number' | 'enclosed' | 'instance';
 
-type ActionType = 'number' | 'enclosed' | 'instance';
-
-interface TypeWriterAction {
+export interface TypeWriterAction {
 	name: string;
 	type: ActionType;
 	action: (this: TypeWriter, ...args: unknown[]) => void;
 }
 
-interface TypeWriterActions {
+export interface TypeWriterActions {
 	[key: string]: TypeWriterAction;
 }
 
-interface TypeWriterConfiguration {
+export interface TypeWriterConfiguration {
 	actions: TypeWriterActions;
 	[key: string]: unknown;
 }
 
-interface TypedConfig extends TypingCallbacks<TypeWriter> {
+export interface TypedConfig extends TypingCallbacks<TypeWriter> {
 	typeSpeed?: number;
 	loop?: boolean | number;
 	showCursor?: boolean;
@@ -39,7 +35,7 @@ interface TypedConfig extends TypingCallbacks<TypeWriter> {
 	onStringLoop?: (index: number, self: TypeWriter) => void;
 }
 
-interface ParsedAction {
+export interface ParsedAction {
 	action: string;
 	n?: string;
 	options?: Record<string, string>;
@@ -47,7 +43,7 @@ interface ParsedAction {
 	id?: string;
 }
 
-interface VoidElementResult {
+export interface VoidElementResult {
 	props: Record<string, boolean>;
 	state: Record<string, unknown>;
 	node: TypeCharacter;
@@ -75,15 +71,22 @@ export interface TypeWriterState extends Properties {
 // Pre-compiled regex patterns for better performance
 // ============================================================================
 
-const QUOTED_VALUE_PATTERN = /=["'](.*?)\1/g;
-const CSS_VALUE_PATTERN = /(:[ ]?)(.*?);/g;
-const QUOTE_CONTENT_PATTERN = /(["'])(.*?)\1/g;
+export const QUOTED_VALUE_PATTERN = /=["'](.*?)\1/g;
+export const CSS_VALUE_PATTERN = /(:[ ]?)(.*?);/g;
+export const QUOTE_CONTENT_PATTERN = /(["'])(.*?)\1/g;
 
 // ============================================================================
 // TypeWriter Component
 // ============================================================================
 
 class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
+  static override tag = 'type-writer';
+
+  static _patternCacheVersion: number = 0;
+  static _numberActionsCache: string | null = null;
+  static _enclosedActionsCache: string | null = null;
+  static _instanceActionsCache: string | null = null;
+
 	static override _configuration: TypeWriterConfiguration = {
 		actions: {
 			'pause': {
@@ -117,6 +120,222 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 					}
 				},
 			},
+			'shake': {
+				name: 'shake',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'shake-hard': {
+				name: 'shake-hard',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'shake-slow': {
+				name: 'shake-slow',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'shake-little': {
+				name: 'shake-little',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'shake-horizontal': {
+				name: 'shake-horizontal',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'shake-vertical': {
+				name: 'shake-vertical',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'wave': {
+				name: 'wave',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'wave-slow': {
+				name: 'wave-slow',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'wave-fast': {
+				name: 'wave-fast',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'fade': {
+				name: 'fade',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'fade-slow': {
+				name: 'fade-slow',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'blur': {
+				name: 'blur',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'scale': {
+				name: 'scale',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'scale-bounce': {
+				name: 'scale-bounce',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'slide-up': {
+				name: 'slide-up',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'slide-down': {
+				name: 'slide-down',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'glitch': {
+				name: 'glitch',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'glitch-hard': {
+				name: 'glitch-hard',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'glitch-slow': {
+				name: 'glitch-slow',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'bold': {
+				name: 'bold',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'italic': {
+				name: 'italic',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'big': {
+				name: 'big',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'small': {
+				name: 'small',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'impact': {
+				name: 'impact',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'redacted': {
+				name: 'redacted',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'invisible-ink': {
+				name: 'invisible-ink',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'handwriting': {
+				name: 'handwriting',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'strike': {
+				name: 'strike',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'flicker': {
+				name: 'flicker',
+				type: 'enclosed',
+				action: () => {},
+			},
+
+			'angry': {
+				name: 'angry',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'scared': {
+				name: 'scared',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'happy': {
+				name: 'happy',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'sad': {
+				name: 'sad',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'mysterious': {
+				name: 'mysterious',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'excited': {
+				name: 'excited',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'whisper': {
+				name: 'whisper',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'shout': {
+				name: 'shout',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'dizzy': {
+				name: 'dizzy',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'dreamy': {
+				name: 'dreamy',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'robotic': {
+				name: 'robotic',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'static': {
+				name: 'static',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'rainbow': {
+				name: 'rainbow',
+				type: 'enclosed',
+				action: () => {},
+			},
+			'glow': {
+				name: 'glow',
+				type: 'enclosed',
+				action: () => {},
+			},
 		},
 	};
 
@@ -135,14 +354,14 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	elements: NodeListOf<TypeCharacter> | null = null;
 	ignorePause?: boolean;
 
-	// Animation frame timing (replaces setTimeout for smoother animations)
+	// Animation frame timing
 	private _animationFrameId: number | null = null;
 	private _lastFrameTime: number = 0;
 	private _accumulatedTime: number = 0;
 	private _targetWaitTime: number = 0;
 	private _isAnimating: boolean = false;
 
-	// Pre-compiled action patterns (populated on first parse)
+	// Pre-compiled action patterns
 	private _actionPatternCache: RegExp | null = null;
 	private _numberActionsCache: string | null = null;
 	private _enclosedActionsCache: string | null = null;
@@ -163,9 +382,6 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		};
 	}
 
-	/**
-	 * Get or set the component configuration.
-	 */
 	static override configuration(object: string | TypeWriterConfiguration | null = null): TypeWriterConfiguration | unknown {
 		if (object !== null) {
 			if (typeof object === 'string') {
@@ -178,11 +394,37 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		return this._configuration;
 	}
 
-	/**
-	 * Return the list of all actions from the actions config.
-	 */
 	static actions(): TypeWriterActions {
 		return this._configuration.actions;
+	}
+
+	/**
+	 * Strip all TypeWriter action markers from a string.
+	 * This dynamically handles all registered actions (number, enclosed, instance types).
+	 *
+	 * @param str - The string to strip markers from
+	 * @returns The string with all action markers removed
+	 */
+	static stripActionMarkers(str: string): string {
+		const actions = this.actions();
+		let result = str;
+
+		for (const actionName in actions) {
+			const action = actions[actionName];
+
+			if (action.type === 'number') {
+				// Matches {action:N} or {action N}
+				result = result.replace(new RegExp(`\\{${actionName}[:\\s]\\d+\\}`, 'g'), '');
+			} else if (action.type === 'enclosed') {
+				// Matches {/action} or {/action options}
+				result = result.replace(new RegExp(`\\{\\/${actionName}(?:\\s[^}]*)?\\}`, 'g'), '');
+			} else if (action.type === 'instance') {
+				// Matches {action/}
+				result = result.replace(new RegExp(`\\{${actionName}\\/\\}`, 'g'), '');
+			}
+		}
+
+		return result;
 	}
 
 	/**
@@ -215,16 +457,14 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	 * Called when new actions are registered.
 	 */
 	private static _invalidateAllPatternCaches(): void {
-		// Use a WeakSet or similar mechanism if we need to track instances
-		// For now, we'll just set a flag that instances check
-		(this as any)._patternCacheVersion = ((this as any)._patternCacheVersion || 0) + 1;
+		this._patternCacheVersion = (this._patternCacheVersion || 0) + 1;
 	}
 
 	/**
 	 * Get the current pattern cache version.
 	 */
 	static get patternCacheVersion(): number {
-		return (this as any)._patternCacheVersion || 0;
+		return this._patternCacheVersion || 0;
 	}
 
 	/**
@@ -251,9 +491,13 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 				return a;
 			}, {} as Record<string, string[]>);
 
-		this._numberActionsCache = acts.number?.join('|') ?? '';
-		this._enclosedActionsCache = acts.enclosed?.join('|') ?? '';
-		this._instanceActionsCache = acts.instance?.join('|') ?? '';
+		// Sort actions by length (longest first) to ensure proper regex matching.
+		// E.g., "shake-hard" must come before "shake" to avoid partial matches.
+		const sortByLength = (arr: string[]) => arr.sort((a, b) => b.length - a.length);
+
+		this._numberActionsCache = acts.number ? sortByLength(acts.number).join('|') : '';
+		this._enclosedActionsCache = acts.enclosed ? sortByLength(acts.enclosed).join('|') : '';
+		this._instanceActionsCache = acts.instance ? sortByLength(acts.instance).join('|') : '';
 
 		const patterns: string[] = [];
 
@@ -276,8 +520,27 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	 * Start the typing animation with a fresh configuration.
 	 */
 	initiate(): void {
-		// Set the typed configuration on each initiation.
-		this.setState({ config: this.engine.global('typedConfiguration') as Partial<TypedConfig> });
+		// Build default config with internal lifecycle callbacks
+		const defaultConfig: Partial<TypedConfig> = {
+			typeSpeed: this.engine.preference('TextSpeed') as number,
+			loop: false,
+			showCursor: false,
+			hideCursorOnEnd: false,
+			preStringTyped: (_index: number, _self: TypeWriter) => {
+				this.engine.global('finished_typing', false);
+				this.engine.trigger('didStartTyping');
+			},
+			onStringTyped: (_index: number, _self: TypeWriter) => {
+				this.engine.global('finished_typing', true);
+				this.engine.trigger('didFinishTyping');
+			},
+			onDestroy: (_self: TypeWriter) => {
+				this.engine.global('finished_typing', true);
+			},
+		};
+
+		// Merge with any existing config (for backwards compatibility)
+		this.setState({ config: { ...defaultConfig, ...this.state.config } });
 
 		if (!this.state.strings.length && this.props.string) {
 			this.setState({ ignore: true, strings: [this.props.string] });
@@ -288,7 +551,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		// Handle empty strings array
 		if (!strings || strings.length === 0) {
 			this.engine.debug.warn('TypeWriter: No strings to type');
-			this.state.config.onStringTyped?.(0, this);
+			config.onStringTyped?.(0, this);
 			return;
 		}
 
@@ -298,7 +561,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		// Handle empty string
 		if (!currentString) {
 			this.engine.debug.warn('TypeWriter: Empty string provided');
-			this.state.config.onStringTyped?.(0, this);
+			config.onStringTyped?.(0, this);
 			return;
 		}
 
@@ -459,6 +722,80 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	}
 
 	/**
+	 * Finish the typing animation immediately, showing all remaining text.
+	 *
+	 * @param instant - If true, immediately show full text without animation.
+	 *                  If false, rush through at maximum speed.
+	 */
+	finish(instant: boolean = false): void {
+		if (instant) {
+			// Get the string being typed
+			const str = this.state.strings[0];
+
+			// Get the container element
+			const container = this.querySelector('div');
+
+			if (container === null) {
+				return;
+			}
+
+			// Stop and clean up animation
+			this.destroy();
+
+			// Show the full text with all action markers stripped
+			container.innerHTML = (this.constructor as typeof TypeWriter).stripActionMarkers(str);
+		} else {
+			// Rush through animation at maximum speed
+			this.speed = 0;
+			this.ignorePause = true;
+
+			if (this.loops) {
+				this.loops = false;
+				this.stopLoop = true;
+			}
+		}
+	}
+
+	/**
+	 * Set content to display, with optional typing animation.
+	 * This is the primary API for displaying text in the TypeWriter.
+	 *
+	 * @param text - The text to display (may include TypeWriter action markers)
+	 * @param animate - If true, animate the text. If false, show instantly.
+	 *                  Also respects the global TypeAnimation setting.
+	 */
+	setContent(text: string, animate: boolean = true): void {
+		const shouldAnimate = animate && this.engine.setting('TypeAnimation') === true;
+
+		if (shouldAnimate) {
+			// Signal start of typing
+			this.engine.global('finished_typing', false);
+			this.engine.trigger('didStartTyping');
+
+			// Set strings and trigger animation via state update
+			this.setState({ strings: [text] });
+		} else {
+			// Show text instantly with action markers stripped
+			const strippedText = (this.constructor as typeof TypeWriter).stripActionMarkers(text);
+
+			// Find or create container
+			let container = this.querySelector('div');
+			if (!container) {
+				// Container was cleared, create a new one
+				container = document.createElement('div');
+				container.className = 'type-writer-container';
+				this.appendChild(container);
+			}
+
+			container.innerHTML = strippedText;
+
+			// Signal completion
+			this.engine.global('finished_typing', true);
+			this.engine.trigger('didFinishTyping');
+		}
+	}
+
+	/**
 	 * Start the typing animation again.
 	 */
 	start(): void {
@@ -490,6 +827,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		const sections = curString.split(this._actionPatternCache);
 		let nodeCounter = 0;
 		let falseCounter = 0;
+		let charIndex = 0; // Track character index for staggered animations
 
 		sections.forEach((section, i) => {
 			this.parseIndex++;
@@ -516,7 +854,8 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 
 						nodeCounter++;
 						const node = document.createElement('type-character') as TypeCharacter;
-						node.setProps({ letter: char });
+						node.setProps({ letter: char, charIndex });
+						charIndex++;
 
 						if (this.enclosedID.length) {
 							node.setState({ special } as any);
@@ -548,12 +887,14 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	 * Parse text without any actions directly into a DocumentFragment (fast path).
 	 */
 	private _parseTextOnlyToFragment(curString: string, fragment: DocumentFragment): void {
+		let charIndex = 0;
 		for (const char of curString) {
 			if (WHITESPACE_PATTERN.test(char)) {
 				fragment.appendChild(document.createTextNode(char));
 			} else {
 				const node = document.createElement('type-character') as TypeCharacter;
-				node.setProps({ letter: char });
+				node.setProps({ letter: char, charIndex });
+				charIndex++;
 				node.style.opacity = '0';
 				fragment.appendChild(node);
 			}
@@ -584,7 +925,11 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 
 			if (match?.groups) {
 				if (this.enclosedID.length) {
-					const idAction = this.enclosedID[this.enclosedID.length - 1].split('-')[0];
+					// Extract action name from enclosedID (format: "actionName-parseIndex")
+					// Action names can contain hyphens (e.g., "shake-hard"), so we find the last hyphen
+					const lastId = this.enclosedID[this.enclosedID.length - 1];
+					const lastDashIndex = lastId.lastIndexOf('-');
+					const idAction = lastDashIndex > 0 ? lastId.substring(0, lastDashIndex) : lastId;
 					if (idAction === match.groups.action) {
 						this.enclosedID.pop();
 						return undefined;
@@ -735,10 +1080,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		}
 	}
 
-	/**
-	 * Main typing loop - reveals one character at a time using requestAnimationFrame.
-	 * Uses RAF for smoother animations and better performance.
-	 */
+	// Reveal one character at a time
 	typewrite(): void {
 		// Execute actions that appear before the current character
 		if (this.actions[this.nodeCounter]) {
@@ -813,7 +1155,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 			this.stopLoop = false;
 		}
 
-		// Reveal character using visibility (avoids layout recalculation)
+		// Reveal character using opacity (avoids layout recalculation)
 		if (this.elements?.[this.nodeCounter]) {
 			this.elements[this.nodeCounter].style.opacity = '';
 		}
@@ -899,7 +1241,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		}
 	}
 
-	override onStateUpdate(property: string, _oldValue: unknown, _newValue: unknown): Promise<void> {
+	override async onStateUpdate(property: string, _oldValue: unknown, _newValue: unknown): Promise<void> {
 		if (property === 'strings') {
 			if (!this.state.ignore) {
 				this.forceRender().then(() => {
@@ -911,34 +1253,26 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 				this.setState({ ignore: false });
 			}
 		}
-
-		return Promise.resolve();
 	}
 
-	override didMount(): Promise<void> {
+	override async didMount(): Promise<void> {
 		if (this.props.start) {
 			this.initiate();
 		}
-
-		return Promise.resolve();
 	}
 
 	override render(): string {
 		return '<div class="type-writer-container"></div>';
 	}
 
-	override willUnmount(): Promise<void> {
+	override async willUnmount(): Promise<void> {
 		this.destroy(true);
 
 		this.elements = null;
 		this.enclosedID = [];
 		this.innerHTML = '';
-
-		return Promise.resolve();
 	}
 }
-
-TypeWriter.tag = 'type-writer';
 
 export default TypeWriter;
 

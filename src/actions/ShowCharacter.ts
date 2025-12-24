@@ -224,8 +224,18 @@ export class ShowCharacter extends Action {
 			let image: HTMLElement | null = null;
 			let imageReady = Promise.resolve();
 			if (typeof this.image === 'string') {
-				image = document.createElement('img');
-				$_(image).attribute('src', `${imgSrc}${this.image}`);
+				// Check if character sprite is cached
+				const cacheKey = `characters/${this.asset}/${this.sprite}`;
+				const cachedImage = this.engine.imageCache(cacheKey);
+				
+				if (cachedImage) {
+					// Clone the cached image element
+					image = cachedImage.cloneNode(true) as HTMLImageElement;
+				} else {
+					// Create new image element
+					image = document.createElement('img');
+					$_(image).attribute('src', `${imgSrc}${this.image}`);
+				}
 				$_(image).addClass('animated');
 				$_(image).data('character', this.asset);
 				$_(image).data('sprite', this.sprite);

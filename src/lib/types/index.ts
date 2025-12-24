@@ -141,15 +141,6 @@ export type MediaHistoryItem = string | MediaStateItem[];
 // ============================================================================
 
 /**
- * Typed.js configuration object for dialog typing animation
- */
-export interface TypedConfiguration {
-  strings?: string[];
-  typeSpeed?: number;
-  [key: string]: unknown;
-}
-
-/**
  * Globals registry - maps global keys to their value types.
  * Extend this interface via declaration merging to add custom global keys.
  */
@@ -184,7 +175,6 @@ export interface GlobalsMap {
   // Save/Load screen
   delete_slot: string | null;
 
-  typedConfiguration: TypedConfiguration;
   _dialog_pending_revert: boolean;
   _should_restore_nvl: boolean;
 
@@ -433,3 +423,4 @@ export * from './Component';
 export * from './GameSettings';
 export * from './PlayerPreferences';
 export * from './Monogatari';
+export * from './TypeWriterEffects';

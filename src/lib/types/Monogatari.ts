@@ -562,6 +562,124 @@ export interface VisualNovelEngine {
    */
   assets: (type?: string | null, object?: Record<string, string> | null) => Record<string, Record<string, string>> | Record<string, string> | undefined;
 
+  // ===== Asset Caches =====
+
+  /**
+   * Get or set a cached AudioBuffer.
+   * @param key - Cache key (e.g., 'music/theme')
+   * @param buffer - AudioBuffer to cache (if setting)
+   * @returns The cached AudioBuffer if getting, undefined otherwise
+   */
+  audioBufferCache: {
+    (key: string): AudioBuffer | undefined;
+    (key: string, buffer: AudioBuffer): void;
+  };
+
+  /**
+   * Remove an AudioBuffer from the cache.
+   * @param key - Cache key to remove
+   * @returns true if the key existed and was removed
+   */
+  audioBufferUncache: (key: string) => boolean;
+
+  /**
+   * Clear AudioBuffer cache, optionally filtered by prefix.
+   * @param pattern - If provided, only clear keys starting with this pattern
+   */
+  audioBufferClearCache: (pattern?: string) => void;
+
+  /**
+   * Get or set a cached HTMLImageElement.
+   * @param key - Cache key (e.g., 'scenes/forest')
+   * @param image - HTMLImageElement to cache (if setting)
+   * @returns The cached HTMLImageElement if getting, undefined otherwise
+   */
+  imageCache: {
+    (key: string): HTMLImageElement | undefined;
+    (key: string, image: HTMLImageElement): void;
+  };
+
+  /**
+   * Remove an HTMLImageElement from the cache.
+   * @param key - Cache key to remove
+   * @returns true if the key existed and was removed
+   */
+  imageUncache: (key: string) => boolean;
+
+  /**
+   * Clear image cache, optionally filtered by prefix.
+   * @param pattern - If provided, only clear keys starting with this pattern
+   */
+  imageClearCache: (pattern?: string) => void;
+
+  /**
+   * Clear all asset caches (audio and image).
+   */
+  clearAllCaches: () => void;
+
+  // ===== Service Worker Communication =====
+
+  /**
+   * Request the service worker to cache specified asset URLs.
+   * @param urls - Array of URLs to cache
+   * @returns Promise resolving to cache result
+   */
+  cacheInServiceWorker: (urls: string[]) => Promise<{ success: boolean; cached?: number; total?: number; error?: string }>;
+
+  /**
+   * Check if an asset URL is cached in the service worker.
+   * @param url - URL to check
+   * @returns Promise resolving to whether the URL is cached
+   */
+  isInServiceWorkerCache: (url: string) => Promise<boolean>;
+
+  /**
+   * Get cached raw data from service worker (for decoding).
+   * @param url - URL of the cached asset
+   * @returns Promise resolving to ArrayBuffer if found, undefined otherwise
+   */
+  getFromServiceWorkerCache: (url: string) => Promise<ArrayBuffer | undefined>;
+
+  // ===== Persistent Audio Storage (IndexedDB) =====
+
+  /**
+   * Get the persistent audio buffer Space instance (IndexedDB).
+   * Lazily initialized on first access.
+   * @returns Promise resolving to the Space instance, or null if IndexedDB is unavailable
+   */
+  audioBufferSpace: () => Promise<Space | null>;
+
+  /**
+   * Check if IndexedDB is available for audio caching.
+   * @returns true if available, false if not, null if not yet checked
+   */
+  isIndexedDBAvailable: () => boolean | null;
+
+  /**
+   * Store a decoded AudioBuffer in persistent storage (IndexedDB).
+   * @param key - Cache key (e.g., 'music/theme')
+   * @param buffer - AudioBuffer to store
+   */
+  storeAudioBufferPersistent: (key: string, buffer: AudioBuffer) => Promise<void>;
+
+  /**
+   * Retrieve a decoded AudioBuffer from persistent storage (IndexedDB).
+   * @param key - Cache key (e.g., 'music/theme')
+   * @returns The AudioBuffer if found, undefined otherwise
+   */
+  getAudioBufferPersistent: (key: string) => Promise<AudioBuffer | undefined>;
+
+  /**
+   * Remove an AudioBuffer from persistent storage (IndexedDB).
+   * @param key - Cache key to remove
+   */
+  removeAudioBufferPersistent: (key: string) => Promise<void>;
+
+  /**
+   * Clear all AudioBuffers from persistent storage (IndexedDB).
+   */
+  clearAudioBufferPersistent: () => Promise<void>;
+
   // ===== Media Players =====
 
   /**
@@ -928,13 +1046,6 @@ export interface VisualNovelEngine {
    * @returns Template value
    */
   template: (key: string, value?: unknown) => unknown;
-
-  /**
-   * Get or set status flags.
-   * @param object - Optional status object to set
-   * @returns Current status flags
-   */
-  status: (object?: Record<string, boolean> | null) => Record<string, boolean>;
 
   // ===== Debug =====
 

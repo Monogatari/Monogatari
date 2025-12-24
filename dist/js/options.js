@@ -131,7 +131,7 @@ monogatari.settings({
 	// - RemoteStorage: The information will be sent and retrieved from a given
 	//					URL Endpoint providing a REST API.
 	'Storage': {
-		'Adapter': 'LocalStorage',
+		'Adapter': 'IndexedDB',
 		'Store': 'GameData',
 		'Endpoint': ''
 	},

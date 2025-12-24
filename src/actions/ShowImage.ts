@@ -66,11 +66,22 @@ export class ShowImage extends Action {
 	}
 
 	override async apply(): Promise<void> {
-		const image = document.createElement('img');
 		const position = (this._statement as string).match(/at\s(\S*)/);
+		
+		// Check if image is cached
+		const cacheKey = `images/${this.asset}`;
+		const cachedImage = this.engine.imageCache(cacheKey);
+		
+		let image: HTMLImageElement;
+		if (cachedImage) {
+			// Clone the cached image element
+			image = cachedImage.cloneNode(true) as HTMLImageElement;
+		} else {
+			// Create new image element
+			image = document.createElement('img');
+			$_(image).attribute('src', `${this.engine.setting('AssetsPath').root}/${this.engine.setting('AssetsPath').images}/${this.image}`);
+		}
 
-
-		$_(image).attribute('src', `${this.engine.setting('AssetsPath').root}/${this.engine.setting('AssetsPath').images}/${this.image}`);
 		$_(image).addClass('animated');
 		$_(image).data('image', this.asset);
 

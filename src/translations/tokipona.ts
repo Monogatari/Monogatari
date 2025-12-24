@@ -8,8 +8,6 @@
  * jan Inkepa <analytic@gmail.com>
  */
 
-
-
 export default {
 	'AdvanceHelp': 'sina ken musi e musi ni kepeken ilo luka anu nena palisa pi ilo sitelen.',
 	'AllowPlayback': 'sina wile kute e musi ni la o luka e mi.',

@@ -9,8 +9,6 @@
  * TibixDev <fuloptibi03@gmail.com>
  */
 
-
-
 export default {
 	'AdvanceHelp': 'Ahhoz, hogy tovább haladj a játékban, nyomd meg a bal egérgombot, koppints bárhová a képernyőn, vagy nyomd le a space-t',
 	'AllowPlayback': 'Kattints ide hogy engedélyezd a hangvisszajátszást',
