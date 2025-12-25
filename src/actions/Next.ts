@@ -2,7 +2,6 @@ import Action from './../lib/Action';
 import { ActionApplyResult, ActionRevertResult } from '../lib/types';
 
 export class Next extends Action {
-
 	static override id = 'Next';
 
 	static override matchString([action]: string[]): boolean {

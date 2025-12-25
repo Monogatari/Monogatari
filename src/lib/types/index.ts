@@ -143,10 +143,16 @@ export type MediaHistoryItem = string | MediaStateItem[];
 /**
  * Globals registry - maps global keys to their value types.
  * Extend this interface via declaration merging to add custom global keys.
+ *
+ * TODO: Actions should use their own fields instead of globals
  */
 export interface GlobalsMap {
   // Game flow state
   playing: boolean;
+
+  /**
+   * @deprecated Each action should use its `blocking` attribute
+   */
   block: boolean;
   finished_typing: boolean;
   distraction_free: boolean;
@@ -155,6 +161,9 @@ export interface GlobalsMap {
   // Engine internal state
   _restoring_state: boolean;
   _engine_block: boolean;
+  /**
+   * @deprecated Each action should use its `blocking` attribute
+   */
   _executing_sub_action: boolean;
   _didSetup: boolean;
   _didBind: boolean;

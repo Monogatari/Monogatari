@@ -45,11 +45,16 @@ Cypress.Commands.add ('proceed',function () {
 });
 
 Cypress.Commands.add ('rollback', function () {
-	this.monogatari.global ('block', false);
 	this.monogatari.rollback ();
 
 	// Prevent False Positives by waiting a bit
 	cy.wait (150);
+});
+
+Cypress.Commands.add('clearStorage', function () {
+  this.monogatari.Storage.clear();
+
+  cy.wait (150);
 });
 
 Cypress.Commands.add ('loadTestAssets', function (args) {

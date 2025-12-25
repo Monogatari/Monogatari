@@ -28,7 +28,7 @@ export class ReversibleFunction extends Action {
 		// allow the game to keep going right away.
 		try {
 			const returnValue = await Util.callAsync(this.statement.Apply, this.engine);
-			this.engine.global('block', false);
+
 			if (returnValue === false) {
 				this.shouldContinue = false;
 			}
@@ -72,7 +72,7 @@ export class ReversibleFunction extends Action {
 		// allow the game to keep going right away.
 		try {
 			const returnValue = await Util.callAsync(this.statement.Revert, this.engine);
-			this.engine.global('block', false);
+
 			if (returnValue === false) {
 				this.shouldContinue = false;
 			}

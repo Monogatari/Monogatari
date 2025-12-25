@@ -25,7 +25,6 @@ class GameScreen extends ScreenComponent {
 			engine.registerListener('back', {
 				keys: 'left',
 				callback: async () => {
-					engine.global('block', false);
 					try {
 						await engine.rollback();
 					} catch (e: unknown) {

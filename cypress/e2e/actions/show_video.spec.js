@@ -279,7 +279,7 @@ context ('Show Video', function () {
 		cy.start ();
 		cy.get ('[data-video="kirino"][data-mode="modal"]').should ('be.visible');
 		// Game should be blocked - trying to proceed shouldn't work immediately
-		cy.wrap (this.monogatari).invoke ('global', 'block').should ('eq', true);
+		cy.wrap (this.monogatari).invoke ('action', 'Video').its('blocking').should ('eq', true);
 	});
 
 	it ('Blocks game progression in immersive mode', function () {
@@ -293,7 +293,7 @@ context ('Show Video', function () {
 
 		cy.start ();
 		cy.get ('[data-video="kirino"][data-mode="immersive"]').should ('be.visible');
-		cy.wrap (this.monogatari).invoke ('global', 'block').should ('eq', true);
+		cy.wrap (this.monogatari).invoke ('action', 'Video').its('blocking').should ('eq', true);
 	});
 
 	it ('Does not block game progression in displayable mode', function () {

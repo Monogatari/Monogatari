@@ -2,6 +2,7 @@ context ('Save Screen', function () {
 
 	beforeEach (() => {
 		cy.open ();
+    cy.clearStorage();
 	});
 
 	it ('Gets open when clicking the save button on the quick menu', function () {

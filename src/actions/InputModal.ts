@@ -6,163 +6,173 @@ import type TextInputComponent from './../components/text-input';
 
 export class InputModal extends Action {
 
-	static override id = 'Input';
+  static override id = 'Input';
+  static override blocking = false;
 
-	static override async setup(): Promise<void> {
+  static override async setup(): Promise<void> {
     this.engine.globals({
       _InputTimer: null,
       _input_just_rolled_back: false,
     });
-	}
+  }
 
-	static override async reset(): Promise<void> {
-		this.engine.globals({
-			_InputTimer: null,
-			_input_just_rolled_back: false,
-		});
-	}
+  static override async reset(): Promise<void> {
+    this.engine.globals({
+      _InputTimer: null,
+      _input_just_rolled_back: false,
+    });
+  }
 
-	static override async afterRevert(): Promise<void> {
-		// When a choice gets reverted, it pushes a `true` value to this global variable.
-		// As soon as it gets reverted, this function is run and it pops the `true` out of
-		// the array, meaning it was just reverted and the choice should be showing on screeen again.
-		if (this.engine.global('_input_just_rolled_back')) {
-			this.engine.global('_input_just_rolled_back', false);
-			return;
-		}
+  static override async afterRevert(): Promise<void> {
+    // When a choice gets reverted, it pushes a `true` value to this global variable.
+    // As soon as it gets reverted, this function is run and it pops the `true` out of
+    // the array, meaning it was just reverted and the choice should be showing on screeen again.
+    if (this.engine.global('_input_just_rolled_back')) {
+      this.engine.global('_input_just_rolled_back', false);
+      return;
+    }
 
-		// If the player reverts once more while the choice is being shown, then we'll reach this part
-		// and we can clean up any variables we need to.
-		const timer = this.engine.global('_InputTimer');
+    // If the player reverts once more while the choice is being shown, then we'll reach this part
+    // and we can clean up any variables we need to.
+    const timer = this.engine.global('_InputTimer');
 
-		if (typeof timer !== 'undefined' && timer !== null) {
-			if (timer.props?.timer) {
-				clearTimeout(timer.props.timer);
-			}
+    if (typeof timer !== 'undefined' && timer !== null) {
+      if (timer.props?.timer) {
+        clearTimeout(timer.props.timer);
+      }
 
-			if (timer.parentNode !== null && timer.element) {
-				timer.element().remove();
-			}
+      if (timer.parentNode !== null && timer.element) {
+        timer.element().remove();
+      }
 
-			this.engine.global('_InputTimer', null);
-		}
-	}
+      this.engine.global('_InputTimer', null);
+    }
+  }
 
+  static override async shouldProceed(_options?: { userInitiated?: boolean; skip?: boolean; autoPlay?: boolean; }): Promise<void> {
+    if (InputModal.blocking) {
+      throw new Error('Waiting for user input');
+    }
+  }
 
-	static override matchObject({ Input }: any): boolean {
-		return typeof Input !== 'undefined';
-	}
+  static override async willRollback(): Promise<void> {
+    InputModal.blocking = false;
+  }
 
-	statement: any;
+  static override matchObject({ Input }: any): boolean {
+    return typeof Input !== 'undefined';
+  }
 
-	constructor({ Input }: any) {
-		super();
-		this.statement = Input;
+  statement: any;
 
-		if (typeof this.statement.Validation !== 'function') {
-			this.statement.Validation = () => true;
-		}
+  constructor({ Input }: any) {
+    super();
+    this.statement = Input;
 
-		if (typeof this.statement.Save !== 'function') {
-			this.statement.Save = () => true;
-		}
+    if (typeof this.statement.Validation !== 'function') {
+      this.statement.Validation = () => true;
+    }
 
-		if (typeof this.statement.Warning !== 'string') {
-			this.statement.Warning = '';
-		}
+    if (typeof this.statement.Save !== 'function') {
+      this.statement.Save = () => true;
+    }
 
-		if (typeof this.statement.actionString !== 'string') {
-			this.statement.actionString = 'OK';
-		}
+    if (typeof this.statement.Warning !== 'string') {
+      this.statement.Warning = '';
+    }
 
-		if (typeof this.statement.Class !== 'string') {
-			this.statement.Class = '';
-		}
+    if (typeof this.statement.actionString !== 'string') {
+      this.statement.actionString = 'OK';
+    }
 
-		if (['string', 'number'].indexOf(typeof this.statement.Default) === -1 || this.statement.Default === '') {
-			this.statement.Default = null;
-		}
+    if (typeof this.statement.Class !== 'string') {
+      this.statement.Class = '';
+    }
 
-		if (typeof this.statement.Type !== 'string') {
-			this.statement.Type = 'text';
-		}
+    if (['string', 'number'].indexOf(typeof this.statement.Default) === -1 || this.statement.Default === '') {
+      this.statement.Default = null;
+    }
 
-		if (typeof this.statement.Options !== 'object' || this.statement.Options === null) {
-			this.statement.Options = [];
-		}
+    if (typeof this.statement.Type !== 'string') {
+      this.statement.Type = 'text';
+    }
 
-		if (typeof this.statement.Timer !== 'object') {
-			this.statement.Timer = null;
-		}
+    if (typeof this.statement.Options !== 'object' || this.statement.Options === null) {
+      this.statement.Options = [];
+    }
 
-		if (typeof this.statement.Attributes !== 'object') {
-			this.statement.Attributes = {};
-		}
-	}
+    if (typeof this.statement.Timer !== 'object') {
+      this.statement.Timer = null;
+    }
 
-	override async apply(): Promise<void> {
-		this.engine.global('block', true);
+    if (typeof this.statement.Attributes !== 'object') {
+      this.statement.Attributes = {};
+    }
+  }
 
-		const input = document.createElement('text-input') as TextInputComponent;
+  override async apply(): Promise<void> {
+    InputModal.blocking = true;
 
-		const { Text, Warning, Save, Validation, actionString, Class, Type, Options, Default, Timer, Attributes } = this.statement;
+    const input = document.createElement('text-input') as TextInputComponent;
 
-		input.setProps({
-			text: this.engine.replaceVariables(Text),
-			type: Type,
-			options: Options,
-			default: Default,
-			warning: Warning,
-			onSubmit: Save,
-			validate: Validation,
-			attributes: Attributes,
-			actionString,
-				callback: () => {
-				const timer = this.engine.global('_InputTimer');
+    const { Text, Warning, Save, Validation, actionString, Class, Type, Options, Default, Timer, Attributes } = this.statement;
 
-				if (typeof timer !== 'undefined' && timer !== null) {
-					if (timer.props?.timer) {
-						clearTimeout(timer.props.timer);
-					}
-					if (timer.parentNode !== null && timer.element) {
-						timer.element().remove();
-					}
-					this.engine.global('_InputTimer', null);
-				}
+    input.setProps({
+      text: this.engine.replaceVariables(Text),
+      type: Type,
+      options: Options,
+      default: Default,
+      warning: Warning,
+      onSubmit: Save,
+      validate: Validation,
+      attributes: Attributes,
+      actionString,
+        callback: () => {
+        const timer = this.engine.global('_InputTimer');
 
-				this.engine.global('block', false);
-				this.engine.proceed({ userInitiated: true, skip: false, autoPlay: false });
-			},
-			classes: Class.trim()
-		});
+        if (typeof timer !== 'undefined' && timer !== null) {
+          if (timer.props?.timer) {
+            clearTimeout(timer.props.timer);
+          }
+          if (timer.parentNode !== null && timer.element) {
+            timer.element().remove();
+          }
+          this.engine.global('_InputTimer', null);
+        }
 
-		if (Timer !== null) {
-			const timer_display = document.createElement('timer-display') as TimerDisplayComponent;
-			timer_display.setProps(Timer);
-			this.engine.global('_InputTimer', timer_display);
-			this.engine.element().find('[data-screen="game"]').prepend(timer_display);
-		}
+        InputModal.blocking = false;
+        this.engine.proceed({ userInitiated: true, skip: false, autoPlay: false });
+      },
+      classes: Class.trim()
+    });
 
-		this.engine.element().find('[data-screen="game"]').append(input);
-	}
+    if (Timer !== null) {
+      const timer_display = document.createElement('timer-display') as TimerDisplayComponent;
+      timer_display.setProps(Timer);
+      this.engine.global('_InputTimer', timer_display);
+      this.engine.element().find('[data-screen="game"]').prepend(timer_display);
+    }
 
-	override async willRevert(): Promise<void> {
-		if (typeof this.statement.Revert === 'function') {
-			return;
-		}
+    this.engine.element().find('[data-screen="game"]').append(input);
+  }
 
-		throw new Error('Input is missing a `Revert` function.');
-	}
+  override async willRevert(): Promise<void> {
+    if (typeof this.statement.Revert === 'function') {
+      return;
+    }
 
-	override async revert(): Promise<void> {
-		await Util.callAsync(this.statement.Revert, this.engine);
-		return this.apply();
-	}
+    throw new Error('Input is missing a `Revert` function.');
+  }
 
-	override async didRevert(): Promise<ActionRevertResult> {
-		this.engine.global('_input_just_rolled_back', true);
-		return { advance: false, step: true };
-	}
+  override async revert(): Promise<void> {
+    await Util.callAsync(this.statement.Revert, this.engine);
+    return this.apply();
+  }
+
+  override async didRevert(): Promise<ActionRevertResult> {
+    this.engine.global('_input_just_rolled_back', true);
+    return { advance: false, step: true };
+  }
 }
 
 export default InputModal;

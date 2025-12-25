@@ -2,6 +2,7 @@ context ('Load Screen', function () {
 
 	beforeEach (() => {
 		cy.open ();
+    cy.clearStorage();
 		cy.loadTestAssets ();
 	});
 

@@ -77,18 +77,4 @@ context ('Wait', function () {
 		cy.rollback ();
 		cy.get ('text-box').contains ('Before');
 	});
-
-	it ('Shows an error if the time provided is not numeric', function () {
-		this.monogatari.setting ('TypeAnimation', false);
-		this.monogatari.script ({
-			'Start': [
-				'wait s',
-				'After'
-			]
-		});
-
-		cy.start ();
-		cy.get ('.fancy-error').should ('be.visible');
-	});
-
 });

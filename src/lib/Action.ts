@@ -7,7 +7,6 @@ import type {
   SaveSlot,
 } from './types';
 
-import type Monogatari from '../monogatari';
 import type { VisualNovelEngine } from './types/Monogatari';
 
 /**
@@ -82,80 +81,85 @@ import type { VisualNovelEngine } from './types/Monogatari';
  * @class Action
  */
 class Action {
-	/**
-	 * Marks the action as experimental, meaning it's not stable and should not
-	 * be used in production.
-	 */
-	static _experimental: boolean = false;
+  /**
+   * Marks the action as experimental, meaning it's not stable and should not
+   * be used in production.
+   */
+  static _experimental: boolean = false;
 
-	/**
-	 * If needed, every action should declare its configuration as follows. This
-	 * configuration object should be used to store action-specific settings as well
-	 * as other objects/assets used by the action. If any specific object needs
-	 * recurrent access such as the declarations in the script.js file, provinding
-	 * a static function for that specific object could be great.
+  /**
+   * If needed, every action should declare its configuration as follows. This
+   * configuration object should be used to store action-specific settings as well
+   * as other objects/assets used by the action. If any specific object needs
+   * recurrent access such as the declarations in the script.js file, provinding
+   * a static function for that specific object could be great.
    *
    * IMPORTANT: Subclasses should declare their own `static _configuration = {}`
    * to avoid sharing state with other actions.
-	 */
-	static _configuration: Configuration = {};
+   */
+  static _configuration: Configuration = {};
 
-	/**
-	 * All actions must have an ID, with this ID the developers will be able to
-	 * access the action classes, remove actions or register new ones. They must also
-	 * be unique.
-	 */
-	static id: string = 'Action';
+  /**
+   * All actions must have an ID, with this ID the developers will be able to
+   * access the action classes, remove actions or register new ones. They must also
+   * be unique.
+   */
+  static id: string = 'Action';
 
-	/**
-	 * The loading order of an action can be used to sort which actions should be
-	 * run before or after the others when a game is loaded in case they have some
-	 * dependencies between themselves.
-	 */
-	static loadingOrder: number = 0;
+  /**
+   * The loading order of an action can be used to sort which actions should be
+   * run before or after the others when a game is loaded in case they have some
+   * dependencies between themselves.
+   */
+  static loadingOrder: number = 0;
 
-	/**
-	 * Reference to the Monogatari engine (set by engine on registration)
-	 */
-	static engine: VisualNovelEngine;
+  /**
+   * Reference to the Monogatari engine (set by engine on registration)
+   */
+  static engine: VisualNovelEngine;
 
-	/**
-	 * The original statement this action was instantiated with
-	 */
-	_statement: string | string[] | Record<string, unknown> | ((...args: unknown[]) => unknown) | undefined;
+  /**
+   * We will use this instead of the engine block
+   */
+  static blocking: boolean = false;
 
-	/**
-	 * Current cycle: 'Application' or 'Revert'
-	 */
-	_cycle: 'Application' | 'Revert' | undefined;
+  /**
+   * The original statement this action was instantiated with
+   */
+  _statement: string | string[] | Record<string, unknown> | ((...args: unknown[]) => unknown) | undefined;
 
-	/**
-	 * Extra context passed to the action
-	 */
-	_extras: Record<string, unknown> | undefined;
+  /**
+   * Current cycle: 'Application' or 'Revert'
+   */
+  _cycle: 'Application' | 'Revert' | undefined;
 
-	/**
-	 * Context reference (usually the Monogatari class)
+  /**
+   * Extra context passed to the action
+   */
+  _extras: Record<string, unknown> | undefined;
+
+  /**
+   * Context reference (usually the Monogatari class)
    * @deprecated - This property is deprecated and will be removed in a future version. Use the engine property instead.
-	 */
-	context: VisualNovelEngine | undefined;
+   */
+  context: VisualNovelEngine | undefined;
 
-	/**
-	 * @static configuration - A simple function providing access to the configuration
-	 * object of the function. If the action has a configuration object it must
-	 * also include this method.
-	 *
-	 * @param  {Object|string} [object = null] - Object with which current
-	 * configuration will be updated with (i.e. Object.assign) or a string to access
-	 * a property.
-	 *
-	 * @return {any} - If the parameter sent was a string, the function will
-	 * return the value of the property whose name matches the parameter. If no
-	 * parameter was sent, then the function will return the whole configuration
-	 * object.
-	 */
-	static configuration (object: string | Configuration | null = null): Configuration | unknown {
-		if (object === null) {
+  /**
+   * @static configuration - A simple function providing access to the configuration
+   * object of the function. If the action has a configuration object it must
+   * also include this method.
+   *
+   * @param  {Object|string} [object = null] - Object with which current
+   * configuration will be updated with (i.e. Object.assign) or a string to access
+   * a property.
+   *
+   * @return {any} - If the parameter sent was a string, the function will
+   * return the value of the property whose name matches the parameter. If no
+   * parameter was sent, then the function will return the whole configuration
+   * object.
+   */
+  static configuration (object: string | Configuration | null = null): Configuration | unknown {
+    if (object === null) {
       return this._configuration;
     }
 
@@ -164,318 +168,318 @@ class Action {
     }
 
     this._configuration = Object.assign({}, this._configuration, object);
-	}
+  }
 
-	/**
-	 * @static shouldProceed - Either when the user clicks in the game to proceed or
-	 * the autoPlay feature is ready to go on, Monogatari will first check with
-	 * all actions if it's ok to proceed. Every action should implement its own
-	 * logic for it according to its requirements.
-	 *
-	 * @param {Object} options - Options for proceeding
-	 * @param {boolean} options.userInitiated - Whether the proceed was initiated by user click
-	 * @param {boolean} options.skip - Whether skip mode is active
-	 * @param {boolean} options.autoPlay - Whether auto-play mode is active
-	 * @return {Promise} - Resolved if proceeding is alright or rejected if its not
-	 */
-	static async shouldProceed (_options?: { userInitiated?: boolean; skip?: boolean; autoPlay?: boolean }): Promise<void> {}
+  /**
+   * @static shouldProceed - Either when the user clicks in the game to proceed or
+   * the autoPlay feature is ready to go on, Monogatari will first check with
+   * all actions if it's ok to proceed. Every action should implement its own
+   * logic for it according to its requirements.
+   *
+   * @param {Object} options - Options for proceeding
+   * @param {boolean} options.userInitiated - Whether the proceed was initiated by user click
+   * @param {boolean} options.skip - Whether skip mode is active
+   * @param {boolean} options.autoPlay - Whether auto-play mode is active
+   * @return {Promise} - Resolved if proceeding is alright or rejected if its not
+   */
+  static async shouldProceed (_options?: { userInitiated?: boolean; skip?: boolean; autoPlay?: boolean }): Promise<void> {}
 
-	/**
-	 * @static willProceed - Once the shouldProceed check is passed, each action
-	 * should implement its own logic according to its requirements to respond to
-	 * the game proceeding.
-	 *
-	 * @return {Promise}
-	 */
-	static async willProceed (): Promise<void> {}
+  /**
+   * @static willProceed - Once the shouldProceed check is passed, each action
+   * should implement its own logic according to its requirements to respond to
+   * the game proceeding.
+   *
+   * @return {Promise}
+   */
+  static async willProceed (): Promise<void> {}
 
-	/**
-	 * @static shouldRollback - Similarly to the shouldProceed () function, this one takes
-	 * action when the player tries to go back in the game.Monogatari will first
-	 * check with all actions if it's ok to go back. Every action should implement
-	 * its own logic for it according to its requirements.
-	 *
-	 * @return {Promise} - Resolved if going back is alright or rejected if its not
-	 */
-	static async shouldRollback (): Promise<void> {}
+  /**
+   * @static shouldRollback - Similarly to the shouldProceed () function, this one takes
+   * action when the player tries to go back in the game.Monogatari will first
+   * check with all actions if it's ok to go back. Every action should implement
+   * its own logic for it according to its requirements.
+   *
+   * @return {Promise} - Resolved if going back is alright or rejected if its not
+   */
+  static async shouldRollback (): Promise<void> {}
 
-	/**
-	 * @static willRollback - Once the shouldRollback check is passed, each action
-	 * should implement its own logic according to its requirements to respond to
-	 * the game reverting the previous action
-	 *
-	 * @return {Promise}
-	 */
-	static async willRollback (): Promise<void> {}
+  /**
+   * @static willRollback - Once the shouldRollback check is passed, each action
+   * should implement its own logic according to its requirements to respond to
+   * the game reverting the previous action
+   *
+   * @return {Promise}
+   */
+  static async willRollback (): Promise<void> {}
 
-	/**
-	 * @static onStart - This function acts as an event listener for when the game
-	 * starts. If the action needs to do any particular activities when the game
-	 * starts, then this function should be implemented and it will be automatically
-	 * called once the player starts the game.
-	 *
-	 * @return {Promise}
-	 */
-	static async onStart (): Promise<void> {}
+  /**
+   * @static onStart - This function acts as an event listener for when the game
+   * starts. If the action needs to do any particular activities when the game
+   * starts, then this function should be implemented and it will be automatically
+   * called once the player starts the game.
+   *
+   * @return {Promise}
+   */
+  static async onStart (): Promise<void> {}
 
-	/**
-	 * @static onLoad - This function acts as an event listener for when a game
-	 * is loaded. If the action needs to perform any particular actions such as
-	 * restoring some state (i.e. showing images, playing media, etc.) when a game
-	 * is loaded, this function must be implemented and it will be automatically
-	 * called when a game is loaded.
-	 *
-	 * @return {Promise}  description
-	 */
-	static async onLoad (): Promise<void> {}
+  /**
+   * @static onLoad - This function acts as an event listener for when a game
+   * is loaded. If the action needs to perform any particular actions such as
+   * restoring some state (i.e. showing images, playing media, etc.) when a game
+   * is loaded, this function must be implemented and it will be automatically
+   * called when a game is loaded.
+   *
+   * @return {Promise}  description
+   */
+  static async onLoad (): Promise<void> {}
 
-	/**
-	 * @static onSave - This function acts as an event listener for when a game
-	 * is saved. If the action needs to perform any particular actions when that
-	 * happens, this function must be implemented and it will be automatically
-	 * called when a game is saved.
-	 *
-	 * @param {Object} slot - The slot object that has just been saved.
-	 * @param {string} slot.key - The key used to save the slot in the local storage
-	 * @param {Object} slot.value - The actual value saved
-	 *
-	 * @return {Promise}  description
-	 */
-	static async onSave (_slot?: SaveSlot): Promise<void> {}
+  /**
+   * @static onSave - This function acts as an event listener for when a game
+   * is saved. If the action needs to perform any particular actions when that
+   * happens, this function must be implemented and it will be automatically
+   * called when a game is saved.
+   *
+   * @param {Object} slot - The slot object that has just been saved.
+   * @param {string} slot.key - The key used to save the slot in the local storage
+   * @param {Object} slot.value - The actual value saved
+   *
+   * @return {Promise}  description
+   */
+  static async onSave (_slot?: SaveSlot): Promise<void> {}
 
-	/**
-	 * @static reset - When a game ends using the 'end' statement or before a game
-	 * is loaded, Monogatari will perform a reset on all its actions. If the action
-	 * needs to reset a state or any other variables/elements to an initial state
-	 * once a game is over or a new one is loaded, the logic for it must be implemented
-	 * here and the function will be automatically called when needed.
-	 *
-	 * @return {Promise} - Result of the reset operation
-	 */
-	static async reset (): Promise<void> {}
+  /**
+   * @static reset - When a game ends using the 'end' statement or before a game
+   * is loaded, Monogatari will perform a reset on all its actions. If the action
+   * needs to reset a state or any other variables/elements to an initial state
+   * once a game is over or a new one is loaded, the logic for it must be implemented
+   * here and the function will be automatically called when needed.
+   *
+   * @return {Promise} - Result of the reset operation
+   */
+  static async reset (): Promise<void> {}
 
-	/**
-	 * @static setup - The setup is the first step of the Mounting cycle, all
-	 * operations required for the action's setup should be implemented here.
-	 *
-	 * @param  {string} selector - The CSS selector with which Monogatari has been
-	 *                             initialized
-	 * @return {Promise} - Result of the setup operation
-	 */
-	static async setup (_selector?: string): Promise<void> {}
+  /**
+   * @static setup - The setup is the first step of the Mounting cycle, all
+   * operations required for the action's setup should be implemented here.
+   *
+   * @param  {string} selector - The CSS selector with which Monogatari has been
+   *                             initialized
+   * @return {Promise} - Result of the setup operation
+   */
+  static async setup (_selector?: string): Promise<void> {}
 
-	/**
-	 * @static bind - The binding is the second step of the Mounting cycle, all
-	 * operations related to event bindings or other sort of binding with the
-	 * HTML content generated in the setup phase should be implemented here.
-	 *
-	 * @param  {string} selector - The CSS selector with which Monogatari has been
-	 *                             initialized
-	 * @return {Promise} - Result of the binding operation
-	 */
-	static async bind (_selector?: string): Promise<void> {}
+  /**
+   * @static bind - The binding is the second step of the Mounting cycle, all
+   * operations related to event bindings or other sort of binding with the
+   * HTML content generated in the setup phase should be implemented here.
+   *
+   * @param  {string} selector - The CSS selector with which Monogatari has been
+   *                             initialized
+   * @return {Promise} - Result of the binding operation
+   */
+  static async bind (_selector?: string): Promise<void> {}
 
-	/**
-	 * @static init - The initialization is the last step of the Mounting cycle,
-	 * all final operations should be implemented here.
-	 *
-	 * @param  {string} selector - The CSS selector with which Monogatari has been
-	 *                             initialized
-	 * @return {Promise} - Result of the initialization operation
-	 */
-	static async init (_selector?: string): Promise<void> {}
+  /**
+   * @static init - The initialization is the last step of the Mounting cycle,
+   * all final operations should be implemented here.
+   *
+   * @param  {string} selector - The CSS selector with which Monogatari has been
+   *                             initialized
+   * @return {Promise} - Result of the initialization operation
+   */
+  static async init (_selector?: string): Promise<void> {}
 
-	/**
-	 * @static match - Currently this function is saved up for future uses.
-	 *
-	 * @param {any} statement - Statement to match
-	 *
-	 * @returns {boolean} - Whether the action matches the statement or not
-	 */
-	static match (_statement: unknown): boolean {
-		return false;
-	}
+  /**
+   * @static match - Currently this function is saved up for future uses.
+   *
+   * @param {any} statement - Statement to match
+   *
+   * @returns {boolean} - Whether the action matches the statement or not
+   */
+  static match (_statement: unknown): boolean {
+    return false;
+  }
 
-	/**
-	 * @static matchString - When Monogatari goes through a string statement, it
-	 * will use this function to find which action it corresponds to.
-	 *
-	 * @param  {string[]} statement - The statement to match, splitted into an array by spaces
-	 * @return {boolean} - Whether the action matches the statement or not
-	 */
-	static matchString (_statement: string[]): boolean {
-		return false;
-	}
+  /**
+   * @static matchString - When Monogatari goes through a string statement, it
+   * will use this function to find which action it corresponds to.
+   *
+   * @param  {string[]} statement - The statement to match, splitted into an array by spaces
+   * @return {boolean} - Whether the action matches the statement or not
+   */
+  static matchString (_statement: string[]): boolean {
+    return false;
+  }
 
-	/**
-	 * @static matchObject - Similarly to its string counterpart, this function
-	 * is used when Monogatari goes through an Object (generally JSON) statement
-	 * to find which action the statement corresponds to.
-	 *
-	 * @param  {Object} statement - The statement to match,
-	 * @return {boolean} - Whether the action matches the statement or not
-	 */
-	static matchObject (_statement: Record<string, unknown>): boolean {
-		return false;
-	}
+  /**
+   * @static matchObject - Similarly to its string counterpart, this function
+   * is used when Monogatari goes through an Object (generally JSON) statement
+   * to find which action the statement corresponds to.
+   *
+   * @param  {Object} statement - The statement to match,
+   * @return {boolean} - Whether the action matches the statement or not
+   */
+  static matchObject (_statement: Record<string, unknown>): boolean {
+    return false;
+  }
 
-	static async beforeRun (_context: ActionRunContext): Promise<void> {}
-	static async beforeRevert (_context: ActionRevertContext): Promise<void> {}
+  static async beforeRun (_context: ActionRunContext): Promise<void> {}
+  static async beforeRevert (_context: ActionRevertContext): Promise<void> {}
 
-	static async afterRun (_context: ActionRunContext): Promise<void> {}
+  static async afterRun (_context: ActionRunContext): Promise<void> {}
 
-	static async afterRevert (_context: ActionRevertContext): Promise<void> {}
+  static async afterRevert (_context: ActionRevertContext): Promise<void> {}
 
-	/**
-	 * constuctor - Once the action has been matched through one of the match
-	 * functions, an instance of the action is created with the statement  it
-	 * matched as argument. As in the match functions, the string statements will
-	 * actually be received as arrays of words splitted by spaces.
-	 *
-	 * @param  {string[]|Object} statement - The statement it matched
-	 */
-	constructor (_statement?: string[] | Record<string, unknown>) {}
+  /**
+   * constuctor - Once the action has been matched through one of the match
+   * functions, an instance of the action is created with the statement  it
+   * matched as argument. As in the match functions, the string statements will
+   * actually be received as arrays of words splitted by spaces.
+   *
+   * @param  {string[]|Object} statement - The statement it matched
+   */
+  constructor (_statement?: string[] | Record<string, unknown>) {}
 
-	/**
-	 * The engine to which this action registered to.
-	 *
-	 * @type {Monogatari}
-	 */
-	get engine (): VisualNovelEngine {
-		return (this.constructor as typeof Action).engine;
-	}
+  /**
+   * The engine to which this action registered to.
+   *
+   * @type {Monogatari}
+   */
+  get engine (): VisualNovelEngine {
+    return (this.constructor as typeof Action).engine;
+  }
 
-	set engine (_value: VisualNovelEngine) {
-		throw new Error('Component engine reference is hold at static level and cannot be modified.');
-	}
+  set engine (_value: VisualNovelEngine) {
+    throw new Error('Component engine reference is hold at static level and cannot be modified.');
+  }
 
-	/**
-	 * setContext - This is a built in function in every action, the context of
-	 * the action will always be the Monogatari class. This is mainly used for
-	 * cases where the action can't import or reference directly the Monogatari
-	 * class so it can simply use this.context instead.
+  /**
+   * setContext - This is a built in function in every action, the context of
+   * the action will always be the Monogatari class. This is mainly used for
+   * cases where the action can't import or reference directly the Monogatari
+   * class so it can simply use this.context instead.
    *
    * @deprecated - This function is deprecated and will be removed in a future version. Use the engine property instead.
-	 *
-	 * @param  {Monogatari} context - The Monogatari Class
-	 */
-	setContext (context: VisualNovelEngine): void {
-		this.context = context;
-	}
+   *
+   * @param  {Monogatari} context - The Monogatari Class
+   */
+  setContext (context: VisualNovelEngine): void {
+    this.context = context;
+  }
 
-	/**
-	 * _setStatement - Since the original statement used to match an action tends
-	 * to be transformed by monogatari (i.e. by splitting it or other things),
-	 * this action built-in function is automatically used by Monogatari to
-	 * set the original statement to the action once it has been instantiated.
-	 * Because of this function, you can always refere to the original statement
-	 * in the Application and Reverting cycles with this._statement;
-	 *
-	 * @param  {string|Object|function} statement - The statement with which the action was run
-	 */
-	_setStatement (statement: string | Record<string, unknown> | ((...args: unknown[]) => unknown)): void {
-		this._statement = statement;
-	}
+  /**
+   * _setStatement - Since the original statement used to match an action tends
+   * to be transformed by monogatari (i.e. by splitting it or other things),
+   * this action built-in function is automatically used by Monogatari to
+   * set the original statement to the action once it has been instantiated.
+   * Because of this function, you can always refere to the original statement
+   * in the Application and Reverting cycles with this._statement;
+   *
+   * @param  {string|Object|function} statement - The statement with which the action was run
+   */
+  _setStatement (statement: string | Record<string, unknown> | ((...args: unknown[]) => unknown)): void {
+    this._statement = statement;
+  }
 
-	/**
-	 * _setCycle - This simple method is used to set what cycle the action is
-	 * currently performing. This is useful to know on those actions that may
-	 * use the apply or revert methods on any situation but that have slight
-	 * differences on the logic.
-	 *
-	 * @param  {string} cycle - 'Application' if the action is running the application
-	 * cycle or 'Revert' if it's running the revert cycle.
-	 */
-	_setCycle (cycle: 'Application' | 'Revert'): void {
-		this._cycle = cycle;
-	}
+  /**
+   * _setCycle - This simple method is used to set what cycle the action is
+   * currently performing. This is useful to know on those actions that may
+   * use the apply or revert methods on any situation but that have slight
+   * differences on the logic.
+   *
+   * @param  {string} cycle - 'Application' if the action is running the application
+   * cycle or 'Revert' if it's running the revert cycle.
+   */
+  _setCycle (cycle: 'Application' | 'Revert'): void {
+    this._cycle = cycle;
+  }
 
-	/**
-	 * setExtras - Some times, actions may require extra context to know what they're
-	 * supposed to do. The extras object should hold any additional information
-	 * we want to pass down to the action.
-	 *
-	 * @param {Object} extras
-	 */
-	setExtras (extras: Record<string, unknown>): Record<string, unknown> {
-		this._extras = extras;
+  /**
+   * setExtras - Some times, actions may require extra context to know what they're
+   * supposed to do. The extras object should hold any additional information
+   * we want to pass down to the action.
+   *
+   * @param {Object} extras
+   */
+  setExtras (extras: Record<string, unknown>): Record<string, unknown> {
+    this._extras = extras;
 
     return this._extras;
-	}
+  }
 
-	/**
-	 * willApply - Method called before the application of an action
-	 *
-	 * @return {Promise} - Result of the willApply operation, if this function
-	 * returns a rejected promise, the cycle will be interrupted and the action
-	 * will not be applied.
-	 */
-	async willApply (): Promise<void> {}
+  /**
+   * willApply - Method called before the application of an action
+   *
+   * @return {Promise} - Result of the willApply operation, if this function
+   * returns a rejected promise, the cycle will be interrupted and the action
+   * will not be applied.
+   */
+  async willApply (): Promise<void> {}
 
-	/**
-	 * apply - Method for the actual application of an action, this is where
-	 * the core operations of an action must be done.
-	 *
-	 * @return {Promise} - Result of the application operation
-	 */
-	async apply (): Promise<void> {}
+  /**
+   * apply - Method for the actual application of an action, this is where
+   * the core operations of an action must be done.
+   *
+   * @return {Promise} - Result of the application operation
+   */
+  async apply (): Promise<void> {}
 
-	/**
-	 * didApply - If the cycle has reached this far, it means the action has
-	 * correctly gone through the willApply and apply functions. Now that it has
-	 * been applied, we can perform any cleanup operations.
-	 *
-	 * @return {Promise<boolean>} - Result of the didApply operation. When resolved,
-	 * it should resolve to a boolean value, true if the game should go to the
-	 * next statement right away, false if it should wait for user's interaction.
-	 */
-	async didApply (options?: { updateHistory?: boolean; updateState?: boolean }): Promise<ActionApplyResult> {
-		return {
-			advance: false
-		};
-	}
+  /**
+   * didApply - If the cycle has reached this far, it means the action has
+   * correctly gone through the willApply and apply functions. Now that it has
+   * been applied, we can perform any cleanup operations.
+   *
+   * @return {Promise<boolean>} - Result of the didApply operation. When resolved,
+   * it should resolve to a boolean value, true if the game should go to the
+   * next statement right away, false if it should wait for user's interaction.
+   */
+  async didApply (options?: { updateHistory?: boolean; updateState?: boolean }): Promise<ActionApplyResult> {
+    return {
+      advance: false
+    };
+  }
 
-	/**
-	 * interrupt - Currently saved for future purposes, the interrupt function
-	 * would be used to interrupt a function when its still doing something, like
-	 * when the typing animation of dialogs is interrupted if you click again.
-	 *
-	 * @return {Promsie} - Result of the interruption
-	 */
-	async interrupt (): Promise<void> {}
+  /**
+   * interrupt - Currently saved for future purposes, the interrupt function
+   * would be used to interrupt a function when its still doing something, like
+   * when the typing animation of dialogs is interrupted if you click again.
+   *
+   * @return {Promsie} - Result of the interruption
+   */
+  async interrupt (): Promise<void> {}
 
-	/**
-	 * willRevert - Method called before an action is reverted
-	 *
-	 * @return {Promise} - Result of the willRevert operation, if this function
-	 * returns a rejected promise, the cycle will be interrupted and the action
-	 * will not be reverted.
-	 */
-	async willRevert (): Promise<void> {}
+  /**
+   * willRevert - Method called before an action is reverted
+   *
+   * @return {Promise} - Result of the willRevert operation, if this function
+   * returns a rejected promise, the cycle will be interrupted and the action
+   * will not be reverted.
+   */
+  async willRevert (): Promise<void> {}
 
-	/**
-	 * revert - Method called for the actual reversion of an action, this is where
-	 * the core operations needed to revert an action must be done.
-	 *
-	 * @return {Promise} - Result of the reversion operation
-	 */
-	async revert (): Promise<void> {}
+  /**
+   * revert - Method called for the actual reversion of an action, this is where
+   * the core operations needed to revert an action must be done.
+   *
+   * @return {Promise} - Result of the reversion operation
+   */
+  async revert (): Promise<void> {}
 
-	/**
-	 * didApply - If the cycle has reached this far, it means the action has
-	 * correctly gone through the willRevert and revert functions. Now that it has
-	 * been reverted, we can perform any cleanup operations.
-	 *
-	 * @returns {Promise} - Result of the didRevert operation. When resolved,
-	 * it should resolve to a boolean value, true if the game should go to the
-	 * previous statement right away, false if it should wait for user's interaction.
-	 */
-	async didRevert (): Promise<ActionRevertResult> {
-		return {
-			advance: false,
-			step: true
-		};
-	}
+  /**
+   * didApply - If the cycle has reached this far, it means the action has
+   * correctly gone through the willRevert and revert functions. Now that it has
+   * been reverted, we can perform any cleanup operations.
+   *
+   * @returns {Promise} - Result of the didRevert operation. When resolved,
+   * it should resolve to a boolean value, true if the game should go to the
+   * previous statement right away, false if it should wait for user's interaction.
+   */
+  async didRevert (): Promise<ActionRevertResult> {
+    return {
+      advance: false,
+      step: true
+    };
+  }
 }
 
 export default Action;

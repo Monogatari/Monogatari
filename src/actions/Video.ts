@@ -5,8 +5,9 @@ import { FancyError } from './../lib/FancyError';
 import { ActionApplyResult, ActionRevertResult, ActionInstance } from '../lib/types';
 
 export class Video extends Action {
-
 	static override id = 'Video';
+  static override blocking = false;
+
 	static _configuration: { objects: Record<string, any>, modes: string[] } = {
 		objects: {
 
@@ -26,6 +27,10 @@ export class Video extends Action {
 	}
 
 	static override async shouldProceed(): Promise<void> {
+    if (Video.blocking) {
+      throw new Error('Video is still playing');
+    }
+
 		return new Promise((resolve, reject) => {
 			$_('[data-video]').each((element: HTMLElement) => {
 				const videoElement = element as HTMLVideoElement;
@@ -203,7 +208,7 @@ export class Video extends Action {
 						videos.splice(index, 1);
 					}
 
-					this.engine.global('block', false);
+				  Video.blocking = false;
 					this.engine.proceed({ userInitiated: false, skip: false, autoPlay: false });
 				} else if (this.mode === 'background' || this.mode === 'displayable') {
 					if (index > -1) {
@@ -225,10 +230,10 @@ export class Video extends Action {
 		if (this.mode === 'background') {
 			this.engine.element().find('[data-ui="background"]').append(element);
 		} else if (this.mode === 'immersive') {
-			this.engine.global('block', true);
+			Video.blocking = true;
 			this.engine.element().find('[data-screen="game"]').prepend(element);
 		} else if (this.mode === 'fullscreen') {
-			this.engine.global('block', true);
+			Video.blocking = true;
 			if (element.requestFullscreen) {
 				this.engine.element().find('[data-screen="game"]').append(element);
 				element.requestFullscreen();
@@ -239,7 +244,7 @@ export class Video extends Action {
 		} else if (this.mode === 'displayable') {
 			this.engine.element().find('[data-screen="game"]').append(element);
 		} else if (this.mode === 'modal') {
-			this.engine.global('block', true);
+			Video.blocking = true;
 			this.engine.element().find('[data-screen="game"]').append(element);
 		} else {
 			throw new Error('Invalid video mode.');
@@ -280,7 +285,7 @@ export class Video extends Action {
 
 		// Unblock if this was a blocking video
 		if (this.mode === 'immersive' || this.mode === 'fullscreen' || this.mode === 'modal') {
-			this.engine.global('block', false);
+			Video.blocking = false;
 		}
 	}
 

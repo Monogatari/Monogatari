@@ -1,55 +1,57 @@
 import Action from './../lib/Action';
-import { FancyError } from './../lib/FancyError';
 import { ActionApplyResult, ActionRevertResult } from '../lib/types';
 
 export class Wait extends Action {
-	static override id = 'Wait';
+  static override id = 'Wait';
 
-	static override matchString([action]: string[]): boolean {
-		return action === 'wait';
-	}
+  static override blocking = false;
 
-	time: number | undefined;
+  static override matchString([action]: string[]): boolean {
+    return action === 'wait';
+  }
 
-	constructor([action, time]: string[]) {
-		super();
-		// Check if the provided time is a valid integer
-		if (!isNaN(Number(time))) {
-			this.time = parseInt(time);
-		} else {
-			if (typeof time !== 'undefined') {
-				FancyError.show('action:wait:invalid_time', {
-					time: time,
-					statement: `<code class='language=javascript'>"${this._statement}"</code>`,
-					label: this.engine.state('label'),
-					step: this.engine.state('step')
-				});
-			}
-		}
-	}
+  static override async shouldProceed(_options?: { userInitiated?: boolean; skip?: boolean; autoPlay?: boolean; }): Promise<void> {
+    if (this.blocking) {
+      throw new Error('Wait period has not ended');
+    }
+  }
 
-	override async apply(): Promise<void> {
+  // TODO: Haven't decided if this is really necesary but sort of makes sense
+  static override async willRollback(): Promise<void> {
+    Wait.blocking = false;
+  }
+
+  // When null, we wait for the click instead of a specific amount of time
+  time: number | null = null;
+
+  constructor([action, time]: string[]) {
+    super();
+
+    this.time = !isNaN(Number(time)) ? parseInt(time) : null;
+  }
+
+  override async apply(): Promise<void> {
     if (typeof this.time !== 'number') {
       return;
     }
 
-		return new Promise<void>((resolve) => {
-			this.engine.global('block', true);
+    return new Promise<void>((resolve) => {
+      Wait.blocking = true;
 
-			setTimeout(() => {
-				this.engine.global('block', false);
-				resolve();
-			}, this.time);
-		});
-	}
+      setTimeout(() => {
+        Wait.blocking = false;
+        resolve();
+      }, this.time!);
+    });
+  }
 
-	override async didApply(): Promise<ActionApplyResult> {
-		return { advance: typeof this.time === 'number' };
-	}
+  override async didApply(): Promise<ActionApplyResult> {
+    return { advance: typeof this.time === 'number' };
+  }
 
-	override async didRevert(): Promise<ActionRevertResult> {
-		return { advance: true, step: true };
-	}
+  override async didRevert(): Promise<ActionRevertResult> {
+    return { advance: true, step: true };
+  }
 }
 
 export default Wait;

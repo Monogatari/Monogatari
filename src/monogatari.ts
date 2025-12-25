@@ -342,24 +342,31 @@ class Monogatari {
     'AutoPlaySpeed': 5
   };
 
-  static _globals: Record<string, unknown> = {
+  static _globals: Partial<GlobalsMap> = {
     distraction_free: false,
     delete_slot: null,
     overwrite_slot: null,
-    block: false,
+
     playing: false,
     current_auto_save_slot: 1,
     _auto_play_timer: null,
     skip: null,
     _log: [],
     _auto_save_interval: null,
-    _engine_block: false,
-    _executing_sub_action: false,
+
+
     _restoring_state: false,
     on_splash_screen: false,
+
     _didSetup: false,
     _didBind: false,
     _didInit: false,
+    _engine_block: false,
+
+    // TODO: Eventually get rid of these as they are deprecated
+    block: false,
+    _executing_sub_action: false,
+
   };
 
   static _listeners: Array<{ name: string; keys?: string | string[]; callback: (this: VisualNovelEngine, event: Event, element: DOM) => unknown }> = [];
@@ -1498,9 +1505,9 @@ class Monogatari {
     if (typeof name === 'string') {
       if (typeof value !== 'undefined') {
         this._$[name] = value;
-      } else {
-        return this._$[name];
       }
+
+      return this._$[name];
     } else if (typeof name === 'object') {
       this._$ = Object.assign ({}, this._$, name);
     } else if (typeof name === 'undefined') {
@@ -2418,7 +2425,6 @@ class Monogatari {
       return Promise.reject ();
     }
 
-
     const action = this.prepareAction (actionToRevert as string | Record<string, unknown>, { cycle: 'Revert' });
 
     if (action === null) {
@@ -2437,14 +2443,14 @@ class Monogatari {
     return (action as Action).willRevert ().then (() => {
       this.debug.debug ('Action Will Revert');
       // If it can be reverted, then run the revert method
-      return (action as Action).revert ().then (() => {
+      return action.revert ().then (() => {
         this.debug.debug ('Action Reverting');
         // If the reversion was successful, run the didRevert
         // function. The action will return a boolean (shouldContinue)
         // specifying if the game should go ahead and revert
         // the previous statement as well or if it should
         // wait instead
-        return (action as Action).didRevert ().then (({ advance, step }: { advance: boolean; step: boolean }) => {
+        return action.didRevert ().then (({ advance, step }: { advance: boolean; step: boolean }) => {
           this.debug.debug ('Action Did Revert');
 
           this.trigger ('didRevertAction', { action });
@@ -2866,16 +2872,17 @@ class Monogatari {
    * can't proceed right now.
    */
   static shouldProceed ({ userInitiated = false, skip = false, autoPlay = false }) {
+    // TODO: This should be removed
+    const deprecatedBlocks = this.global ('block') || this.global ('_executing_sub_action');
 
     // Check if the game is visible, if it's not, then it probably is not
     // playing or is looking at some menu and thus the game should not
     // proceed. The game will not proceed if it's blocked or if the distraction
     // free mode is enabled.
-
     if (!$_('.modal').isVisible ()
       && !this.global ('distraction_free')
-      && !this.global ('block')
-      && (!this.global ('_engine_block') || this.global ('_executing_sub_action'))) {
+      && !deprecatedBlocks
+      && !this.global ('_engine_block')) {
       const promises = [];
 
       this.debug.groupCollapsed ('shouldProceed Check');

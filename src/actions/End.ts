@@ -1,75 +1,74 @@
 import Action from './../lib/Action';
 
 export class End extends Action {
-	static override id = 'End';
+  static override id = 'End';
 
-	static override async bind(): Promise<void> {
+  static override async bind(): Promise<void> {
+    this.engine.registerListener('end', {
+      keys: 'shift+q',
+      callback: () => {
+        if (this.engine.global('playing')) {
+          this.engine.alert('quit-warning', {
+            message: 'Confirm',
+            actions: [
+              {
+                label: 'Quit',
+                listener: 'quit'
+              },
+              {
+                label: 'Cancel',
+                listener: 'dismiss-alert'
+              }
+            ]
+          });
+        }
+      }
+    });
 
-		this.engine.registerListener('end', {
-			keys: 'shift+q',
-			callback: () => {
-				if (this.engine.global('playing')) {
-					this.engine.alert('quit-warning', {
-						message: 'Confirm',
-						actions: [
-							{
-								label: 'Quit',
-								listener: 'quit'
-							},
-							{
-								label: 'Cancel',
-								listener: 'dismiss-alert'
-							}
-						]
-					});
-				}
-			}
-		});
+    this.engine.registerListener('quit', {
+      callback: () => {
+        this.engine.dismissAlert('quit-warning');
 
-		this.engine.registerListener('quit', {
-			callback: () => {
-				this.engine.dismissAlert('quit-warning');
-
-				if (this.engine.global('playing') === true) {
-					this.engine.run('end');
+        if (this.engine.global('playing') === true) {
+          this.engine.run('end');
           return;
-				}
+        }
 
         const electron = (window as any).electron;
 
         if (typeof electron === 'object' && typeof electron.send === 'function') {
           electron.send('quit-request');
         }
-			}
-		});
-	}
+      }
+    });
+  }
 
-	static override matchString([action]: string[]): boolean {
-		return action === 'end';
-	}
+  static override matchString([action]: string[]): boolean {
+    return action === 'end';
+  }
 
-	override async willApply(): Promise<void> {
-		this.engine.hideScreens();
-	}
+  override async willApply(): Promise<void> {
+    this.engine.hideScreens();
+  }
 
-	override async apply(): Promise<void> {
+  override async apply(): Promise<void> {
     const engine = this.engine;
 
-		engine.global('playing', false);
+    engine.global('playing', false);
 
-		engine.resetGame();
-		engine.showMainScreen();
+    engine.resetGame();
+    engine.showMainScreen();
 
 
     const engineElement = engine.element();
 
-		engineElement.find('[data-component="quick-menu"]').removeClass('splash-screen');
-		engineElement.find('[data-component="game-screen"]').removeClass('splash-screen');
-	}
+    engineElement.find('[data-component="quick-menu"]').removeClass('splash-screen');
+    engineElement.find('[data-component="game-screen"]').removeClass('splash-screen');
+  }
 
-	override async willRevert(): Promise<void> {
-		throw new Error('End action is not reversible');
-	}
+  override async willRevert(): Promise<void> {
+    throw new Error('End action is not reversible');
+  }
 }
 
 export default End;
