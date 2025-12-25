@@ -376,4 +376,4 @@ class ShadowComponent<P extends Properties = Properties, S extends Properties = 
 	}
 }
 
-export { ShadowComponent };
+export default ShadowComponent;

@@ -316,9 +316,9 @@ Monogatari._actions = [
 /**
  * Export Monogatari Core
  */
-export * from './lib/Action';
-export * from './lib/Component';
-export * from './lib/ShadowComponent';
+export { default as Action } from './lib/Action';
+export { default as Component } from './lib/Component';
+export { default as ShadowComponent } from './lib/ShadowComponent';
 export * from './lib/ScreenComponent';
 export * from './lib/MenuComponent';
 export * from './lib/FancyError';
