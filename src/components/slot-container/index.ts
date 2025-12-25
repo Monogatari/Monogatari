@@ -147,7 +147,6 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 		}
 
 		this.engine.Storage.onCreate((key: string, value: unknown) => {
-      console.log(key, value);
 			// We only want to react to those items that we believe are save files
 			// by their key and making sure they're an actual object
 			if (key.indexOf(`${this.props.label}_`) === 0) {

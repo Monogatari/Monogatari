@@ -219,6 +219,7 @@ export class Play extends Action {
     this.props = props;
 
     const volumeSettings = this.engine.preference('Volume') as Record<string, number>;
+
     this.mediaVolume = volumeSettings[Text.capitalize(this.type)];
 
     // Check if a media was defined or just a `play music` was stated

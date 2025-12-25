@@ -2,6 +2,7 @@ context ('Play', function () {
 
 	beforeEach (() => {
 		cy.open ();
+    cy.clearStorage();
 		cy.loadTestAssets ();
 		cy.window ().its ('Monogatari.default').as ('monogatari');
 	});

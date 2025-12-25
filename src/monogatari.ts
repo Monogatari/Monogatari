@@ -3617,7 +3617,6 @@ class Monogatari {
       const element = $_(this);
 
       const action = element.data ('action');
-      console.log(action);
 
       if (action) {
         self.runListener (action, event, element);

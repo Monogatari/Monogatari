@@ -172,7 +172,6 @@ class AudioPlayer {
 		this.gainNode = outputNode || this.audioContext.createGain();
 		this._volume = volume;
 		this.gainNode.gain.value = volume;
-		console.log('[AudioPlayer.constructor] volume set to:', volume, '_volume:', this._volume);
 	}
 
 	private createSourceNode (): AudioBufferSourceNode {
@@ -338,12 +337,10 @@ class AudioPlayer {
 	}
 
 	get volume (): number {
-		console.log('[AudioPlayer.volume getter] returning:', this._volume);
 		return this._volume;
 	}
 
 	set volume (value: number) {
-		console.log('[AudioPlayer.volume setter] setting:', value);
 		this._volume = value;
 		this.gainNode.gain.setValueAtTime(value, this.audioContext.currentTime);
 	}
