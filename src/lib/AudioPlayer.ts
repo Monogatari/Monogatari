@@ -13,6 +13,7 @@ class AudioPlayer {
 	private _isPlaying: boolean = false;
 	private _isPaused: boolean = false;
 	private _loop: boolean = false;
+	private _volume: number = 1;
 	private startedAt: number = 0;
 	private pausedAt: number = 0;
 
@@ -161,7 +162,7 @@ class AudioPlayer {
 	 * @param buffer - The decoded audio data to play.
 	 * @param options - Configuration options.
 	 */
-	constructor (audioContext: AudioContext, buffer: AudioBuffer, { outputNode = null, effects = {}, loop = false, paused = false }: AudioPlayerOptions = {}) {
+	constructor (audioContext: AudioContext, buffer: AudioBuffer, { outputNode = null, effects = {}, loop = false, paused = false, volume = 1 }: AudioPlayerOptions = {}) {
 		this.audioContext = audioContext;
 		this.buffer = buffer;
 		this.effectsConfig = effects;
@@ -169,6 +170,9 @@ class AudioPlayer {
 		this._isPaused = paused;
 
 		this.gainNode = outputNode || this.audioContext.createGain();
+		this._volume = volume;
+		this.gainNode.gain.value = volume;
+		console.log('[AudioPlayer.constructor] volume set to:', volume, '_volume:', this._volume);
 	}
 
 	private createSourceNode (): AudioBufferSourceNode {
@@ -334,10 +338,13 @@ class AudioPlayer {
 	}
 
 	get volume (): number {
-		return this.gainNode.gain.value;
+		console.log('[AudioPlayer.volume getter] returning:', this._volume);
+		return this._volume;
 	}
 
 	set volume (value: number) {
+		console.log('[AudioPlayer.volume setter] setting:', value);
+		this._volume = value;
 		this.gainNode.gain.setValueAtTime(value, this.audioContext.currentTime);
 	}
 
@@ -418,7 +425,7 @@ class AudioPlayer {
 			return;
 		}
 
-		// Use provided target volume, or stored target volume, or current gain value
+		// Use provided target volume, or stored target volume, or current volume
 		const target = targetVolume ?? this._targetVolume;
 		this._targetVolume = target;
 
@@ -431,6 +438,9 @@ class AudioPlayer {
 
 		// Wait for the fade to complete
 		await new Promise<void>(resolve => setTimeout(resolve, duration * 1000));
+
+		// Update tracked volume after fade completes
+		this._volume = target;
 	}
 
 	async fadeOut (duration: number, stopAfterFade: boolean = false): Promise<void> {
@@ -439,16 +449,19 @@ class AudioPlayer {
 		}
 
 		// Save current volume as target for potential fadeIn later
-		this._targetVolume = this.gainNode.gain.value;
+		this._targetVolume = this._volume;
 
 		const startTime = this.audioContext.currentTime;
 		const endTime = startTime + duration;
 
-		this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, startTime);
+		this.gainNode.gain.setValueAtTime(this._volume, startTime);
 		this.gainNode.gain.linearRampToValueAtTime(0, endTime);
 
 		// Wait for the fade to complete
 		await new Promise<void>(resolve => setTimeout(resolve, duration * 1000));
+
+		// Update tracked volume after fade completes
+		this._volume = 0;
 
 		// Optionally stop the audio after fade completes
 		if (stopAfterFade) {

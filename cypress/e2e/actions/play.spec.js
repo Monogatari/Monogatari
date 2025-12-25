@@ -147,7 +147,6 @@ context ('Play', function () {
 		cy.get ('text-box').contains ('Zero');
 
 		cy.proceed ();
-		cy.wait(100); // Add a small delay to ensure async operations complete
 
 		cy.wrap (this.monogatari).invoke ('state', 'music').should ('deep.equal', [{ statement: 'play music theme loop', paused: false }, { statement: 'play music subspace loop', paused: false }]);
 		cy.wrap (this.monogatari).invoke ('history', 'music').should ('deep.equal', ['play music theme loop', 'play music subspace loop']);
@@ -256,7 +255,7 @@ context ('Play', function () {
 
 	it ('Sets player volume correctly', function () {
 		this.monogatari.setting ('TypeAnimation', false);
-		this.monogatari.preference('Volume').Music = 0.25;
+		this.monogatari.preference('Volume', { ...this.monogatari.preference('Volume'), Music: 0.25 });
 
 		this.monogatari.script ({
 			'Start': [
@@ -277,7 +276,7 @@ context ('Play', function () {
 
 	it ('Handles volume change correctly', function () {
 		this.monogatari.setting ('TypeAnimation', false);
-		this.monogatari.preference('Volume').Music = 0.25;
+		this.monogatari.preference('Volume', { ...this.monogatari.preference('Volume'), Music: 0.25 });
 
 		this.monogatari.script ({
 			'Start': [

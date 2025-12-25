@@ -414,6 +414,7 @@ export interface AudioPlayerOptions {
   effects?: Record<string, Record<string, unknown>>;
   loop?: boolean;
   paused?: boolean;
+  volume?: number;
 }
 
 export type Constructor<T = object> = new (...args: any[]) => T;

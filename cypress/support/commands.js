@@ -565,6 +565,19 @@ Cypress.Commands.add ('loadTestAssets', function (args) {
 		}
 	});
 
+  this.monogatari.action ('Preload').blocks({
+    'default': {
+      'music': ['theme.mp3', 'subspace.mp3'],
+      'sounds': ['beep.mp3', 'coin.mp3'],
+      'voices': ['sample.mp3'],
+      'scenes': ['christmas.png'],
+      'images': ['polaroid.jpg', 'christmas.png'],
+      'characters': {
+        'y': ['angry.png', 'happy.png', 'normal.png', 'sad.png', 'surprised.png'],
+      }
+    }
+  });
+
 	// We'll add for a while to ensure all assets have been loaded
 	// cy.wait (5000);
 });

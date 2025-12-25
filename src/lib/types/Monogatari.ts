@@ -738,19 +738,12 @@ export interface VisualNovelEngine {
      */
     (statement: Record<string, unknown>, options: { cycle: 'Application' | 'Revert'; extras?: Record<string, unknown> }): ActionInstance | null;
     /**
-     * Prepare a function statement (returns the function as-is).
-     * @param statement - Function to prepare
-     * @param options - Options with cycle and extras
-     * @returns The function
-     */
-    (statement: (...args: unknown[]) => unknown, options: { cycle: 'Application' | 'Revert'; extras?: Record<string, unknown> }): (...args: unknown[]) => unknown;
-    /**
      * Prepare any statement type (union of all possible types).
      * @param statement - Statement of any supported type
      * @param options - Options with cycle and extras
      * @returns Action instance, function, or null
      */
-    (statement: string | Record<string, unknown> | ((...args: unknown[]) => unknown), options: { cycle: 'Application' | 'Revert'; extras?: Record<string, unknown> }): ActionInstance | ((...args: unknown[]) => unknown) | null;
+    (statement: string | Record<string, unknown>, options: { cycle: 'Application' | 'Revert'; extras?: Record<string, unknown> }): ActionInstance | null;
   };
 
   /**
