@@ -38,7 +38,7 @@ export interface TypedConfig extends TypingCallbacks<TypeWriter> {
 export interface ParsedAction {
 	action: string;
 	n?: string;
-	options?: Record<string, string>;
+	options?: Record<string, string> | string[];
 	text?: string;
 	id?: string;
 }
@@ -71,7 +71,7 @@ export interface TypeWriterState extends Properties {
 // Pre-compiled regex patterns for better performance
 // ============================================================================
 
-export const QUOTED_VALUE_PATTERN = /=["'](.*?)\1/g;
+export const QUOTED_VALUE_PATTERN = /=(["'])(.*?)\1/g;
 export const CSS_VALUE_PATTERN = /(:[ ]?)(.*?);/g;
 export const QUOTE_CONTENT_PATTERN = /(["'])(.*?)\1/g;
 
@@ -416,8 +416,8 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 				// Matches {action:N} or {action N}
 				result = result.replace(new RegExp(`\\{${actionName}[:\\s]\\d+\\}`, 'g'), '');
 			} else if (action.type === 'enclosed') {
-				// Matches {/action} or {/action options}
-				result = result.replace(new RegExp(`\\{\\/${actionName}(?:\\s[^}]*)?\\}`, 'g'), '');
+				// Matches {action} or {action options} or {/action} or {/action options}
+				result = result.replace(new RegExp(`\\{/?${actionName}(?:\\s[^}]*)?\\}`, 'g'), '');
 			} else if (action.type === 'instance') {
 				// Matches {action/}
 				result = result.replace(new RegExp(`\\{${actionName}\\/\\}`, 'g'), '');
@@ -505,7 +505,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 			patterns.push(`\\{(?:${this._numberActionsCache})[:\\s]\\d+\\}`);
 		}
 		if (this._enclosedActionsCache) {
-			patterns.push(`\\{\\/(?:${this._enclosedActionsCache}).*?\\}`);
+			patterns.push(`\\{/?(?:${this._enclosedActionsCache}).*?\\}`);
 		}
 		if (this._instanceActionsCache) {
 			patterns.push(`\\{(?:${this._instanceActionsCache})\\/\\}`);
@@ -921,20 +921,27 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		// Try enclosed action
 		if (!match && this._enclosedActionsCache) {
 			type = 'enclosed';
-			match = section.match(new RegExp(`^\\{\\/(?<action>${this._enclosedActionsCache})(?<options>.*)\\}$`));
+			match = section.match(new RegExp(`^\\{/?(?<action>${this._enclosedActionsCache})(?<options>.*)\\}$`));
 
 			if (match?.groups) {
-				if (this.enclosedID.length) {
-					// Extract action name from enclosedID (format: "actionName-parseIndex")
-					// Action names can contain hyphens (e.g., "shake-hard"), so we find the last hyphen
-					const lastId = this.enclosedID[this.enclosedID.length - 1];
-					const lastDashIndex = lastId.lastIndexOf('-');
-					const idAction = lastDashIndex > 0 ? lastId.substring(0, lastDashIndex) : lastId;
-					if (idAction === match.groups.action) {
-						this.enclosedID.pop();
-						return undefined;
+				const isClosing = section.startsWith('{/');
+				if (isClosing) {
+					if (this.enclosedID.length) {
+						// Extract action name from enclosedID (format: "actionName-parseIndex")
+						// Action names can contain hyphens (e.g., "shake-hard"), so we find the last hyphen
+						const lastId = this.enclosedID[this.enclosedID.length - 1];
+						const lastDashIndex = lastId.lastIndexOf('-');
+						const idAction = lastDashIndex > 0 ? lastId.substring(0, lastDashIndex) : lastId;
+						if (idAction === match.groups.action) {
+							this.enclosedID.pop();
+							return undefined;
+						} else {
+							this.engine.debug.error('Mismatched closing action:', match.groups.action);
+							return undefined;
+						}
 					} else {
-						this.enclosedID.push(`${match.groups.action}-${this.parseIndex}`);
+						this.engine.debug.error('Closing action without opening:', match.groups.action);
+						return undefined;
 					}
 				} else {
 					this.enclosedID.push(`${match.groups.action}-${this.parseIndex}`);
@@ -953,7 +960,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 			return undefined;
 		}
 
-		let options: Record<string, string> | undefined;
+		let options: Record<string, string> | string[] | undefined;
 
 		if (type === 'enclosed' && match.groups.options) {
 			options = this._parseOptions(match.groups.options);
@@ -982,8 +989,8 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Parse options from an enclosed action.
 	 */
-	private _parseOptions(optionsStr: string): Record<string, string> {
-		const options: Record<string, string> = {};
+	private _parseOptions(optionsStr: string): Record<string, string> | string[] {
+		const options: Record<string, string> | string[] = {};
 		let opts: string | string[] = optionsStr.trim();
 
 		if (QUOTED_VALUE_PATTERN.test(opts)) {
@@ -1002,6 +1009,10 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 				.replace(/\s/g, ':')
 				.replace(/\[~\]/g, ' ')
 				.split(/:/g);
+		} else {
+			// If no special patterns, split by whitespace and return as an array of strings.
+			opts = opts.split(/\s+/g);
+			return opts;
 		}
 
 		if (Array.isArray(opts)) {
