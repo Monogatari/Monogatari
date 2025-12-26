@@ -811,7 +811,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'Hello {/shake}shaking{/shake} world!'
+					'Hello {shake}shaking{/shake} world!'
 				]
 			});
 
@@ -829,7 +829,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'This is {/wave}wavy text{/wave}!'
+					'This is {wave}wavy text{/wave}!'
 				]
 			});
 
@@ -844,7 +844,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'A {/glitch}corrupted{/glitch} message'
+					'A {glitch}corrupted{/glitch} message'
 				]
 			});
 
@@ -859,7 +859,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'{/angry}I AM FURIOUS!{/angry}'
+					'{angry}I AM FURIOUS!{/angry}'
 				]
 			});
 
@@ -874,7 +874,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'This is {/bold}important{/bold} and {/italic}emphasized{/italic}!'
+					'This is {bold}important{/bold} and {italic}emphasized{/italic}!'
 				]
 			});
 
@@ -891,7 +891,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'The {/redacted}CLASSIFIED{/redacted} information'
+					'The {redacted}CLASSIFIED{/redacted} information'
 				]
 			});
 
@@ -906,7 +906,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'{/shake}Scary{/shake} and {/happy}joyful{/happy}!'
+					'{shake}Scary{/shake} and {happy}joyful{/happy}!'
 				]
 			});
 
@@ -922,7 +922,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimation', false);
 			this.monogatari.script ({
 				'Start': [
-					'Hello {/shake}world{/shake}!'
+					'Hello {shake}world{/shake}!'
 				]
 			});
 
@@ -937,7 +937,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimation', false);
 			this.monogatari.script ({
 				'Start': [
-					'{/angry}FURIOUS{/angry} and {/wave}wavy{/wave} and {/glitch}glitchy{/glitch}!'
+					'{angry}FURIOUS{/angry} and {wave}wavy{/wave} and {glitch}glitchy{/glitch}!'
 				]
 			});
 
@@ -953,7 +953,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'Hello{pause:50} {/shake}shaking{/shake}{speed:50}...done!'
+					'Hello{pause:50} {shake}shaking{/shake}{speed:50}...done!'
 				]
 			});
 
@@ -971,7 +971,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'centered {/mysterious}A mysterious message{/mysterious}'
+					'centered {mysterious}A mysterious message{/mysterious}'
 				]
 			});
 
@@ -989,7 +989,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'nvl {/scared}Trembling with fear{/scared}'
+					'nvl {scared}Trembling with fear{/scared}'
 				]
 			});
 
@@ -1004,7 +1004,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'{/shake-hard}HARD{/shake-hard} {/shake-slow}slow{/shake-slow} {/shake-little}little{/shake-little}'
+					'{shake-hard}HARD{/shake-hard} {shake-slow}slow{/shake-slow} {shake-little}little{/shake-little}'
 				]
 			});
 
@@ -1020,7 +1020,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'{/wave-slow}slow{/wave-slow} {/wave-fast}fast{/wave-fast}'
+					'{wave-slow}slow{/wave-slow} {wave-fast}fast{/wave-fast}'
 				]
 			});
 
@@ -1035,7 +1035,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'{/glitch-hard}HARD{/glitch-hard} {/glitch-slow}slow{/glitch-slow}'
+					'{glitch-hard}HARD{/glitch-hard} {glitch-slow}slow{/glitch-slow}'
 				]
 			});
 
@@ -1050,7 +1050,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'{/fade}fading{/fade} {/scale}scaling{/scale} {/blur}blurry{/blur}'
+					'{fade}fading{/fade} {scale}scaling{/scale} {blur}blurry{/blur}'
 				]
 			});
 
@@ -1066,7 +1066,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'{/rainbow}colorful{/rainbow} {/glow}glowing{/glow}'
+					'{rainbow}colorful{/rainbow} {glow}glowing{/glow}'
 				]
 			});
 
@@ -1081,7 +1081,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 5);
 			this.monogatari.script ({
 				'Start': [
-					'{/happy}joy{/happy} {/sad}tears{/sad} {/excited}wow{/excited} {/whisper}shh{/whisper}'
+					'{happy}joy{/happy} {sad}tears{/sad} {excited}wow{/excited} {whisper}shh{/whisper}'
 				]
 			});
 
@@ -1098,7 +1098,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'{/wave}Hello{/wave}'
+					'{wave}Hello{/wave}'
 				]
 			});
 
@@ -1116,7 +1116,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimationSpeed', 10);
 			this.monogatari.script ({
 				'Start': [
-					'y:happy {/excited}I am so happy!{/excited}'
+					'y:happy {excited}I am so happy!{/excited}'
 				]
 			});
 
@@ -1131,7 +1131,7 @@ context ('Dialog', function () {
 			this.monogatari.setting ('TypeAnimation', false);
 			this.monogatari.script ({
 				'Start': [
-					'{/shake}a{/shake}{/wave}b{/wave}{/glitch}c{/glitch}{/bold}d{/bold}{/angry}e{/angry}{/redacted}f{/redacted}{pause:100}{speed:50}g'
+					'{shake}a{/shake}{wave}b{/wave}{glitch}c{/glitch}{bold}d{/bold}{angry}e{/angry}{redacted}f{/redacted}{pause:100}{speed:50}g'
 				]
 			});
 
