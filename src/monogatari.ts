@@ -3439,7 +3439,7 @@ class Monogatari {
       // auto-play feature
       this.registerListener ('auto-play', {
         callback: () => {
-          this.autoPlay (this.global ('_auto_play_timer') === null);
+          this.autoPlay (this.global ('_auto_play_timer') === undefined);
         }
       });
 
@@ -3517,6 +3517,15 @@ class Monogatari {
     screenElement?.setState ({
       open: true
     });
+
+    // If auto play or skip were enabled, disable them.
+    if (this.global ('_auto_play_timer')) {
+      this.autoPlay (false);
+    }
+
+    if (this.global ('skip')) {
+      this.skip (false);
+    }
   }
 
   static hideScreens (): void {
@@ -3685,11 +3694,11 @@ class Monogatari {
     const promises = [];
 
     for (const component of this.components ()) {
-      promises.push (component.bind ());
+      promises.push (component.bind (selector));
     }
 
     for (const action of this.actions ()) {
-      promises.push (action.bind ());
+      promises.push (action.bind (selector));
     }
 
     return Promise.all (promises).then (() => {
