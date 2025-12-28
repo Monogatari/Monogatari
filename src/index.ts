@@ -26,6 +26,8 @@ import '@fortawesome/fontawesome-free/js/all';
 
 export * from '@aegis-framework/artemis';
 
+export { tsParticles } from '@tsparticles/engine';
+
 export * from '@tsparticles/slim';
 
 export * as RandomJS from 'random-js';

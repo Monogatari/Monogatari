@@ -176,8 +176,9 @@ class SettingsScreen extends ScreenComponent<Properties, ScreenState> {
 		}
 
 		const engine = this.engine;
+		const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 		this.content('auto-play-speed-controller').on('change mouseover', function(this: HTMLInputElement) {
-			const value = (engine.setting('MaxAutoPlaySpeed') as number) - parseInt(this.value);
+			const value = clamp(parseInt(this.value), 0, engine.setting('MaxAutoPlaySpeed') as number);
 			engine.preference('AutoPlaySpeed', value);
 		});
 

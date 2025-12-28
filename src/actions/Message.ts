@@ -15,7 +15,7 @@ export class Message extends Action {
     // The close action removes the active class from the element it
     // points to.
     this.engine.on('click', '[data-component="message-modal"] [data-action="close"]', () => {
-      Message.blocking = true;
+      Message.blocking = false;
       this.engine.element().find('[data-component="message-modal"]').remove();
       this.engine.proceed({ userInitiated: true, skip: false, autoPlay: false });
     });

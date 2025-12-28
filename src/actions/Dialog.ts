@@ -90,9 +90,12 @@ export class Dialog extends Action {
 	static override async bind(selector: string): Promise<void> {
 		// Add listener for the text speed setting (TypeWriter reads from preference directly)
 		$_(`${selector} [data-action="set-text-speed"]`).on('change mouseover', function (this: HTMLInputElement) {
+      const textbox = Dialog.engine.element().find('[data-component="text-box"] [data-component="type-writer"]').get(0) as TypeWriter | undefined;
 			const maxTextSpeed = Dialog.engine.setting('maxTextSpeed') as number;
-			const value = maxTextSpeed - parseInt(this.value);
+			const value = maxTextSpeed + parseInt(this.value);
+
 			Dialog.engine.preference('TextSpeed', value);
+			textbox?.setState({ config: { typeSpeed: value } });
 		});
 
 		// Detect scroll on the text element to remove the unread class used when
