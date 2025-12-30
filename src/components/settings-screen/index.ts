@@ -163,9 +163,7 @@ class SettingsScreen extends ScreenComponent<Properties, ScreenState> {
 				this.element().find('[data-platform="electron"]').remove();
 			}
 
-			this.element().find('[data-action="set-text-speed"]').value(
-				(this.engine.setting('maxTextSpeed') as number) - (this.engine.preference('TextSpeed') as number)
-			);
+			this.element().find('[data-action="set-text-speed"]').value((this.engine.preference('TextSpeed') as number));
 		});
 
 		// Disable audio settings in iOS since they are not supported

@@ -746,7 +746,8 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 			container.innerHTML = (this.constructor as typeof TypeWriter).stripActionMarkers(str);
 		} else {
 			// Rush through animation at maximum speed
-			this.speed = 0;
+			const minSpeed = this.engine.setting('minTextSpeed') as number;
+			this.speed = minSpeed > 0 ? 0 : minSpeed;
 			this.ignorePause = true;
 
 			if (this.loops) {
@@ -1132,6 +1133,15 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 		this._lastFrameTime = timestamp;
 		this._accumulatedTime += deltaTime;
 
+		// Some developers may want the text to appear instantly,
+		// while disabling "InstantText".
+		if (this._targetWaitTime < 0) {
+			while (this.elements && this.nodeCounter < this.elements.length) {
+				this._revealNextCharacter(true);
+			}
+			return;
+		}
+
 		// Check if we've waited long enough
 		if (this._accumulatedTime >= this._targetWaitTime) {
 			this._revealNextCharacter();
@@ -1144,7 +1154,7 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 	/**
 	 * Reveal the next character and schedule the next one.
 	 */
-	private _revealNextCharacter(): void {
+	private _revealNextCharacter(instant: boolean = false): void {
 		if (this.nextPause) {
 			this.nextPause = null;
 
@@ -1171,6 +1181,24 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 			this.elements[this.nodeCounter].style.opacity = '';
 		}
 		this.nodeCounter += 1;
+
+		// If the developer wants instant text while keeping "InstantText" off,
+		// this will handle executing all remaining actions semi-instantly.
+		if (instant && this.elements && this.nodeCounter < this.elements.length) {
+			if (this.actions[this.nodeCounter]) {
+				this.executeAction(this.actions[this.nodeCounter]!);
+
+				this.actionsPlayed++;
+				return;
+			}
+
+			if (this.actionsPlayed) {
+				this.nodeCounter -= this.actionsPlayed;
+				this.actionsPlayed = 0;
+			}
+
+			return;
+		}
 
 		if (this.elements && this.nodeCounter < this.elements.length) {
 			// Continue typing - start new timing cycle
