@@ -2992,6 +2992,12 @@ class Monogatari {
    * @returns {void}
    */
   static stopTyping (component: TypeWriterComponent): void {
+    // Main differences between instant text & speed text:
+    //    Instant Text:
+    //      -- Appear instantly & removes all non-node formatting.
+    //    Speed Text:
+    //      -- Appear gradually at the fastest speed while keeping all non-node formatting.
+    //      -- Setting min-speed to -1 or lower results in the benefits of speed text and instant text.
     const instant = this.setting('InstantText') as boolean;
 
     // TypeWriter.finish() handles setting finished_typing and triggering events
@@ -3907,11 +3913,11 @@ class Monogatari {
     const init: Promise<void>[] = [];
 
     for (const component of this.components ()) {
-      init.push (component.init ());
+      init.push (component.init (selector));
     }
 
     for (const action of this.actions ()) {
-      init.push (action.init ());
+      init.push (action.init (selector));
     }
 
     if (this.setting ('AutoSave') != 0 && typeof this.setting ('AutoSave') === 'number') {

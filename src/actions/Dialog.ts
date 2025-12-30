@@ -89,10 +89,12 @@ export class Dialog extends Action {
 
 	static override async bind(selector: string): Promise<void> {
 		// Add listener for the text speed setting (TypeWriter reads from preference directly)
+		const clamp = (num: number, min: number, max: number): number => Math.min(Math.max(num, min), max);
 		$_(`${selector} [data-action="set-text-speed"]`).on('change mouseover', function (this: HTMLInputElement) {
-      const textbox = Dialog.engine.element().find('[data-component="text-box"] [data-component="type-writer"]').get(0) as TypeWriter | undefined;
+			const textbox = Dialog.engine.element().find('[data-component="text-box"] [data-component="type-writer"]').get(0) as TypeWriter | undefined;
 			const maxTextSpeed = Dialog.engine.setting('maxTextSpeed') as number;
-			const value = maxTextSpeed + parseInt(this.value);
+			const minPlaySpeed = Dialog.engine.setting('minTextSpeed') as number;
+			const value = clamp(parseInt(this.value), minPlaySpeed, maxTextSpeed);
 
 			Dialog.engine.preference('TextSpeed', value);
 			textbox?.setState({ config: { typeSpeed: value } });
@@ -118,6 +120,7 @@ export class Dialog extends Action {
 		}
 
 		this.engine.setting('maxTextSpeed', parseInt(($_(`${selector} [data-action="set-text-speed"]`).attribute('max') || '0')));
+		this.engine.setting('minTextSpeed', parseInt(($_(`${selector} [data-action="set-text-speed"]`).attribute('min') || '0')));
 	}
 
 	static override async reset({ keepNVL = false, saveNVL = false }: { keepNVL?: boolean; saveNVL?: boolean } = {}): Promise<void> {
