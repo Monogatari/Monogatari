@@ -3566,9 +3566,9 @@ class Monogatari {
     }
 
     $_('.forceAspectRatio').style ({
-      width: widthCss,
-      height: heightCss,
-      marginTop: marginTopCss
+      'width': widthCss,
+      'height': heightCss,
+      'margin-top': marginTopCss
     });
   }
 
