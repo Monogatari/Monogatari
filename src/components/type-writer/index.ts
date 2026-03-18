@@ -95,10 +95,10 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 				action: function (this: TypeWriter, number: unknown): void {
 					const time = Number(number);
 
-					if (time) {
+					if (!isNaN(time) && time >= 0) {
 						this.nextPause = time;
 
-						if (typeof this.state.config.onTypingPaused === 'function') {
+						if (time > 0 && typeof this.state.config.onTypingPaused === 'function') {
 							this.state.config.onTypingPaused(this.stringPos, this);
 						}
 					} else {
@@ -112,9 +112,13 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 				action: function (this: TypeWriter, number: unknown): void {
 					const percentage = Number(number);
 
-					if (percentage) {
-						const speed = Math.floor((this.speed * 100) / percentage);
-						this.speed = speed;
+					if (!isNaN(percentage) && percentage >= 0) {
+						if (percentage === 0) {
+							this.speed = 0;
+						} else {
+							const speed = Math.floor((this.speed * 100) / percentage);
+							this.speed = speed;
+						}
 					} else {
 						this.engine.debug.error('Provided value was not a valid number value:\n' + number);
 					}
@@ -744,6 +748,11 @@ class TypeWriter extends Component<TypeWriterProps, TypeWriterState> {
 
 			// Show the full text with all action markers stripped
 			container.innerHTML = (this.constructor as typeof TypeWriter).stripActionMarkers(str);
+
+			// Fire the typed event so listeners (e.g. didFinishTyping) are notified.
+			// destroy() already sets finished_typing=true via onDestroy, but
+			// onStringTyped also triggers the didFinishTyping engine event.
+			this.state.config.onStringTyped?.(this.stringPos, this);
 		} else {
 			// Rush through animation at maximum speed
 			const minSpeed = this.engine.setting('minTextSpeed') as number;

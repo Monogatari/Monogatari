@@ -1,6 +1,5 @@
 'use strict';
-/* global Monogatari */
-/* global monogatari */
+/* global Monogatari, monogatari */
 
 /**
  * =============================================================================

@@ -1,4 +1,5 @@
 import Action from './../lib/Action';
+import { getDesktopBridge } from '../lib/DesktopBridge';
 
 export class End extends Action {
   static override id = 'End';
@@ -34,10 +35,10 @@ export class End extends Action {
           return;
         }
 
-        const electron = (window as any).electron;
+        const bridge = getDesktopBridge();
 
-        if (typeof electron === 'object' && typeof electron.send === 'function') {
-          electron.send('quit-request');
+        if (bridge) {
+          bridge.send('quit-request');
         }
       }
     });

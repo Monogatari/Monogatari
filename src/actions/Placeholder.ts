@@ -35,8 +35,8 @@ export class Placeholder extends Action {
 		await this.action.apply();
 	}
 
-	override async didApply(context: ActionApplyResult = { advance: true }): Promise<ActionApplyResult> {
-		return await this.action.didApply(context);
+	override async didApply(options?: { updateHistory?: boolean; updateState?: boolean }): Promise<ActionApplyResult> {
+		return await this.action.didApply(options);
 	}
 
 	override async willRevert(): Promise<void> {

@@ -350,9 +350,9 @@ export interface VisualNovelEngine {
   /**
    * Register a keyboard shortcut.
    * @param shortcut - Key(s) that trigger the shortcut
-   * @param callback - Callback invoked when shortcut is triggered
+   * @param callback - Callback invoked when shortcut is triggered, with `this` bound to the engine
    */
-  keyboardShortcut: (shortcut: string | string[], callback: (event: KeyboardEvent) => void) => void;
+  keyboardShortcut: (shortcut: string | string[], callback: (this: VisualNovelEngine, event: KeyboardEvent, element: DOM) => void) => void;
 
   // ===== State Management =====
 
@@ -616,6 +616,30 @@ export interface VisualNovelEngine {
    * Clear all asset caches (audio and image).
    */
   clearAllCaches: () => void;
+
+  /**
+   * Serialize an AudioBuffer into a plain object for IndexedDB storage.
+   * @param buffer - AudioBuffer to serialize
+   * @returns Serialized representation with channel data, sample rate, length, and channel count
+   */
+  serializeAudioBuffer: (buffer: AudioBuffer) => {
+    channels: Float32Array[];
+    sampleRate: number;
+    length: number;
+    numberOfChannels: number;
+  };
+
+  /**
+   * Reconstruct an AudioBuffer from serialized data.
+   * Much faster than re-decoding from raw audio file.
+   * @param data - Serialized audio buffer data
+   * @param audioContext - AudioContext to use for buffer creation
+   * @returns Reconstructed AudioBuffer
+   */
+  deserializeAudioBuffer: (
+    data: { channels: ArrayLike<number>[]; sampleRate: number; length: number; numberOfChannels: number },
+    audioContext: AudioContext
+  ) => AudioBuffer;
 
   // ===== Service Worker Communication =====
 
@@ -958,7 +982,7 @@ export interface VisualNovelEngine {
    * @param name - Optional save name
    * @returns Promise resolving when save is complete
    */
-  saveTo: (prefix?: string, id?: number | null, name?: string | null) => Promise<unknown> | undefined;
+  saveTo: (prefix?: string, id?: number | null, name?: string | null) => Promise<unknown | undefined>;
 
   /**
    * Load a game from a slot.

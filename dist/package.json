@@ -1,21 +1,17 @@
 {
   "name": "my-game",
-  "productName": "My Game",
   "version": "0.1.0",
-  "main": "engine/electron/index.js",
-  "description": "A description of your game",
   "author": "Your Name",
-  "license": "MIT",
-  "homepage": "https://example.com",
-  "targets": {
-    "webbrowser": {
-      "context": "browser",
-      "distDir": "dist/renderer",
-      "publicUrl": "./",
-      "sourceMap": true
-    }
+  "main": "engine/electron/index.js",
+  "devDependencies": {
+    "@electron/notarize": "^2.4.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.0.5"
   },
   "build": {
+    "directories": {
+      "output": "build/electron"
+    },
     "appId": "com.example.mygame",
     "win": {
       "target": [
@@ -46,21 +42,22 @@
     "icon": "assets/icons/512x512.png",
     "afterSign": "engine/electron/notarize.js"
   },
+  "description": "A description of your game",
+  "homepage": "https://example.com",
+  "license": "MIT",
+  "productName": "My Game",
   "scripts": {
-    "serve": "parcel index.html --target webbrowser",
+    "serve": "bun --hot serve.ts",
     "start": "yarn electron . --enable-logging",
+    "start:electrobun": "bunx electrobun build && bunx electrobun dev",
     "build": "yarn electron-builder -mwl",
     "build:windows": "yarn electron-builder -w",
     "build:mac": "yarn electron-builder -m",
-    "build:linux": "yarn electron-builder -l"
+    "build:linux": "yarn electron-builder -l",
+    "build:web": "bun build-web.ts",
+    "build:electrobun": "bunx electrobun build"
   },
-  "devDependencies": {
-    "@electron/notarize": "^2.4.0",
-    "electron": "^33.2.0",
-    "electron-builder": "^25.0.5"
-  },
-  "staticFiles": {
-    "staticPath": "assets",
-    "staticOutPath": "assets"
+  "dependencies": {
+    "electrobun": "^1.16.0"
   }
 }

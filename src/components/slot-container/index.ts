@@ -122,7 +122,8 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 					event.preventDefault();
 
 					const slot = $_(this).attribute('slot');
-					const slotId = slot?.split('_').pop() ?? null;
+					const slotIdStr = slot?.split('_').pop();
+					const slotId = slotIdStr ? parseInt(slotIdStr, 10) : null;
 					engine.global('overwrite_slot', slotId);
 					engine.Storage.get(self.props.label + '_' + engine.global('overwrite_slot')).then((data: unknown) => {
 						const saveData = data as { name?: string; date: string };

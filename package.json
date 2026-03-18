@@ -1,6 +1,6 @@
 {
 	"name": "@monogatari/core",
-	"version": "2.7.0",
+	"version": "2.8.0",
 	"type": "module",
 	"main": "./dist/engine/core/monogatari.module.js",
 	"module": "./dist/engine/core/monogatari.module.js",
@@ -34,8 +34,8 @@
 		"watch": "bun run watch:js && bun run watch:css",
 		"watch:js": "bun build.ts --watch",
 		"watch:css": "bun build.ts --css --watch",
-		"check": "tsc --noEmit",
-		"clean": "rm -rf dist/engine/core dist/types && rm -rf lib",
+		"check": "bunx tsc --noEmit",
+		"clean": "bun run rm -rf dist/engine/core dist/types && rm -rf lib",
 		"lint": "bunx eslint ./src",
 		"test": "bunx cypress"
 	},
@@ -57,9 +57,9 @@
 		"typescript-eslint": "^8.48.1"
 	},
 	"dependencies": {
-		"@aegis-framework/artemis": "^0.5.2",
+		"@aegis-framework/artemis": "^0.5.3",
 		"@aegis-framework/kayros.css": "^0.5.1",
-		"@aegis-framework/pandora": "^0.4.2",
+		"@aegis-framework/pandora": "^0.5.0",
 		"@fortawesome/fontawesome-free": "^7.1.0",
 		"@tsparticles/engine": "^3.9.1",
 		"@tsparticles/slim": "^3.9.1",

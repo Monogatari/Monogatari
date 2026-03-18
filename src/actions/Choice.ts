@@ -75,13 +75,19 @@ export class Choice extends Action {
 
       if (currentChoiceExists && typeof current[choice].onChosen === 'function') {
         Util.callAsync(current[choice].onChosen, engine).then(() => {
-          run();
+          return run();
+        }).catch((e) => {
+          Choice.blocking = false;
+          engine.debug.error(e);
         });
 
         return;
       }
 
-      run();
+      run().catch((e) => {
+        Choice.blocking = false;
+        engine.debug.error(e);
+      });
     });
   }
 
@@ -195,7 +201,7 @@ export class Choice extends Action {
     const timer = this.statement.Timer;
     const textBox = this.engine.element().find('[data-component="text-box"]').get(0);
 
-      if (typeof dialog === 'string') {
+    if (typeof dialog === 'string') {
       // If there's a dialog, we'll wait until showing that up to show
       // the choices, in order to avoid showing the choices in an incorrect
       // format if the dialog was NVL or not
@@ -226,7 +232,7 @@ export class Choice extends Action {
   override async willRevert(): Promise<void> {
     if (this.engine.history('choice').length > 0) {
       const choice = this.engine.history('choice')[this.engine.history('choice').length - 1];
-      if (this.statement[choice] !== 'undefined') {
+      if (typeof this.statement[choice] !== 'undefined') {
 
         // Check if the choice had an onChosen function with it's matching
         // onRevert functionality, or if no onChosen function was provided
@@ -247,11 +253,12 @@ export class Choice extends Action {
     const choice = this.engine.history('choice')[this.engine.history('choice').length - 1];
 
     // First, revert the action that was chosen
-    if (this.statement[choice] && typeof this.statement[choice].Do === 'string') {
-      await this.engine.revert(this.statement[choice].Do, false);
+    const chosenOption = this.statement[choice];
+    if (chosenOption && typeof chosenOption.Do === 'string') {
+      await this.engine.revert(chosenOption.Do, false);
     }
-    if (typeof this.statement[choice].onRevert === 'function') {
-      await Util.callAsync(this.statement[choice].onRevert, this.engine);
+    if (chosenOption && typeof chosenOption.onRevert === 'function') {
+      await Util.callAsync(chosenOption.onRevert, this.engine);
     }
 
     // Clean up timer if it exists
@@ -279,7 +286,7 @@ export class Choice extends Action {
     this.engine.element().find('choice-container').remove();
 
     // Now re-apply the choice to show it again
-    const action = this.engine.prepareAction(this._statement as string, { cycle: 'Application' }) as ActionInstance | null;
+    const action = this.engine.prepareAction(this._statement as unknown as string | Record<string, unknown>, { cycle: 'Application' }) as ActionInstance | null;
     if (action !== null) {
       await action.willApply();
       await action.apply();

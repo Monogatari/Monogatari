@@ -1,11 +1,16 @@
 import type { Properties } from '@aegis-framework/pandora';
 import { Platform, Text } from '@aegis-framework/artemis';
 import ScreenComponent, { ScreenState } from '../../lib/ScreenComponent';
+import { type DesktopBridge, getDesktopBridge } from '../../lib/DesktopBridge';
 
-// Extend Window interface for Electron support
+// Extend Window interface for desktop app support
 declare global {
 	interface Window {
 		electron?: {
+			send: (channel: string, data: unknown) => void;
+			on: (channel: string, callback: (args: unknown) => void) => void;
+		};
+		electrobun?: {
 			send: (channel: string, data: unknown) => void;
 			on: (channel: string, callback: (args: unknown) => void) => void;
 		};
@@ -36,7 +41,7 @@ class SettingsScreen extends ScreenComponent<Properties, ScreenState> {
 		return Promise.resolve();
 	}
 
-	electron(): void {
+	desktop(bridge: DesktopBridge): void {
 		this.element().find('[data-action="set-resolution"]').value(this.engine.preference('Resolution') as string);
 
 		window.onbeforeunload = (event: BeforeUnloadEvent) => {
@@ -57,12 +62,12 @@ class SettingsScreen extends ScreenComponent<Properties, ScreenState> {
 			return false;
 		};
 
-		window.electron!.send('window-info-request', {
+		bridge.send('window-info-request', {
 			title: this.engine.setting('Name'),
 			resizable: this.engine.setting('ForceAspectRatio') !== 'Global'
 		});
 
-		window.electron!.on('window-info-reply', (args: unknown) => {
+		bridge.on('window-info-reply', (args: unknown) => {
 			const { resizable, minWidth, maxWidth, minHeight, maxHeight } = args as {
 				resizable: boolean;
 				minWidth: number;
@@ -87,10 +92,10 @@ class SettingsScreen extends ScreenComponent<Properties, ScreenState> {
 
 				this.element().find('[data-action="set-resolution"]').append(`<option value="fullscreen">${this.engine.string('FullScreen')}</option>`);
 
-				this.changeWindowResolution(this.engine.preference('Resolution') as string);
+				this.changeWindowResolution(bridge, this.engine.preference('Resolution') as string);
 				this.element().find('[data-action="set-resolution"]').change((event: Event) => {
 					const size = (event.target as HTMLSelectElement).value;
-					this.changeWindowResolution(size);
+					this.changeWindowResolution(bridge, size);
 				});
 
 				this.element().find('[data-action="set-resolution"]').value(this.engine.preference('Resolution') as string);
@@ -100,7 +105,7 @@ class SettingsScreen extends ScreenComponent<Properties, ScreenState> {
 			}
 		});
 
-		window.electron!.on('resize-reply', (args: unknown) => {
+		bridge.on('resize-reply', (args: unknown) => {
 			const { width, height, fullscreen } = args as { width: number; height: number; fullscreen: boolean };
 
 			if (fullscreen) {
@@ -111,15 +116,15 @@ class SettingsScreen extends ScreenComponent<Properties, ScreenState> {
 		});
 	}
 
-	changeWindowResolution(resolution: string): void {
+	changeWindowResolution(bridge: DesktopBridge, resolution: string): void {
 		if (resolution) {
 			if (resolution === 'fullscreen') {
-				window.electron!.send('resize-request', {
+				bridge.send('resize-request', {
 					fullscreen: true
 				});
 			} else if (resolution.indexOf('x') > -1) {
 				const [width, height] = resolution.split('x');
-				window.electron!.send('resize-request', {
+				bridge.send('resize-request', {
 					width: parseInt(width),
 					height: parseInt(height),
 					fullscreen: false
@@ -154,13 +159,12 @@ class SettingsScreen extends ScreenComponent<Properties, ScreenState> {
 				this.content(`${mediaType}-audio-controller`).value(volume[Text.capitalize(mediaType)]);
 			}
 
-			// Set the electron quit handler.
-			if (Platform.electron && typeof window.electron === 'object') {
-				if (typeof window.electron.send === 'function' && typeof window.electron.on === 'function') {
-					this.electron();
-				}
+			// Set the desktop app quit handler.
+			const bridge = getDesktopBridge();
+			if (Platform.desktopApp && bridge) {
+				this.desktop(bridge);
 			} else {
-				this.element().find('[data-platform="electron"]').remove();
+				this.element().find('[data-platform="desktop"]').remove();
 			}
 
 			this.element().find('[data-action="set-text-speed"]').value((this.engine.preference('TextSpeed') as number));
@@ -224,7 +228,7 @@ class SettingsScreen extends ScreenComponent<Properties, ScreenState> {
 						<div class="horizontal horizontal--center" data-content="wrapper"></div>
 					</div>
 
-					<div data-settings="resolution" data-platform="electron">
+					<div data-settings="resolution" data-platform="desktop">
 						<h3 data-string="Resolution">Resolution</h3>
 						<div class="horizontal">
 							<select data-action="set-resolution"></select>

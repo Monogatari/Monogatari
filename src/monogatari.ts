@@ -254,6 +254,10 @@ class Monogatari {
     // character won't show the animation even if this is set to true.
     'CenteredTypeAnimation': true,
 
+    // When true, finishing a typing animation (e.g. clicking during text)
+    // will instantly show all remaining text rather than fast-forwarding.
+    'InstantText': false,
+
     // Force some orientation on mobile devices. If this setting is set either
     // to portrait or landscape, a warning message will be displayed so the
     // player rotates its device.
@@ -1654,7 +1658,7 @@ class Monogatari {
     // Check if asset preloading is enabled. Preloading will not be done in
     // electron or cordova since the assets are expected to be available
     // locally.
-    const preloadEnabled = this.setting ('Preload') && !Platform.electron && !Platform.cordova && location.protocol.indexOf ('file') < 0;
+    const preloadEnabled = this.setting ('Preload') && !Platform.desktopApp && !Platform.cordova && location.protocol.indexOf ('file') < 0;
 
     if (!preloadEnabled) {
       return Promise.resolve ();
@@ -2187,7 +2191,7 @@ class Monogatari {
           break;
       }
 
-      if (window.navigator && !Platform.electron && !Platform.cordova) {
+      if (window.navigator && !Platform.desktopApp && !Platform.cordova) {
         if (window.navigator.storage && window.navigator.storage.persist) {
           window.navigator.storage.persist ().then ((persisted) => {
             if (persisted !== true) {
@@ -2517,6 +2521,10 @@ class Monogatari {
    * if it couldn't be run correctly.
    */
   static async run (statement: unknown, shouldAdvance = true): Promise<{ advance: boolean }> {
+    // Capture current position at the start to detect if another advance happened
+    // during async operations (e.g., user click during Notification's willApply)
+    const initialStep = this.state ('step') as number;
+    const initialLabel = this.state ('label') as string;
 
     const actions = this.actions ();
     const before: Promise<void>[] = actions.map (action => action.beforeRun ({ advance: shouldAdvance }));
@@ -2548,8 +2556,16 @@ class Monogatari {
         this.debug.groupEnd ();
 
         if (shouldAdvance && returnValue !== false) {
-          // TODO: Do we need to return here? We don't do it in the other run methods.
-          return this.next ().then (() => ({ advance: true }));
+          // Only advance if we're still on the same step - another action might have
+          // already advanced the game (e.g., user clicked during async function)
+          const currentStep = this.state ('step') as number;
+          const currentLabel = this.state ('label') as string;
+          if (currentStep === initialStep && currentLabel === initialLabel) {
+            // TODO: Do we need to return here? We don't do it in the other run methods.
+            return this.next ().then (() => ({ advance: true }));
+          } else {
+            this.debug.debug ('Skipping auto-advance: game already advanced by another action');
+          }
         }
 
         return Promise.resolve ({ advance: false });
@@ -2627,8 +2643,16 @@ class Monogatari {
       await Promise.all (promises);
 
       if (advance === true && shouldAdvance === true) {
-        this.debug.debug ('Next action will be run right away');
-        this.next ();
+        // Only advance if we're still on the same step - another action might have
+        // already advanced the game (e.g., user clicked during async willApply)
+        const currentStep = this.state ('step') as number;
+        const currentLabel = this.state ('label') as string;
+        if (currentStep === initialStep && currentLabel === initialLabel) {
+          this.debug.debug ('Next action will be run right away');
+          this.next ();
+        } else {
+          this.debug.debug ('Skipping auto-advance: game already advanced by another action');
+        }
       }
 
       this.debug.groupEnd ();
@@ -3337,36 +3361,42 @@ class Monogatari {
       // where the assets are expected to be available locally and thus don't
       // require being cached.
       if (this.setting ('ServiceWorkers')) {
-        if (!Platform.electron && !Platform.cordova && Platform.serviceWorkers) {
-          navigator.serviceWorker.register('./service-worker.js').then ((registration) => {
+        if (!Platform.desktopApp && !Platform.cordova && Platform.serviceWorkers) {
+          if (window.location.protocol === 'file:') {
+            console.warn ('Service Workers are not available when opening the index.html file directly in your browser. Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/.');
+          } else {
+            navigator.serviceWorker.register('./service-worker.js').then ((registration) => {
 
-            // Check if an update to the service worker was found
-            registration.onupdatefound = () => {
-              const worker = registration.installing;
+              // Check if an update to the service worker was found
+              registration.onupdatefound = () => {
+                const worker = registration.installing;
 
-              if (worker) {
-                worker.onstatechange = () => {
-                  // Once the updated service worker has been installed,
-                  // show a notice to the players so that they reload the
-                  // page and get the latest content.
-                  if (worker.state === 'installed') {
-                    if (navigator.serviceWorker.controller) {
-                      const element = this.element();
-                      const broadcastElement = `
-                        <div data-ui="broadcast" data-content="new-content">
-                          <p data-string="NewContent">${this.string ('NewContent')}.</p>
-                        </div>
-                      `;
-                      element?.prepend (broadcastElement);
-                      element?.on ('click', '[data-ui="broadcast"][data-content="new-content"]', () => {
-                        this.element()?.find ('[data-ui="broadcast"][data-content="new-content"]').remove ();
-                      });
+                if (worker) {
+                  worker.onstatechange = () => {
+                    // Once the updated service worker has been installed,
+                    // show a notice to the players so that they reload the
+                    // page and get the latest content.
+                    if (worker.state === 'installed') {
+                      if (navigator.serviceWorker.controller) {
+                        const element = this.element();
+                        const broadcastElement = `
+                          <div data-ui="broadcast" data-content="new-content">
+                            <p data-string="NewContent">${this.string ('NewContent')}.</p>
+                          </div>
+                        `;
+                        element?.prepend (broadcastElement);
+                        element?.on ('click', '[data-ui="broadcast"][data-content="new-content"]', () => {
+                          this.element()?.find ('[data-ui="broadcast"][data-content="new-content"]').remove ();
+                        });
+                      }
                     }
-                  }
-                };
-              }
-            };
-          });
+                  };
+                }
+              };
+            }).catch ((error) => {
+              console.warn ('Failed to register Service Worker:', error.message);
+            });
+          }
         } else {
           console.warn ('Service Workers are not available in this browser or have been disabled in the engine configuration. Service Workers are available only when serving your files through a server, once you upload your game this warning will go away. You can also try using a simple server like this one for development: https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb/');
         }
@@ -3543,11 +3573,11 @@ class Monogatari {
   }
 
   static resize (_element: unknown, proportionWidth: number, proportionHeight: number): void {
-    const mainElement = $_('body').get (0);
-    if (!mainElement) return;
+    const parentElement = this.parentElement();
+    if (!parentElement) return;
 
-    const mainWidth = mainElement.offsetWidth;
-    const mainHeight = mainElement.offsetHeight;
+    const mainWidth = parentElement.width();
+    const mainHeight = parentElement.height();
 
     const h = Math.floor (mainWidth * (proportionHeight / proportionWidth));
 
@@ -3679,7 +3709,7 @@ class Monogatari {
         break;
 
       case 'Global':
-        this.element ().parent ().addClass('forceAspectRatio');
+        this.parentElement().addClass('forceAspectRatio');
         break;
 
       default:
@@ -3691,7 +3721,7 @@ class Monogatari {
       const [w, h] = aspectRatio.split (':');
       const proportionWidth = parseInt(w);
       const proportionHeight = parseInt(h);
-      if (!(Platform.electron && forceAspectRatio === 'Global')) {
+      if (!(Platform.desktopApp && forceAspectRatio === 'Global')) {
         this.resize (null, proportionWidth, proportionHeight);
         window.addEventListener('resize', () => this.resize (null, proportionWidth, proportionHeight));
       }

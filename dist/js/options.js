@@ -8,9 +8,7 @@
  **/
 
 'use strict';
-/* global Monogatari */
-
-const monogatari  = Monogatari.default;
+/* global monogatari */
 
 monogatari.settings({
 

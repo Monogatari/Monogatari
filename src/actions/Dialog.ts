@@ -89,14 +89,15 @@ export class Dialog extends Action {
 
 	static override async bind(selector: string): Promise<void> {
 		// Add listener for the text speed setting (TypeWriter reads from preference directly)
+		const engine = this.engine;
 		const clamp = (num: number, min: number, max: number): number => Math.min(Math.max(num, min), max);
 		$_(`${selector} [data-action="set-text-speed"]`).on('change mouseover', function (this: HTMLInputElement) {
-			const textbox = Dialog.engine.element().find('[data-component="text-box"] [data-component="type-writer"]').get(0) as TypeWriter | undefined;
-			const maxTextSpeed = Dialog.engine.setting('maxTextSpeed') as number;
-			const minPlaySpeed = Dialog.engine.setting('minTextSpeed') as number;
+			const textbox = engine.element().find('[data-component="text-box"] [data-component="type-writer"]').get(0) as TypeWriter | undefined;
+			const maxTextSpeed = engine.setting('maxTextSpeed') as number;
+			const minPlaySpeed = engine.setting('minTextSpeed') as number;
 			const value = clamp(parseInt(this.value), minPlaySpeed, maxTextSpeed);
 
-			Dialog.engine.preference('TextSpeed', value);
+			engine.preference('TextSpeed', value);
 			textbox?.setState({ config: { typeSpeed: value } });
 		});
 
@@ -125,6 +126,10 @@ export class Dialog extends Action {
 
 	static override async reset({ keepNVL = false, saveNVL = false }: { keepNVL?: boolean; saveNVL?: boolean } = {}): Promise<void> {
 		const textBox = this.engine.element().find('[data-component="text-box"]').get(0) as any;
+
+		if (!textBox) {
+			return;
+		}
 
 		if (saveNVL === true && textBox.props.mode === 'nvl') {
 			this.engine.history('nvl').push(textBox.content('dialog').html());
@@ -289,6 +294,10 @@ export class Dialog extends Action {
 
 		if (textBox.props?.mode !== 'nvl') {
 			Dialog.reset();
+			// NOTE: setProps does NOT trigger a re-render — it only updates the
+			// mode attribute so CSS (text-box[mode="nvl"]) applies. The ADV-mode
+			// type-writer element persists and serves as the container for NVL
+			// dialog entries appended to [data-ui="say"].
 			textBox.setProps({ mode: 'nvl' });
 
 			// We need to re-apply any custom classes here because the reset clears them
@@ -318,15 +327,19 @@ export class Dialog extends Action {
 			this.engine.element().find('[data-ui="say"]').append(`<div data-spoke="${character}" class='unnamed'><type-writer></type-writer></div>`);
 		}
 
-		// Use requestAnimationFrame to ensure the element is in the DOM and mounted
-		requestAnimationFrame(() => {
-			const elements = $_('[data-ui="say"] [data-spoke] type-writer');
-			const last = elements.last().get(0) as TypeWriter | undefined;
+		// Wait for the new type-writer component to be fully mounted before
+		// setting its content. Using ready() is more reliable than
+		// requestAnimationFrame since Pandora's connectedCallback is async.
+		const elements = $_('[data-ui="say"] [data-spoke] type-writer');
+		const last = elements.last().get(0) as TypeWriter | undefined;
 
-			if (last) {
+		if (last && typeof (last as any).ready === 'function') {
+			(last as any).ready(() => {
 				last.setContent(dialog, shouldAnimate);
-			}
-		});
+			});
+		} else if (last) {
+			last.setContent(dialog, shouldAnimate);
+		}
 
 		const text_box = this.engine.element().find('[data-component="text-box"]');
 		if (text_box.exists()) {
@@ -351,7 +364,18 @@ export class Dialog extends Action {
 				this.engine.history('nvl').push(textBox.content('dialog').html());
 			}
 
+			// NOTE: setProps does NOT trigger a re-render — it only updates the
+			// mode attribute on the element so CSS (text-box[mode="adv"]) applies.
+			// The type-writer child persists across mode changes by design.
 			textBox.setProps({ mode: 'adv' });
+
+			// Destroy any active NVL entry type-writers before clearing to prevent
+			// leaked animation frames from detached elements.
+			this.engine.element().find('[data-ui="say"] [data-spoke] type-writer').each((tw: any) => {
+				if (typeof tw.destroy === 'function') {
+					tw.destroy();
+				}
+			});
 
 			// Remove contents from the dialog area.
 			this.engine.element().find('[data-ui="say"]').html('');

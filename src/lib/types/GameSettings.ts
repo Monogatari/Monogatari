@@ -18,6 +18,7 @@ export interface GameSettings {
   NVLTypeAnimation: boolean;
   NarratorTypeAnimation: boolean;
   CenteredTypeAnimation: boolean;
+  InstantText: boolean;
   Orientation: string;
   Skip: number;
   AssetsPath: {

@@ -183,6 +183,10 @@ export interface GlobalsMap {
 
   // Save/Load screen
   delete_slot: string | null;
+  overwrite_slot: number | null;
+
+  // Dialog log
+  _log: unknown[];
 
   _dialog_pending_revert: boolean;
   _should_restore_nvl: boolean;
@@ -249,6 +253,9 @@ export interface HistoryMap {
 
   // Choice history
   choice: string[];
+
+  // Conditional history
+  conditional: string[];
 
   // Jump history (for tracking label jumps during revert)
   jump: JumpHistoryItem[];
@@ -324,12 +331,11 @@ export interface MenuButton {
 }
 
 /**
- * Action application result
+ * Action application result returned by didApply.
+ * The `advance` field indicates whether the game should proceed to the next statement.
  */
 export interface ActionApplyResult {
   advance?: boolean;
-  updateHistory?: boolean;
-  updateState?: boolean;
 }
 
 /**

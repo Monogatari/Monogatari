@@ -35,7 +35,7 @@ export class Scene extends Action {
 							const image = $_(firstChild);
 							const imgElement = image.get(0);
 							if (!imgElement) return '';
-							const classes = imgElement.classList.toString().replace('animated', '').trim();
+							const classes = Array.from(imgElement.classList).filter(c => c !== 'animated').join(' ');
 							return `show character ${image.data('character')} ${image.data('sprite')}${classes.length > 0 ? ` with ${classes}` : ''}`;
 						}),
 						images: elements.filter(element => element.indexOf('data-image=') > -1).map((element) => {
@@ -46,7 +46,7 @@ export class Scene extends Action {
 							const image = $_(firstChild);
 							const imgElement = image.get(0);
 							if (!imgElement) return '';
-							const classes = imgElement.classList.toString().replace('animated', '').trim();
+							const classes = Array.from(imgElement.classList).filter(c => c !== 'animated').join(' ');
 							return `show image ${image.data('image')}${classes.length > 0 ? ` with ${classes}` : ''}`;
 						}),
 					};
@@ -197,7 +197,7 @@ export class Scene extends Action {
 					const textBox = this.engine.element().find('[data-component="text-box"]').get(0) as (HTMLElement & { setProps?: (props: { mode: string }) => void }) | undefined;
 
 					if (textBox?.setProps) {
-						textBox.setProps({ mode: state.textBoxMode ?? '' });
+						textBox.setProps({ mode: state.textBoxMode || 'adv' });
 					}
 
 					if (state.textBoxMode === 'nvl') {
@@ -217,13 +217,13 @@ export class Scene extends Action {
 		const sceneHistory = this.engine.history('scene') as string[];
 		if (sceneHistory.length > 0) {
 			this.engine.global('_scene_history_cleared_by_background', false);
-			const last = sceneHistory[sceneHistory.length - 1];
+
+			// Pop the current scene first, then set state to the previous one
+			sceneHistory.pop();
 
 			this.engine.state({
-				scene: last ?? ''
+				scene: sceneHistory.length > 0 ? sceneHistory[sceneHistory.length - 1] : ''
 			});
-
-			sceneHistory.pop();
 
 			restoreSceneItems();
 			const dialogAction = this.engine.action('Dialog');

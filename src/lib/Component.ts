@@ -255,14 +255,14 @@ class Component<P extends Properties = Properties, S extends Properties = Proper
 	 *
 	 * @return {Promise} - Result of the reset operation
 	 */
-	static async onReset (): Promise<void> {
+	static async onReset (): Promise<void[]> {
 		const promises: Promise<void>[] = [];
 
 		this.instances((instance: any) => {
 			promises.push(instance.onReset());
 		});
 
-		await Promise.all(promises);
+		return Promise.all(promises);
 	}
 
 	/**

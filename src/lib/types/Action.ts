@@ -34,6 +34,12 @@ export interface StaticAction {
   loadingOrder: number;
 
   /**
+   * Whether this action is currently blocking the game from proceeding.
+   * Used as a per-action alternative to the deprecated global block.
+   */
+  blocking: boolean;
+
+  /**
    * Reference to the Monogatari engine (set by engine on registration).
    */
   engine: VisualNovelEngine;

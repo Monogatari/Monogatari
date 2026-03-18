@@ -73,18 +73,18 @@ export class ShowBackground extends Action {
 			}
 		}
 
-		if (typeof classes !== 'undefined') {
-			this.classes = ['animated', ...classes];
-		} else {
-			this.classes = [];
-		}
+		this.classes = ['animated', ...classes];
 	}
 
 	override async willApply(): Promise<void> {
 		const background = this.engine.element().find('[data-ui="background"]');
 
 		background.removeClass();
-		void (background.get(0) as any).offsetWidth;
+		// Force reflow to restart CSS animations
+		const el = background.get(0);
+		if (el) {
+			void (el as any).offsetWidth;
+		}
 	}
 
 	override async apply(): Promise<void> {
@@ -139,7 +139,7 @@ export class ShowBackground extends Action {
 		if (history.length > 0) {
 			const background = this.engine.element().find('[data-ui="background"]');
 			const last = history[history.length - 1].replace('show scene', 'show background');
-			const action = this.engine.prepareAction(last, { cycle: 'Application' }) as (ActionInstance & { property?: string; value?: string }) | null;
+			const action = this.engine.prepareAction(last, { cycle: 'Application' }) as (ActionInstance & { property?: string; value?: string; classes?: string[] }) | null;
 
 			background.style('background-image', 'initial');
 			background.style('background-color', 'initial');
@@ -147,7 +147,9 @@ export class ShowBackground extends Action {
 				background.style(action.property, action.value);
 			}
 
-			for (const newClass of this.classes) {
+			// Use the previous background's classes, not the current one being reverted
+			const classesToApply = action?.classes ?? [];
+			for (const newClass of classesToApply) {
 				background.addClass(newClass);
 			}
 
