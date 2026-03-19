@@ -104,6 +104,24 @@ export interface VisualNovelEngine {
    */
   _script: Record<string, unknown>;
 
+  /** @internal */ _characters: Record<string, Character>;
+  /** @internal */ _translations: Record<string, Record<string, string>>;
+  /** @internal */ _assets: Record<string, Record<string, string>>;
+  /** @internal */ _audioBufferCache: Map<string, AudioBuffer>;
+  /** @internal */ _imageCache: Map<string, HTMLImageElement>;
+  /** @internal */ _audioBufferSpace: Space | null;
+  /** @internal */ _indexedDBAvailable: boolean | null;
+  /** @internal */ _listeners: Array<{ name: string; keys?: string | string[]; callback: (this: VisualNovelEngine, event: Event, element: DOM) => unknown }>;
+  /** @internal */ _globals: Partial<GlobalsMap>;
+  /** @internal */ _state: StateMap;
+  /** @internal */ _history: HistoryMap;
+  /** @internal */ _storage: Record<string, unknown>;
+  /** @internal */ _upgrade: Record<string, { storage?: (oldData: unknown) => unknown; replaceStorage?: boolean }>;
+  /** @internal */ _actions: StaticAction[];
+  /** @internal */ _components: StaticComponent[];
+  /** @internal */ _settings: GameSettings;
+  /** @internal */ _preferences: PlayerPreferences;
+
   // ===== Lifecycle Methods =====
 
   /**
@@ -997,7 +1015,7 @@ export interface VisualNovelEngine {
    * @param newVersion - Version to upgrade to
    * @param callbacks - Migration callbacks
    */
-  upgrade: (oldVersion: string, newVersion: string, callbacks: { storage?: (oldData: unknown) => unknown }) => void;
+  upgrade: (oldVersion: string, newVersion: string, callbacks: { storage?: (oldData: unknown) => unknown; replaceStorage?: boolean }) => void;
 
   /**
    * Setup the storage adapter.
