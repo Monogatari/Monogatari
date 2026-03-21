@@ -276,6 +276,7 @@ export interface Character {
   default_expression?: string;
   type_animation?: boolean;
   nvl?: boolean;
+  layers?: string[];
   layer_assets?: Record<string, Record<string, string>>;
   // Legacy property names (for backwards compatibility)
   Name?: string;
