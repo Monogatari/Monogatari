@@ -181,6 +181,102 @@ function registerErrors(FancyError) {
     }
   });
 
+  // ShowCharacter Action
+  FancyError.register('action:show_character:character_not_found', {
+    title: 'The character "{{asset}}" does not exist',
+    message: 'Monogatari attempted to show the character "{{asset}}" but it wasn\'t found on the characters object.',
+    props: {
+      'Missing Character': '{{asset}}',
+      'You may have meant one of these': '{{availableCharacters}}',
+      'Statement': '{{statement}}',
+      'Label': '{{label}}',
+      'Step': '{{step}}',
+      'Help': {
+        '_': 'Check your characters object and your script to make sure the character exists and that it does not have a typo in it.'
+      }
+    }
+  });
+
+  FancyError.register('action:show_character:sprite_not_found', {
+    title: 'The sprite "{{sprite}}" for character "{{asset}}" does not exist',
+    message: 'Monogatari attempted to show the character "{{asset}}" with sprite "{{sprite}}" but the sprite wasn\'t found.',
+    props: {
+      'Character': '{{asset}}',
+      'Missing Sprite': '{{sprite}}',
+      'Available Sprites': '{{availableSprites}}',
+      'Statement': '{{statement}}',
+      'Label': '{{label}}',
+      'Step': '{{step}}',
+      'Help': {
+        '_': 'Check that the sprite name is correctly defined in your character\'s sprites object.'
+      }
+    }
+  });
+
+  // ShowCharacterLayer Action
+  FancyError.register('action:show_character_layer:character_not_found', {
+    title: 'The character "{{asset}}" does not exist',
+    message: 'Monogatari attempted to show a layer for character "{{asset}}" but the character wasn\'t found on the characters object.',
+    props: {
+      'Missing Character': '{{asset}}',
+      'Layer': '{{layer}}',
+      'You may have meant one of these': '{{availableCharacters}}',
+      'Statement': '{{statement}}',
+      'Label': '{{label}}',
+      'Step': '{{step}}',
+      'Help': {
+        '_': 'Check your characters object and your script to make sure the character exists and that it does not have a typo in it.'
+      }
+    }
+  });
+
+  FancyError.register('action:show_character_layer:sprite_not_found', {
+    title: 'The sprite "{{sprite}}" for layer "{{layer}}" of character "{{asset}}" does not exist',
+    message: 'Monogatari attempted to show a character layer but the sprite wasn\'t found in the layer assets.',
+    props: {
+      'Character': '{{asset}}',
+      'Layer': '{{layer}}',
+      'Missing Sprite': '{{sprite}}',
+      'Available Sprites': '{{availableSprites}}',
+      'Statement': '{{statement}}',
+      'Label': '{{label}}',
+      'Step': '{{step}}',
+      'Help': {
+        '_': 'Check that the sprite name is correctly defined in your character\'s layer_assets object for this layer.'
+      }
+    }
+  });
+
+  // HideImage Action
+  FancyError.register('action:hide_image:not_shown', {
+    title: 'The image "{{asset}}" can\'t hide because it\'s not being shown',
+    message: 'Monogatari attempted to hide the image "{{asset}}" but it was not being shown.',
+    props: {
+      'Missing Image': '{{asset}}',
+      'Statement': '{{statement}}',
+      'Label': '{{label}}',
+      'Step': '{{step}}',
+      'Help': {
+        '_': 'Check that before this hide action you have a show action that shows the image you want to hide.'
+      }
+    }
+  });
+
+  // HideCanvas Action
+  FancyError.register('action:hide_canvas:not_shown', {
+    title: 'The canvas "{{name}}" can\'t hide because it\'s not being shown',
+    message: 'Monogatari attempted to hide the canvas "{{name}}" but it was not being shown.',
+    props: {
+      'Canvas': '{{name}}',
+      'Statement': '{{statement}}',
+      'Label': '{{label}}',
+      'Step': '{{step}}',
+      'Help': {
+        '_': 'Check that before this hide action you have a show action that shows the canvas you want to hide.'
+      }
+    }
+  });
+
   // Conditional Action
   FancyError.register('action:conditional:negative_value', {
     title: 'Conditional condition returned a negative number "{{value}}".',
