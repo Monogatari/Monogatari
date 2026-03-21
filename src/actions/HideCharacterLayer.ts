@@ -105,13 +105,14 @@ export class HideCharacterLayer extends Action {
 			this.element.remove();
 		}
 
-		const parentAsComponent = this.parent.get(0);
-		const stateLayers = parentAsComponent.state.layers;
-		delete stateLayers[this.layer];
-
-		parentAsComponent.setState({
-			layers: stateLayers
-		});
+		const parentAsComponent = this.parent.get(0) as (HTMLElement & { state?: { layers?: Record<string, unknown> }; setState?: (state: Record<string, unknown>) => void }) | undefined;
+		if (parentAsComponent?.state && parentAsComponent?.setState) {
+			const stateLayers = parentAsComponent.state.layers || {};
+			const { [this.layer]: _, ...remainingLayers } = stateLayers;
+			parentAsComponent.setState({
+				layers: remainingLayers
+			});
+		}
 	}
 
 	override async didApply({ updateHistory = true, updateState = true } = {}): Promise<ActionApplyResult> {

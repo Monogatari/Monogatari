@@ -1,5 +1,6 @@
 import Action from './../lib/Action';
 import { $_ } from '@aegis-framework/artemis';
+import { FancyError } from './../lib/FancyError';
 import { ActionApplyResult, ActionRevertResult, ActionInstance, CharacterLayerHistoryItem } from '../lib/types';
 
 export class ShowCharacterLayer extends Action {
@@ -85,9 +86,36 @@ export class ShowCharacterLayer extends Action {
 			}
 
 		} else {
-			// TODO: Add Fancy Error when the specified character does not exist
 			this.sprite = '';
 			this.classes = [];
+		}
+	}
+
+	override async willApply(): Promise<void> {
+		if (typeof this.character === 'undefined') {
+			FancyError.show('action:show_character_layer:character_not_found', {
+				asset: this.asset,
+				layer: this.layer,
+				availableCharacters: Object.keys(this.engine.characters()),
+				statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
+			throw new Error(`Character "${this.asset}" not found.`);
+		}
+
+		if (typeof this.image === 'undefined') {
+			const layerAssets = this.character.layer_assets?.[this.layer];
+			FancyError.show('action:show_character_layer:sprite_not_found', {
+				asset: this.asset,
+				layer: this.layer,
+				sprite: this.sprite,
+				availableSprites: layerAssets ? Object.keys(layerAssets) : [],
+				statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
+			throw new Error(`Sprite "${this.sprite}" not found for layer "${this.layer}" of character "${this.asset}".`);
 		}
 	}
 

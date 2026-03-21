@@ -190,31 +190,28 @@ export class Video extends Action {
 					videoElement.remove();
 				}
 
-				let index = -1;
-
-				const state = this.engine.state('videos');
-				for (let i = state.length - 1; i >= 0; i--) {
-					const last = state[i];
-					const [, , name, mode] = last.split(' ');
-					if (name === this.name && mode === this.mode) {
-						index = i;
-						break;
-					}
-				}
+				const removeVideoFromState = () => {
+					let found = false;
+					this.engine.state({
+						videos: this.engine.state('videos').filter((item: string) => {
+							if (!found) {
+								const [, , name, mode] = item.split(' ');
+								if (name === this.name && mode === this.mode) {
+									found = true;
+									return false;
+								}
+							}
+							return true;
+						})
+					});
+				};
 
 				if (this.mode === 'immersive' || this.mode === 'fullscreen' || this.mode === 'modal') {
-					if (index > -1) {
-						const videos = this.engine.state('videos');
-						videos.splice(index, 1);
-					}
-
+					removeVideoFromState();
 				  Video.blocking = false;
 					this.engine.proceed({ userInitiated: false, skip: false, autoPlay: false });
 				} else if (this.mode === 'background' || this.mode === 'displayable') {
-					if (index > -1) {
-						const videos = this.engine.state('videos');
-						videos.splice(index, 1);
-					}
+					removeVideoFromState();
 				}
 			};
 		}
@@ -260,7 +257,9 @@ export class Video extends Action {
 		}
 
 		if (updateState === true) {
-			this.engine.state('videos').push(statement);
+			this.engine.state({
+				videos: [...this.engine.state('videos'), statement]
+			});
 		}
 
 		if (this.mode === 'background' || this.mode === 'modal' || this.mode === 'displayable') {
@@ -290,21 +289,24 @@ export class Video extends Action {
 	}
 
 	override async didRevert(): Promise<ActionRevertResult> {
-		const state = this.engine.state('videos');
+		let foundState = false;
+		this.engine.state({
+			videos: this.engine.state('videos').filter((item: string) => {
+				if (!foundState) {
+					const [, , name, mode] = item.split(' ');
+					if (name === this.name && mode === this.mode) {
+						foundState = true;
+						return false;
+					}
+				}
+				return true;
+			})
+		});
+
 		const history = this.engine.history('video');
-
-		for (let i = state.length - 1; i >= 0; i--) {
-			const last = state[i];
-			const [show, video, name, mode] = last.split(' ');
-			if (name === this.name && mode === this.mode) {
-				state.splice(i, 1);
-				break;
-			}
-		}
-
 		for (let i = history.length - 1; i >= 0; i--) {
 			const last = history[i];
-			const [show, video, name, mode] = last.split(' ');
+			const [, , name, mode] = last.split(' ');
 			if (name === this.name && mode === this.mode) {
 				history.splice(i, 1);
 				break;

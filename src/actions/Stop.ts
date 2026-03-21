@@ -100,16 +100,16 @@ export class Stop extends Action {
 			for (let i = history.length - 1; i >= 0; i--) {
 				const last = history[i];
 				if (typeof last === 'string') {
-					const [play, type, media] = last.split(' ');
+					const [, type, media] = last.split(' ');
 
 					if (this.type === type && this.media === media) {
-						// prepareAction returns typeof Action but actually returns instance
 						const action = this.engine.prepareAction(last, { cycle: 'Application' }) as ActionInstance | null;
 						if (action) {
 							await action.willApply();
 							await action.apply();
 							await action.didApply({ updateHistory: false, updateState: true });
 						}
+						return;
 					}
 				}
 			}

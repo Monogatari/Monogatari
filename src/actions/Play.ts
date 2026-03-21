@@ -417,7 +417,13 @@ export class Play extends Action {
     const currentState = this.engine.state(this.type);
 
     if (typeof this.mediaKey !== 'undefined') {
-      this.engine.history(this.type).pop();
+      const history = this.engine.history(this.type) as string[];
+      for (let i = history.length - 1; i >= 0; i--) {
+        if (history[i] === this._statement) {
+          history.splice(i, 1);
+          break;
+        }
+      }
       const filteredState = currentState.filter((m: MediaStateItem) => m.statement !== this._statement);
       this.engine.state({ [this.type]: filteredState });
     } else if (this.player instanceof Array) {

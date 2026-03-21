@@ -1,6 +1,6 @@
 import Action from './../lib/Action';
 import Video from './Video';
-import { ActionApplyResult, ActionRevertResult } from '../lib/types';
+import { ActionApplyResult, ActionRevertResult, ActionInstance } from '../lib/types';
 
 export class HideVideo extends Action {
 
@@ -54,24 +54,34 @@ export class HideVideo extends Action {
 	}
 
 	override async didApply(): Promise<ActionApplyResult> {
-		for (let i = this.engine.state('videos').length - 1; i >= 0; i--) {
-			const last = this.engine.state('videos')[i];
-			const [show, video, name, mode] = last.split(' ');
-			if (name === this.name) {
-				this.engine.state('videos').splice(i, 1);
-				break;
-			}
-		}
+		let found = false;
+		this.engine.state({
+			videos: this.engine.state('videos').filter((item: string) => {
+				if (!found) {
+					const [, , name] = item.split(' ');
+					if (name === this.name) {
+						found = true;
+						return false;
+					}
+				}
+				return true;
+			})
+		});
 		return { advance: true };
 	}
 
 	override async revert(): Promise<void> {
-		for (let i = this.engine.history('video').length - 1; i >= 0; i--) {
-			const last = this.engine.history('video')[i];
-			const [show, video, name, mode] = last.split(' ');
+		const history = this.engine.history('video') as string[];
+		for (let i = history.length - 1; i >= 0; i--) {
+			const last = history[i];
+			const [, , name] = last.split(' ');
 			if (name === this.name) {
-				this.engine.history('video').splice(i, 1);
-				await this.engine.run(last, false);
+				const action = this.engine.prepareAction(last, { cycle: 'Application' }) as ActionInstance | null;
+				if (action !== null) {
+					await action.willApply();
+					await action.apply();
+					await action.didApply({ updateHistory: false, updateState: true });
+				}
 				return;
 			}
 		}

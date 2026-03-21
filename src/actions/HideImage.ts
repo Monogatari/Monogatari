@@ -1,4 +1,5 @@
 import Action from './../lib/Action';
+import { FancyError } from './../lib/FancyError';
 import { ActionApplyResult, ActionRevertResult } from '../lib/types';
 
 export class HideImage extends Action {
@@ -25,6 +26,18 @@ export class HideImage extends Action {
 			this.classes = [];
 		}
 		this.classes = this.classes.filter((c) => (c !== 'at' && c !== 'with'));
+	}
+
+	override async willApply(): Promise<void> {
+		if (!this.element.exists()) {
+			FancyError.show('action:hide_image:not_shown', {
+				asset: this.asset,
+				statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
+			throw new Error('Attempted to hide an image that was not being shown.');
+		}
 	}
 
 	override async apply(): Promise<void> {

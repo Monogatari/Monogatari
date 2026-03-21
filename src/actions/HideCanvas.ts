@@ -1,6 +1,7 @@
 import Action from './../lib/Action';
 import { Util } from '@aegis-framework/artemis';
-import { ActionApplyResult, ActionRevertResult } from '../lib/types';
+import { FancyError } from './../lib/FancyError';
+import { ActionApplyResult, ActionRevertResult, ActionInstance } from '../lib/types';
 
 export class HideCanvas extends Action {
 
@@ -28,6 +29,18 @@ export class HideCanvas extends Action {
 			this.classes = classes;
 		} else {
 			this.classes = [];
+		}
+	}
+
+	override async willApply(): Promise<void> {
+		if (this.element === null) {
+			FancyError.show('action:hide_canvas:not_shown', {
+				name: this.name,
+				statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
+			throw new Error('Attempted to hide a canvas that was not being shown.');
 		}
 	}
 
@@ -61,14 +74,19 @@ export class HideCanvas extends Action {
 	}
 
 	override async didApply(): Promise<ActionApplyResult> {
-		for (let i = this.engine.state('canvas').length - 1; i >= 0; i--) {
-			const last = this.engine.state('canvas')[i];
-			const [show, canvas, name, mode] = last.split(' ');
-			if (name === this.name) {
-				this.engine.state('canvas').splice(i, 1);
-				break;
-			}
-		}
+		let found = false;
+		this.engine.state({
+			canvas: this.engine.state('canvas').filter((item: string) => {
+				if (!found) {
+					const [, , name] = item.split(' ');
+					if (name === this.name) {
+						found = true;
+						return false;
+					}
+				}
+				return true;
+			})
+		});
 		return { advance: true };
 	}
 
@@ -78,10 +96,13 @@ export class HideCanvas extends Action {
 			const last = canvasHistory[i];
 			const [, , name] = last.split(' ');
 			if (name === this.name) {
-				canvasHistory.splice(i, 1);
-				await this.engine.run(last, false);
+				const action = this.engine.prepareAction(last, { cycle: 'Application' }) as ActionInstance | null;
+				if (action !== null) {
+					await action.willApply();
+					await action.apply();
+					await action.didApply({ updateHistory: false, updateState: true });
+				}
 				return;
-
 			}
 		}
 	}

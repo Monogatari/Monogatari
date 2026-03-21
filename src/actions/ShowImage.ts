@@ -127,11 +127,18 @@ export class ShowImage extends Action {
 	}
 
 	override async didRevert(): Promise<ActionRevertResult> {
-		this.engine.history('image').pop();
+		const history = this.engine.history('image') as string[];
+		for (let i = history.length - 1; i >= 0; i--) {
+			const [, , asset] = history[i].split(' ');
+			if (asset === this.asset) {
+				history.splice(i, 1);
+				break;
+			}
+		}
 		this.engine.state({
 			images: [...this.engine.state('images').filter((item: string) => {
 				if (typeof item === 'string') {
-					const [show, image, asset] = item.split(' ');
+					const [, , asset] = item.split(' ');
 					return asset !== this.asset;
 				}
 				return true;

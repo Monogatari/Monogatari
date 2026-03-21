@@ -223,7 +223,9 @@ export class Canvas extends Action {
 		}
 
 		if (updateState === true) {
-			this.engine.state('canvas').push(statement);
+			this.engine.state({
+				canvas: [...this.engine.state('canvas'), statement]
+			});
 		}
 
 		if (this.mode === 'background' || this.mode === 'character' || this.mode === 'displayable') {
@@ -236,9 +238,12 @@ export class Canvas extends Action {
 	override async willRevert(): Promise<void> {
 		this.containerSelector = `[data-component="canvas-container"][canvas="${this.name}"][mode="${this.mode}"]`;
 		this.element = document.querySelector(this.containerSelector);
-		this.object = this.element.props.object;
 
-		return Promise.resolve();
+		if (this.element === null) {
+			throw new Error(`Canvas element "${this.name}" (mode: ${this.mode}) not found in the DOM.`);
+		}
+
+		this.object = this.element.props.object;
 	}
 
 	override async revert(): Promise<void> {
@@ -247,20 +252,25 @@ export class Canvas extends Action {
 	}
 
 	override async didRevert(): Promise<ActionRevertResult> {
-		for (let i = this.engine.state('canvas').length - 1; i >= 0; i--) {
-			const last = this.engine.state('canvas')[i];
-			const [show, canvas, name, mode] = last.split(' ');
-			if (name === this.name && mode === this.mode) {
-				this.engine.state('canvas').splice(i, 1);
-				break;
-			}
-		}
+		let foundState = false;
+		this.engine.state({
+			canvas: this.engine.state('canvas').filter((item: string) => {
+				if (!foundState) {
+					const [, , name, mode] = item.split(' ');
+					if (name === this.name && mode === this.mode) {
+						foundState = true;
+						return false;
+					}
+				}
+				return true;
+			})
+		});
 
-		for (let i = this.engine.history('canvas').length - 1; i >= 0; i--) {
-			const last = this.engine.history('canvas')[i];
-			const [show, canvas, name, mode] = last.split(' ');
+		const history = this.engine.history('canvas') as string[];
+		for (let i = history.length - 1; i >= 0; i--) {
+			const [, , name] = history[i].split(' ');
 			if (name === this.name) {
-				this.engine.history('canvas').splice(i, 1);
+				history.splice(i, 1);
 				break;
 			}
 		}

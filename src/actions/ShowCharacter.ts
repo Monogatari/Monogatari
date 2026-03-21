@@ -1,5 +1,6 @@
 import Action from './../lib/Action';
 import { $_ } from '@aegis-framework/artemis';
+import { FancyError } from './../lib/FancyError';
 import { ActionApplyResult, ActionRevertResult, ActionInstance, CharacterHistoryItem } from '../lib/types';
 
 export class ShowCharacter extends Action {
@@ -81,9 +82,33 @@ export class ShowCharacter extends Action {
 			}
 
 		} else {
-			// TODO: Add Fancy Error when the specified character does not exist
 			this.sprite = '';
 			this.classes = [];
+		}
+	}
+
+	override async willApply(): Promise<void> {
+		if (typeof this.character === 'undefined') {
+			FancyError.show('action:show_character:character_not_found', {
+				asset: this.asset,
+				availableCharacters: Object.keys(this.engine.characters()),
+				statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
+			throw new Error(`Character "${this.asset}" not found.`);
+		}
+
+		if (typeof this.image === 'undefined') {
+			FancyError.show('action:show_character:sprite_not_found', {
+				asset: this.asset,
+				sprite: this.sprite,
+				availableSprites: this.character.sprites ? Object.keys(this.character.sprites) : [],
+				statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
+			throw new Error(`Sprite "${this.sprite}" not found for character "${this.asset}".`);
 		}
 	}
 
@@ -467,16 +492,14 @@ export class ShowCharacter extends Action {
 						}
 						return;
 					} else {
-						if (typeof this.image === 'object') {
-							for (let j = characterLayerHistory.length - 1; j >= 0; j--) {
-								const { parent } = characterLayerHistory[j];
-								if (typeof parent === 'string') {
-									const [, , _asset] = parent.split(' ');
+						for (let j = characterLayerHistory.length - 1; j >= 0; j--) {
+							const { parent } = characterLayerHistory[j];
+							if (typeof parent === 'string') {
+								const [, , _asset] = parent.split(' ');
 
-									if (_asset === this.asset) {
-										characterLayerHistory.splice(j, 1);
-										break;
-									}
+								if (_asset === this.asset) {
+									characterLayerHistory.splice(j, 1);
+									break;
 								}
 							}
 						}
@@ -498,27 +521,32 @@ export class ShowCharacter extends Action {
 		// If the script didn't return on the for cycle above, it means either the
 		// history didn't have any items left or, the character was not found.
 		// In that case, we simply remove the character from the state.
-		this.engine.state({
+		const updatedState: Record<string, unknown> = {
 			characters: [
 				...this.engine.state('characters').filter((item: any) => {
 					if (typeof item === 'string') {
-						const [show, character, asset, sprite] = item.split(' ');
+						const [, , asset] = item.split(' ');
 						return asset !== this.asset;
 					}
 					return false;
 				}),
 			],
-			characterLayers: [
+		};
+
+		if (this.engine.setting('ExperimentalFeatures') === true) {
+			updatedState.characterLayers = [
 				...this.engine.state('characterLayers').filter((item: any) => {
 					if (typeof item === 'string') {
-						const [show, character, asset, sprite] = item.split(' ');
-						const [id, layer] = asset.split(':');
+						const [, , asset] = item.split(' ');
+						const [id] = asset.split(':');
 						return id !== this.asset;
 					}
 					return false;
 				}),
-			]
-		});
+			];
+		}
+
+		this.engine.state(updatedState);
 	}
 
 	override async didRevert(): Promise<ActionRevertResult> {
