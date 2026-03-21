@@ -444,3 +444,4 @@ export * from './GameSettings';
 export * from './PlayerPreferences';
 export * from './Monogatari';
 export * from './TypeWriterEffects';
+export { FileSystemStorage } from '../FileSystemStorage';

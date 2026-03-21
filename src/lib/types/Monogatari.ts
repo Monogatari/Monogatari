@@ -22,6 +22,35 @@ import type {
 } from './index';
 
 // ============================================================================
+// Storage Interface
+// ============================================================================
+
+/**
+ * Common interface satisfied by both Artemis Space and FileSystemStorage.
+ */
+export interface StorageInterface {
+  get(key: string): Promise<unknown>;
+  set(key: string, value: unknown): Promise<unknown>;
+  update(key: string, value: unknown): Promise<unknown>;
+  remove(key: string): Promise<void>;
+  getAll(): Promise<Record<string, unknown>>;
+  each(callback: (key: string, value: unknown) => unknown): Promise<unknown[]>;
+  clear(): Promise<void>;
+  key(index: number, full?: boolean): Promise<string>;
+  keys(full?: boolean): Promise<string[]>;
+  contains(key: string): Promise<void>;
+  open(): Promise<unknown>;
+  configuration(object?: Record<string, unknown> | null): Record<string, unknown> | undefined;
+  rename(name: string): Promise<void>;
+  upgrade(oldVersion: string, newVersion: string, callback: (...args: unknown[]) => Promise<void>): Promise<unknown>;
+  onCreate(callback: (key: string, value: unknown) => void): void;
+  onUpdate(callback: (key: string, value: unknown) => void): void;
+  onDelete(callback: (key: string, value: unknown) => void): void;
+  addTransformation(transformation: { id: string; get?: ((key: string, value: unknown) => unknown) | null; set?: ((key: string, value: unknown) => unknown) | null }): void;
+  removeTransformation(id: string): void;
+}
+
+// ============================================================================
 // Listener Types
 // ============================================================================
 
@@ -96,7 +125,7 @@ export interface VisualNovelEngine {
   /**
    * Storage adapter for persistent data (save files, settings)
    */
-  Storage: Space;
+  Storage: StorageInterface;
 
   /**
    * Internal script storage
@@ -1016,6 +1045,31 @@ export interface VisualNovelEngine {
    * @param callbacks - Migration callbacks
    */
   upgrade: (oldVersion: string, newVersion: string, callbacks: { storage?: (oldData: unknown) => unknown; replaceStorage?: boolean }) => void;
+
+  /**
+   * Called during saveTo() to persist a screenshot blob.
+   * Receives the slot key and raw Blob. Must return a storage key string.
+   * Override this to control where screenshots are stored.
+   */
+  onSaveScreenshot: (slotKey: string, blob: Blob) => Promise<string>;
+
+  /**
+   * Called by save-slot to resolve a screenshot key into an image src URL.
+   * Override this for custom retrieval logic.
+   */
+  onLoadScreenshot: (key: string) => Promise<string>;
+
+  /**
+   * Called when a save slot is deleted to clean up the screenshot.
+   * Override this for custom cleanup logic.
+   */
+  onDeleteScreenshot: (key: string) => Promise<void>;
+
+  /**
+   * Whether the developer has overridden the default onSaveScreenshot callback.
+   * @internal
+   */
+  _hasCustomSaveScreenshot: boolean;
 
   /**
    * Setup the storage adapter.

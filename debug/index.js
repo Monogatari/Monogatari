@@ -739,6 +739,23 @@ function registerErrors(FancyError) {
       }
     }
   });
+
+  FancyError.register('engine:storage:filesystem_no_bridge', {
+    title: 'FileSystem storage requires a desktop environment',
+    message: 'The FileSystem storage adapter is only available in Electron or Electrobun. Change your Storage adapter to IndexedDB or LocalStorage for browser-based games.',
+    props: {
+      'Suggested Fix': 'Set Storage.Adapter to "IndexedDB" in your game settings, or run your game in an Electron or Electrobun wrapper.',
+    }
+  });
+
+  FancyError.register('engine:screenshots:storage_incompatible', {
+    title: 'Screenshot saving requires IndexedDB or custom storage',
+    message: 'Automatic screenshot saving is not supported with LocalStorage or SessionStorage due to storage size limits. Either change your Storage adapter to IndexedDB or provide custom onSaveScreenshot and onLoadScreenshot callbacks.',
+    props: {
+      'Current Adapter': '{{adapter}}',
+      'Suggested Fix': 'Set Storage.Adapter to "IndexedDB" in your game settings, or provide custom onSaveScreenshot/onLoadScreenshot callbacks.',
+    }
+  });
 }
 
 // Wait for Monogatari to be available, then register all errors with its

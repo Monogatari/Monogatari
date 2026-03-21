@@ -10,9 +10,8 @@ import {
 import type { DOM, EventCallback } from '@aegis-framework/artemis';
 import {  Registry } from '@aegis-framework/pandora';
 import { FancyError } from './lib/FancyError';
-import Component  from './lib/Component';
 import AudioPlayer from './lib/AudioPlayer';
-import type { StaticComponent, StaticAction, Character, GameSettings, PlayerPreferences, StateMap, HistoryMap, GlobalsMap, ActionInstance } from './lib/types';
+import type { StaticComponent, StaticAction, Character, GameSettings, PlayerPreferences, StateMap, HistoryMap, GlobalsMap, ActionInstance, StorageInterface } from './lib/types';
 import deeply from 'deeply';
 import { version } from '../package.json';
 import { Random, browserCrypto } from 'random-js';
@@ -193,7 +192,37 @@ class Monogatari {
   // Track IndexedDB availability: null = not checked, true = available, false = unavailable
   static _indexedDBAvailable: boolean | null = null;
 
-  static Storage: Space = new Space ();
+  // Whether the developer has overridden the default onSaveScreenshot callback
+  static _hasCustomSaveScreenshot = false;
+
+  static Storage: StorageInterface = new Space () as unknown as StorageInterface;
+
+  // Screenshot callbacks with defaults. Override to customize screenshot storage.
+  private static _onSaveScreenshot: (slotKey: string, blob: Blob) => Promise<string> = async (slotKey, blob) => {
+    await Monogatari.Storage.set(`${slotKey}__screenshot`, blob);
+
+    return `${slotKey}__screenshot`;
+  };
+
+  static get onSaveScreenshot(): (slotKey: string, blob: Blob) => Promise<string> {
+    return this._onSaveScreenshot;
+  }
+
+  static set onSaveScreenshot(callback: (slotKey: string, blob: Blob) => Promise<string>) {
+    this._onSaveScreenshot = callback;
+
+    this._hasCustomSaveScreenshot = true;
+  }
+
+  static onLoadScreenshot: (key: string) => Promise<string> = async (key) => {
+    const blob = await Monogatari.Storage.get(key) as Blob;
+
+    return URL.createObjectURL(blob);
+  };
+
+  static onDeleteScreenshot: (key: string) => Promise<void> = async (key) => {
+    await Monogatari.Storage.remove(key);
+  };
 
   static _mediaPlayers: Record<string, Record<string, HTMLAudioElement | HTMLVideoElement | AudioPlayer | (HTMLAudioElement & { stop?: () => void }) | (HTMLVideoElement & { stop?: () => void })>> = {
     music: {},
@@ -393,7 +422,12 @@ class Monogatari {
     // These features are unfinished and unstable, chances are they will still
     // go through a lot of changes and functionality won't have any backward
     // compatibility rendering your save files unusable on many cases.
-    'ExperimentalFeatures': false
+    'ExperimentalFeatures': false,
+
+    // Enable screenshot capture for save slots. When true, save slots show a
+    // screenshot of the game screen instead of just the scene/background image.
+    // Requires IndexedDB adapter or custom onSaveScreenshot/onLoadScreenshot callbacks.
+    'Screenshots': false
   };
 
   static _preferences: PlayerPreferences = {

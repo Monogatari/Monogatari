@@ -1,8 +1,14 @@
-import type { VisualNovelEngine } from '../lib/types/Monogatari';
-import type { LegacySaveData, HistoryMap, StateMap } from '../lib/types';
 import { $_, Space, SpaceAdapter, Platform, Text } from '@aegis-framework/artemis';
 import { DateTime } from 'luxon';
+
+import type { VisualNovelEngine, StorageInterface } from '../lib/types/Monogatari';
+import type { LegacySaveData, HistoryMap, StateMap } from '../lib/types';
+import type { GameSettings } from '../lib/types';
+
 import migrate from '../migrations';
+import { FancyError } from '../lib/FancyError';
+import { FileSystemStorage } from '../lib/FileSystemStorage';
+import { getDesktopBridge } from '../lib/DesktopBridge';
 
 // ============================================================================
 // Game Object / State Snapshot
@@ -52,12 +58,41 @@ export async function saveTo (engine: VisualNovelEngine, prefix = 'SaveLabel', i
 		image = sceneState.split (' ')[2];
 	}
 
-	const response = await engine.Storage.set (`${engine.setting (prefix)}_${id || timestamp}`, {
+	const slotKey = `${engine.setting (prefix)}_${id || timestamp}`;
+
+	let screenshot: string | undefined;
+
+	if (engine.setting ('Screenshots')) {
+		try {
+			const { domToBlob } = await import ('modern-screenshot');
+			const gameScreen = document.querySelector ('[data-screen="game"]') as HTMLElement;
+			if (gameScreen) {
+				const blob = await domToBlob (gameScreen, {
+					quality: 0.8,
+					type: 'image/jpeg',
+					scale: 400 / gameScreen.offsetWidth,
+				});
+				if (blob) {
+					screenshot = await engine.onSaveScreenshot (slotKey, blob);
+				}
+			}
+		} catch (e) {
+			engine.debug.warn ('Screenshot capture failed:', e);
+		}
+	}
+
+	const saveData: Record<string, unknown> = {
 		name,
 		date,
 		image,
 		game: gameData
-	});
+	};
+
+	if (screenshot) {
+		saveData.screenshot = screenshot;
+	}
+
+	const response = await engine.Storage.set (slotKey, saveData);
 
 	if (response instanceof Response) {
 		return Promise.resolve (response.json ());
@@ -155,8 +190,30 @@ export function setupStorage (engine: VisualNovelEngine): void {
 				};
 				break;
 
+			case 'FileSystem': {
+				const bridge = getDesktopBridge();
+
+				if (bridge) {
+					const fsStorage = new FileSystemStorage(bridge);
+
+					fsStorage.configuration({
+						name: Text.friendly(engine.setting('Name') as string),
+						version: engine.setting('Version') as string,
+						store: storageSetting.Store,
+					});
+
+					engine.Storage = fsStorage as unknown as StorageInterface;
+				} else {
+					FancyError.show('engine:storage:filesystem_no_bridge', {});
+
+					// Fall back to IndexedDB so the game remains functional
+					adapter = SpaceAdapter.IndexedDB;
+				}
+				break;
+			}
+
 			default:
-				adapter = SpaceAdapter.LocalStorage;
+				adapter = SpaceAdapter.IndexedDB;
 				break;
 		}
 
@@ -172,13 +229,15 @@ export function setupStorage (engine: VisualNovelEngine): void {
 			}
 		}
 
-		engine.Storage = new Space (adapter, {
-			name: Text.friendly (engine.setting ('Name') as string),
-			version: engine.setting ('Version') as string,
-			store: storageSetting.Store,
-			endpoint: storageSetting.Endpoint,
-			props,
-		} as ConstructorParameters<typeof Space>[1]);
+		if (!(engine.Storage instanceof FileSystemStorage)) {
+			engine.Storage = new Space(adapter, {
+				name: Text.friendly(engine.setting('Name') as string),
+				version: engine.setting('Version') as string,
+				store: storageSetting.Store,
+				endpoint: storageSetting.Endpoint,
+				props,
+			} as ConstructorParameters<typeof Space>[1]) as unknown as StorageInterface;
+		}
 	}
 
 	// Setup all the upgrade functions
@@ -212,6 +271,20 @@ export function setupStorage (engine: VisualNovelEngine): void {
 					}
 				}
 			});
+		}
+	}
+
+	// Check for incompatible screenshot & storage combination.
+	if (engine.setting ('Screenshots') && !engine._hasCustomSaveScreenshot) {
+		const adapterName = storageSetting.Adapter.trim();
+
+		if (adapterName === 'LocalStorage' || adapterName === 'SessionStorage') {
+			FancyError.show('engine:screenshots:storage_incompatible', {
+				adapter: adapterName
+			});
+
+			// Disable screenshots to prevent silent failures
+			engine.setting('Screenshots' as keyof GameSettings, false);
 		}
 	}
 }

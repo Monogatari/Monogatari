@@ -42,5 +42,6 @@ export interface GameSettings {
   };
   AllowRollback: boolean;
   ExperimentalFeatures: boolean;
+  Screenshots: boolean;
   [key: string]: string | number | boolean | Record<string, unknown>;
 }

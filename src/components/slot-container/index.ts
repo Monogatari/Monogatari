@@ -2,20 +2,16 @@ import type { Properties } from '@aegis-framework/pandora';
 import { $_, DOM } from '@aegis-framework/artemis';
 import Component from '../../lib/Component';
 
-/**
- * Props for SlotContainer component
- */
 export interface SlotContainerProps extends Properties {
 	type: 'load' | 'save';
 	label?: string;
 }
 
-/**
- * State for SlotContainer component
- */
 export interface SlotContainerState extends Properties {
 	slots: string[];
 }
+
+const SCREENSHOT_KEY_PREFIX = '__screenshot';
 
 class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 	static override tag = 'slot-container';
@@ -26,6 +22,7 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 				// Find the modal wrapper first, then find the input within it
 				const wrapper = element.closest('[data-content="wrapper"]');
 				const customName = wrapper.find('[data-content="context"]').value()?.trim() ?? '';
+
 				if (customName !== '') {
 					this.engine.saveTo('SaveLabel', this.engine.global('overwrite_slot') as number, customName);
 
@@ -54,7 +51,7 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 		const fullLabel = `${this.props.label}_`;
 
 		return (this.engine.Storage.each((key: string, value: unknown) => {
-			if (key.indexOf(fullLabel) === 0) {
+			if (key.indexOf(fullLabel) === 0 && key.indexOf(SCREENSHOT_KEY_PREFIX) === -1) {
 				// If any of the save files has somehow become corrupted and is
 				// no longer a valid object, we'll want to exclude it.
 				if (typeof value === 'object' && value !== null) {
@@ -150,7 +147,7 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 		this.engine.Storage.onCreate((key: string, value: unknown) => {
 			// We only want to react to those items that we believe are save files
 			// by their key and making sure they're an actual object
-			if (key.indexOf(`${this.props.label}_`) === 0) {
+			if (key.indexOf(`${this.props.label}_`) === 0 && key.indexOf(SCREENSHOT_KEY_PREFIX) === -1) {
 				if (typeof value === 'object' && value !== null) {
 					this.setState({
 						slots: [...new Set([...this.state.slots, key])]
@@ -162,9 +159,10 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 		this.engine.Storage.onUpdate((key: string, value: unknown) => {
 			// We only want to react to those items that we believe are save files
 			// by their key and making sure they're an actual object
-			if (key.indexOf(`${this.props.label}_`) === 0) {
+			  if (key.indexOf(`${this.props.label}_`) === 0 && key.indexOf(SCREENSHOT_KEY_PREFIX) === -1) {
 				if (typeof value === 'object' && value !== null) {
 					const slot = this.element().find(`[slot="${key}"]`).get(0);
+
 					if (slot && 'setProps' in slot) {
 						(slot as { setProps: (props: unknown) => void }).setProps(value);
 					}
@@ -191,6 +189,7 @@ class SlotContainer extends Component<SlotContainerProps, SlotContainerState> {
 		if (property === 'slots') {
 			this.forceRender();
 		}
+
 		return Promise.resolve();
 	}
 
