@@ -68,6 +68,24 @@ function registerErrors(FancyError) {
     }
   });
 
+  // Dialog Action
+  FancyError.register('action:dialog:textbox_hidden', {
+    title: 'A dialog is being shown while the textbox is hidden',
+    message: 'Monogatari attempted to display a dialog but the textbox is currently hidden. The dialog will still be shown, but the player may not be able to see it.',
+    props: {
+      'Statement': '{{statement}}',
+      'Label': '{{label}}',
+      'Step': '{{step}}',
+      'Help': {
+        '_': 'If you intentionally hid the textbox, make sure to show it again before displaying dialog:',
+        '_1': `
+          <pre><code class='language-javascript'>"show textbox"</code></pre>
+        `,
+        '_2': 'If you want to show visual elements without dialog while the textbox is hidden, use non-dialog actions like show image or show character.'
+      }
+    }
+  });
+
   // Message Action
   FancyError.register('action:message:not_found', {
     title: 'The message "{{id}}" was not found',

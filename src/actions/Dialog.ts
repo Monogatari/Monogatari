@@ -1,5 +1,6 @@
 import { $_ } from '@aegis-framework/artemis';
 import Action from './../lib/Action';
+import { FancyError } from './../lib/FancyError';
 import { ActionApplyResult, ActionRevertResult } from '../lib/types';
 import TypeWriter from './../components/type-writer';
 import type TextBoxComponent from './../components/text-box';
@@ -343,6 +344,12 @@ export class Dialog extends Action {
 
 		const text_box = this.engine.element().find('[data-component="text-box"]');
 		if (text_box.exists()) {
+			const textContent = text_box.find('[data-content="text"]').get(0);
+
+			if (textContent) {
+				textContent.scrollTop = textContent.scrollHeight;
+			}
+
 			const element = text_box.get(0) as any;
 			if (typeof element.checkUnread === 'function') {
 				element.checkUnread();
@@ -448,15 +455,24 @@ export class Dialog extends Action {
 			this.engine.debug.error(e);
 		}
 
+		const textBoxElement = this.engine.element().find('[data-component="text-box"]').get(0) as TextBoxComponent | undefined;
+		if (textBoxElement?.state?.hidden === true) {
+			FancyError.show('action:dialog:textbox_hidden', {
+				statement: `<code class='language=javascript'>"${this._statement}"</code>`,
+				label: this.engine.state('label'),
+				step: this.engine.state('step')
+			});
+		}
+
 		if (typeof this.character !== 'undefined') {
-			this._handleCustomClasses(this.engine.element().find('[data-component="text-box"]').get(0));
-			(this.engine.element().find('[data-component="text-box"]').get(0) as any).show();
+			this._handleCustomClasses(textBoxElement);
+			(textBoxElement as any)?.show();
 			return this.characterDialog();
 		} else if (this.id === 'centered') {
 			return this.displayCenteredDialog(this.dialog, this.clearDialog, this.id, this.engine.setting('CenteredTypeAnimation'));
 		} else {
-			this._handleCustomClasses(this.engine.element().find('[data-component="text-box"]').get(0));
-			(this.engine.element().find('[data-component="text-box"]').get(0) as any).show();
+			this._handleCustomClasses(textBoxElement);
+			(textBoxElement as any)?.show();
 			return this.displayDialog(this.dialog, this.clearDialog, '_narrator', this.engine.setting('NarratorTypeAnimation'));
 		}
 	}

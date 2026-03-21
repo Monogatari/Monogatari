@@ -216,6 +216,7 @@ class Monogatari {
     particles: '',
     videos: [],
     canvas: [],
+    textboxHidden: false,
   };
 
   static _history: HistoryMap = {
@@ -2069,6 +2070,8 @@ class Monogatari {
       const action = element.data ('action');
 
       if (action) {
+        // Prevent action clicks from bubbling to the game-screen's proceed handler
+        event.stopPropagation ();
         self.runListener (action, event, element);
       }
 

@@ -252,6 +252,7 @@ import HideCharacter from './actions/HideCharacter';
 import HideCharacterLayer from './actions/HideCharacterLayer';
 import HideImage from './actions/HideImage';
 import HideParticles from './actions/HideParticles';
+import HideTextBox from './actions/HideTextBox';
 import HideVideo from './actions/HideVideo';
 import InputModal from './actions/InputModal';
 import Jump from './actions/Jump';
@@ -268,6 +269,7 @@ import ShowBackground from './actions/ShowBackground';
 import ShowCharacter from './actions/ShowCharacter';
 import ShowCharacterLayer from './actions/ShowCharacterLayer';
 import ShowImage from './actions/ShowImage';
+import ShowTextBox from './actions/ShowTextBox';
 import Stop from './actions/Stop';
 import Unload from './actions/Unload';
 import Vibrate from './actions/Vibrate';
@@ -289,6 +291,7 @@ Monogatari._actions = [
 	HideCharacterLayer,
 	HideImage,
 	HideParticles,
+	HideTextBox,
 	HideVideo,
 	InputModal,
 	Jump,
@@ -305,6 +308,7 @@ Monogatari._actions = [
 	ShowCharacter,
 	ShowCharacterLayer,
 	ShowImage,
+	ShowTextBox,
 	Stop,
 	Unload,
 	Vibrate,

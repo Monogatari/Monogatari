@@ -117,6 +117,9 @@ export interface StateMap {
   // Canvas state
   canvas: string[];
 
+  // TextBox visibility state
+  textboxHidden: boolean;
+
   // Index signature for extension and backward compatibility
   [key: string]: unknown;
 }

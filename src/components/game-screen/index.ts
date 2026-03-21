@@ -12,13 +12,20 @@ class GameScreen extends ScreenComponent {
 	static override async bind() {
 		const engine = this.engine;
 
-		engine.on('click', '[data-screen="game"] *:not([data-choice])', async () => {
+		engine.on('click', '[data-screen="game"] *:not([data-choice]):not([data-action]):not([data-delete])', async function (this: HTMLElement) {
+			// Don't proceed if the click target is inside an element with data-action or data-delete
+      // TODO: Should this have the choice one too?
+			if (this.closest('[data-action]') || this.closest('[data-delete]')) {
+				return;
+			}
+
 			engine.debug.debug('Next Statement Listener');
-      try {
-        await engine.proceed({ userInitiated: true, skip: false, autoPlay: false });
-      } catch (e: unknown) {
-        engine.debug.log(`Click Proceed Prevented\nReason: ${e}`);
-      }
+
+			try {
+				await engine.proceed({ userInitiated: true, skip: false, autoPlay: false });
+			} catch (e: unknown) {
+				engine.debug.log(`Click Proceed Prevented\nReason: ${e}`);
+			}
 		});
 
 		if (engine.setting('AllowRollback') === true) {

@@ -1,4 +1,4 @@
-import { $_, Text, Util, $_ready } from '@aegis-framework/artemis';
+import { $_, Text, Util, $_ready, Debug } from '@aegis-framework/artemis';
 import type { FancyErrorProps, QueuedError, ErrorTemplate, ErrorContext } from './types';
 
 declare const Prism: { highlightAll: () => void } | undefined;
@@ -140,7 +140,7 @@ export class FancyError {
 	 *   FancyError.show('Error Title', 'Error message', { prop: 'value' });
 	 */
 	static show (idOrTitle: string, contextOrMessage?: ErrorContext | string, propsArg?: FancyErrorProps): void {
-		if (typeof MonogatariDebug === 'object') {
+		if (typeof MonogatariDebug === 'object' && Debug.currentLevel > 0) {
 			let title: string;
 			let message: string;
 			let props: FancyErrorProps;

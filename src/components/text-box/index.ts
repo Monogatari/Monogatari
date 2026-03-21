@@ -5,16 +5,40 @@ interface TextBoxProps extends Properties {
 	mode: 'adv' | 'nvl';
 }
 
-class TextBox extends Component<TextBoxProps, Properties> {
+interface TextBoxState extends Properties {
+	hidden: boolean;
+}
+
+class TextBox extends Component<TextBoxProps, TextBoxState> {
 	constructor () {
 		super();
 
 		this.props = {
 			mode: 'adv',
 		};
+
+		this.state = {
+			hidden: false,
+		};
+	}
+
+	override onStateUpdate (property: string, _oldValue: unknown, newValue: unknown): Promise<void> {
+		if (property === 'hidden') {
+			if (newValue === true) {
+				this.element().hide();
+			} else {
+				this.element().show('grid');
+			}
+		}
+
+		return Promise.resolve();
 	}
 
 	show (): void {
+		if (this.state.hidden) {
+			return;
+		}
+
 		this.element().show('grid');
 	}
 
@@ -26,9 +50,11 @@ class TextBox extends Component<TextBoxProps, Properties> {
 	 */
 	checkUnread (): void {
 		const text = this.content('text').get(0) as HTMLElement | undefined;
+
 		if (!text) {
 			return;
 		}
+
 		if ((text.clientHeight + text.scrollTop) < text.scrollHeight) {
 			this.classList.add('unread');
 		} else {
