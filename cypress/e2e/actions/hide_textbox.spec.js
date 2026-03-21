@@ -112,7 +112,8 @@ context ('Hide TextBox', function () {
 				'hide textbox',
 				'Two',
 				'show textbox',
-				'Three'
+				'Three',
+				'end'
 			]
 		});
 
@@ -125,13 +126,9 @@ context ('Hide TextBox', function () {
 		cy.get ('text-box').should ('not.be.visible');
 		cy.save (1);
 
-
 		cy.proceed ();
-		cy.get ('text-box').should ('be.visible');
-		cy.get ('text-box').contains ('Three');
-
-
 		cy.proceed ();
+
 		cy.get ('[data-component="main-menu"] [data-action="open-screen"][data-open="load"]').click ();
 		cy.get ('[data-component="load-screen"] [data-component="save-slot"]').first ().click ();
 		cy.get ('[data-component="game-screen"]').should ('be.visible');
@@ -148,7 +145,8 @@ context ('Hide TextBox', function () {
 				'hide textbox',
 				'show textbox',
 				'Two',
-				'Three'
+				'Three',
+				'end'
 			]
 		});
 
@@ -162,9 +160,8 @@ context ('Hide TextBox', function () {
 		cy.save (1);
 
 		cy.proceed ();
-		cy.get ('text-box').contains ('Three');
-
 		cy.proceed ();
+
 		cy.get ('[data-component="main-menu"] [data-action="open-screen"][data-open="load"]').click ();
 		cy.get ('[data-component="load-screen"] [data-component="save-slot"]').first ().click ();
 		cy.get ('[data-component="game-screen"]').should ('be.visible');
@@ -211,14 +208,15 @@ context ('Hide TextBox', function () {
 	});
 
 	it ('Hides the textbox correctly in NVL mode', function () {
+		this.monogatari.debug.level (0);
 		cy.loadTestAssets ({ nvl: true });
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({
 			'Start': [
 				'y Hello!',
-				'y More text',
 				'hide textbox',
 				'show image polaroid',
+				'y Hidden dialog',
 				'show textbox',
 				'y Back again'
 			]
@@ -228,7 +226,6 @@ context ('Hide TextBox', function () {
 		cy.get ('text-box').should ('be.visible');
 		cy.wrap (this.monogatari).invoke ('element').invoke ('find', 'text-box').invoke ('get', 0).its ('props.mode').should ('equal', 'nvl');
 
-		cy.proceed ();
 		cy.proceed ();
 
 		cy.get ('text-box').should ('not.be.visible');

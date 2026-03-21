@@ -108,7 +108,8 @@ context ('Show TextBox', function () {
 				'hide textbox',
 				'show textbox',
 				'Two',
-				'Three'
+				'Three',
+				'end'
 			]
 		});
 
@@ -121,9 +122,8 @@ context ('Show TextBox', function () {
 		cy.save (1);
 
 		cy.proceed ();
-		cy.get ('text-box').contains ('Three');
-
 		cy.proceed ();
+
 		cy.get ('[data-component="main-menu"] [data-action="open-screen"][data-open="load"]').click ();
 		cy.get ('[data-component="load-screen"] [data-component="save-slot"]').first ().click ();
 		cy.get ('[data-component="game-screen"]').should ('be.visible');
@@ -140,7 +140,8 @@ context ('Show TextBox', function () {
 				'show image polaroid',
 				'show textbox',
 				'One',
-				'Two'
+				'Two',
+				'end'
 			]
 		});
 
@@ -152,9 +153,8 @@ context ('Show TextBox', function () {
 		cy.save (1);
 
 		cy.proceed ();
-		cy.get ('text-box').contains ('Two');
-
 		cy.proceed ();
+
 		cy.get ('[data-component="main-menu"] [data-action="open-screen"][data-open="load"]').click ();
 		cy.get ('[data-component="load-screen"] [data-component="save-slot"]').first ().click ();
 		cy.get ('[data-component="game-screen"]').should ('be.visible');

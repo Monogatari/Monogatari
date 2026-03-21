@@ -23,6 +23,7 @@ class DialogLog extends Component<Properties, DialogLogState> {
 
 	static override setup(): Promise<void> {
 		const quickMenu = this.engine.component('quick-menu') as { addButtonAfter?: (after: string, btn: { string: string; icon: string; data: { action: string } }) => void } | undefined;
+
 		if (quickMenu?.addButtonAfter) {
 			quickMenu.addButtonAfter('Hide', {
 				string: 'Log',
@@ -32,6 +33,7 @@ class DialogLog extends Component<Properties, DialogLogState> {
 				}
 			});
 		}
+
 		return Promise.resolve();
 	}
 
@@ -46,6 +48,7 @@ class DialogLog extends Component<Properties, DialogLogState> {
 				});
 			}
 		});
+
 		return Promise.resolve();
 	}
 
@@ -89,9 +92,14 @@ class DialogLog extends Component<Properties, DialogLogState> {
 			this.classList.toggle('modal--active');
 
 			if (newValue === true) {
-				this.scrollTop = this.scrollHeight;
+				const log = this.content('log').get(0);
+
+				if (log) {
+					log.scrollTop = log.scrollHeight;
+				}
 			}
 		}
+
 		return Promise.resolve();
 	}
 
