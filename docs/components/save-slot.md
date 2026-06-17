@@ -66,6 +66,11 @@ Each slot previews where the player was when they saved, in this order of prefer
 2. Otherwise, if the current scene has an associated image, that scene image is used.
 3. Otherwise, the slot falls back to the saved `background` / `scene` state.
 
+> [!NOTE]
+> The save-time screenshot inlines every on-screen image, so background and
+> character assets served from another origin must send CORS headers or they
+> are captured as black. See [Cross-Origin Assets Require CORS](../configuration-options/game-configuration/saving.md#cross-origin-assets-require-cors).
+
 ## Customizing
 
 ### Restyle the slot

@@ -40,7 +40,7 @@ monogatari.setting('AutoSave', 10);
 | `ShowMainScreen` | `boolean` | `true` | Show main menu on game start. |
 | `Preload` | `boolean` | `true` | Enable asset preloading on web. |
 | `AutoSave` | `number` | `0` | Auto-save interval in minutes (0 = off). |
-| `Screenshots` | `boolean` | `false` | Capture a screenshot when saving, used as the [save slot](../../components/save-slot.md)'s preview background. |
+| `Screenshots` | `boolean` | `false` | Capture a screenshot when saving, used as the [save slot](../../components/save-slot.md)'s preview background. Cross-origin assets must send CORS headers or they capture as black — see [Saving](saving.md#cross-origin-assets-require-cors). |
 | `ServiceWorkers` | `boolean` | `true` | Enable service workers for caching. |
 | `AspectRatio` | `string` | `'16:9'` | Aspect ratio for backgrounds. |
 | `ForceAspectRatio` | `string` | `'None'` | Force aspect ratio: `'None'`, `'Visuals'`, or `'Global'`. |
