@@ -57,7 +57,6 @@ function createWindow () {
 			nodeIntegration: false,
 			nodeIntegrationInWorker: false,
 			contextIsolation: true,
-			enableRemoteModule: false,
 			preload: path.join (appRoot, '/engine/electron/preload.js'),
 		}
 	});
@@ -157,14 +156,15 @@ app.on ('activate', () => {
 // Whenever a new window tries to get created, we'll check if it was because the
 // user clicked on a link with a target="_blank" property. If so, instead of
 // creating the new window, we'll open the website on their browsers.
-app.on('web-contents-created', (event, contents) => {
-	contents.on ('new-window', async (event, navigationUrl) => {
-		// We'll only open pages with the HTTP(S) protocol.
-		if (navigationUrl.indexOf ('http://') === 0 || navigationUrl.indexOf ('https://') === 0) {
-			event.preventDefault ();
-
-			await shell.openExternal (navigationUrl);
+app.on ('web-contents-created', (event, contents) => {
+	contents.setWindowOpenHandler (({ url: navigationUrl }) => {
+		// We'll only open pages with the HTTP(S) protocol on the user's browser.
+		if (navigationUrl.startsWith ('http://') || navigationUrl.startsWith ('https://')) {
+			shell.openExternal (navigationUrl);
 		}
+
+		// Never let the app spawn its own extra windows.
+		return { action: 'deny' };
 	});
 });
 

@@ -9,6 +9,7 @@ import migrate from '../migrations';
 import { FancyError } from '../lib/FancyError';
 import { FileSystemStorage } from '../lib/FileSystemStorage';
 import { getDesktopBridge } from '../lib/DesktopBridge';
+import { captureGameScreenshot } from './ui';
 
 // ============================================================================
 // Game Object / State Snapshot
@@ -64,17 +65,19 @@ export async function saveTo (engine: VisualNovelEngine, prefix = 'SaveLabel', i
 
 	if (engine.setting ('Screenshots')) {
 		try {
-			const { domToBlob } = await import ('modern-screenshot');
-			const gameScreen = document.querySelector ('[data-screen="game"]') as HTMLElement;
-			if (gameScreen) {
-				const blob = await domToBlob (gameScreen, {
-					quality: 0.8,
-					type: 'image/jpeg',
-					scale: 400 / gameScreen.offsetWidth,
-				});
-				if (blob) {
-					screenshot = await engine.onSaveScreenshot (slotKey, blob);
-				}
+			// Prefer the screenshot captured when the save screen was opened.
+			// Auto-saves fire during gameplay, so they fall back to capturing the still-visible game screen.
+			let blob: Blob | null = null;
+
+			if (engine._pendingScreenshot) {
+				blob = await engine._pendingScreenshot;
+				engine._pendingScreenshot = null;
+			} else {
+				blob = await captureGameScreenshot (engine);
+			}
+
+			if (blob) {
+				screenshot = await engine.onSaveScreenshot (slotKey, blob);
 			}
 		} catch (e) {
 			engine.debug.warn ('Screenshot capture failed:', e);
@@ -271,20 +274,6 @@ export function setupStorage (engine: VisualNovelEngine): void {
 					}
 				}
 			});
-		}
-	}
-
-	// Check for incompatible screenshot & storage combination.
-	if (engine.setting ('Screenshots') && !engine._hasCustomSaveScreenshot) {
-		const adapterName = storageSetting.Adapter.trim();
-
-		if (adapterName === 'LocalStorage' || adapterName === 'SessionStorage') {
-			FancyError.show('engine:screenshots:storage_incompatible', {
-				adapter: adapterName
-			});
-
-			// Disable screenshots to prevent silent failures
-			engine.setting('Screenshots' as keyof GameSettings, false);
 		}
 	}
 }

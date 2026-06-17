@@ -48,6 +48,7 @@ import {
   serializeAudioBuffer as _serializeAudioBuffer,
   deserializeAudioBuffer as _deserializeAudioBuffer,
   audioBufferSpace as _audioBufferSpace,
+  screenshotSpace as _screenshotSpace,
   isIndexedDBAvailable as _isIndexedDBAvailable,
   storeAudioBufferPersistent as _storeAudioBufferPersistent,
   getAudioBufferPersistent as _getAudioBufferPersistent,
@@ -189,19 +190,43 @@ class Monogatari {
   // Persistent audio buffer storage
   static _audioBufferSpace: Space | null = null;
 
+  // Save screenshot storage (IndexedDB, out-of-line keys; holds raw Blobs)
+  static _screenshotSpace: Space | null = null;
+
   // Track IndexedDB availability: null = not checked, true = available, false = unavailable
   static _indexedDBAvailable: boolean | null = null;
 
   // Whether the developer has overridden the default onSaveScreenshot callback
   static _hasCustomSaveScreenshot = false;
 
+  // Screenshot of the game screen captured when the save screen is opened, before
+  // the game screen is hidden. Consumed by saveTo() for manual-save thumbnails.
+  static _pendingScreenshot: Promise<Blob | null> | null = null;
+
   static Storage: StorageInterface = new Space () as unknown as StorageInterface;
+
+  // Read a stored screenshot Blob into a data-URL string for display.
+  private static _blobToDataURL (blob: Blob): Promise<string> {
+    return new Promise ((resolve, reject) => {
+      const reader = new FileReader ();
+      reader.onload = () => resolve (reader.result as string);
+      reader.onerror = () => reject (reader.error ?? new Error ('Failed to read screenshot blob'));
+      reader.readAsDataURL (blob);
+    });
+  }
 
   // Screenshot callbacks with defaults. Override to customize screenshot storage.
   private static _onSaveScreenshot: (slotKey: string, blob: Blob) => Promise<string> = async (slotKey, blob) => {
-    await Monogatari.Storage.set(`${slotKey}__screenshot`, blob);
+    const key = `${slotKey}__screenshot`;
+    const space = await Monogatari.screenshotSpace ();
 
-    return `${slotKey}__screenshot`;
+    if (!space) {
+      throw new Error ('Screenshot storage (IndexedDB) is unavailable');
+    }
+
+    await space.set (key, blob);
+
+    return key;
   };
 
   static get onSaveScreenshot(): (slotKey: string, blob: Blob) => Promise<string> {
@@ -215,13 +240,35 @@ class Monogatari {
   }
 
   static onLoadScreenshot: (key: string) => Promise<string> = async (key) => {
-    const blob = await Monogatari.Storage.get(key) as Blob;
+    const space = await Monogatari.screenshotSpace ();
 
-    return URL.createObjectURL(blob);
+    if (!space) {
+      return '';
+    }
+
+    try {
+      const blob = await space.get (key) as Blob | null;
+
+      return blob instanceof Blob ? await Monogatari._blobToDataURL (blob) : '';
+    } catch {
+      // Key not found / unreadable — fall back to the scene image.
+      return '';
+    }
   };
 
   static onDeleteScreenshot: (key: string) => Promise<void> = async (key) => {
-    await Monogatari.Storage.remove(key);
+    const space = await Monogatari.screenshotSpace ();
+
+    if (!space) {
+      return;
+    }
+
+    // A missing screenshot must not fail the save deletion it accompanies.
+    try {
+      await space.remove (key);
+    } catch {
+      // already gone
+    }
   };
 
   static _mediaPlayers: Record<string, Record<string, HTMLAudioElement | HTMLVideoElement | AudioPlayer | (HTMLAudioElement & { stop?: () => void }) | (HTMLVideoElement & { stop?: () => void })>> = {
@@ -1068,6 +1115,14 @@ class Monogatari {
    */
   static async audioBufferSpace(): Promise<Space | null> {
     return _audioBufferSpace(this.asEngine());
+  }
+
+  /**
+   * Get the save screenshot Space instance (IndexedDB)
+   * Lazily initialized on first access. Returns null if IndexedDB is unavailable.
+   */
+  static async screenshotSpace(): Promise<Space | null> {
+    return _screenshotSpace(this.asEngine());
   }
 
   /**
@@ -2207,8 +2262,8 @@ class Monogatari {
   static element (pure: true, handled?: boolean): HTMLElement | null;
   static element (pure: false, handled?: boolean): DOM;
   static element (pure = false, handled = false): HTMLElement | DOM | null {
-    let element: HTMLElement | DOM | null = null;
-    let exists = false;
+    let element: HTMLElement | DOM | null;
+    let exists: boolean;
 
     if (pure === true) {
       element = document.querySelector ('visual-novel') as HTMLElement;

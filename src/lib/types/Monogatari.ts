@@ -139,6 +139,7 @@ export interface VisualNovelEngine {
   /** @internal */ _audioBufferCache: Map<string, AudioBuffer>;
   /** @internal */ _imageCache: Map<string, HTMLImageElement>;
   /** @internal */ _audioBufferSpace: Space | null;
+  /** @internal */ _screenshotSpace: Space | null;
   /** @internal */ _indexedDBAvailable: boolean | null;
   /** @internal */ _listeners: Array<{ name: string; keys?: string | string[]; callback: (this: VisualNovelEngine, event: Event, element: DOM) => unknown }>;
   /** @internal */ _globals: Partial<GlobalsMap>;
@@ -721,6 +722,13 @@ export interface VisualNovelEngine {
   audioBufferSpace: () => Promise<Space | null>;
 
   /**
+   * Get the save screenshot Space instance (IndexedDB).
+   * Lazily initialized on first access.
+   * @returns Promise resolving to the Space instance, or null if IndexedDB is unavailable
+   */
+  screenshotSpace: () => Promise<Space | null>;
+
+  /**
    * Check if IndexedDB is available for audio caching.
    * @returns true if available, false if not, null if not yet checked
    */
@@ -1070,6 +1078,12 @@ export interface VisualNovelEngine {
    * @internal
    */
   _hasCustomSaveScreenshot: boolean;
+
+  /**
+   * A screenshot of the game screen captured the moment the save screen was opened
+   * @internal
+   */
+  _pendingScreenshot: Promise<Blob | null> | null;
 
   /**
    * Setup the storage adapter.

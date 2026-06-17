@@ -246,6 +246,37 @@ export function isIndexedDBAvailable(engine: VisualNovelEngine): boolean | null 
   return engine._indexedDBAvailable;
 }
 
+// ============================================================================
+// Save Screenshot Storage (IndexedDB)
+// ============================================================================
+
+export async function screenshotSpace(engine: VisualNovelEngine): Promise<Space | null> {
+  // If we already know IndexedDB isn't available, skip
+  if (engine._indexedDBAvailable === false) {
+    return null;
+  }
+
+  if (!engine._screenshotSpace) {
+    try {
+      // We use a dedicated IndexedDB Space for screenshots (blobs), so they don't interfere with the main save data.
+      engine._screenshotSpace = new Space(SpaceAdapter.IndexedDB, {
+        name: `${Text.friendly(engine.setting('Name') as string)}_Screenshots`,
+        version: '1',
+        store: 'screenshots'
+      } as ConstructorParameters<typeof Space>[1]);
+
+      await engine._screenshotSpace.open();
+      engine._indexedDBAvailable = true;
+    } catch (error) {
+      console.warn('IndexedDB not available for save screenshots. Save thumbnails will fall back to the scene image:', error);
+      engine._indexedDBAvailable = false;
+      return null;
+    }
+  }
+
+  return engine._screenshotSpace;
+}
+
 export async function storeAudioBufferPersistent(engine: VisualNovelEngine, key: string, buffer: AudioBuffer): Promise<void> {
   const space = await audioBufferSpace(engine);
 

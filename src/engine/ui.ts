@@ -158,6 +158,60 @@ export function showSplashScreen (engine: VisualNovelEngine): void {
 }
 
 export function showScreen (engine: VisualNovelEngine, screen: string): void {
+  // Capture a screenshot before hiding the game screen if we're opening the save screen.
+	const shouldCapture = screen === 'save'
+		&& engine.setting ('Screenshots') === true
+		&& engine.global ('playing') === true
+		&& engine.element ().find ('[data-screen="game"]').isVisible ();
+
+	if (shouldCapture) {
+		engine._pendingScreenshot = captureGameScreenshot (engine);
+		engine._pendingScreenshot.finally (() => revealScreen (engine, screen));
+		return;
+	}
+
+	// Leaving the save screen discards any pending capture
+	if (screen !== 'save') {
+		engine._pendingScreenshot = null;
+	}
+
+	revealScreen (engine, screen);
+}
+
+/**
+ * Capture the current game screen as a JPEG Blob
+ */
+export async function captureGameScreenshot (engine: VisualNovelEngine): Promise<Blob | null> {
+	const gameScreen = engine.element ().find ('[data-screen="game"]').get (0) as HTMLElement | undefined;
+
+	if (!gameScreen || gameScreen.offsetWidth === 0) {
+		return null;
+	}
+
+	// Ensure animations are settled before capturing the screenshot.
+	const settleAnimations = document.createElement ('style');
+	settleAnimations.textContent = '[data-screen="game"], [data-screen="game"] *, [data-screen="game"] *::before, [data-screen="game"] *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }';
+
+	try {
+		document.head.appendChild (settleAnimations);
+
+		const { domToBlob } = await import ('modern-screenshot');
+
+		return await domToBlob (gameScreen, {
+			quality: 0.8,
+			type: 'image/jpeg',
+			scale: 400 / gameScreen.offsetWidth,
+		});
+	} catch (e) {
+		engine.debug.warn ('Screenshot capture failed:', e);
+
+		return null;
+	} finally {
+		settleAnimations.remove ();
+	}
+}
+
+function revealScreen (engine: VisualNovelEngine, screen: string): void {
 	hideScreens (engine);
 
 	const screenElement = engine.element ().find (`[data-screen="${screen}"]`).get (0) as Component | undefined;

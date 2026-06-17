@@ -57,7 +57,7 @@
 		"typescript-eslint": "^8.48.1"
 	},
 	"dependencies": {
-		"@aegis-framework/artemis": "^0.5.3",
+		"@aegis-framework/artemis": "^0.6.0",
 		"@aegis-framework/kayros.css": "^0.5.1",
 		"@aegis-framework/pandora": "^0.5.0",
 		"@fortawesome/fontawesome-free": "^7.1.0",

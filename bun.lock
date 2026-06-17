@@ -5,7 +5,7 @@
     "": {
       "name": "@monogatari/core",
       "dependencies": {
-        "@aegis-framework/artemis": "^0.5.3",
+        "@aegis-framework/artemis": "^0.6.0",
         "@aegis-framework/kayros.css": "^0.5.1",
         "@aegis-framework/pandora": "^0.5.0",
         "@fortawesome/fontawesome-free": "^7.1.0",
@@ -38,7 +38,7 @@
     },
   },
   "packages": {
-    "@aegis-framework/artemis": ["@aegis-framework/artemis@0.5.3", "", {}, "sha512-LyGIVbM7pzOFoxtJ5p/ViMILvd+3Z7A+wLlP9oyAPqXonNurS1mxrRI+yCeyvgouG6qvLcZDCmrxsIkWjyzZZQ=="],
+    "@aegis-framework/artemis": ["@aegis-framework/artemis@0.6.0", "", {}, "sha512-0IMxa5oT2w/SsPmy5/tNZm5nnsUvDRqJsQ074ZS1qCISxgkM3Rtu9qfWwWattTqng0i6PQFjWbXCEgoKPid+ug=="],
 
     "@aegis-framework/kayros.css": ["@aegis-framework/kayros.css@0.5.1", "", {}, "sha512-Wbn44PhzgItTQ3PHYp5plAjYIf+pLJjfeQ5hcZT0gcljPgZcWZ0CFSUOpVudQOCdRMO+Eu2BpFMSB9xB4AcgnQ=="],
 

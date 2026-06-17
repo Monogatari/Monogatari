@@ -4,9 +4,10 @@
   "author": "Your Name",
   "main": "engine/electron/index.js",
   "devDependencies": {
-    "@electron/notarize": "^2.4.0",
-    "electron": "^33.2.0",
-    "electron-builder": "^25.0.5"
+    "@electron/notarize": "^3.1.1",
+    "dotenv": "^16.4.5",
+    "electron": "^42.4.0",
+    "electron-builder": "^26.15.3"
   },
   "build": {
     "directories": {
@@ -58,6 +59,6 @@
     "build:electrobun": "bunx electrobun build"
   },
   "dependencies": {
-    "electrobun": "^1.16.0"
+    "electrobun": "^1.18.1"
   }
 }

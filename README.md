@@ -59,9 +59,9 @@ Ok so now you have the environment set up, you have some idea on what the files 
 If you manage to do all that, congratulations! You just made your first game and are probably more familiarized with the workflow you'll be using, just make changes, save, reload, try and repeat!
 
 ## Documentation
-You can take a look at the documentation in https://developers.monogatari.io/
+You can read the documentation at [monogatari.io/v2](https://monogatari.io/v2).
 
-You can also contribute to it in the [Documentation repository](https://github.com/Monogatari/Documentation)
+The documentation source lives in the [`docs/`](docs/) folder of this repository.
 
 ## Monogatari as a Module
 Monogatari's core functionality is also released as an UMD module, therefore it's possible to use it either on a browser as a global library, using ES6 modules or Node.js modules.
