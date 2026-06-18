@@ -4,7 +4,7 @@ Hey there! The very fact that you are reading this is awesome! It means you are
 a bit interested in contributing to Monogatari. If you want to contribute, please
 keep in mind the following guidelines! Please note these guidelines are just for
 contributing to the project, not for creating your game. If you need instructions
-on programming your own Visual Novel, you'll find useful resources in the [documentation](https://developers.monogatari.io/documentation/).
+on programming your own Visual Novel, you'll find useful resources in the [documentation](https://monogatari.io/v2).
 
 ## Development Culture
 A very important part is to get into Monogatari's development culture, and it's
@@ -51,9 +51,9 @@ the way to contribute. So let's start!
    ```
 
 4. Change to the `develop` branch. Monogatari uses the [Git WorkFlow](https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows) so there are
-   two main branches, `main` where all the stable code is hosted
+   two main branches, `master` where all the stable code is hosted
    and `develop` where all the work in progress code is hosted. Following
-   this distinction, `main` usually hosts the code of the latest stable
+   this distinction, `master` usually hosts the code of the latest stable
    release while develop hosts the code for the upcoming releases. All
    your contributions should always use `develop` as its base.
 
@@ -67,16 +67,33 @@ the way to contribute. So let's start!
    bun install
    ```
 
-6. Make all the changes you want and build the code. Please follow the
-   coding guidelines described at the end of this document while making
-   changes to the code.
+6. Make all the changes you want. Please follow the coding guidelines
+   described at the end of this document while making changes to the code.
+   During development you can keep the engine and styles rebuilding
+   automatically as you edit:
+
+   ```bash
+   bun run watch
+   ```
+
+   When you're ready, produce the final build (this also runs the linter
+   and the TypeScript type checker):
 
    ```bash
    bun run build
    ```
 
-7. Test your changes and make sure everything works correctly, once
-   tested, commit your changes.
+7. Test your changes and make sure everything works correctly. Before
+   committing, make sure the code lints, type-checks and passes the test
+   suite:
+
+   ```bash
+   bun run lint     # ESLint
+   bun run check    # TypeScript type check (tsc --noEmit)
+   bun run test     # Cypress end-to-end tests
+   ```
+
+   Once everything passes, commit your changes.
 
    ```bash
    git commit <List of files to commit> -m "A message describing what you did in present tense, should start with a capital letter."
@@ -100,6 +117,13 @@ the way to contribute. So let's start!
 That's it! You ready to build and contribute. See **Code Styling**.
 
 ## Code Styling
+
+### TypeScript
+
+The engine is written in TypeScript. New code should be typed as well — prefer
+explicit types over `any`, and keep the public types under `src/lib/types/` up to
+date when you change an action's, component's or the engine's API. Run
+`bun run check` to type-check the project without emitting any files.
 
 ### Single Quoted Strings
 
