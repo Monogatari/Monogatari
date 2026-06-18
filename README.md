@@ -10,6 +10,8 @@ Demo: https://demo.monogatari.io
 
 Twitter: https://twitter.com/monogatari
 
+GitHub Sponsors: https://github.com/sponsors/Hyuchia
+
 Patreon: https://www.patreon.com/Hyuchia
 
 Ko-fi: https://ko-fi.com/hyuchia
