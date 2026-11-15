@@ -1,21 +1,24 @@
 {
 	"name": "@monogatari/core",
-	"version": "2.8.0",
+	"version": "2.8.1",
 	"type": "module",
-	"main": "./dist/engine/core/monogatari.module.js",
-	"module": "./dist/engine/core/monogatari.module.js",
+	"main": "./lib/monogatari.module.js",
+	"module": "./lib/monogatari.module.js",
 	"types": "./dist/types/index.d.ts",
 	"exports": {
 		".": {
-			"types": "./lib/index.d.ts",
-			"import": "./lib/engine/core/monogatari.module.js",
-			"default": "./lib/engine/core/monogatari.module.js"
+			"types": "./dist/types/index.d.ts",
+			"import": "./lib/monogatari.module.js",
+			"default": "./lib/monogatari.module.js"
 		},
 		"./browser": {
-			"types": "./dist/types/index.d.ts",
+			"types": "./dist/types/browser.d.ts",
 			"import": "./dist/engine/core/monogatari.js",
 			"default": "./dist/engine/core/monogatari.js"
-		}
+		},
+		"./monogatari.css": "./dist/engine/core/monogatari.css",
+		"./dist/engine/core/monogatari.css": "./dist/engine/core/monogatari.css",
+		"./package.json": "./package.json"
 	},
 	"css": "dist/engine/core/monogatari.css",
 	"description": "Monogatari is a simple web visual novel engine created to bring Visual Novels to the web.",
@@ -41,11 +44,10 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.1",
-		"@types/luxon": "^3.7.1",
 		"@types/mousetrap": "^1.6.15",
 		"@typescript-eslint/eslint-plugin": "^8.48.1",
 		"@typescript-eslint/parser": "^8.48.1",
-		"bun": "^1.3.4",
+		"bun": "^1.4.4",
 		"cypress": "^15.7.1",
 		"dotenv": "^16.4.5",
 		"eslint": "^9.39.1",
@@ -63,18 +65,19 @@
 		"@fortawesome/fontawesome-free": "^7.1.0",
 		"@tsparticles/engine": "^3.9.1",
 		"@tsparticles/slim": "^3.9.1",
+		"@types/luxon": "^3.7.1",
 		"animate.css": "^4.1.1",
 		"deeply": "^3.1.0",
 		"luxon": "^3.7.2",
 		"modern-screenshot": "^4.6.8",
-		"mousetrap": "^1.6.5",
-		"random-js": "https://github.com/Monogatari/random-js"
+		"mousetrap": "^1.6.5"
 	},
 	"files": [
 		"README.md",
 		"LICENSE",
 		"package.json",
 		"src/*",
-		"dist/*"
+		"dist/*",
+		"lib/*"
 	]
 }

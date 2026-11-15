@@ -54,35 +54,26 @@ game-screen {
 	}
 
 	[data-sprite] {
-		margin: 0 auto;
-		left: 0;
-		right: 0;
+		right: auto;
+		margin: 0;
+
+		left: 50%;
+		translate: -50%;
 
 		&.right {
-			left: initial;
-			right: 0;
+			left: 100%;
+			translate: -100%;
 		}
 
 		&.left {
 			left: 0;
-			right: initial;
-		}
-
-		/* left: 50%;
-		transform: translateX(-50%);
-
-		&.right {
-			left: 100%;
-			transform: translateX(-100%);
-		}
-
-		&.left {
-			left: 0%;
-			transform: translateX(0%);
+			translate: 0;
 		}
 
 		&.move {
-			transition:all 0.2s ease;
-		} */
+			transition-property: left, translate;
+			transition-duration: var(--character-move-speed);
+			transition-timing-function: var(--character-move-easing);
+		}
 	}
 }

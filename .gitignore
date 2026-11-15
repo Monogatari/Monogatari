@@ -42,3 +42,6 @@ release
 cypress/videos/
 cypress/screenshots/
 docs/assets/
+
+# Showcase dev-server build output
+showcase/__bundle/

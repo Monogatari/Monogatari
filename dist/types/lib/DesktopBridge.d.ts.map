@@ -1,0 +1,1 @@
+{"version":3,"file":"DesktopBridge.d.ts","sourceRoot":"","sources":["../../../src/lib/DesktopBridge.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,aAAa;IAC7B,IAAI,CAAC,OAAO,EAAE,MAAM,EAAE,IAAI,CAAC,EAAE,OAAO,GAAG,IAAI,CAAC;IAC5C,EAAE,CAAC,OAAO,EAAE,MAAM,EAAE,QAAQ,EAAE,CAAC,IAAI,EAAE,OAAO,KAAK,IAAI,GAAG,IAAI,CAAC;CAC7D;AAED,wBAAgB,gBAAgB,IAAI,aAAa,GAAG,IAAI,CAIvD"}

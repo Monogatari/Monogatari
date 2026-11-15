@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../../src/components/help-screen/index.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,UAAU,EAAE,MAAM,0BAA0B,CAAC;AAC3D,OAAO,eAAe,EAAE,EAAE,WAAW,EAAE,MAAM,2BAA2B,CAAC;AAEzE,cAAM,UAAW,SAAQ,eAAe,CAAC,UAAU,EAAE,WAAW,CAAC;IAChE,OAAgB,GAAG,SAAiB;IAE3B,MAAM,IAAI,MAAM;CA2JzB;AAED,eAAe,UAAU,CAAC"}

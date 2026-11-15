@@ -10,6 +10,7 @@ export default [
 		ignores: [
 			'lib/**/*',
 			'dist/**/*',
+			'src/vendor/**/*',
 			'**/*.min.js',
 			'.yarn/**/*',
 			'.pnp.loader.mjs',

@@ -30,7 +30,7 @@ export { tsParticles } from '@tsparticles/engine';
 
 export * from '@tsparticles/slim';
 
-export * as RandomJS from 'random-js';
+export * as RandomJS from './vendor/random-js';
 
 export * as Luxon from 'luxon';
 

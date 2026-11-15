@@ -94,6 +94,7 @@ const monogatari = Monogatari.default;
 
 ```javascript
 import Monogatari from '@monogatari/core';
+import '@monogatari/core/monogatari.css';
 ```
 
 Type definitions are bundled with the package, so editors get autocomplete and type-checking out of the box.

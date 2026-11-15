@@ -13,4 +13,7 @@
 	--cursor-blinker: '|';
 	--cursor-speed: 0.53s;
 	--cursor-easing: cubic-bezier(1, 0, 0, 1);
+
+	--character-move-speed: 0.2s;
+	--character-move-easing: ease;
 }

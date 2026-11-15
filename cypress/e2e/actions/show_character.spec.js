@@ -102,6 +102,119 @@ context ('Show Character', function () {
 		cy.get ('[data-sprite="angry"][data-position="center"]').should ('exist');
 	});
 
+	it ('Transitions the sprite between positions when the move property is used', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show character y happy at left with fadeIn',
+				'y One',
+				'show character y happy at center with move transition 3s',
+				'y Two'
+			]
+		});
+
+		cy.start ();
+		cy.get ('[data-sprite="happy"]').should ('have.class', 'left');
+
+		cy.proceed ();
+
+		cy.get ('[data-sprite="happy"]').should ('have.class', 'move');
+		cy.get ('[data-sprite="happy"]').should ('have.class', 'center');
+		cy.get ('[data-sprite="happy"]').should ('not.have.class', 'left');
+
+		// The position properties must be transitionable on both ends, otherwise
+		// the browser jumps straight to the new position instead of moving.
+		cy.get ('[data-sprite="happy"]').then (([sprite]) => {
+			const transitions = sprite.getAnimations ().filter ((animation) => {
+				return animation instanceof sprite.ownerDocument.defaultView.CSSTransition;
+			});
+
+			const properties = transitions.map ((transition) => transition.transitionProperty);
+
+			expect (properties, 'running transitions').to.include.members (['left', 'translate']);
+
+			for (const transition of transitions) {
+				expect (transition.effect.getTiming ().duration, `${transition.transitionProperty} duration`).to.equal (3000);
+			}
+		});
+	});
+
+	it ('Anchors the sprite to each position', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show character y happy at left',
+				'y One',
+				'show character y happy at center',
+				'y Two',
+				'show character y happy at right',
+				'y Three'
+			]
+		});
+
+		const measure = () => {
+			return cy.get ('[data-sprite="happy"]').then (([sprite]) => {
+				return {
+					container: sprite.parentElement.getBoundingClientRect (),
+					sprite: sprite.getBoundingClientRect ()
+				};
+			});
+		};
+
+		cy.start ();
+
+		// The position classes share their names with global utility classes,
+		// so the sprite has to be measured to catch those leaking back in.
+		cy.get ('[data-sprite="happy"]', { timeout: 20000 }).should (([sprite]) => {
+			expect (sprite.complete && sprite.naturalWidth > 0, 'sprite image loaded').to.equal (true);
+		});
+
+		measure ().then (({ container, sprite }) => {
+			expect (sprite.left, 'left edge at left').to.be.closeTo (container.left, 2);
+		});
+
+		cy.proceed ();
+
+		measure ().then (({ container, sprite }) => {
+			expect (
+				sprite.left + (sprite.width / 2),
+				'middle at center'
+			).to.be.closeTo (container.left + (container.width / 2), 2);
+		});
+
+		cy.proceed ();
+
+		measure ().then (({ container, sprite }) => {
+			expect (sprite.right, 'right edge at right').to.be.closeTo (container.right, 2);
+		});
+	});
+
+	it ('Uses the default move duration when no transition property is given', function () {
+		this.monogatari.setting ('TypeAnimation', false);
+		this.monogatari.script ({
+			'Start': [
+				'show character y happy at left with fadeIn',
+				'y One',
+				'show character y happy at right with move',
+				'y Two'
+			]
+		});
+
+		cy.start ();
+		cy.proceed ();
+
+		cy.get ('[data-sprite="happy"]').should ('have.class', 'move');
+		cy.get ('[data-sprite="happy"]').then (([sprite]) => {
+			const styles = sprite.ownerDocument.defaultView.getComputedStyle (sprite);
+
+			expect (styles.transitionProperty).to.equal ('left, translate');
+
+			// A single duration is repeated over the property list, so browsers
+			// may serialize it either as one value or as one per property.
+			expect (styles.transitionDuration).to.match (/^0\.2s(, 0\.2s)?$/);
+		});
+	});
+
 	it ('Clears the previous classes from the image correctly', function () {
 		this.monogatari.setting ('TypeAnimation', false);
 		this.monogatari.script ({

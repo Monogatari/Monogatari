@@ -14,7 +14,7 @@ import AudioPlayer from './lib/AudioPlayer';
 import type { StaticComponent, StaticAction, Character, GameSettings, PlayerPreferences, StateMap, HistoryMap, GlobalsMap, ActionInstance, StorageInterface } from './lib/types';
 import deeply from 'deeply';
 import { version } from '../package.json';
-import { Random, browserCrypto } from 'random-js';
+import { Random, browserCrypto } from './vendor/random-js';
 
 // TODO: We need to decouple these.
 import type TypeWriterComponent from './components/type-writer';

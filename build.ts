@@ -4,6 +4,7 @@ import { join } from 'path';
 const OUT_DIR_BROWSER = './dist/engine/core';
 const OUT_DIR_DEBUG = './dist/engine/debug';
 const OUT_DIR_MODULE = './lib';
+const OUT_DIR_TYPES = './dist/types';
 const SRC_DIR = './src';
 const DEBUG_DIR = './debug';
 
@@ -21,7 +22,7 @@ async function buildModule(): Promise<void> {
 	console.log('📦 Building ES module...');
 
 	const result = await Bun.build({
-		entrypoints: [join(SRC_DIR, 'index.js')],
+		entrypoints: [join(SRC_DIR, 'index.ts')],
 		outdir: OUT_DIR_MODULE,
 		naming: 'monogatari.module.js',
 		...commonBuildOptions,
@@ -123,7 +124,7 @@ async function buildCSS(): Promise<void> {
 async function buildTypes(): Promise<void> {
 	console.log('📝 Building type declarations...');
 
-	const proc = Bun.spawn(['tsc', '--emitDeclarationOnly', '--declarationDir', './dist/types'], {
+	const proc = Bun.spawn(['tsc', '--emitDeclarationOnly', '--noEmit', 'false', '--rootDir', SRC_DIR, '--declarationDir', OUT_DIR_TYPES], {
 		stdout: 'inherit',
 		stderr: 'inherit',
 	});
@@ -132,6 +133,11 @@ async function buildTypes(): Promise<void> {
 
 	if (exitCode !== 0) {
 		console.error('❌ Type declarations build failed');
+		process.exit(1);
+	}
+
+	if (!(await Bun.file(join(OUT_DIR_TYPES, 'index.d.ts')).exists())) {
+		console.error(`❌ Type declarations build emitted no ${join(OUT_DIR_TYPES, 'index.d.ts')}`);
 		process.exit(1);
 	}
 
