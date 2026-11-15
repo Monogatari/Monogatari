@@ -50,6 +50,14 @@ Upload the **contents of `build/web/`** wherever you want to host it:
 
 - **[itch.io](https://itch.io)** — the go-to home for visual novels. Zip the contents of `build/web/`, upload it as an **HTML5** project, and tick "This file will be played in the browser" (itch uses `index.html` as the entry point).
 - **Static hosts** — [Netlify](https://www.netlify.com/), [Vercel](https://vercel.com/), [Cloudflare Pages](https://pages.cloudflare.com/) and [GitHub Pages](https://pages.github.com/) all serve a folder of files for free over HTTPS.
+- **[deed.page](https://deed.page)** — a shareable link from one command, with no account needed. Pack the contents of `build/web/` and upload them:
+
+  ```bash
+  tar -C build/web -czf game.tar.gz .
+  curl -sS -T game.tar.gz "https://deed.page/v1/sites?slug=my-visual-novel"
+  ```
+
+  Pick your own slug. The response includes your game's URL (`https://my-visual-novel.deed.page/`) and an owner token; keep the token, since you need it to update or delete the game later.
 - **Your own server** — any web server works; the template includes an `.htaccess` for Apache.
 
 > [!TIP]
